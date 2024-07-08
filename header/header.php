@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="icon" href="/pictures/logo.png" type="image/x-icon">
+        <title>
+            dashboard    
+        </title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="UserDashboard.css">
+    </head>
+
+    <body>
+
+        <header class="main-header">
+            <div class="logo">
+                <img src="/pictures/logo-no-background.png" alt="Organization logo">
+            </div>
+            <div class="header-content">
+                <b>Nurse ID</b> - Organization 
+            </div>
+            <a href="logout.php" class="live-link">Logout</a>
+        </header>
+
+
+
+        <div class="upperbody">
+            <div class="dropdown">
+                <button class="dropbtn">Dropdown</button>
+                <div class="dropdown-content">
+                        <a href="/index.html">Home</a>
+                        <a href="/aboutus/aboutus.html">Uploads</a>
+                        <a href="#">Clients</a>
+                        <a href="/connect/connect.html">Data</a>
+                </div>
+            </div>
+            
+        </div>
