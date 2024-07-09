@@ -1,6 +1,9 @@
 <?php include_once '/xampp/htdocs/General-page/header/header.php'; ?>
 
-    <div class="text1"><p>Device</p></div>
+    <div class="container1">
+        <div class="text1"><p>Device</p></div>
+    </div>
+    
 
 
 

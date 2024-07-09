@@ -7,8 +7,7 @@
 
     <link rel="stylesheet" href="userlogin.css">
 
-
-    <title>Login</title>
+    <title>registration</title>
 </head>
 
 
@@ -17,24 +16,24 @@
     <div class="container" id="container">
         <div class="form-container sign-up">
             <form>
-                <h1>Sign In</h1>
-                <span>Login With Oganization Id</span>
-                <input type="text" placeholder="Enter Organization Id">
+                <h1>Create Account</h1>
+                <span>Register your Organization</span>
+                <input type="text" placeholder="Name">
+                <input type="email" placeholder="Enter E-mail">
                 <input type="password" placeholder="Enter Password">
-                <a href="#">Forget Password?</a>
-                <button>Sign In</button>
+                <button>Sign Up</button>
             </form>
         </div>
 
 
         <div class="form-container sign-in">
             <form>
-                <h1>Sign In</h1>
-                <span>Login With Oganization Id</span>
-                <input type="text" placeholder="Enter Organization Id">
+                <h1>Create Account</h1>
+                <span>Register your Organization</span>
+                <input type="text" placeholder="Name">
+                <input type="email" placeholder="Enter E-mail">
                 <input type="password" placeholder="Enter Password">
-                <a href="#">Forget Password?</a>
-                <button>Sign In</button>
+                <button>Sign Up</button>
             </form>
         </div>
 
@@ -44,13 +43,13 @@
             <div class="toggle">
                 <div class="panel toggle-left">
                     <h1>Organization</h1>
-                    <p><a href="registration.html"> Register your Organization</a></p>
-                    <button class="hidden" id="login">#logo</button>
+                    <p> #logo</p>
+                    
                 </div>
                 <div class="panel toggle-right">
-                    <h1>Organization</h1>
-                    <p> Register your Organization</p>
-                    <button class="hidden" id="register">#logo</button>
+                    <h1>APPNAME</h1>
+                    <p> #logo</p>
+                    
                 </div>
             </div>
         </div>
@@ -59,7 +58,6 @@
 
 
 
-    <script src="userlogin.js"></script>
 </body>
 
 </html>

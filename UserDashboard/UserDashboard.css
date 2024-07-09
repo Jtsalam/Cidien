@@ -1,6 +1,7 @@
 body {
     margin: 0px;
     font-family: Arial, sans-serif;
+    
 }
 
 .main-header {
@@ -36,20 +37,9 @@ body {
 
 
 
-/* .text1{
-    margin-top: 30px;
-   text-align: center;
-   align-items: center;
-   font-weight: bold;
-   word-spacing: 2px;
-   text-shadow:#87a96b;
-   background-color: #87a96b;
-   border-radius: 10px;
-   margin-left : 75px; 
-   padding: 50px;
 
 
-} */
+
 
 
 
@@ -80,22 +70,25 @@ body {
         margin-right: 150px;
  
     }
-    
 
-    .text1{
-       margin-top: 70px; 
+    .upperbody{
+        margin-bottom: 200px;
+    }
+
+
+
+    .text1{ 
+        margin: auto;
        text-align: center;
        align-items: center;
+       justify-content: center;
        font-weight: bold;
        word-spacing: 2px;
        text-shadow:#8ebf66;
        background-color: #87a96b;
        border-radius: 10px;
-       margin-left : 75px; 
-       margin-right: 75px; 
        padding: 50px;
        width: 500px;
-       transform: translate(45%,50%);
 
     
     }
@@ -137,9 +130,7 @@ body {
         text-align: center;
         margin-left: 20px;
     }
-    /* .upperbody{
-        display: flex;
-    } */
+
 
     .dropbtn{
         display: none;
@@ -153,7 +144,7 @@ body {
       
       /* Dropdown Content (Hidden by Default) */
       .dropdown-content {
-        position:relative;
+        position: relative;
         display: flex;
         flex-direction: column;
         background-color:  #87a;
@@ -161,6 +152,7 @@ body {
         z-index: 1;
         padding: 10px;
         height: 100vh; /* Use full viewport height */
+
         
 
       }
@@ -173,30 +165,30 @@ body {
         padding-top: 50px;
         margin: 10px;
         border-radius: 5px;
-        width: 100%;
         box-sizing: border-box;
         transition: all 0.3s ease-in-out;
       }
 
-      .text1{
-        color: white;
-        border-radius: 5px;
-        position:fixed;
-        text-align: center;
-        align-items: center;
-        font-weight: bold;
-        word-spacing: 2px;
-        border-radius: 10px;
-        top: 50%;
-        left:50%;
-        transform: translate(-50%, -50%);
-        width: 200px;
-        height: 75px;
-        padding: 20px;
-        margin-left: 100px;
-        margin-right: 100px;
-        background-color: #87a96b;
-      }
+
+    .text1{ 
+        right:   calc(40% - 20px);
+        left: 40%;
+        position: fixed;
+        margin: auto;
+       text-align: center;
+       align-items: center;
+       justify-content: center;
+       font-weight: bold;
+       word-spacing: 2px;
+       text-shadow:#8ebf66;
+       background-color: #87a96b;
+       border-radius: 10px;
+       padding: 50px;
+       min-width: 100px;
+       margin-top: 150px;
+
+    
+    }
       
       /* Change color of dropdown links on hover */
       .dropdown-content a:hover {background-color: #f1f1f1}
