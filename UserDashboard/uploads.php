@@ -12,12 +12,13 @@ if (!isset($_SESSION['userlogin-form-submitted']) || $_SESSION['userlogin-form-s
 }
 $_SESSION['userlogin-form-submitted'] = true;
 ?>
-<div class="container1">
-    <div class="text1"><p>Device</p></div>
-</div>
+
+<form class = "FolderUpload">
+<input type="file" webkitdirectory mozdirectory/><br>
+<input type="submit" id = "submit">
+</form>
 <?php include_once '/xampp/htdocs/General-page/header/popup.php'; ?>
-<!-- Other content of the webpage goes here -->
-<script src="userdashboard.js"></script>
+
+<script src="uploads.js"></script>
 </body>
-    
 </html>

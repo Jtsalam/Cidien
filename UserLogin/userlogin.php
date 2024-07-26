@@ -1,65 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
+    include_once 'C:\xampp\htdocs\General-page\Database_test\database.php';
+    session_start();
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    if ($_SERVER["REQUEST_METHOD"] == "POST"){
+        $staff_number = filter_input(INPUT_POST, "staff_number", FILTER_SANITIZE_SPECIAL_CHARS);
+        $staff_password = filter_input(INPUT_POST, "password", FILTER_SANITIZE_SPECIAL_CHARS);
+        $org_info_query = "SELECT * FROM `medicalcenter-info` WHERE `Center-name` = '" . $_SESSION['center_name'] . "'";
+        $q_center_row = mysqli_query($conn, $org_info_query);//Queried center row
 
-    <link rel="stylesheet" href="userlogin.css">
+        if(mysqli_num_rows($q_center_row) > 0){
+            $center_row = mysqli_fetch_assoc($q_center_row);
+            $center_id = $center_row['Center-Id'];
+        };
 
+        $user_info_query = "SELECT * FROM `user-info` WHERE `Center-Id` = '" . $center_id . "'";
+        $q_user_row = mysqli_query($conn, $user_info_query);//Queried user row
 
-    <title>Login</title>
-</head>
-
-
-
-<body>
-    <div class="container" id="container">
-        <div class="form-container sign-up">
-            <form>
-                <h1>Sign In</h1>
-                <span>Login With Oganization Id</span>
-                <input type="text" placeholder="Enter Organization Id">
-                <input type="password" placeholder="Enter Password">
-                <a href="#">Forget Password?</a>
-                <button>Sign In</button>
-            </form>
-        </div>
-
-
-        <div class="form-container sign-in">
-            <form>
-                <h1>Sign In</h1>
-                <span>Login With Oganization Id</span>
-                <input type="text" placeholder="Enter Organization Id">
-                <input type="password" placeholder="Enter Password">
-                <a href="#">Forget Password?</a>
-                <button>Sign In</button>
-            </form>
-        </div>
-
-
-        <div class="swap-container">
-
-            <div class="toggle">
-                <div class="panel toggle-left">
-                    <h1>Organization</h1>
-                    <p><a href="registration.html"> Register your Organization</a></p>
-                    <button class="hidden" id="login">#logo</button>
-                </div>
-                <div class="panel toggle-right">
-                    <h1>Organization</h1>
-                    <p> Register your Organization</p>
-                    <button class="hidden" id="register">#logo</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-
-    <script src="userlogin.js"></script>
-</body>
-
-</html>
+        if(mysqli_num_rows($q_user_row) > 0){
+            while($user_row = mysqli_fetch_assoc($q_user_row)){
+                $user_number = $user_row['Center-number'];  
+                $user_password = $user_row['Password'];
+                if ($staff_number == $user_number and password_verify($staff_password, $user_password)){
+                    $_SESSION['userlogin-form-submitted'] = true;
+                    header("Location: /General-page/UserDashboard/userdashboard.php");
+                    exit();
+                };
+            };  
+            $_SESSION['user_error_message'] = "Invalid credentials";
+            header("Location: userlogin-form.php");
+            exit();
+        }
+    };
+    mysqli_close($conn);
+?>
