@@ -22,22 +22,24 @@ $_SESSION['sign-in-form-submitted'] = true;
     <title>Login</title>
 </head>
 <body>
-    <div class="container" id="container">
+<div class="container" id="container">
         <div class="form-container sign-up">
-            <form method="post">
-                <h1>Sign In</h1>
-                <span>Login With Organization Id</span>
-                <input type="text" placeholder="Enter Organization Id">
+            <form>
+                <h1>Create Account</h1>
+                <span>Register your Organization</span>
+                <input type="text" placeholder="Name">
+                <input type="staff ID" placeholder="staff ID">
+                <input type="email" placeholder="Enter E-mail">
                 <input type="password" placeholder="Enter Password">
-                <a href="#">Forget Password?</a>
-                <button>Sign In</button>
-                
+                <input type="retype password" placeholder="Retype Password">
+                <button>Sign Up</button>
             </form>
         </div>
+
         <div class="form-container sign-in">
             <form action="userlogin.php" method="POST">
                 <h1>Sign In</h1>
-                <span>Login With Organization Id</span>
+                <span>Login With Staff Id</span>
                 <input type="number" name="staff_number" placeholder="Enter Organization Id" required>
                 
                 <div class="password-container">
@@ -61,8 +63,8 @@ $_SESSION['sign-in-form-submitted'] = true;
             <div class="toggle">
                 <div class="panel toggle-left">
                     <h1>Organization</h1>
-                    <p><a href="https://this-page-intentionally-left-blank.org/"> Register your Organization</a></p>
-                    <button class="hidden" id="login">#logo</button>
+                    <p><a class = "bi bi-arrow-return-left" id = "select_org" href = "/General-page/UserLogin/sign-in-form.php"> Select Organization</a></p>
+                    <button>#logo</button>
                 </div>
                 <div class="panel toggle-right">
                     <h1><?php echo($_SESSION['display_name']);?></h1><br>
