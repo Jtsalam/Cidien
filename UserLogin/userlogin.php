@@ -1,5 +1,5 @@
 <?php
-    include_once 'C:\xampp\htdocs\General-page\Database_test\database.php';
+    include_once 'C:\xampp\htdocs\General-page\Database\database.php';
     session_start();
 
     if ($_SERVER["REQUEST_METHOD"] == "POST"){
