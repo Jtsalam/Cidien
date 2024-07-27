@@ -1,6 +1,3 @@
-<?php
-session_start();
-?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -18,11 +15,10 @@ session_start();
 
         <header class="main-header">
             <div class="logo">
-                <img src="<?php echo '/General-page/Center_images/' . $_SESSION['display_name'] . '.png'; ?>" alt="Organization logo">
+                <img src="/pictures/logo-no-background.png" alt="Organization logo">
             </div>
             <div class="header-content">
-                <?php echo($_SESSION["display_name"])?><br>
-                <b>Nurse ID: <?php echo($_SESSION["Nurse_Id"])?> </b> 
+                <b>Nurse ID</b> - Organization 
             </div>
             <a id = "logout"href="/General-page/UserLogin/userlogin-form.php" class="live-link">Logout</a>
         </header>
@@ -34,10 +30,22 @@ session_start();
                 <button class="dropbtn">Dropdown</button>
                 <div class="dropdown-content">
                         <a href="/General-page/UserDashboard/userdashboard.php">Home</a>
-                        <a href="/General-page/UserDashboard/uploads.php">Uploads</a>       
+                        <a href="/General-page/UserDashboard/uploads.php">Uploads</a>
                         <a href="/connect/connect.html">Data</a>
-                        <a href="#">Clients</a>
+                        <a href="/General-page/UserDashboard/STAFF">STAFF</a>
+                        <a href="/General-page/UserDashboard/Clients">Clients</a>
                 </div>
             </div>
             
         </div>
+
+<div class="container1">
+    <div class="text1"><p>Device</p></div>
+    <div class="text1"><p>CREATE ACCOUNT</p></div>
+</div>
+<?php include_once '/xampp/htdocs/General-page/header/popup.php'; ?>
+<!-- Other content of the webpage goes here -->
+<script src="userdashboard.js"></script>
+</body>
+    
+</html>
