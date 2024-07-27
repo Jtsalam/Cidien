@@ -24,7 +24,7 @@ $_SESSION['sign-in-form-submitted'] = true;
 <body>
 <div class="container" id="container">
         <div class="form-container sign-up">
-            <form>
+            <form method>
                 <h1>Create Account</h1>
                 <span>Register your Organization</span>
                 <input type="text" placeholder="Name">
@@ -62,9 +62,8 @@ $_SESSION['sign-in-form-submitted'] = true;
         <div class="swap-container">
             <div class="toggle">
                 <div class="panel toggle-left">
-                    <h1>Organization</h1>
-                    <p><a class = "bi bi-arrow-return-left" id = "select_org" href = "/General-page/UserLogin/sign-in-form.php"> Select Organization</a></p>
-                    <button>#logo</button>
+                    <h1>Organization</h1>         
+                    <p><a class = "bi bi-arrow-return-left" id = "my_org"> Select Organization</a></p>
                 </div>
                 <div class="panel toggle-right">
                     <h1><?php echo($_SESSION['display_name']);?></h1><br>

@@ -1,17 +1,32 @@
 const container = document.getElementById('container');
 const registerBtn = document.getElementById('register');
-const loginBtn = document.getElementById('login');
 const togglePassword = document.querySelector("#togglePassword");
 const password = document.querySelector("#password");
 const select_org = document.querySelector("#select_org");
+const my_org = document.getElementById('my_org');
+
 
 registerBtn.addEventListener('click', () => {
     container.classList.add("active");
+    
 });
 
-loginBtn.addEventListener('click', () => {
-    container.classList.remove("active");
+my_org.addEventListener('click', () => {
+    container.classList.add("active");
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/General-page/UserLogin/unset-session.php", true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            // Redirect to the sign-in form after unsetting the session
+            window.location.href = "/General-page/UserLogin/sign-in-form.php";
+        }
+    };
+    xhr.send();
+    
 });
+
+
+
 
 togglePassword.addEventListener("click", function () {
     // toggle the type attribute
@@ -35,3 +50,5 @@ select_org.addEventListener("click", function(){
     };
     xhr.send();
 });
+
+
