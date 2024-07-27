@@ -3,7 +3,7 @@
     session_start();
 
     if ($_SERVER["REQUEST_METHOD"] == "POST"){
-        $staff_number = filter_input(INPUT_POST, "staff_number", FILTER_SANITIZE_SPECIAL_CHARS);
+        $staff_Id = filter_input(INPUT_POST, "staff_Id", FILTER_SANITIZE_SPECIAL_CHARS);
         $staff_password = filter_input(INPUT_POST, "password", FILTER_SANITIZE_SPECIAL_CHARS);
         $org_info_query = "SELECT * FROM `medicalcenter-info` WHERE `Center-name` = '" . $_SESSION['center_name'] . "'";
         $q_center_row = mysqli_query($conn, $org_info_query);//Queried center row
@@ -18,10 +18,11 @@
 
         if(mysqli_num_rows($q_user_row) > 0){
             while($user_row = mysqli_fetch_assoc($q_user_row)){
-                $user_number = $user_row['Center-number'];  
+                $user_Id = $user_row['StaffId'];  
                 $user_password = $user_row['Password'];
-                if ($staff_number == $user_number and password_verify($staff_password, $user_password)){
+                if ($staff_Id == $user_Id and password_verify($staff_password, $user_password)){
                     $_SESSION['userlogin-form-submitted'] = true;
+                    $_SESSION["Nurse_Id"] = $user_Id;
                     header("Location: /General-page/UserDashboard/userdashboard.php");
                     exit();
                 };

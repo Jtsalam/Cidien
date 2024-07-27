@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -15,10 +18,11 @@
 
         <header class="main-header">
             <div class="logo">
-                <img src="/pictures/logo-no-background.png" alt="Organization logo">
+                <img src="<?php echo '/General-page/Center_images/' . $_SESSION['display_name'] . '.png'; ?>" alt="Organization logo">
             </div>
             <div class="header-content">
-                <b>Nurse ID</b> - Organization 
+                <?php echo($_SESSION["display_name"])?><br>
+                <b>Nurse ID: <?php echo($_SESSION["Nurse_Id"])?> </b> 
             </div>
             <a id = "logout"href="/General-page/UserLogin/userlogin-form.php" class="live-link">Logout</a>
         </header>

@@ -40,7 +40,7 @@ $_SESSION['sign-in-form-submitted'] = true;
             <form action="userlogin.php" method="POST">
                 <h1>Sign In</h1>
                 <span>Login With Staff Id</span>
-                <input type="number" name="staff_number" placeholder="Enter Organization Id" required>
+                <input type="text" name="staff_Id" placeholder="Enter Staff Id" required>
                 
                 <div class="password-container">
                     <input type="password" name="password" id="password" placeholder="Enter Password" required>
