@@ -30,10 +30,22 @@
                 <button class="dropbtn">Dropdown</button>
                 <div class="dropdown-content">
                         <a href="/General-page/UserDashboard/userdashboard.php">Home</a>
-                        <a href="/General-page/UserDashboard/uploads.php">Uploads</a>       
+                        <a href="/General-page/UserDashboard/uploads.php">Uploads</a>
                         <a href="/connect/connect.html">Data</a>
-                        <a href="#">Clients</a>
+                        <a href="/General-page/UserDashboard/STAFF">STAFF</a>
+                        <a href="/General-page/UserDashboard/Clients">Clients</a>
                 </div>
             </div>
             
         </div>
+
+<div class="container1">
+    <div class="text1"><p>Device</p></div>
+    <div class="text1"><p>CREATE ACCOUNT</p></div>
+</div>
+<?php include_once '/xampp/htdocs/General-page/header/popup.php'; ?>
+<!-- Other content of the webpage goes here -->
+<script src="userdashboard.js"></script>
+</body>
+    
+</html>
