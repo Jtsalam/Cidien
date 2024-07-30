@@ -31,7 +31,7 @@ $_SESSION['sign-in-form-submitted'] = true;
                 <input type="staff ID" placeholder="staff ID">
                 <input type="email" placeholder="Enter E-mail">
                 <input type="password" placeholder="Enter Password">
-                <input type="retype password" placeholder="Retype Password">
+                <input type="password" placeholder="Retype Password">
                 <button>Sign Up</button>
             </form>
         </div>

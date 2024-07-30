@@ -16,21 +16,31 @@
         $user_info_query = "SELECT * FROM `user-info` WHERE `Center-Id` = '" . $center_id . "'";
         $q_user_row = mysqli_query($conn, $user_info_query);//Queried user row
 
-        if(mysqli_num_rows($q_user_row) > 0){
-            while($user_row = mysqli_fetch_assoc($q_user_row)){
+        if (mysqli_num_rows($q_user_row) > 0) {
+            while ($user_row = mysqli_fetch_assoc($q_user_row)) {
                 $user_Id = $user_row['StaffId'];  
                 $user_password = $user_row['Password'];
-                if ($staff_Id == $user_Id and password_verify($staff_password, $user_password)){
+                $user_role = $user_row['User-Role'];
+                if (($staff_Id == $user_Id) and password_verify($staff_password, $user_password)) {
                     $_SESSION['userlogin-form-submitted'] = true;
                     $_SESSION["Nurse_Id"] = $user_Id;
-                    header("Location: /General-page/UserDashboard/userdashboard.php");
-                    exit();
-                };
-            };  
+                    $_SESSION["user_role"] = $user_role;
+                    if($user_role == "Staff"){
+                        header("Location: /General-page/StaffDashboard/userdashboard.php");
+                        exit();
+                    }elseif($user_role == "Admin"){
+                        header("Location: /General-page/AdminDashboard/userdashboard.php");
+                        exit();
+                    }elseif($user_role == "IT"){
+                        header("Location: /General-page/ITDashboard/userdashboard.php");
+                        exit();        
+                    }
+                }
+            }  
             $_SESSION['user_error_message'] = "Invalid credentials";
             header("Location: userlogin-form.php");
             exit();
-        }
+        }   
     };
     mysqli_close($conn);
 ?>

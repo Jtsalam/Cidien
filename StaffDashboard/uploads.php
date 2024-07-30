@@ -2,7 +2,7 @@
 
 <?php
 // Start the session
-session_start();
+// session_start();
 
 // Check if the form was submitted
 if (!isset($_SESSION['userlogin-form-submitted']) || $_SESSION['userlogin-form-submitted'] !== true) {

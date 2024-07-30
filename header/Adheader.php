@@ -7,11 +7,11 @@ session_start();
         <link rel="icon" href="/pictures/logo.png" type="image/x-icon">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <title>
-            dashboard    
+            dashboard
         </title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/General-page/StaffDashboard/userdashboard.css">
+        <link rel="stylesheet" href="/General-page/AdminDashboard/userdashboard.css">
     </head>
 
     <body>
@@ -33,10 +33,11 @@ session_start();
             <div class="dropdown">
                 <button class="dropbtn">Dropdown</button>
                 <div class="dropdown-content">
-                        <a href="/General-page/StaffDashboard/userdashboard.php">Home</a>
-                        <a href="/General-page/StaffDashboard/uploads.php">Uploads</a>       
-                        <a href="/General-page/StaffDashboard/data.php">Data</a>
-                        <a href="/General-page/StaffDashboard/clients.php">Clients</a>
+                        <a href="/General-page/AdminDashboard/userdashboard.php">Home</a>
+                        <a href="/General-page/AdminDashboard/uploads.php">Uploads</a>
+                        <a href="/General-page/AdminDashboard/data.php">Data</a>
+                        <a href="/General-page/AdminDashboard/staff.php">STAFF</a>
+                        <a href="/General-page/AdminDashboard/clients.php">Clients</a>
                 </div>
             </div>
             

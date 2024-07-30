@@ -2,7 +2,16 @@
 session_start();
 
 if (isset($_SESSION['sign-in-form-submitted']) && isset($_SESSION['userlogin-form-submitted'])) {
-  header("Location: /General-page/UserDashboard/userdashboard.php");
+  if($_SESSION["user_role"] == "Staff"){
+    header("Location: /General-page/StaffDashboard/userdashboard.php");
+    exit();
+  }elseif($_SESSION["user_role"] == "Admin"){
+      header("Location: /General-page/AdminDashboard/userdashboard.php");
+      exit();
+  }elseif($_SESSION["user_role"] == "IT"){
+      header("Location: /General-page/ITDashboard/userdashboard.php");
+      exit();        
+  }
 }
 elseif(isset($_SESSION['sign-in-form-submitted'])){
   header("Location: userlogin-form.php");
