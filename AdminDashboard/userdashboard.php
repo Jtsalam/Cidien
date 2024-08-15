@@ -16,7 +16,7 @@ $_SESSION['userlogin-form-submitted'] = true;
 ?>
 <div class="container1">
     <div class="text1"><p>Device</p></div>
-    <div class="text1"><p>CREATE ACCOUNT</p></div>
+    <div class="text1"><p><a href="/AdminDashboard/Createaccount.php"></a>CREATE ACCOUNT</p></div>
 </div>
 <?php include_once '/xampp/htdocs/General-page/header/popup.php'; ?>
 <!-- Other content of the webpage goes here -->

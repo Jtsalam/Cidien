@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="userlogin.css">
+    <link rel="stylesheet" href="/UserLogin/userlogin.css">
 
     <title>registration</title>
 </head>
@@ -17,10 +17,11 @@
         <div class="form-container sign-up">
             <form>
                 <h1>Create Account</h1>
-                <span>Register your Organization</span>
+                <!-- <span>Register your Organization</span> -->
                 <input type="text" placeholder="Name">
                 <input type="email" placeholder="Enter E-mail">
                 <input type="password" placeholder="Enter Password">
+                <input type="password" placeholder=" re-type Enter Password">
                 <button>Sign Up</button>
             </form>
         </div>
@@ -29,7 +30,7 @@
         <div class="form-container sign-in">
             <form>
                 <h1>Create Account</h1>
-                <span>Register your Organization</span>
+                <!-- <span>Register your Organization</span> -->
                 <input type="text" placeholder="Name">
                 <input type="email" placeholder="Enter E-mail">
                 <input type="password" placeholder="Enter Password">

@@ -34,7 +34,7 @@ session_start();
                 <button class="dropbtn">Dropdown</button>
                 <div class="dropdown-content">
                         <a href="/General-page/StaffDashboard/userdashboard.php">Home</a>
-                        <a href="/General-page/StaffDashboard/uploads.php">Uploads</a>       
+                        <a href="/General-page/uploads/uploadview.php">Uploads</a>       
                         <a href="/General-page/StaffDashboard/data.php">Data</a>
                         <a href="/General-page/StaffDashboard/clients.php">Clients</a>
                 </div>

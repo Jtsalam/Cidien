@@ -1,4 +1,4 @@
-<?php include_once 'C:\xampp\htdocs\General-page\header\Adheader.php'; ?>
+<!-- <?php include_once 'C:\xampp\htdocs\General-page\header\Adheader.php'; ?>
 
 <?php
 // Start the session
@@ -21,4 +21,4 @@ $_SESSION['userlogin-form-submitted'] = true;
 
 <script src="uploads.js"></script>
 </body>
-</html>
+</html> -->
