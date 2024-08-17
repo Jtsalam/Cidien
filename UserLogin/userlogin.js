@@ -1,8 +1,9 @@
 const container = document.getElementById('container');
 const registerBtn = document.getElementById('register');
 const loginBtn = document.getElementById('login');
-const togglePassword = document.querySelector("#togglePassword");
-const password = document.querySelector("#password");
+const togglePassword = document.getElementById("togglePassword");
+const showPassword = document.getElementById("showPassword");
+const password = document.getElementById("password");
 const select_org = document.getElementById("select_org");
 const my_org = document.getElementById('my_org');
 
@@ -38,6 +39,16 @@ my_org.addEventListener('click', () => {
 togglePassword.addEventListener("click", function () {
     // toggle the type attribute
     const type = password.getAttribute("type") === "password" ? "text" : "password";
+    password.setAttribute("type", type);
+    
+    // toggle the icon
+    this.classList.toggle("bi-eye");
+});
+
+
+showPassword.addEventListener("click", function () {
+    // toggle the type attribute
+    const type = password.getAttribute("type") === "password" ? "text" : "password1";
     password.setAttribute("type", type);
     
     // toggle the icon

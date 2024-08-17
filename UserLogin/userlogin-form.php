@@ -33,8 +33,8 @@ $_SESSION['sign-in-form-submitted'] = true;
                 <input type="text" name="staff_Id" placeholder="Enter Room Id" required>
                 
                 <div class="password-container">
-                    <input type="password" name="password" id="password" placeholder="Enter Password" required>
-                    <i class="bi bi-eye-slash" id="togglePassword"></i>
+                    <input type="password" name="password" id="password1" placeholder="Enter Password" required>
+                    <i class="bi bi-eye-slash" id="showPassword"></i>
                 </div>
                 
                 <a href="#">Forgot Password?</a>
