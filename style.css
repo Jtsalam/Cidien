@@ -16,15 +16,8 @@ body{
     height: 100vh;
 }
 
-img{
-    border-radius: 10px;
-    max-width: 100%;
-    object-fit: contain;
-  }
-  
-
 .container{
-    background: #87a96b;
+    background-color: #fff;
     border-radius: 30px;
     box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
     position: relative;
@@ -209,28 +202,4 @@ img{
     right: 0;
     transform: translateX(0);
 }
-
-
-.password-container {
-    position: relative;
-    width: 100%;
-}
-
-.password-container input[type="password"] {
-    width: 100%;
-    padding-right: 30px; /* Adjust padding to make room for the icon */
-}
-
-.password-container i {
-    position: absolute;
-    right: 10px; /* Adjust the value as needed */
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-}
-
-a{
-    cursor: pointer; 
-}
-
 
