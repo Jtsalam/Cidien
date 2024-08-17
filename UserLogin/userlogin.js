@@ -18,19 +18,19 @@ loginBtn.addEventListener('click', () => {
 
 
 
-// my_org.addEventListener('click', () => {
-//     container.classList.add("active");
-//     var xhr = new XMLHttpRequest();
-//     xhr.open("GET", "/General-page/UserLogin/unset-session.php", true);
-//     xhr.onreadystatechange = function () {
-//         if (xhr.readyState == 4 && xhr.status == 200) {
-//             // Redirect to the sign-in form after unsetting the session
-//             window.location.href = "/General-page/UserLogin/sign-in-form.php";
-//         }
-//     };
-//     xhr.send();
+my_org.addEventListener('click', () => {
+    container.classList.add("active");
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/General-page/UserLogin/unset-session.php", true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            // Redirect to the sign-in form after unsetting the session
+            window.location.href = "/General-page/UserLogin/sign-in-form.php";
+        }
+    };
+    xhr.send();
     
-// });
+});
 
 
 

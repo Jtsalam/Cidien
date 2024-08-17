@@ -73,7 +73,7 @@ $_SESSION['sign-in-form-submitted'] = true;
                 
                 <a href="#">Forgot Password?</a>
                 <button>Sign In</button>
-                <p><a class = "bi bi-arrow-return-right" id = "select_org" href = "/General-page/UserLogin/sign-in-form.php"> Select Organization</a></p>
+                <p><a class = "bi bi-arrow-return-right" id = "my_org" href = "/General-page/UserLogin/sign-in-form.php"> Select Organization</a></p>
                 
                 <?php
                 if (isset($_SESSION['user_error_message'])) {

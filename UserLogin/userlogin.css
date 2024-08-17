@@ -21,10 +21,9 @@ img{
     max-width: 100%;
     object-fit: contain;
   }
-  
-
+ 
 .container{
-    background: #87a96b;
+    background-color: #fff;
     border-radius: 30px;
     box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
     position: relative;
@@ -167,7 +166,7 @@ img{
 }
 
 .toggle{
-    background-color: rgba(255, 4, 4, 0.952);
+    background-color: #87a;
     height: 100%;
     color: #fff;
     position: relative;
