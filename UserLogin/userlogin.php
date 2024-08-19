@@ -33,10 +33,10 @@
                         exit();
                     }elseif($user_role == "IT"){
                         header("Location: /General-page/ITDashboard/userdashboard.php");
-                        exit();        
+                        exit();  
                     }
                 }
-            }  
+            }
             $_SESSION['user_error_message'] = "Invalid credentials";
             header("Location: userlogin-form.php");
             exit();

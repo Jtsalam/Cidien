@@ -123,6 +123,49 @@ ALTER TABLE `user-info`
   MODIFY `UserId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 COMMIT;
 
+CREATE TABLE `patient-info` (
+  `PatientId` int(11) NOT NULL,
+  `Patient-Name` text NOT NULL,
+  `Registered-date` date NOT NULL,
+  `Center-Id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `patient-info`
+--
+
+INSERT INTO `patient-info` (`PatientId`, `Patient-Name`, `Registered-date`, `Center-Id`) VALUES
+(1, 'Jacob Denver', '2019-09-05', 1),
+(2, 'Sarah Green', '2013-08-13', 1),
+(3, 'Alex Thompson', '2016-03-21', 2),
+(4, 'Emma Roberts', '2021-07-12', 3),
+(5, 'Michael Scott', '2017-11-08', 4),
+(6, 'Olivia Martinez', '2019-05-17', 5),
+(7, 'Daniel Williams', '2020-02-29', 2),
+(8, 'Sophia Johnson', '2022-09-14', 3),
+(9, 'Benjamin Clark', '2018-04-23', 4),
+(10, 'Isabella Wright', '2023-06-06', 5);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `patient-info`
+--
+ALTER TABLE `patient-info`
+  ADD PRIMARY KEY (`PatientId`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `patient-info`
+--
+ALTER TABLE `patient-info`
+  MODIFY `PatientId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

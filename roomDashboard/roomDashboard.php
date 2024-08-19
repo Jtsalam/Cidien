@@ -7,8 +7,7 @@
 
 
 <?php
-session_start();
-include 'database_connection.php';
+include_once 'C:\xampp\htdocs\General-page\Database\database.php';
 
 // Initialize session if not set
 if (!isset($_SESSION['clients_checked'])) {
@@ -17,7 +16,7 @@ if (!isset($_SESSION['clients_checked'])) {
 }
 
 // Check if clients exist in the database
-$query = "SELECT COUNT(*) as client_count FROM clients";
+$query = "SELECT COUNT(*) as client_count FROM `patient-info`";
 $result = mysqli_query($conn, $query);
 $row = mysqli_fetch_assoc($result);
 $clientCount = $row['client_count'];
