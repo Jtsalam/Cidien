@@ -34,9 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['selected_client'])) {
 }
 ?>
 
-<div>
+<!-- <div>
     <button onclick="toggleView()">View Clients</button>
-</div>
+</div> -->
 
 <div id="clientsSection" style="display: none;">
     <?php if (!$_SESSION['clients_checked']): ?>
@@ -68,41 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['selected_client'])) {
     <!-- Search results and client selection -->
     <div id="searchResults"></div>
 </div>
-
-<script>
-function toggleView() {
-    var section = document.getElementById("clientsSection");
-    section.style.display = section.style.display === "none" ? "block" : "none";
-}
-
-function toggleAddClient() {
-    var section = document.getElementById("addClientSection");
-    section.style.display = section.style.display === "none" ? "block" : "none";
-}
-
-// Simulate search (replace with an AJAX call for real search)
-function searchClient() {
-    var searchInput = document.getElementById("searchClientInput").value;
-    var searchResultsDiv = document.getElementById("searchResults");
-
-    // Simulate search results (replace with actual database search)
-    if (searchInput !== "") {
-        searchResultsDiv.innerHTML = "<form method='post'>" +
-            "<p onclick='selectClient(\"" + searchInput + "\")'>" + searchInput + "</p>" +
-            "<input type='hidden' name='selected_client' value='" + searchInput + "'>" +
-            "<button type='submit'>Add Client</button>" +
-            "</form>";
-    } else {
-        searchResultsDiv.innerHTML = "<p>No results found</p>";
-    }
-}
-
-function selectClient(clientName) {
-    // The form submission will handle adding the client to the session and redirecting
-}
-</script>
-
-
 
 
 
