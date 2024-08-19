@@ -1,7 +1,7 @@
 <?php include_once '/xampp/htdocs/General-page/header/roomheader.php'; ?>
 
 <?php
-session_start();
+// session_start();
 
 // Check if selected clients exist in the session
 $selectedClients = isset($_SESSION['selected_clients']) ? $_SESSION['selected_clients'] : [];
