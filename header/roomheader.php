@@ -45,10 +45,6 @@ session_start();
                             <a href="/General-page/AdminDashboard/staff.php">D</a>
                             <a href="/General-page/AdminDashboard/clients.php">E</a> -->
                             <!-- <button onclick="window.location.href='addClient.php'">Add Client</button> -->
-
-
-
-
                                                         
                             <div id="clientsSection" style="display: none;">
                                 <?php if (!$_SESSION['clients_checked']): ?>
