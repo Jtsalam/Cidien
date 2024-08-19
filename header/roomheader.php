@@ -1,5 +1,6 @@
 <?php
 session_start();
+include_once 'C:\xampp\htdocs\General-page\Database\database.php';
 
 ?>
 <!DOCTYPE html>
@@ -8,7 +9,7 @@ session_start();
         <link rel="icon" href="/pictures/logo.png" type="image/x-icon">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <title>
-            dashboard    
+            dashboard
         </title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
