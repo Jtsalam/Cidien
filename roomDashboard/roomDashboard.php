@@ -10,9 +10,10 @@ include_once 'C:\xampp\htdocs\General-page\Database\database.php';
 
 <body>
 
-<table id="myTable" border="1">
+<table id="myTable" border="1" style="width: 100%;"><br><br><br>
     <thead>
         <tr>
+            <th>#Index</th>
             <th>Date</th>
             <th>Time</th>
             <th>Note</th>
@@ -24,11 +25,11 @@ include_once 'C:\xampp\htdocs\General-page\Database\database.php';
     </tbody>
 </table>
 
-<button onclick="fetchData()">Fetch and Add Row</button>
+<button onclick="fetchData()" style="display: none;">Fetch and Add Row</button>
 
 <script>
 let lastData = {};
-
+let rowIndex = 0;
 async function fetchData() {
     try {
         const response = await fetch('http://localhost:5000/get_data');
@@ -41,18 +42,21 @@ async function fetchData() {
 
             // Create a new row
             var newRow = table.insertRow();
+            rowIndex++;  // Increment the row index
 
             // Insert cells in the new row
-            var cell1 = newRow.insertCell(0);
-            var cell2 = newRow.insertCell(1);
-            var cell3 = newRow.insertCell(2);
-            var cell4 = newRow.insertCell(3);
+            var cell0 = newRow.insertCell(0);
+            var cell1 = newRow.insertCell(1);
+            var cell2 = newRow.insertCell(2);
+            var cell3 = newRow.insertCell(3);
+            var cell4 = newRow.insertCell(4);
 
             // Add values to the cells
+            cell0.innerHTML = rowIndex;  // Add the row index
             cell1.innerHTML = data.date;
             cell2.innerHTML = data.time;
             cell3.innerHTML = data.note;
-            cell4.innerHTML = data.nurse;
+            cell4.innerHTML = data.nurse; 
 
             // Update the last data variable
             lastData = data;
