@@ -116,4 +116,10 @@ def get_data():
         return jsonify(chart_data)
 
 if __name__ == '__main__':
+    os.makedirs('Flask/device_uploads/room_aud', exist_ok=True)
+    os.makedirs('Flask/device_uploads/3438', exist_ok=True)
+    os.makedirs('Flask/device_uploads/3439', exist_ok=True)
+    os.makedirs('Flask/device_uploads/3461', exist_ok=True)
+    os.makedirs('Flask/device_uploads/3463', exist_ok=True)
+    os.makedirs('Flask/device_uploads/Unassigned', exist_ok=True)
     app.run(debug=True, port=5000)
