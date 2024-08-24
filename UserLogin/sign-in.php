@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       exit();
   }else {
     // Invalid option selected
-    $_SESSION['org_error_message'] = 'Invalid Medical center chosen. please choose another from the listed centers.';
+    $_SESSION['org_error_message'] = 'Please choose a medical center from the list below.';
     $_SESSION['shared_variable'] = NULL;
     header("Location: sign-in-form.php");
     exit();
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
 }else {
   // If the form was not submitted correctly, redirect to the form page
-  echo("Access to this page cannot be reached. Please try again later.");
+  echo("Access to this page cannot be reached.");
   exit();
     }
 ?>
