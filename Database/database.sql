@@ -90,12 +90,12 @@ CREATE TABLE `user-info` (
 --
 
 INSERT INTO `user-info` (`UserId`, `User-Name`, `StaffId`, `Password`, `User-Role`, `Center-Id`, `charterId`) VALUES
-(1, 'Ifejesu Salam', '2001745', '$2y$10$8Gat9PJiUPErXwZlLULDkOo7ZXPvs6mFlCSFJLtzeBKJH9eljNF62', 'Staff', 4, '7382BF16\r\n'),
-(2, 'Thomas Vernon', '4101735', '$2y$10$KufW4NMvqBUo9Ibnr4RsieTdbeR9t6tZCkRzxbM9LEQd013zlBOr6', 'Admin', 4, '9465CK92\r\n'),
-(3, 'Jessica nia', '1285723', '$2y$10$pg9N05LBhpbSzVXFSG514.44FcAIiz/v6hszIIZngKrAUKD8QJ2uW', 'Admin', 5, '2759DL34\r\n'),
+(1, 'Ifejesu Salam', '2001745', '$2y$10$8Gat9PJiUPErXwZlLULDkOo7ZXPvs6mFlCSFJLtzeBKJH9eljNF62', 'Staff', 4, '7382BF16'),
+(2, 'Thomas Vernon', '4101735', '$2y$10$KufW4NMvqBUo9Ibnr4RsieTdbeR9t6tZCkRzxbM9LEQd013zlBOr6', 'Admin', 4, '9465CK92'),
+(3, 'Jessica nia', '1285723', '$2y$10$pg9N05LBhpbSzVXFSG514.44FcAIiz/v6hszIIZngKrAUKD8QJ2uW', 'Admin', 5, '2759DL34'),
 (4, 'Adrea James', '1095422', '$2y$10$l4Jf0zNFjblP0WobdTY/DOcPpRtJ3eev2Zub0kTXXOrs687XB8zLO', 'Staff', 5, '5098EG57'),
-(5, 'Tom Murphy', '2378651', '$2y$10$Jk4Go/zURHydLuvCljlfB.EE2wVrwR6/uSkM5kl4F1aOR2c7e4w.K', 'Staff', 1, '8632FH83\r\n'),
-(6, 'Robert Blue', '3127901', '$2y$10$.KEfuv4J.fQo1EtFS36D1OtpzsWOHOlTVypZhUWqTMlLbAwS9hipW', 'Admin', 1, '1743GI29\r\n'),
+(5, 'Tom Murphy', '2378651', '$2y$10$Jk4Go/zURHydLuvCljlfB.EE2wVrwR6/uSkM5kl4F1aOR2c7e4w.K', 'Staff', 1, '8632FH83'),
+(6, 'Robert Blue', '3127901', '$2y$10$.KEfuv4J.fQo1EtFS36D1OtpzsWOHOlTVypZhUWqTMlLbAwS9hipW', 'Admin', 1, '1743GI29'),
 (7, 'Sarah Love', '4712902', '$2y$10$WsBCo5RlMB53cgkOPwjbGuIsKkeV6yfVfxx2Ka01q6SN.jFu0rvVi', 'Admin', 2, '6824HJ45'),
 (8, 'Mary Andrews', '3701291', '$2y$10$r7fnDfKKw1VzVjxNpIOekOcl4LNxn8TkIK71cD0lDkgbhT9Tbu3W2', 'Staff', 2, '2956ZB43'),
 (9, 'John Adams', '4720943', '$2y$10$SzW3IctNwEaZdEHLeaRMhe25g9XsD.cMq/TEvZGdOYsvrNf18365O', 'Admin', 3, '8412MN90'),

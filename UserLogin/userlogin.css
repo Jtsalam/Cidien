@@ -52,7 +52,7 @@ img{
 }
 
 .container button{
-    background-color: rgb(255, 13, 13);
+    background-color: #1244b9;
     color: #fff;
     font-size: 12px;
     padding: 10px 45px;
@@ -166,7 +166,7 @@ img{
 }
 
 .toggle{
-    background-color: #87a;
+    background-color:#1244b9;
     height: 100%;
     color: #fff;
     position: relative;
