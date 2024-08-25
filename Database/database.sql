@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 26, 2024 at 06:10 AM
+-- Generation Time: Aug 25, 2024 at 10:19 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -45,31 +45,94 @@ INSERT INTO `medicalcenter-info` (`Center-Id`, `Center-name`, `Logo`, `Website`)
 (4, 'Jim Pattison Children''s Hospital', 'https://momsandkidssask.saskhealthauthority.ca/themes/custom/duchess/logo.svg', 'https://momsandkidssask.saskhealthauthority.ca/jim-pattison-childrens-hospital'),
 (5, 'Evergreen Medical Clinic', 'https://www.evergreenmedicalclinic.ca/images/logo.svg', 'https://www.evergreenmedicalclinic.ca/?no_footer=true&no_header=true');
 
---
--- Indexes for dumped tables
---
+-- --------------------------------------------------------
 
 --
--- Indexes for table `medicalcenter-info`
---
-ALTER TABLE `medicalcenter-info`
-  ADD PRIMARY KEY (`Center-Id`);
-
---
--- AUTO_INCREMENT for dumped tables
+-- Table structure for table `patient-info`
 --
 
---
--- AUTO_INCREMENT for table `medicalcenter-info`
---
-ALTER TABLE `medicalcenter-info`
-  MODIFY `Center-Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-COMMIT;
+CREATE TABLE `patient-info` (
+  `PatientId` int(11) NOT NULL,
+  `Patient-Name` text NOT NULL,
+  `Registered-date` date NOT NULL,
+  `Center-Id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--
+-- Dumping data for table `patient-info`
+--
 
+INSERT INTO `patient-info` (`PatientId`, `Patient-Name`, `Registered-date`, `Center-Id`) VALUES
+(1, 'Jacob Denver', '2019-09-05', 1),
+(2, 'Sarah Green', '2013-08-13', 1),
+(3, 'Alex Thompson', '2016-03-21', 2),
+(4, 'Emma Roberts', '2021-07-12', 3),
+(5, 'Michael Scott', '2017-11-08', 4),
+(6, 'Olivia Martinez', '2019-05-17', 5),
+(7, 'Daniel Williams', '2020-02-29', 2),
+(8, 'Sophia Johnson', '2022-09-14', 3),
+(9, 'Benjamin Clark', '2018-04-23', 4),
+(10, 'Isabella Wright', '2023-06-06', 5);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `patient-uploads`
+--
+
+CREATE TABLE `patient-uploads` (
+  `PatientId` int(11) NOT NULL,
+  `SessionId` int(11) NOT NULL,
+  `upload-path` text NOT NULL,
+  `Patient-notes` text NOT NULL,
+  `upload-time` time NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `room-info`
+--
+
+CREATE TABLE `room-info` (
+  `RoomId` int(11) NOT NULL,
+  `Room-number` int(11) NOT NULL,
+  `Center-Id` int(11) NOT NULL,
+  `Number-of-beds` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `room-info`
+--
+
+INSERT INTO `room-info` (`RoomId`, `Room-number`, `Center-Id`, `Number-of-beds`) VALUES
+(1, 3438, 1, 3),
+(2, 3439, 1, 3),
+(3, 3461, 2, 1),
+(4, 2438, 2, 3),
+(5, 3345, 3, 4),
+(6, 3346, 3, 2),
+(7, 4338, 4, 3),
+(8, 4339, 4, 2),
+(9, 2336, 5, 1),
+(10, 2337, 5, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `room-register`
+--
+
+CREATE TABLE `room-register` (
+  `RoomId` int(11) NOT NULL,
+  `PatientId` int(11) NOT NULL,
+  `SessionId` int(11) NOT NULL,
+  `Center-Id` int(11) NOT NULL,
+  `reg-date` date NOT NULL,
+  `reg-time` time NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `user-info`
@@ -101,9 +164,54 @@ INSERT INTO `user-info` (`UserId`, `User-Name`, `StaffId`, `Password`, `User-Rol
 (9, 'John Adams', '4720943', '$2y$10$SzW3IctNwEaZdEHLeaRMhe25g9XsD.cMq/TEvZGdOYsvrNf18365O', 'Admin', 3, '8412MN90'),
 (10, 'Layla Tomkins', '8462192', '$2y$10$iLk3WFAvlPzTUw1o066/UOwmdRbzyXwRqyVRTDiNH5plTJRynR6am', 'Staff', 3, '5731QX18');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user-uploads`
+--
+
+CREATE TABLE `user-uploads` (
+  `UserId` int(11) NOT NULL,
+  `Center-Id` int(11) NOT NULL,
+  `upload-path` text NOT NULL,
+  `Unassigned-uploads` text NOT NULL,
+  `upload-date` date NOT NULL,
+  `upload-time` time NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `medicalcenter-info`
+--
+ALTER TABLE `medicalcenter-info`
+  ADD PRIMARY KEY (`Center-Id`);
+
+--
+-- Indexes for table `patient-info`
+--
+ALTER TABLE `patient-info`
+  ADD PRIMARY KEY (`PatientId`);
+
+--
+-- Indexes for table `patient-uploads`
+--
+ALTER TABLE `patient-uploads`
+  ADD PRIMARY KEY (`PatientId`);
+
+--
+-- Indexes for table `room-info`
+--
+ALTER TABLE `room-info`
+  ADD PRIMARY KEY (`RoomId`);
+
+--
+-- Indexes for table `room-register`
+--
+ALTER TABLE `room-register`
+  ADD PRIMARY KEY (`RoomId`);
 
 --
 -- Indexes for table `user-info`
@@ -113,8 +221,32 @@ ALTER TABLE `user-info`
   ADD KEY `Center-Id` (`Center-Id`);
 
 --
+-- Indexes for table `user-uploads`
+--
+ALTER TABLE `user-uploads`
+  ADD PRIMARY KEY (`UserId`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `medicalcenter-info`
+--
+ALTER TABLE `medicalcenter-info`
+  MODIFY `Center-Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `patient-info`
+--
+ALTER TABLE `patient-info`
+  MODIFY `PatientId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `room-info`
+--
+ALTER TABLE `room-info`
+  MODIFY `RoomId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `user-info`
@@ -123,49 +255,6 @@ ALTER TABLE `user-info`
   MODIFY `UserId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 COMMIT;
 
-CREATE TABLE `patient-info` (
-  `PatientId` int(11) NOT NULL,
-  `Patient-Name` text NOT NULL,
-  `Registered-date` date NOT NULL,
-  `Center-Id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `patient-info`
---
-
-INSERT INTO `patient-info` (`PatientId`, `Patient-Name`, `Registered-date`, `Center-Id`) VALUES
-(1, 'Jacob Denver', '2019-09-05', 1),
-(2, 'Sarah Green', '2013-08-13', 1),
-(3, 'Alex Thompson', '2016-03-21', 2),
-(4, 'Emma Roberts', '2021-07-12', 3),
-(5, 'Michael Scott', '2017-11-08', 4),
-(6, 'Olivia Martinez', '2019-05-17', 5),
-(7, 'Daniel Williams', '2020-02-29', 2),
-(8, 'Sophia Johnson', '2022-09-14', 3),
-(9, 'Benjamin Clark', '2018-04-23', 4),
-(10, 'Isabella Wright', '2023-06-06', 5);
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `patient-info`
---
-ALTER TABLE `patient-info`
-  ADD PRIMARY KEY (`PatientId`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `patient-info`
---
-ALTER TABLE `patient-info`
-  MODIFY `PatientId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
