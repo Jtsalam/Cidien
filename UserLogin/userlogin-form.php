@@ -13,7 +13,7 @@ $_SESSION['sign-in-form-submitted'] = true;
 
 <!DOCTYPE html>
 <html lang="en">
-
+    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,10 +27,10 @@ $_SESSION['sign-in-form-submitted'] = true;
 
         <div class="form-container sign-up">
 
-            <form action="userlogin.php" method="POST">
+            <form action="roomlogin.php" method="POST">
                 <h1>Sign In</h1>
                 <span>Login With Room Id</span>
-                <input type="text" name="staff_Id" placeholder="Enter Room Id" required>
+                <input type="text" name="room_Id" placeholder="Enter Room Id" required>
                 
                 <div class="password-container">
                     <input type="password" name="password" id="password1" placeholder="Enter Password" required>
@@ -42,22 +42,12 @@ $_SESSION['sign-in-form-submitted'] = true;
                 <p><a class = "bi bi-arrow-return-left" id = "select_org" href = "/General-page/UserLogin/sign-in-form.php"> Select Organization</a></p>
                 
                 <?php
-                if (isset($_SESSION['user_error_message'])) {
-                    echo '<p style="color: red;">' . nl2br(htmlentities($_SESSION['user_error_message'])) . '</p>';
-                    unset($_SESSION['user_error_message']);
+                if (isset($_SESSION['room_error_message'])) {
+                    echo '<p style="color: red;">' . nl2br(htmlentities($_SESSION['room_error_message'])) . '</p>';
+                    unset($_SESSION['room_error_message']);
                 }
                 ?>
             </form>
-            <!-- <form method>
-                <h1>Create Account</h1>
-                <span>Register your Organization</span>
-                <input type="text" placeholder="Name">
-                <input type="staff ID" placeholder="staff ID">
-                <input type="email" placeholder="Enter E-mail">
-                <input type="password" placeholder="Enter Password">
-                <input type="password" placeholder="Retype Password">
-                <button>Sign Up</button>
-            </form> -->
         </div>
 
         <div class="form-container sign-in">
@@ -100,7 +90,30 @@ $_SESSION['sign-in-form-submitted'] = true;
         </div>
     </div>
 
-
+    <script>
+        window.onload = function() {
+        // PHP will output true or false
+        var showSecondForm = <?php echo json_encode($_SESSION['show_second_form'] ?? false); ?>;
+        
+        if (showSecondForm) {
+            document.getElementById('container').classList.add('active');  // Add this class if you want to show the second form
+            unsetSession();
+        } else {
+            document.getElementById('container').classList.remove('active');
+        }
+    };
+    function unsetSession() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "roomlogin-display.php", true);    
+        // xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText); // Response from PHP script
+            }
+        };
+        xhr.send();
+    };
+    </script>
     <script src="userlogin.js"></script>
 </body>
 

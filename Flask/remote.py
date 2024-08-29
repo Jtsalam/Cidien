@@ -17,7 +17,7 @@ CORS(app)  # Enable CORS for all routes
 # Initialize counters for each Room file
 recording_counters = {
     'room_aud': no_of_files('Flask/device_uploads/room_aud'), #All device audios
-    '3438':no_of_files('Flask/device_uploads/3438'),
+    '4338':no_of_files('Flask/device_uploads/4338'),
     '3439':no_of_files('Flask/device_uploads/3439'),
     '3461':no_of_files('Flask/device_uploads/3461'),
     '3463':no_of_files('Flask/device_uploads/3463'),
@@ -61,6 +61,7 @@ def room_btn_fn():
         return jsonify({'message': "Room not heard properly, Please try again."})
     else:
         room_exists = False
+        print(room_number)
         return jsonify({"message": "Room does not exist!"})
     print(room_exists)
     
@@ -79,7 +80,6 @@ def room_data_btn():
     # Ensure the audio file is in the request
     if 'audio' not in request.files:
         return jsonify({'message': 'No audio file found in request'}), 400
-    
     audio_file = request.files['audio']
     # Define the file path using the counter
     # Save audio to room number if room exists, else, save to 'Unassigned folder'
@@ -117,7 +117,7 @@ def get_data():
 
 if __name__ == '__main__':
     os.makedirs('Flask/device_uploads/room_aud', exist_ok=True)
-    os.makedirs('Flask/device_uploads/3438', exist_ok=True)
+    os.makedirs('Flask/device_uploads/4338', exist_ok=True)
     os.makedirs('Flask/device_uploads/3439', exist_ok=True)
     os.makedirs('Flask/device_uploads/3461', exist_ok=True)
     os.makedirs('Flask/device_uploads/3463', exist_ok=True)

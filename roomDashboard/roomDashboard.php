@@ -36,7 +36,7 @@ async function fetchData() {
         const data = await response.json();
         
         // Check if data is different from the last data
-        if (data.room_id && JSON.stringify(data) !== JSON.stringify(lastData)) {
+        if (data.room_id && data.room_id == <?php echo $_SESSION["room_number"]?> && JSON.stringify(data) !== JSON.stringify(lastData)) {
             // Get the table body element   
             var table = document.getElementById("myTable").getElementsByTagName('tbody')[0];
 
@@ -60,7 +60,9 @@ async function fetchData() {
 
             // Update the last data variable
             lastData = data;
-        }
+        }else if(data.room_id !== <?php echo $_SESSION["room_number"]?>){
+            console.error("Error fetching data: Different room number");
+        };
     } catch (error) {
         console.error('Error fetching data:', error);
         // alert('Failed to fetch data. Please try again later.');  // Provide user feedback
