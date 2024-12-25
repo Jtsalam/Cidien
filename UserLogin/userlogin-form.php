@@ -7,6 +7,8 @@ if (!isset($_SESSION['sign-in-form-submitted']) || $_SESSION['sign-in-form-submi
     // Redirect to the form page or display an error
     header("Location: sign-in-form.php");
     exit();
+// } else if(!isset($_SESSION['roomlogin-form-submitted'])){
+//     header("Location: sign-in-form.php");
 }
 $_SESSION['sign-in-form-submitted'] = true;
 ?>

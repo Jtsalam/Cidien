@@ -2,8 +2,16 @@
 include_once 'C:\xampp\htdocs\General-page\Database\database.php';
 ?>
 
-
-
+<?php
+// Check if the form was submitted and if the user role is not "Staff"
+if (!isset($_SESSION['roomlogin-form-submitted']) || $_SESSION['roomlogin-form-submitted'] !== true) {
+    // Redirect to the form page or display an error
+    header("Location: /General-page/UserLogin/sign-in-form.php");
+    exit();
+};
+// Mark the form as submitted
+$_SESSION['roomlogin-form-submitted'] = true;
+?>
 <!-- <div class="container1">
     <div class="text1"><p>Device</p></div>
 </div> -->
@@ -16,6 +24,7 @@ include_once 'C:\xampp\htdocs\General-page\Database\database.php';
             <th>#Index</th>
             <th>Date</th>
             <th>Time</th>
+
             <th>Note</th>
             <th>Nurse</th>
         </tr>
@@ -79,7 +88,6 @@ window.onload = startFetchingData;
 </script>
 
 
-<!-- <?php include_once '/xampp/htdocs/General-page/header/popup.php'; ?> -->
 <!-- Other content of the webpage goes here -->
 <script src="roomdashboard.js"></script>
 </body>

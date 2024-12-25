@@ -7,7 +7,7 @@ logout_btn.addEventListener("click", function(event) {
     if (confirm(text) == true) {
         // Make an AJAX request to the PHP script to unset the session
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/General-page/UserLogin/userlogin-unset.php", true);
+        xhr.open("GET", "/General-page/UserLogin/roomlogin-unset.php", true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 // Redirect to the sign-in form after unsetting the session

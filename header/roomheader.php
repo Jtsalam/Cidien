@@ -24,7 +24,7 @@ include_once 'C:\xampp\htdocs\General-page\Database\database.php';
             </div>
             <div class="header-content">
                 <?php echo($_SESSION["display_name"])?><br>
-                <b>ROOM ID: <?php echo($_SESSION["Nurse_Id"])?> </b> 
+                <b>ROOM ID: <?php echo($_SESSION["room_number"])?> </b> 
             </div>
             <a id = "logout"href="/General-page/UserLogin/userlogin-form.php" class="live-link">Logout</a>
         </header>
