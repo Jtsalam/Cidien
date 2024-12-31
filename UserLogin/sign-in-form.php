@@ -3,13 +3,13 @@ session_start();
 
 if (isset($_SESSION['sign-in-form-submitted']) && isset($_SESSION['userlogin-form-submitted'])) {
   if($_SESSION["user_role"] == "Staff"){
-    header("Location: /General-page/StaffDashboard/userdashboard.php");
+    header("Location: /Mobile-Charter/StaffDashboard/userdashboard.php");
     exit();
   }elseif($_SESSION["user_role"] == "Admin"){
-      header("Location: /General-page/AdminDashboard/userdashboard.php");
+      header("Location: /Mobile-Charter/AdminDashboard/userdashboard.php");
       exit();
   }elseif($_SESSION["user_role"] == "IT"){
-      header("Location: /General-page/ITDashboard/userdashboard.php");
+      header("Location: /Mobile-Charter/ITDashboard/userdashboard.php");
       exit();        
   }
 }

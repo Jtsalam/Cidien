@@ -41,7 +41,7 @@ $_SESSION['sign-in-form-submitted'] = true;
                 
                 <a href="#">Forgot Password?</a>
                 <button>Sign In</button>
-                <p><a class = "bi bi-arrow-return-left" id = "select_org" href = "/General-page/UserLogin/sign-in-form.php"> Select Organization</a></p>
+                <p><a class = "bi bi-arrow-return-left" id = "select_org" href = "/Mobile-Charter/UserLogin/sign-in-form.php"> Select Organization</a></p>
                 
                 <?php
                 if (isset($_SESSION['room_error_message'])) {
@@ -65,7 +65,7 @@ $_SESSION['sign-in-form-submitted'] = true;
                 
                 <a href="#">Forgot Password?</a>
                 <button>Sign In</button>
-                <p><a class = "bi bi-arrow-return-right" id = "my_org" href = "/General-page/UserLogin/sign-in-form.php"> Select Organization</a></p>
+                <p><a class = "bi bi-arrow-return-right" id = "my_org" href = "/Mobile-Charter/UserLogin/sign-in-form.php"> Select Organization</a></p>
                 
                 <?php
                 if (isset($_SESSION['user_error_message'])) {
@@ -80,12 +80,12 @@ $_SESSION['sign-in-form-submitted'] = true;
             <div class="toggle">
                  <div class="toggle-panel toggle-left">
                     <h1><?php echo($_SESSION['display_name']);?></h1><br>
-                    <img src="<?php echo '/General-page/Center_images/' . $_SESSION['display_name'] . '.png'; ?>" alt="Organization logo">
+                    <img src="<?php echo '/Mobile-Charter/Center_images/' . $_SESSION['display_name'] . '.png'; ?>" alt="Organization logo">
                     <button class="hidden" id="login">Sign in with Staff Id</button>
                 </div>
                 <div class="toggle-panel toggle-right">
                     <h1><?php echo($_SESSION['display_name']);?></h1><br>
-                    <img src="<?php echo '/General-page/Center_images/' . $_SESSION['display_name'] . '.png'; ?>" alt="Organization logo">
+                    <img src="<?php echo '/Mobile-Charter/Center_images/' . $_SESSION['display_name'] . '.png'; ?>" alt="Organization logo">
                     <button class="hidden" id="register">Sign in with Room Id</button>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-<?php include_once 'C:\xampp\htdocs\General-page\header\Adheader.php'; ?>
+<?php include_once 'C:\xampp\htdocs\Mobile-Charter\header\Adheader.php'; ?>
 
 
 
@@ -9,7 +9,7 @@
 // Check if the form was submitted
 if (!isset($_SESSION['userlogin-form-submitted']) || $_SESSION['userlogin-form-submitted'] !== true) {
     // Redirect to the form page or display an error
-    header("Location: /General-page/UserLogin/sign-in-form.php");
+    header("Location: /Mobile-Charter/UserLogin/sign-in-form.php");
     exit();
 }
 $_SESSION['userlogin-form-submitted'] = true;
@@ -19,7 +19,7 @@ $_SESSION['userlogin-form-submitted'] = true;
 <input type="file" webkitdirectory mozdirectory/><br>
 <input type="submit" id = "submit">
 </form> -->
-<?php include_once '/xampp/htdocs/General-page/header/popup.php'; ?>
+<?php include_once '/xampp/htdocs/Mobile-Charter/header/popup.php'; ?>
 
     <h2>Uploaded Audio Files</h2>
     <?php

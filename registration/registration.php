@@ -54,7 +54,7 @@
                 <h1>APPNAME</h1><br>
                 <img src="#" alt="Organization logo">
                     <!-- <button class="hidden" id="#">Sign Up</button> -->
-                    <p><a class = "bi bi-arrow-return-right" href = "/General-page/UserLogin/sign-in-form.php"> Select Organization</a></p>
+                    <p><a class = "bi bi-arrow-return-right" href = "/Mobile-Charter/UserLogin/sign-in-form.php"> Select Organization</a></p>
                 </div>
             </div>
         </div>

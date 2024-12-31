@@ -1,5 +1,5 @@
 <?php
-include_once 'C:\xampp\htdocs\General-page\Database\database.php';
+include_once 'C:\xampp\htdocs\Mobile-Charter\Database\database.php';
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -27,13 +27,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 $_SESSION["Nurse_Id"] = $user_Id;
                 $_SESSION["user_role"] = $user_role;
                 if($user_role == "Staff"){
-                    header("Location: /General-page/StaffDashboard/userdashboard.php");
+                    header("Location: /Mobile-Charter/StaffDashboard/userdashboard.php");
                     exit();
                 }elseif($user_role == "Admin"){
-                    header("Location: /General-page/AdminDashboard/userdashboard.php");
+                    header("Location: /Mobile-Charter/AdminDashboard/userdashboard.php");
                     exit();
                 }elseif($user_role == "IT"){
-                    header("Location: /General-page/ITDashboard/userdashboard.php");
+                    header("Location: /Mobile-Charter/ITDashboard/userdashboard.php");
                     exit();  
                 }
             }

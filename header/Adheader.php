@@ -11,20 +11,20 @@ session_start();
         </title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/General-page/AdminDashboard/userdashboard.css">
+        <link rel="stylesheet" href="/Mobile-Charter/AdminDashboard/userdashboard.css">
     </head>
 
     <body>
 
         <header class="main-header">
             <div class="logo">
-                <img src="<?php echo '/General-page/Center_images/' . $_SESSION['display_name'] . '.png'; ?>" alt="Organization logo">
+                <img src="<?php echo '/Mobile-Charter/Center_images/' . $_SESSION['display_name'] . '.png'; ?>" alt="Organization logo">
             </div>
             <div class="header-content">
                 <?php echo($_SESSION["display_name"])?><br>
                 <b>Nurse ID: <?php echo($_SESSION["Nurse_Id"])?> </b> 
             </div>
-            <a id = "logout"href="/General-page/UserLogin/userlogin-form.php" class="live-link">Logout</a>
+            <a id = "logout"href="/Mobile-Charter/UserLogin/userlogin-form.php" class="live-link">Logout</a>
         </header>
 
 
@@ -33,11 +33,11 @@ session_start();
             <div class="dropdown">
                 <button class="dropbtn">Dropdown</button>
                 <div class="dropdown-content">
-                        <a href="/General-page/AdminDashboard/userdashboard.php">Home</a>
-                        <a href="/General-page/uploads/uploadview.php">Uploads</a>
-                        <a href="/General-page/AdminDashboard/data.php">Data</a>
-                        <a href="/General-page/AdminDashboard/staff.php">STAFF</a>
-                        <a href="/General-page/AdminDashboard/clients.php">Clients</a>
+                        <a href="/Mobile-Charter/AdminDashboard/userdashboard.php">Home</a>
+                        <a href="/Mobile-Charter/uploads/uploadview.php">Uploads</a>
+                        <a href="/Mobile-Charter/AdminDashboard/data.php">Data</a>
+                        <a href="/Mobile-Charter/AdminDashboard/staff.php">STAFF</a>
+                        <a href="/Mobile-Charter/AdminDashboard/clients.php">Clients</a>
                 </div>
             </div>
             

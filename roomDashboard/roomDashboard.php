@@ -1,12 +1,12 @@
-<?php include_once '/xampp/htdocs/General-page/header/roomheader.php';
-include_once 'C:\xampp\htdocs\General-page\Database\database.php';
+<?php include_once '/xampp/htdocs/Mobile-Charter/header/roomheader.php';
+include_once 'C:\xampp\htdocs\Mobile-Charter\Database\database.php';
 ?>
 
 <?php
 // Check if the form was submitted and if the user role is not "Staff"
 if (!isset($_SESSION['roomlogin-form-submitted']) || $_SESSION['roomlogin-form-submitted'] !== true) {
     // Redirect to the form page or display an error
-    header("Location: /General-page/UserLogin/sign-in-form.php");
+    header("Location: /Mobile-Charter/UserLogin/sign-in-form.php");
     exit();
 };
 // Mark the form as submitted

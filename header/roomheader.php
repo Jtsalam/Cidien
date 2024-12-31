@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once 'C:\xampp\htdocs\General-page\Database\database.php';
+include_once 'C:\xampp\htdocs\Mobile-Charter\Database\database.php';
 
 ?>
 <!DOCTYPE html>
@@ -13,20 +13,20 @@ include_once 'C:\xampp\htdocs\General-page\Database\database.php';
         </title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/General-page/roomDashboard/roomdashboard.css">
+        <link rel="stylesheet" href="/Mobile-Charter/roomDashboard/roomdashboard.css">
     </head>
 
     <body>
 
         <header class="main-header">
             <div class="logo">
-                <img src="<?php echo '/General-page/Center_images/' . $_SESSION['display_name'] . '.png'; ?>" alt="Organization logo">
+                <img src="<?php echo '/Mobile-Charter/Center_images/' . $_SESSION['display_name'] . '.png'; ?>" alt="Organization logo">
             </div>
             <div class="header-content">
                 <?php echo($_SESSION["display_name"])?><br>
                 <b>ROOM ID: <?php echo($_SESSION["room_number"])?> </b> 
             </div>
-            <a id = "logout"href="/General-page/UserLogin/userlogin-form.php" class="live-link">Logout</a>
+            <a id = "logout"href="/Mobile-Charter/UserLogin/userlogin-form.php" class="live-link">Logout</a>
         </header>
 
 
@@ -34,9 +34,9 @@ include_once 'C:\xampp\htdocs\General-page\Database\database.php';
         <div class="upperbody">
             <div class="dropdown">
                 <div class="dropdown-content">
-                        <a href="/General-page/roomDashboard/roomDashboard.php">Home</a>
-                        <a href="/General-page/uploads/uploadview.php">Uploads</a>       
-                        <a href="/General-page/Data/roomData.php">Data</a>
+                        <a href="/Mobile-Charter/roomDashboard/roomDashboard.php">Home</a>
+                        <a href="/Mobile-Charter/uploads/uploadview.php">Uploads</a>       
+                        <a href="/Mobile-Charter/Data/roomData.php">Data</a>
                         <div class="drop">
                         <button class="dropbtn"  onclick="toggleView()" >view Clients</button>
                         <div class="more-items">

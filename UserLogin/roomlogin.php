@@ -1,5 +1,5 @@
 <?php
-include_once 'C:\xampp\htdocs\General-page\Database\database.php';
+include_once 'C:\xampp\htdocs\Mobile-Charter\Database\database.php';
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                         if (password_verify($room_password, $user_password)) {
                             $_SESSION['roomlogin-form-submitted'] = true;
                             $_SESSION['room_number'] = $room_Id;
-                            header("Location: /General-page/roomDashboard/roomDashboard.php");
+                            header("Location: /Mobile-Charter/roomDashboard/roomDashboard.php");
                             exit();
                         }
                     }

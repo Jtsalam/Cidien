@@ -7,7 +7,7 @@ const idleInterval = setInterval(timerIncrement, 1000); // 1 second interval
 function timerIncrement() {
     idleTime++;
     if (idleTime >= idleLimit) {
-        window.location.href = '/General-page/UserLogin/userlogin-form.php';
+        window.location.href = '/Mobile-Charter/UserLogin/userlogin-form.php';
         clearInterval(idleInterval); // Stop the timer
     } else if ((idleLimit - idleTime) === 300) {//If 5 minutes left on timer, show popup
         showCustomAlert();
@@ -36,11 +36,11 @@ function startCountdown() {
         if (countdown <= 0) {
             clearInterval(countdownTimer);
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/General-page/UserLogin/userlogin-unset.php", true);
+            xhr.open("GET", "/Mobile-Charter/UserLogin/userlogin-unset.php", true);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     // Redirect to the sign-in form after unsetting the session
-                    window.location.href = '/General-page/UserLogin/userlogin-form.php';
+                    window.location.href = '/Mobile-Charter/UserLogin/userlogin-form.php';
                 }
             };
             xhr.send();
@@ -57,11 +57,11 @@ function updateCountdownDisplay(countdown) {
 
 function logOff() {
     var xhr_2 = new XMLHttpRequest();
-    xhr_2.open("GET", "/General-page/UserLogin/userlogin-unset.php", true);
+    xhr_2.open("GET", "/Mobile-Charter/UserLogin/userlogin-unset.php", true);
     xhr_2.onreadystatechange = function () {
         if (xhr_2.readyState == 4 && xhr_2.status == 200) {
             // Redirect to the sign-in form after unsetting the session
-            window.location.href = '/General-page/UserLogin/userlogin-form.php';
+            window.location.href = '/Mobile-Charter/UserLogin/userlogin-form.php';
         }
     };
     xhr_2.send();
@@ -88,11 +88,11 @@ logout_btn.addEventListener("click", function(event) {
     if (confirm(text) == true) {
         // Make an AJAX request to the PHP script to unset the session
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/General-page/UserLogin/userlogin-unset.php", true);
+        xhr.open("GET", "/Mobile-Charter/UserLogin/userlogin-unset.php", true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 // Redirect to the sign-in form after unsetting the session
-                window.location.href = "/General-page/UserLogin/sign-in-form.php";
+                window.location.href = "/Mobile-Charter/UserLogin/sign-in-form.php";
             }
         };
         xhr.send();

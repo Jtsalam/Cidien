@@ -7,11 +7,11 @@ logout_btn.addEventListener("click", function(event) {
     if (confirm(text) == true) {
         // Make an AJAX request to the PHP script to unset the session
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/General-page/UserLogin/roomlogin-unset.php", true);
+        xhr.open("GET", "/Mobile-Charter/UserLogin/roomlogin-unset.php", true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 // Redirect to the sign-in form after unsetting the session
-                window.location.href = "/General-page/UserLogin/sign-in-form.php";
+                window.location.href = "/Mobile-Charter/UserLogin/sign-in-form.php";
             }
         };
         xhr.send();
