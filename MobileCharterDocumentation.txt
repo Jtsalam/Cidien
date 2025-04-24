@@ -53,3 +53,7 @@ It's too rough to execute and doesn't flow well when thinking about the user exp
 Proferred solution to this problem?
 Scrap the whole idea of "Unassigned" tab, simply alert the Nurse when a room hasn't been properly recorded by the device, this could be
 done by both blinking of a red light, beeping, or both.
+
+
+> Note: we've recently made a decision to change our tech stack to a more modern one: NextJS, and are currently in the process of converting
+what we have so far to a NextJS project.
