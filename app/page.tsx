@@ -1,73 +1,134 @@
-"use client";
+'use client'
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
-export default function SignIn() {
-  const [organization, setOrganization] = useState("");
-  const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+export default function SignInPage() {
+  const router = useRouter()
+  const [isActive, setIsActive] = useState(false)
+  const [displayName, setDisplayName] = useState('YourOrg')
+  const passwordRef = useRef<HTMLInputElement>(null)
+  const passwordRoomRef = useRef<HTMLInputElement>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-  
-    try {
-      const res = await fetch("/api/signIn", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ organization }),
-      });
-  
-      if (!res.ok) {
-        const errorData = await res.json();
-        // console.error("Error:", errorData.error);
-        // alert(`Error: ${errorData.error}`);
-        setError("Please choose a medical center from the list below.");
-        return;
-      }
-  
-      const data = await res.json();
-      console.log("Success:", data.message);
-      alert("Organization submitted successfully!");
-      setError("");
-  
-    } catch (error) {
-      console.error("Request failed:", error);
-      alert("Failed to connect to the server. Please try again.");
+  const togglePassword = () => {
+    const input = passwordRef.current
+    if (input) {
+      input.type = input.type === 'password' ? 'text' : 'password'
     }
-  };
-  
+  }
+
+  const showPassword = () => {
+    const input = passwordRoomRef.current
+    if (input) {
+      input.type = input.type === 'password' ? 'text' : 'password'
+    }
+  }
+
+  const unsetSessionAndRedirect = async () => {
+    await fetch('/Mobile-Charter/UserLogin/unset-session.php')
+    router.push('/Mobile-Charter/UserLogin/sign-in-form.php')
+  }
 
   return (
-    <div className="h-screen flex justify-center items-center bg-[#87896b]">
-      <div className="bg-white p-10 rounded-lg shadow-lg text-center max-w-md w-full">
-        <h1 className="mb-5 text-2xl font-bold text-gray-800">SIGN IN</h1>
-        <form onSubmit={handleSubmit}>
-          <select
-            id="option"
-            name="option"
-            value={organization}
-            onChange={(e) => setOrganization(e.target.value)}
-            className="w-full p-2 mb-5 border border-gray-300 rounded-md text-lg"
-          >
-            <option value="">Select your Organization</option>
-            <option value="Erindale Health center">Erindale Health center</option>
-            <option value="Parkville Manor">Parkville Manor</option>
-            <option value="Kenderdine Medical Clinic">Kenderdine Medical Clinic</option>
-            <option value="Jim Pattison Children's Hospital">Jim Pattison Children's Hospital</option>
-            <option value="Evergreen Medical Clinic">Evergreen Medical Clinic</option>
-          </select>
-          {error && <p className="text-red-500">{error}</p>}
-          {successMessage && <p className="text-green-500">{successMessage}</p>}
-          <button
-            type="submit"
-            className="px-5 py-2 w-full bg-blue-500 text-white text-lg rounded-md hover:bg-blue-700 transition-all"
-          >
-            Submit
-          </button>
-        </form>
+    <main className="min-h-screen flex items-center justify-center bg-black/80 font-montserrat">
+      <div className="relative overflow-hidden w-[768px] max-w-full min-h-[480px] bg-white rounded-[30px] shadow-whiteGlow" id="container">
+        {/* Room Login Form */}
+        <div className={`absolute top-0 h-full transition-all duration-500 ease-in-out left-0 w-1/2 ${isActive ? 'translate-x-full opacity-100 z-[1]' : 'opacity-0 z-[1]'}`}>
+          <form action="/api/roomlogin" method="POST" className="bg-white flex flex-col items-center justify-center h-full px-10">
+            <h1 className="text-xl font-bold">Sign In</h1>
+            <span className="text-xs">Login With Room Id</span>
+            <input type="text" name="room_Id" placeholder="Enter Room Id" required className="bg-[#eee] border-none my-2 py-2 px-3 text-sm rounded-lg w-full outline-none" />
+            <div className="relative w-full">
+              <input
+                type="password"
+                name="password"
+                ref={passwordRoomRef}
+                className="bg-[#eee] border-none my-2 py-2 px-3 text-sm rounded-lg w-full pr-8"
+                placeholder="Enter Password"
+                required
+              />
+              <i className="bi bi-eye-slash absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={showPassword}></i>
+            </div>
+            <a href="#" className="text-xs text-gray-600 my-2">Forgot Password?</a>
+            <button type="submit" className="bg-[#1244b9] text-white text-xs px-11 py-2.5 border border-transparent rounded-lg font-semibold tracking-wider uppercase mt-2 cursor-pointer">
+              Sign In
+            </button>
+            <p>
+              <a className="bi bi-arrow-return-left cursor-pointer text-sm" onClick={unsetSessionAndRedirect}>Select Organization</a>
+            </p>
+          </form>
+        </div>
+
+        {/* Staff Login Form */}
+        <div className={`absolute top-0 h-full transition-all duration-500 ease-in-out left-0 w-1/2 ${!isActive ? 'z-[5]' : 'opacity-0 z-[1]'}`}>
+          <form action="/api/userlogin" method="POST" className="bg-white flex flex-col items-center justify-center h-full px-10">
+            <h1 className="text-xl font-bold">Sign In</h1>
+            <span className="text-xs">Login With Staff Id</span>
+            <input type="text" name="staff_Id" placeholder="Enter Staff Id" required className="bg-[#eee] border-none my-2 py-2 px-3 text-sm rounded-lg w-full outline-none" />
+            <div className="relative w-full">
+              <input
+                type="password"
+                name="password"
+                ref={passwordRef}
+                className="bg-[#eee] border-none my-2 py-2 px-3 text-sm rounded-lg w-full pr-8"
+                placeholder="Enter Password"
+                required
+              />
+              <i className="bi bi-eye-slash absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={togglePassword}></i>
+            </div>
+            <a href="#" className="text-xs text-gray-600 my-2">Forgot Password?</a>
+            <button type="submit" className="bg-[#1244b9] text-white text-xs px-11 py-2.5 border border-transparent rounded-lg font-semibold tracking-wider uppercase mt-2 cursor-pointer">
+              Sign In
+            </button>
+            <p>
+              <a className="bi bi-arrow-return-right cursor-pointer text-sm" onClick={() => {
+                setIsActive(true)
+              }}>
+                Select Organization
+              </a>
+            </p>
+          </form>
+        </div>
+
+        {/* Toggle Panel */}
+        <div className="absolute top-0 left-1/2 w-1/2 h-full overflow-hidden transition-all duration-500 ease-in-out rounded-[20px] z-[1000]">
+          <div className="bg-[#1244b9] text-white absolute left-[-100%] w-[200%] h-full transition-all duration-500 ease-in-out">
+            <div className="absolute w-1/2 h-full flex flex-col items-center justify-center px-8 text-center transition-all duration-500 ease-in-out translate-x-[-200%]">
+              <h1>{displayName}</h1>
+              <Image
+                src={`/Mobile-Charter/Center_images/${displayName}.png`}
+                alt="Organization logo"
+                width={100}
+                height={100}
+              />
+              <button
+                type="button"
+                className="mt-4 bg-white text-[#1244b9] px-4 py-2 rounded-lg font-bold text-sm cursor-pointer"
+                onClick={() => setIsActive(false)}
+              >
+                Sign in with Staff Id
+              </button>
+            </div>
+            <div className="absolute w-1/2 h-full flex flex-col items-center justify-center px-8 text-center transition-all duration-500 ease-in-out right-0">
+              <h1>{displayName}</h1>
+              <Image
+                src={`/Mobile-Charter/Center_images/${displayName}.png`}
+                alt="Organization logo"
+                width={100}
+                height={100}
+              />
+              <button
+                type="button"
+                className="mt-4 bg-white text-[#1244b9] px-4 py-2 rounded-lg font-bold text-sm cursor-pointer"
+                onClick={() => setIsActive(true)}
+              >
+                Sign in with Room Id
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    </main>
+  )
 }
