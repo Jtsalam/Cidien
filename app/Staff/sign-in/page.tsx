@@ -26,8 +26,8 @@ export default function SignInPage() {
   };
   
   const unsetSessionAndRedirect = async () => {
-    await fetch('/Mobile-Charter/UserLogin/unset-session.php')
-    router.push('/Mobile-Charter/UserLogin/sign-in-form.php')
+    await fetch('/Center/sign-in')
+    router.push('/Center/sign-in')
   };
   
   return (
