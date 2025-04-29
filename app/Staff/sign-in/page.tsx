@@ -26,8 +26,9 @@ export default function SignInPage() {
   };
   
   const unsetSessionAndRedirect = async () => {
-    await fetch('/Center/sign-in')
-    router.push('/Center/sign-in')
+    await fetch("/api/center/logout", { method: "POST" });
+    window.location.href = "/Center/sign-in"; // Redirect to Center sign-in page
+    //A hybrid approach is available.
   };
   
   return (

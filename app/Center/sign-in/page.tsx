@@ -11,7 +11,7 @@ export default function SignIn() {
     e.preventDefault();
   
     try {
-      const res = await fetch("/api/signIn", {
+      const res = await fetch("/api/center/signIn", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -29,7 +29,8 @@ export default function SignIn() {
       
       const data = await res.json();
       console.log("Success:", data.message);
-      alert("Organization submitted successfully!");
+      window.location.href = "/Staff/sign-in"
+      // alert("Organization submitted successfully!");
       setError("");
   
     } catch (error) {
