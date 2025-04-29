@@ -20,5 +20,5 @@ export function middleware(request: NextRequest) {
 
 // Apply the middleware to the following pages
 export const config = {
-  matcher: ["/Center/sign-in", "/Staff/sign-in"],  // Change this to the actual route of your new page
+  matcher: ["/Center/sign-in", "/Staff/sign-in"]  // Change this to the actual route of your new page
 };
