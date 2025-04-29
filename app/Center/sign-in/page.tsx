@@ -26,7 +26,7 @@ export default function SignIn() {
         setError("Please choose a medical center from the list below.");
         return;
       }
-  
+      
       const data = await res.json();
       console.log("Success:", data.message);
       alert("Organization submitted successfully!");
