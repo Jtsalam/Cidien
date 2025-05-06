@@ -16,8 +16,6 @@ export default function SignInPage() {
 
   const router = useRouter()
   const [org, setOrg] = useState("");
-
-  const testName = "larila";
   const [isActive, setIsActive] = useState(false)
   const [showPassword, setShowPassword] = useState({
     staff: false,
