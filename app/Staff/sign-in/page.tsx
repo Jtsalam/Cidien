@@ -2,12 +2,23 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { getCookie } from "@/utils/getCookie";
 import Image from 'next/image'
 
 export default function SignInPage() {
+  const orgMap: { [key: string]: string } = {
+    EHC: "Erindale Health Center",
+    PVM: "Parkville Manor",
+    KMC: "Kenderdine Medical Clinic",
+    JPCH: "Jim Pattison Children's Hospital",
+    EMC: "Evergreen Medical Clinic"
+  };
+
   const router = useRouter()
+  const [org, setOrg] = useState("");
+
+  const testName = "larila";
   const [isActive, setIsActive] = useState(false)
-  const [displayName, setDisplayName] = useState('YourOrg')
   const [showPassword, setShowPassword] = useState({
     staff: false,
     room: false,
@@ -25,6 +36,12 @@ export default function SignInPage() {
     });
   };
   
+  useEffect(() => {
+    const cookieOrg = getCookie("organization") ?? "";
+    console.log("Organization from cookie:", cookieOrg);
+    setOrg(cookieOrg.trim());
+  }, []);
+
   const unsetSessionAndRedirect = async () => {
     await fetch("/api/center/logout", { method: "POST" });
     window.location.href = "/Center/sign-in"; // Redirect to Center sign-in page
@@ -108,18 +125,29 @@ export default function SignInPage() {
         </div>
   
         {/* Toggle Panel */}
-        <div className={`absolute top-0 h-full w-1/2 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] rounded-[20px] z-[50] ${isActive ? 'left-0 scale-100' : 'left-1/2 scale-100'}`}>
-          <div className="bg-[#1244b9] text-white w-full h-full flex flex-col items-center justify-center px-8 text-center gap-4 rounded-[20px]">
-            <h1>{displayName}</h1>
-            <Image
-              src={`/Mobile-Charter/Center_images/${displayName}.png`}
-              alt="Organization logo"
-              width={100}
-              height={100}
-            />
+        <div
+          className={`absolute top-0 h-full w-1/2 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] rounded-[20px] z-[50] ${
+            isActive ? 'left-0 scale-100' : 'left-1/2 scale-100'
+          }`}
+        >
+          <div className="bg-[#1244b9] text-white w-full h-full flex flex-col items-center justify-center px-8 text-center gap-[2px] rounded-[20px]">
+          <h1 className="text-3xl font-bold text-white tracking-wide">
+            {orgMap[org] || "Organization name"}
+          </h1>
+            {org && (
+              <div className="w-[250px] h-[300px] flex items-center justify-center">
+                <Image
+                  src={`/centerImages/${org}.png`}
+                  alt={`${orgMap[org] || "Organization"} logo`}
+                  width={300}
+                  height={300}
+                  className="rounded-[10px] object-contain"
+                />
+              </div>
+            )}
             <button
               type="button"
-              className="mt-4 bg-white text-[#1244b9] px-4 py-2 rounded-lg font-bold text-sm cursor-pointer"
+              className="mt-[-2px] bg-white text-[#1244b9] px-4 py-2 rounded-lg font-bold text-sm cursor-pointer"
               onClick={() => setIsActive(!isActive)}
             >
               {isActive ? "Sign in with Staff Id" : "Sign in with Room Id"}

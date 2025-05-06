@@ -2,10 +2,14 @@
 
 import { useState } from "react";
 
+
 export default function SignIn() {
   const [organization, setOrganization] = useState("");
+  const [org, setOrg] = useState("");
+
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +42,7 @@ export default function SignIn() {
       alert("Failed to connect to the server. Please try again.");
     }
   };
-  
+
 
   return (
     <div className="h-screen flex justify-center items-center bg-[#87896b]">
@@ -53,11 +57,11 @@ export default function SignIn() {
             className="w-full p-2 mb-5 border border-gray-300 rounded-md text-lg"
           >
             <option value="">Select your Organization</option>
-            <option value="Erindale Health center">Erindale Health center</option>
-            <option value="Parkville Manor">Parkville Manor</option>
-            <option value="Kenderdine Medical Clinic">Kenderdine Medical Clinic</option>
-            <option value="Jim Pattison Children's Hospital">Jim Pattison Children's Hospital</option>
-            <option value="Evergreen Medical Clinic">Evergreen Medical Clinic</option>
+            <option value="EHC">Erindale Health center</option>
+            <option value="PVM">Parkville Manor</option>
+            <option value="KMC">Kenderdine Medical Clinic</option>
+            <option value="JPCH">Jim Pattison Children's Hospital</option>
+            <option value="EMC">Evergreen Medical Clinic</option>
           </select>
           {error && <p className="text-red-500">{error}</p>}
           {successMessage && <p className="text-green-500">{successMessage}</p>}
@@ -67,6 +71,16 @@ export default function SignIn() {
           >
             Submit
           </button>
+          <br/>
+          <a
+            href="https://calendly.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline hover:text-blue-800 transition-colors"
+          >
+            Register your account
+          </a>
+
         </form>
       </div>
     </div>

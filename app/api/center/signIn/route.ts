@@ -1,23 +1,40 @@
 import { NextResponse } from "next/server";
 
+const orgMap: { [key: string]: string } = {
+  EHC: "Erindale Health Center",
+  PVM: "Parkville Manor",
+  KMC: "Kenderdine Medical Clinic",
+  JPCH: "Jim Pattison Children's Hospital",
+  EMC: "Evergreen Medical Clinic"
+};
+
 export async function POST(req: Request) {
   try {
     const { organization } = await req.json();
 
-    if (!organization) {
-      return NextResponse.json({ error: "Organization is required" }, { status: 400 });
+    if (!organization || !orgMap[organization]) {
+      return NextResponse.json({ error: "Invalid organization selected" }, { status: 400 });
     }
 
     console.log("Received Organization:", organization);
 
-    // Create a response and set a cookie
-    const response = NextResponse.json({ message: "Organization submitted successfully" }, { status: 200 });
-
-    // Set a cookie to indicate submission (expires in 1 hour)
-    response.headers.set("Set-Cookie", "orgSubmitted=true; Path=/; HttpOnly; Max-Age=3600");
-
+    const response = new NextResponse(
+      JSON.stringify({ message: "Organization submitted successfully" }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    
+    response.headers.append("Set-Cookie", `orgSubmitted=true; Path=/; Max-Age=3600; SameSite=Lax`);
+    response.headers.append("Set-Cookie", `organization=${encodeURIComponent(organization)}; Path=/; Max-Age=3600; SameSite=Lax`);
+    
     return response;
+    
   } catch (error) {
+    console.error("Error in route.ts:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
