@@ -14,6 +14,8 @@ export default function SignInPage() {
     EMC: "Evergreen Medical Clinic"
   };
 
+  
+  const [error, setError] = useState("");
   const router = useRouter()
   const [org, setOrg] = useState("");
   const [isActive, setIsActive] = useState(false)
@@ -46,15 +48,47 @@ export default function SignInPage() {
     //A hybrid approach is available.
   };
   
+  /* Form Submission Logic */
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, formType: "staff" | "room") => {
+    e.preventDefault();
+    setError("");
+  
+    const formData = new FormData(e.currentTarget);
+    formData.append("formType", formType);
+  
+    const res = await fetch("/api/login", {
+      method: "POST",
+      body: formData,
+    });
+  
+    const result = await res.json();
+  
+    if (res.ok && result.success) {
+      // 🌟 Redirect based on role or formType
+      if (result.role === "staff" || formType === "staff") {
+        router.push("/user-dashboard"); //Where to put alert information
+      } else if (result.role === "room" || formType === "room") {
+        router.push("/room-dashboard");
+      } else {
+        router.push("/dashboard"); // fallback if needed
+      }
+    } else {
+      setError(result.message || "Login failed");
+    }
+  };
+  
+  
   return (
     <main className="min-h-screen flex items-center justify-center bg-black/80 font-montserrat">
       <div className="relative overflow-hidden w-[768px] max-w-full min-h-[480px] bg-white rounded-[30px] shadow-whiteGlow">
         
         {/* Staff Login Form */}
         <div className={`absolute top-0 h-full w-1/2 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isActive ? 'left-full opacity-0 scale-95' : 'left-0 opacity-100 scale-100'} ${isActive ? 'z-0' : 'z-10'}`}>
-          <form action="/api/userlogin" method="POST" className="w-full max-w-[320px] flex flex-col items-center justify-center h-full px-6 gap-4">
+          {/* <form action="/api/staff/signIn" method="POST" className="w-full max-w-[320px] flex flex-col items-center justify-center h-full px-6 gap-4"> */}
+          <form onSubmit={(e) => handleSubmit(e, "staff")} className="w-full max-w-[320px] flex flex-col items-center justify-center h-full px-6 gap-4">
             <h1 className="text-xl font-bold">Sign In</h1>
             <span className="text-xs">Login With Staff Id</span>
+            {/* <input type="hidden" name="formType" value="staff" />To use in route.ts */}
             <input type="text" name="staff_Id" placeholder="Enter Staff Id" required className="bg-[#eee] border-none py-2 px-3 text-sm rounded-lg w-full outline-none" />
             <div className="relative w-full">
               <input
@@ -88,9 +122,11 @@ export default function SignInPage() {
   
         {/* Room Login Form */}
         <div className={`absolute top-0 h-full w-1/2 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isActive ? 'left-1/2 scale-100' : 'left-full scale-95'} ${isActive ? 'z-10' : 'z-0'}`}>
-          <form action="/api/roomlogin" method="POST" className="w-full max-w-[320px] flex flex-col items-center justify-center h-full px-6 gap-4">
+          {/* <form action="/api/staff/signIn" method="POST" className="w-full max-w-[320px] flex flex-col items-center justify-center h-full px-6 gap-4"> */}
+          <form onSubmit={(e) => handleSubmit(e, "room")} className="w-full max-w-[320px] flex flex-col items-center justify-center h-full px-6 gap-4">
             <h1 className="text-xl font-bold">Sign In</h1>
             <span className="text-xs">Login With Room Id</span>
+            {/* <input type="hidden" name="formType" value="room" /> To use in route.ts */}
             <input type="text" name="room_Id" placeholder="Enter Room Id" required className="bg-[#eee] border-none py-2 px-3 text-sm rounded-lg w-full outline-none" />
             <div className="relative w-full">
               <input
