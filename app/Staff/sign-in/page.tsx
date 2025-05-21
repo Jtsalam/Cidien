@@ -111,7 +111,6 @@ export default function SignInPage() {
               </button>
             </div>
             <a href="#" className="text-xs text-gray-600">Forgot Password?</a>
-            {error && <p className="text-red-500">{error}</p>}
             <button type="submit" className="bg-[#1244b9] text-white text-xs px-11 py-2.5 border border-transparent rounded-lg font-semibold tracking-wider uppercase cursor-pointer">
               Sign In
             </button>
@@ -121,6 +120,7 @@ export default function SignInPage() {
                 Select Organization
               </a>
             </p>
+            {error && <p className="text-red-500">{error}</p>}
           </form>
         </div>
   
@@ -159,6 +159,7 @@ export default function SignInPage() {
                 Select Organization
               </a>
             </p>
+            {/* {error && <p className="text-red-500">{error}</p>} */}
           </form>
         </div>
   

@@ -11,8 +11,11 @@ export async function POST(req: Request) {
         JPCH: "Jim Pattison Children's Hospital",
         EMC: "Evergreen Medical Clinic"
     };
+    // Getting selected organization from cookies
     const cookieStore = await cookies();
     const org = cookieStore.get("organization")?.value;
+
+    //Error checking for org value
     if (!org) {
         return new Response(
           JSON.stringify({ success: false, message: "organization cookie not found" }),
@@ -38,14 +41,18 @@ export async function POST(req: Request) {
       // Convert both to strings
       const staff_id = raw_staffId.toString();
       const staff_password = raw_password.toString();
-
+    
+      //Get organization information from database
       const organization = await prisma.medicalcenter_info.findFirst({
         where:{center_name:orgMap[org]}
       })
+
+      //Find user that matches ID in selected organization
       const user = await prisma.user_info.findFirst({
         where:{staff_id: staff_id,
-        },
+        center_id:organization?.center_id},
       })
+
       const isPasswordCorrect = user
       ? await bcrypt.compare(staff_password, user.password)
       : false;
