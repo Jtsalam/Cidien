@@ -1,8 +1,25 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from 'bcryptjs';
+import { cookies } from "next/headers";
 
 
 export async function POST(req: Request) {
+    const orgMap: { [key: string]: string } = {
+        EHC: "Erindale Health Center",
+        PVM: "Parkville Manor",
+        KMC: "Kenderdine Medical Clinic",
+        JPCH: "Jim Pattison Children's Hospital",
+        EMC: "Evergreen Medical Clinic"
+    };
+    const cookieStore = await cookies();
+    const org = cookieStore.get("organization")?.value;
+    if (!org) {
+        return new Response(
+          JSON.stringify({ success: false, message: "organization cookie not found" }),
+          { status: 400 }
+        );
+      }
+
     const data = await req.formData();
     const formType = data.get("formType");
   
@@ -22,9 +39,12 @@ export async function POST(req: Request) {
       const staff_id = raw_staffId.toString();
       const staff_password = raw_password.toString();
 
-
+      const organization = await prisma.medicalcenter_info.findFirst({
+        where:{center_name:orgMap[org]}
+      })
       const user = await prisma.user_info.findFirst({
-        where:{staff_id: staff_id}
+        where:{staff_id: staff_id,
+        },
       })
       const isPasswordCorrect = user
       ? await bcrypt.compare(staff_password, user.password)
