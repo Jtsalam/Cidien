@@ -56,7 +56,7 @@ export default function SignInPage() {
     const formData = new FormData(e.currentTarget);
     formData.append("formType", formType);
   
-    const res = await fetch("/api/login", {
+    const res = await fetch("/api/staff/signIn", {
       method: "POST",
       body: formData,
     });
@@ -66,14 +66,17 @@ export default function SignInPage() {
     if (res.ok && result.success) {
       // 🌟 Redirect based on role or formType
       if (result.role === "staff" || formType === "staff") {
-        router.push("/user-dashboard"); //Where to put alert information
+        // router.push("/user-dashboard"); //Where to put alert information
+        alert("Staff signed in successfully!");
       } else if (result.role === "room" || formType === "room") {
         router.push("/room-dashboard");
       } else {
         router.push("/dashboard"); // fallback if needed
       }
     } else {
-      setError(result.message || "Login failed");
+      // alert("Staff sign in failed!");
+      setError("Invalid credentials");
+      return;
     }
   };
   
@@ -108,6 +111,7 @@ export default function SignInPage() {
               </button>
             </div>
             <a href="#" className="text-xs text-gray-600">Forgot Password?</a>
+            {error && <p className="text-red-500">{error}</p>}
             <button type="submit" className="bg-[#1244b9] text-white text-xs px-11 py-2.5 border border-transparent rounded-lg font-semibold tracking-wider uppercase cursor-pointer">
               Sign In
             </button>
