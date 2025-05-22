@@ -1,12 +1,5 @@
 import { NextResponse } from "next/server";
-
-const orgMap: { [key: string]: string } = {
-  EHC: "Erindale Health Center",
-  PVM: "Parkville Manor",
-  KMC: "Kenderdine Medical Clinic",
-  JPCH: "Jim Pattison Children's Hospital",
-  EMC: "Evergreen Medical Clinic"
-};
+import { orgMap } from "@/lib/constants";
 
 export async function POST(req: Request) {
   try {

@@ -1,16 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from 'bcryptjs';
 import { cookies } from "next/headers";
+import { orgMap } from "@/lib/constants";
 
 
 export async function POST(req: Request) {
-    const orgMap: { [key: string]: string } = {
-        EHC: "Erindale Health Center",
-        PVM: "Parkville Manor",
-        KMC: "Kenderdine Medical Clinic",
-        JPCH: "Jim Pattison Children's Hospital",
-        EMC: "Evergreen Medical Clinic"
-    };
     // Getting selected organization from cookies
     const cookieStore = await cookies();
     const org = cookieStore.get("organization")?.value;

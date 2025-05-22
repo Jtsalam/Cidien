@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/lib/generated/prisma"; // ✅ custom location
+import { PrismaClient } from "@/lib/generated/prisma";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
