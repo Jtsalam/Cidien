@@ -15,6 +15,8 @@ export default function SignInPage() {
   };
 
   
+  const [staffError, setStaffError] = useState("");
+  const [roomError, setRoomError] = useState("");
   const [error, setError] = useState("");
   const router = useRouter()
   const [org, setOrg] = useState("");
@@ -67,16 +69,25 @@ export default function SignInPage() {
       // 🌟 Redirect based on role or formType
       if (result.role === "staff" || formType === "staff") {
         // router.push("/user-dashboard"); //Where to put alert information
+        setStaffError("");
         alert("Staff signed in successfully!");
       } else if (result.role === "room" || formType === "room") {
-        router.push("/room-dashboard");
+        // router.push("/room-dashboard");
+        setRoomError("");
+        alert("Room sign in successful!");
       } else {
         router.push("/dashboard"); // fallback if needed
       }
     } else {
       // alert("Staff sign in failed!");
-      setError("Invalid credentials");
-      return;
+      if(result.role === "staff" || formType === "staff" ){
+        setStaffError("Invalid credentials");
+        return;
+      }
+      else {
+        setRoomError("Invalid credentials");
+        return;
+      }
     }
   };
   
@@ -120,7 +131,7 @@ export default function SignInPage() {
                 Select Organization
               </a>
             </p>
-            {error && <p className="text-red-500">{error}</p>}
+            {staffError && <p className="text-red-500">{staffError}</p>}
           </form>
         </div>
   
@@ -135,7 +146,7 @@ export default function SignInPage() {
             <div className="relative w-full">
               <input
                 type={showPassword.room ? "text" : "password"}
-                name="password"
+                name="room_password"
                 ref={passwordRoomRef}
                 className="bg-[#eee] border-none py-2 px-3 text-sm rounded-lg w-full pr-8 outline-none"
                 placeholder="Enter Password"
@@ -159,7 +170,7 @@ export default function SignInPage() {
                 Select Organization
               </a>
             </p>
-            {/* {error && <p className="text-red-500">{error}</p>} */}
+            {roomError && <p className="text-red-500">{roomError}</p>}
           </form>
         </div>
   
