@@ -37,7 +37,8 @@ export default function AuthPage() {
     router.push("/UserLogin/sign-in-form");
   };
 
-  return (
+ return (
+  <div className={styles["page-wrapper"]}>
     <div className={`${styles.container} ${isRegistering ? styles.active : ""}`}>
       <div className={`${styles["form-container"]} ${styles["sign-in"]}`}>
         <form onSubmit={handleLogin}>
@@ -66,6 +67,7 @@ export default function AuthPage() {
           <button type="submit">Sign In</button>
         </form>
       </div>
+    
 
       <div className={`${styles["form-container"]} ${styles["sign-up"]}`}>
         <form>
@@ -95,6 +97,7 @@ export default function AuthPage() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
