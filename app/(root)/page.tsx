@@ -38,7 +38,7 @@ export default function SignInPage() {
       setErrorMessage(data.error || 'Something went wrong');
     } else {
       setSuccessMessage(data.message);
-      router.push('/nextpage'); // ✅ Correct path
+      router.push('/SignIn_registration'); // next path to go
     }
   };
 

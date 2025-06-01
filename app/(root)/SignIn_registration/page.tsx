@@ -68,7 +68,11 @@ export default function AuthPage() {
           </div>
           <a href="https://www.w3schools.com/html/html_links.asp"> Forgot password</a>
           <button type="submit">Sign In</button>
-        </form>
+
+          <a href="#" onClick={(e) => { e.preventDefault(); history.back(); }}>
+           ← Select Organization
+          </a>
+          </form>
       </div>
     
 
