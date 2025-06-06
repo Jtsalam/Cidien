@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Head from 'next/head';
 
 type Props = {
   onSubmit: (orgCode: string) => Promise<void>;
@@ -56,15 +57,16 @@ export default function SelectOrganizationForm({ onSubmit }: Props) {
           </button>
 
           <br />
-
           <a
-            href="https://calendly.com/"
+            href="https://calendly.com/mobilecharterorg/30min"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:underline hover:text-blue-800 transition-colors"
           >
             Register your account
           </a>
+
+
         </form>
       </div>
     </div>
