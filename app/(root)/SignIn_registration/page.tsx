@@ -69,9 +69,11 @@ export default function AuthPage() {
           <a href="https://www.w3schools.com/html/html_links.asp"> Forgot password</a>
           <button type="submit">Sign In</button>
 
-          <a href="#" onClick={(e) => { e.preventDefault(); history.back(); }}>
-           ← Select Organization
-          </a>
+          <a href="#" onClick={(e) => { e.preventDefault(); 
+          router.replace('/'); // or router.replace('/select-organization')
+        }}>
+          ← Select Organization
+        </a>
           </form>
       </div>
     
@@ -97,6 +99,13 @@ export default function AuthPage() {
           </a>
           </div>
           <div className={`${styles["toggle-panel"]} ${styles["toggle-right"]}`}>
+            <div className={styles["image-placeholder"]}>
+              <img
+              src="public\Erindale.jpg"
+              alt="Placeholder image"
+              className={styles["placeholder-image"]}
+              />
+            </div>
             <h2>Hello!</h2>
             <p>Enter your details to register</p>
             <button className={styles.hidden} onClick={() => setIsRegistering(true)}>
