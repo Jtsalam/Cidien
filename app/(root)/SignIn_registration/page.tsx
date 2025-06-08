@@ -51,21 +51,21 @@ export default function AuthPage() {
             onChange={(e) => setStaffId(e.target.value)}
             required
           />
-          <div className={styles["password-container"]}>
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <i
-              className={`bi ${showPassword ? "bi-eye" : "bi-eye-slash"}`}
-              onClick={() => setShowPassword(!showPassword)}
-              role="button"
-              aria-label="Toggle password visibility"
-            ></i>
-          </div>
+      <div className={styles["password-container"]}>
+        <input
+          type={showPassword ? "text" : "password"} // Switches visibility
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <i
+          className={`bi ${showPassword ? "bi-eye" : "bi-eye-slash"}`} // 👈 Default: eye-slash, toggles to eye
+          onClick={() => setShowPassword((prev) => !prev)}
+          role="button"
+          aria-label={showPassword ? "Hide password" : "Show password"}
+        ></i>
+      </div>
           <a href="https://www.w3schools.com/html/html_links.asp"> Forgot password</a>
           <button type="submit">Sign In</button>
 
@@ -92,7 +92,9 @@ export default function AuthPage() {
             <button className={styles.hidden} onClick={() => setIsRegistering(false)}>
               Sign In
             </button>
-            <a onClick={unsetSession}>Select Organization</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); history.back(); }}>
+           ← Select Organization
+          </a>
           </div>
           <div className={`${styles["toggle-panel"]} ${styles["toggle-right"]}`}>
             <h2>Hello!</h2>
