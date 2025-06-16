@@ -56,7 +56,7 @@ export default function SelectOrganizationForm({ onSubmit }: Props) {
             Submit
           </button>
 
-          <br />
+          {/* <br /> */}
           <a
             href="https://calendly.com/mobilecharterorg/30min"
             target="_blank"
