@@ -73,7 +73,7 @@ export default function SignInPage() {
 
             <p style={styles.link}>
               <a
-                href="https://calendly.com/event_types/user/me"
+                href="https://calendly.com/mobilecharterorg/30min"
                 target="_blank"
                 rel="noopener noreferrer"
               >
