@@ -38,7 +38,7 @@ export default function SignInPage() {
       setErrorMessage(data.error || 'Something went wrong');
     } else {
       setSuccessMessage(data.message);
-      router.push('/SignIn_registration'); // next path to go
+      router.push(`/SignIn_registration?organization=${encodeURIComponent(organization)}`); // next path to go
     }
   };
 
@@ -73,7 +73,7 @@ export default function SignInPage() {
 
             <p style={styles.link}>
               <a
-                href="https://docs.google.com/forms/d/1sT9sf46xu9hIWWKs3rVgfRdPpNRJ1z6YkhYO0Si4u3E/edit?pli=1"
+                href="https://forms.gle/HY7LWnfYfs6RTVpU7"
                 target="_blank"
                 rel="noopener noreferrer"
               >
