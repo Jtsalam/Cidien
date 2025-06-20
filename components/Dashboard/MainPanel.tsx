@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { getCookie } from "@/utils/getCookie";
+import { orgMap } from "@/lib/constants";
 import { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter, usePathname } from "next/navigation";
@@ -16,9 +18,15 @@ export default function DashboardPage() {
   // Mock fetching session data (replace with actual logic)
   useEffect(() => {
     // fetch session info here
-    // setDisplayName(session.display_name);
-    // setNurseId(session.Nurse_Id);
-    // setOrgImage(`${session.display_name}.png`);
+    const cookieOrg = getCookie("organization") ?? "";
+    console.log("Organization from cookie:", cookieOrg);
+    setDisplayName(orgMap[cookieOrg.trim()]);
+
+    const cookieId = getCookie("staff_Id") ?? "";
+    console.log("Staff Id from cookie:", cookieId);
+    setNurseId(cookieId.trim());
+    setOrgImage(`${cookieOrg.trim()}`);
+    //console.log(`/centerImages/${cookieOrg.trim()}.png`);
   }, []);
 
   // Map paths to tab values for active state
@@ -37,10 +45,10 @@ export default function DashboardPage() {
       <header className="bg-[#6d8a55] text-[#f8f0f0] flex items-center justify-between px-5 py-4">
         <div className="flex items-center gap-4">
           <Image
-            src={`/Mobile-Charter/Center_images/${orgImage}`}
+            src={`/centerImages/${orgImage}.png`}
             alt="Organization logo"
-            width={70}
-            height={70}
+            width={150}
+            height={150}
             className="rounded"
           />
         </div>
