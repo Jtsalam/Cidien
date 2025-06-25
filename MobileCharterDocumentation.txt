@@ -59,7 +59,7 @@ done by both blinking of a red light, beeping, or both.
 what we have so far to a NextJS project.
 
 
-REGISTER ACCOUNT LOGIC **(DRAFT 2)
+REGISTER ACCOUNT LOGIC **(DRAFT 2)-> ##NOTE: I HAVE MADE CHANGES TO THIS LOGIC AND PUT THEM IN PICTURE FORMAT(FIND IN "DocFiles" folder)
 > Make google form requesting for:
     Name of organization
     Email of organization
@@ -80,6 +80,9 @@ and set up an IT Id and password that can be registered on the system.
 
 > The following pages needed for the latter stages of this process would be done later
 
+[sidenote]: for the logic in the DocFiles folder:
+    > Changing status to "verified" triggers the SVM option
+    > Calendly/zoom option can be replaced by simpling sending a Page of the next steps to take.
 
 
 
