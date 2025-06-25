@@ -7,11 +7,14 @@ import { orgMap } from "@/lib/constants";
 import { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter, usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import LogoutConfirmationModal from "@/components/Dashboard/LogoutConfirmationModal";
 
 export default function DashboardPage() {
   const [displayName, setDisplayName] = useState("");
   const [nurseId, setNurseId] = useState("");
   const [orgImage, setOrgImage] = useState("");
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -28,6 +31,12 @@ export default function DashboardPage() {
     setOrgImage(`${cookieOrg.trim()}`);
     //console.log(`/centerImages/${cookieOrg.trim()}.png`);
   }, []);
+
+  const handleLogout = async () => {
+    await fetch("/api/staff/logout", { method: "POST" });
+    window.location.href = "/Staff/sign-in";
+  };
+
 
   // Map paths to tab values for active state
   const tabRoutes = [
@@ -56,9 +65,9 @@ export default function DashboardPage() {
           <b>Organization Name: {displayName}</b><br/>
           <b>Nurse ID: {nurseId}</b>
         </div>
-        <Link href="/Mobile-Charter/UserLogin/userlogin-form.php" className="underline">
+        <Button variant="ghost" className="underline text-white hover:bg-white/10" onClick={() => setShowLogoutModal(true)}>
           Logout
-        </Link>
+        </Button>
       </header>
 
       <div className="flex justify-center">
@@ -77,6 +86,11 @@ export default function DashboardPage() {
           </TabsList>
         </Tabs>
       </div>
+      <LogoutConfirmationModal
+        open={showLogoutModal}
+        onCancel={() => setShowLogoutModal(false)}
+        onConfirm={handleLogout}
+      />
     </div>
   );
 }
