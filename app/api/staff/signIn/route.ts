@@ -53,6 +53,7 @@ export async function POST(req: Request) {
       if(user && isPasswordCorrect)
       {
         const response = new Response(JSON.stringify({ success: true, role: "staff" }), { status: 200 });
+        response.headers.append("Set-Cookie", `staffSubmitted=true; Path=/; Max-Age=3600; SameSite=Lax`);
         response.headers.append("Set-Cookie", `staff_Id=${encodeURIComponent(staff_Id)}; Path=/; Max-Age=3600; SameSite=Lax`)
         return response
       }
@@ -95,7 +96,10 @@ export async function POST(req: Request) {
 
       // Verifying room login credentials
       if (matchedUser && room) {
-        return new Response(JSON.stringify({ success: true, role: "room" }), { status: 200 });
+        const response = new Response(JSON.stringify({ success: true, role: "room" }), { status: 200 });
+        response.headers.append("Set-Cookie", `roomSubmitted=true; Path=/; Max-Age=3600; SameSite=Lax`);
+        response.headers.append("Set-Cookie", `room_Id=${encodeURIComponent(room_Id)}; Path=/; Max-Age=3600; SameSite=Lax`)
+        return response
       }
     }
   
