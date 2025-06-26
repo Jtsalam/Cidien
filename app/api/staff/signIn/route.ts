@@ -52,8 +52,9 @@ export async function POST(req: Request) {
       // Verifying staff login credentials
       if(user && isPasswordCorrect)
       {
-        const response = new Response(JSON.stringify({ success: true, role: "staff" }), { status: 200 });
+        const response = new Response(JSON.stringify({ success: true, role: user.user_role }), { status: 200 });
         response.headers.append("Set-Cookie", `staffSubmitted=true; Path=/; Max-Age=3600; SameSite=Lax`);
+        response.headers.append("Set-Cookie", `user_role=${encodeURIComponent(user.user_role)}; Path=/; Max-Age=3600; SameSite=Lax`);
         response.headers.append("Set-Cookie", `staff_Id=${encodeURIComponent(staff_Id)}; Path=/; Max-Age=3600; SameSite=Lax`)
         return response
       }
