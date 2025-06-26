@@ -62,10 +62,11 @@ export default function SignInPage() {
   
     if (res.ok && result.success) {
       // 🌟 Redirect based on role or formType
-      if (result.role === "staff" || formType === "staff") {
+      if (result.role === "Staff" || formType === "staff") {
         // router.push("/user-dashboard"); //Where to put alert information
         setStaffError("");
-        alert("Staff signed in successfully!");
+        window.location.href = "/Staff/dashboard";
+        // alert("Staff signed in successfully!");
       } else if (result.role === "room" || formType === "room") {
         // router.push("/room-dashboard");
         setRoomError("");
