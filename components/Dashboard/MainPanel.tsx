@@ -7,7 +7,7 @@ import { useEffect, useState } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { LogOut, Building2, User, Home, Upload, Database, Users } from "lucide-react"
+import { LogOut, Hospital, User, Home, Upload, Database, Users } from "lucide-react"
 import LogoutConfirmationModal from "@/components/Dashboard/LogoutConfirmationModal";
 
 export default function MainPanel() {
@@ -60,7 +60,7 @@ export default function MainPanel() {
       value: "clients",
       path: "/Mobile-Charter/StaffDashboard/clients.php",
       icon: Users,
-      label: "Clients",
+      label: "Patients",
     },
   ]
 
@@ -94,7 +94,7 @@ export default function MainPanel() {
             <div className="hidden md:flex items-center space-x-6">
               <div className="text-right">
                 <div className="flex items-center space-x-2 mb-1">
-                  <Building2 className="w-4 h-4 text-emerald-200" />
+                  <Hospital className="w-4 h-4 text-emerald-200" />
                   <span className="text-sm font-medium text-emerald-100">Organization</span>
                 </div>
                 <p className="font-semibold">{displayName || "Loading..."}</p>
@@ -125,7 +125,7 @@ export default function MainPanel() {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <div className="flex items-center space-x-2 mb-1">
-                  <Building2 className="w-3 h-3 text-emerald-200" />
+                  <Hospital className="w-3 h-3 text-emerald-200" />
                   <span className="text-emerald-100">Organization</span>
                 </div>
                 <p className="font-medium truncate">{displayName || "Loading..."}</p>
