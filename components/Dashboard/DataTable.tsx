@@ -45,6 +45,7 @@ export default function DataTable() {
 
     setLoadingIndex(index)
     const newAudio = new Audio(`http://localhost:5000${url}`)
+    
     newAudio
       .play()
       .then(() => {
@@ -97,6 +98,7 @@ export default function DataTable() {
     })
 
     socket.on("new_transcription", (payload) => {
+      console.log("Incoming payload:", payload)
       console.log("Incoming payload:", payload)
       setIsReceiving(true)
 
