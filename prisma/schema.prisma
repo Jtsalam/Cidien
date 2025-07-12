@@ -59,6 +59,7 @@ model bed_info {
   bed_letter String @db.VarChar(1)
   center_id Int
   is_available Boolean
+  is_assigned Boolean
   assigned_patient_id Int
   assigned_nurse_id Int
   room_info          room_info          @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction)
