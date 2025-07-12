@@ -1,3 +1,1 @@
-# Mobile Charter
-
-Healthcare Charter project for Nurses and Hospitals in Canada
+DEVELOPMENT BRANCH LOCATED IN "experiment/NextJS"
