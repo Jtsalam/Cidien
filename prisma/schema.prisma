@@ -107,4 +107,3 @@ model user_uploads {
 
   @@id([user_id, center_id])
 }
-
