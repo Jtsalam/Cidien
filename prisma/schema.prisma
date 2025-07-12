@@ -15,6 +15,7 @@ model medicalcenter_info {
   website       String          @db.VarChar(400)
   patient_info  patient_info[]
   room_info     room_info[]
+  bed_info      bed_info[]
   room_register room_register[]
   user_info     user_info[]
   user_uploads  user_uploads[]
@@ -28,6 +29,7 @@ model patient_info {
   medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
   patient_uploads    patient_uploads[]
   room_register      room_register[]
+  bed_info           bed_info[]
 }
 
 model patient_uploads {
@@ -46,8 +48,23 @@ model room_info {
   room_number        Int
   center_id          Int
   number_of_beds     Int
+  is_full Boolean
   medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
+  bed_info bed_info[]
   room_register      room_register[]
+}
+model bed_info {
+  bed_id  Int @id @default(autoincrement())
+  room_id Int
+  bed_letter String @db.VarChar(1)
+  center_id Int
+  is_available Boolean
+  assigned_patient_id Int
+  assigned_nurse_id Int
+  room_info          room_info          @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction)
+  medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
+  patient_info       patient_info       @relation(fields: [assigned_patient_id], references: [patient_id], onDelete: NoAction, onUpdate: NoAction)
+  user_info          user_info          @relation(fields: [assigned_nurse_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model room_register {
@@ -74,6 +91,7 @@ model user_info {
   charter_id         String
   medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
   user_uploads       user_uploads[]
+  bed_info bed_info[]
 }
 
 model user_uploads {
@@ -88,3 +106,4 @@ model user_uploads {
 
   @@id([user_id, center_id])
 }
+
