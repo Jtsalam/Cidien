@@ -1,6 +1,6 @@
 *Mobile Charter*
 
-Healthcare Charter project for Nurses and Hospitals in Canada
+Healthcare Charter project for Nurses and Hospitals in Canada <br/>
 TO GET STARTED
 --------------
 Step 1:
