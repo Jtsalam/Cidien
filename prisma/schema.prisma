@@ -11,11 +11,12 @@ datasource db {
 model medicalcenter_info {
   center_id     Int             @id @default(autoincrement())
   center_name   String
-  logo          String          @db.VarChar(400)
-  website       String          @db.VarChar(400)
+  registered_date    DateTime           @db.Date
+  email          String          @db.VarChar(400)
+  address       String          @db.VarChar(400)
+  bed_info      bed_info[]
   patient_info  patient_info[]
   room_info     room_info[]
-  bed_info      bed_info[]
   room_register room_register[]
   user_info     user_info[]
   user_uploads  user_uploads[]
@@ -26,10 +27,10 @@ model patient_info {
   patient_name       String
   registered_date    DateTime           @db.Date
   center_id          Int
+  bed_info           bed_info[]
   medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
   patient_uploads    patient_uploads[]
   room_register      room_register[]
-  bed_info           bed_info[]
 }
 
 model patient_uploads {
@@ -48,24 +49,25 @@ model room_info {
   room_number        Int
   center_id          Int
   number_of_beds     Int
-  is_full Boolean
+  is_full            Boolean            @default(false)
+  bed_info           bed_info[]
   medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
-  bed_info bed_info[]
   room_register      room_register[]
 }
+
 model bed_info {
-  bed_id  Int @id @default(autoincrement())
-  room_id Int
-  bed_letter String @db.VarChar(1)
-  center_id Int
-  is_available Boolean
-  is_assigned Boolean
+  bed_id              Int                @id @default(autoincrement())
+  room_id             Int
+  bed_letter          String             @db.VarChar(1)
+  center_id           Int
+  is_available        Boolean            @default(false)
+  is_assigned         Boolean            @default(false)
   assigned_patient_id Int
-  assigned_nurse_id Int
-  room_info          room_info          @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction)
-  medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
-  patient_info       patient_info       @relation(fields: [assigned_patient_id], references: [patient_id], onDelete: NoAction, onUpdate: NoAction)
-  user_info          user_info          @relation(fields: [assigned_nurse_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  assigned_nurse_id   Int
+  user_info           user_info          @relation(fields: [assigned_nurse_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  patient_info        patient_info       @relation(fields: [assigned_patient_id], references: [patient_id], onDelete: NoAction, onUpdate: NoAction)
+  medicalcenter_info  medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
+  room_info           room_info          @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model room_register {
@@ -90,9 +92,9 @@ model user_info {
   user_role          String
   center_id          Int
   charter_id         String
+  bed_info           bed_info[]
   medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
   user_uploads       user_uploads[]
-  bed_info bed_info[]
 }
 
 model user_uploads {
