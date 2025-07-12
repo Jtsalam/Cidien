@@ -87,6 +87,9 @@ and set up an IT Id and password that can be registered on the system.
 
 
 
+> Transformer model; for medical jargon. Needs to be tightened for accuracy 
+> Edit for texts and version history.
+> Login to charting device with staff ID -> Keep track of Nurse
 
 
 
