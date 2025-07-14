@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button"
 import { LogOut, Hospital, User, Upload, Database, Bed, DoorOpen } from "lucide-react"
 import LogoutConfirmationModal from "@/components/Dashboard/LogoutConfirmationModal"
 import DataTable from "@/components/Dashboard/DataTable"
+import { Mic, StopCircle } from "lucide-react"
+import { processRoomAudio, processClinicalNote } from "@/lib/api"
 
 export default function MainPanel() {
   const [displayName, setDisplayName] = useState("")
@@ -18,6 +20,46 @@ export default function MainPanel() {
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingType, setRecordingType] = useState<'room' | 'note' | null>(null);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+
+  const startRecording = async (type: 'room' | 'note') => {
+    try {
+      setRecordingType(type);
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks: Blob[] = [];
+      
+      recorder.ondataavailable = (e) => chunks.push(e.data);
+      recorder.onstop = async () => {
+        const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+        if (type === 'room') {
+          await processRoomAudio(audioBlob);
+        } else {
+          await processClinicalNote(audioBlob);
+        }
+        setAudioChunks([]);
+      };
+      
+      recorder.start();
+      setMediaRecorder(recorder);
+      setIsRecording(true);
+      setAudioChunks(chunks);
+    } catch (error) {
+      console.error('Recording failed:', error);
+    }
+  };
+  
+  const stopRecording = () => {
+    if (mediaRecorder) {
+      mediaRecorder.stop();
+      mediaRecorder.stream.getTracks().forEach(track => track.stop());
+      setIsRecording(false);
+      setRecordingType(null);
+    }
+  };
 
   // Mock fetching session data (replace with actual logic)
   useEffect(() => {
@@ -163,6 +205,44 @@ export default function MainPanel() {
               </TabsList>
             </Tabs>
           </div>
+        </div>
+      </div>
+      <div className="fixed bottom-6 right-6 z-50">
+        <div className="flex flex-col items-end space-y-3">
+          {isRecording ? (
+            <Button
+              variant="destructive"
+              size="lg"
+              className="rounded-full shadow-lg animate-pulse"
+              onClick={stopRecording}
+            >
+              <StopCircle className="w-5 h-5 mr-2" />
+              Stop Recording
+            </Button>
+          ) : (
+            <>
+              <Button
+                variant="default"
+                size="lg"
+                className="rounded-full shadow-lg bg-emerald-600 hover:bg-emerald-700 text-white"
+                onClick={() => startRecording('room')}
+              >
+                <Mic className="w-5 h-5 mr-2" />
+                Record Room Number
+              </Button>
+              {roomId && (
+                <Button
+                  variant="default"
+                  size="lg"
+                  className="rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 text-white mt-2"
+                  onClick={() => startRecording('note')}
+                >
+                  <Mic className="w-5 h-5 mr-2" />
+                  Record Clinical Note
+                </Button>
+              )}
+            </>
+          )}
         </div>
       </div>
 

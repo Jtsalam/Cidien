@@ -9,7 +9,7 @@ import { Play, Pause, Loader2, Database, Mic, Wifi, WifiOff } from "lucide-react
 import * as Tooltip from "@radix-ui/react-tooltip"
 
 // Initialize socket connection once
-const socket = io("http://localhost:5000") // Adjust to your Flask server address if needed
+const socket = io("http://localhost:3000") // Adjust to your Flask server address if needed
 
 interface RowData {
   index: number
@@ -44,7 +44,7 @@ export default function DataTable() {
     }
 
     setLoadingIndex(index)
-    const newAudio = new Audio(`http://localhost:5000${url}`)
+    const newAudio = new Audio(`http://localhost:3000${url}`)
     
     newAudio
       .play()
@@ -70,7 +70,7 @@ export default function DataTable() {
 
   useEffect(() => {
     // Load existing transcriptions
-    fetch("http://localhost:5000/transcriptions")
+    fetch("http://localhost:3000/transcriptions")
       .then((res) => res.json())
       .then((json) => {
         setData(

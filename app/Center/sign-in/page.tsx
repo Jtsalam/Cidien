@@ -1,4 +1,5 @@
-"use client";
+//app/Center/sign-in/page.tsx
+'use client';
 
 import SelectOrganizationForm from "@/components/Center/SelectOrganizationForm";
 
