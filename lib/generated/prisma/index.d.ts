@@ -34,6 +34,11 @@ export type patient_uploads = $Result.DefaultSelection<Prisma.$patient_uploadsPa
  */
 export type room_info = $Result.DefaultSelection<Prisma.$room_infoPayload>
 /**
+ * Model bed_info
+ * 
+ */
+export type bed_info = $Result.DefaultSelection<Prisma.$bed_infoPayload>
+/**
  * Model room_register
  * 
  */
@@ -215,6 +220,16 @@ export class PrismaClient<
   get room_info(): Prisma.room_infoDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.bed_info`: Exposes CRUD operations for the **bed_info** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Bed_infos
+    * const bed_infos = await prisma.bed_info.findMany()
+    * ```
+    */
+  get bed_info(): Prisma.bed_infoDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.room_register`: Exposes CRUD operations for the **room_register** model.
     * Example usage:
     * ```ts
@@ -301,8 +316,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.7.0
-   * Query Engine version: 3cff47a7f5d65c3ea74883f1d736e41d68ce91ed
+   * Prisma Client JS version: 6.11.1
+   * Query Engine version: f40f79ec31188888a2e33acda0ecc8fd10a853a9
    */
   export type PrismaVersion = {
     client: string
@@ -687,6 +702,7 @@ export namespace Prisma {
     patient_info: 'patient_info',
     patient_uploads: 'patient_uploads',
     room_info: 'room_info',
+    bed_info: 'bed_info',
     room_register: 'room_register',
     user_info: 'user_info',
     user_uploads: 'user_uploads'
@@ -708,7 +724,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "medicalcenter_info" | "patient_info" | "patient_uploads" | "room_info" | "room_register" | "user_info" | "user_uploads"
+      modelProps: "medicalcenter_info" | "patient_info" | "patient_uploads" | "room_info" | "bed_info" | "room_register" | "user_info" | "user_uploads"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1005,6 +1021,80 @@ export namespace Prisma {
           count: {
             args: Prisma.room_infoCountArgs<ExtArgs>
             result: $Utils.Optional<Room_infoCountAggregateOutputType> | number
+          }
+        }
+      }
+      bed_info: {
+        payload: Prisma.$bed_infoPayload<ExtArgs>
+        fields: Prisma.bed_infoFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.bed_infoFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$bed_infoPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.bed_infoFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$bed_infoPayload>
+          }
+          findFirst: {
+            args: Prisma.bed_infoFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$bed_infoPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.bed_infoFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$bed_infoPayload>
+          }
+          findMany: {
+            args: Prisma.bed_infoFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$bed_infoPayload>[]
+          }
+          create: {
+            args: Prisma.bed_infoCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$bed_infoPayload>
+          }
+          createMany: {
+            args: Prisma.bed_infoCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.bed_infoCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$bed_infoPayload>[]
+          }
+          delete: {
+            args: Prisma.bed_infoDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$bed_infoPayload>
+          }
+          update: {
+            args: Prisma.bed_infoUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$bed_infoPayload>
+          }
+          deleteMany: {
+            args: Prisma.bed_infoDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.bed_infoUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.bed_infoUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$bed_infoPayload>[]
+          }
+          upsert: {
+            args: Prisma.bed_infoUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$bed_infoPayload>
+          }
+          aggregate: {
+            args: Prisma.Bed_infoAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBed_info>
+          }
+          groupBy: {
+            args: Prisma.bed_infoGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Bed_infoGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.bed_infoCountArgs<ExtArgs>
+            result: $Utils.Optional<Bed_infoCountAggregateOutputType> | number
           }
         }
       }
@@ -1318,6 +1408,7 @@ export namespace Prisma {
     patient_info?: patient_infoOmit
     patient_uploads?: patient_uploadsOmit
     room_info?: room_infoOmit
+    bed_info?: bed_infoOmit
     room_register?: room_registerOmit
     user_info?: user_infoOmit
     user_uploads?: user_uploadsOmit
@@ -1482,11 +1573,13 @@ export namespace Prisma {
    */
 
   export type Patient_infoCountOutputType = {
+    bed_info: number
     patient_uploads: number
     room_register: number
   }
 
   export type Patient_infoCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bed_info?: boolean | Patient_infoCountOutputTypeCountBed_infoArgs
     patient_uploads?: boolean | Patient_infoCountOutputTypeCountPatient_uploadsArgs
     room_register?: boolean | Patient_infoCountOutputTypeCountRoom_registerArgs
   }
@@ -1500,6 +1593,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the Patient_infoCountOutputType
      */
     select?: Patient_infoCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * Patient_infoCountOutputType without action
+   */
+  export type Patient_infoCountOutputTypeCountBed_infoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: bed_infoWhereInput
   }
 
   /**
@@ -1522,10 +1622,12 @@ export namespace Prisma {
    */
 
   export type Room_infoCountOutputType = {
+    bed_info: number
     room_register: number
   }
 
   export type Room_infoCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bed_info?: boolean | Room_infoCountOutputTypeCountBed_infoArgs
     room_register?: boolean | Room_infoCountOutputTypeCountRoom_registerArgs
   }
 
@@ -1543,6 +1645,13 @@ export namespace Prisma {
   /**
    * Room_infoCountOutputType without action
    */
+  export type Room_infoCountOutputTypeCountBed_infoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: bed_infoWhereInput
+  }
+
+  /**
+   * Room_infoCountOutputType without action
+   */
   export type Room_infoCountOutputTypeCountRoom_registerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: room_registerWhereInput
   }
@@ -1553,10 +1662,12 @@ export namespace Prisma {
    */
 
   export type User_infoCountOutputType = {
+    bed_info: number
     user_uploads: number
   }
 
   export type User_infoCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bed_info?: boolean | User_infoCountOutputTypeCountBed_infoArgs
     user_uploads?: boolean | User_infoCountOutputTypeCountUser_uploadsArgs
   }
 
@@ -1569,6 +1680,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the User_infoCountOutputType
      */
     select?: User_infoCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * User_infoCountOutputType without action
+   */
+  export type User_infoCountOutputTypeCountBed_infoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: bed_infoWhereInput
   }
 
   /**
@@ -1606,22 +1724,25 @@ export namespace Prisma {
   export type Medicalcenter_infoMinAggregateOutputType = {
     center_id: number | null
     center_name: string | null
-    logo: string | null
-    website: string | null
+    address: string | null
+    email: string | null
+    registered_date: Date | null
   }
 
   export type Medicalcenter_infoMaxAggregateOutputType = {
     center_id: number | null
     center_name: string | null
-    logo: string | null
-    website: string | null
+    address: string | null
+    email: string | null
+    registered_date: Date | null
   }
 
   export type Medicalcenter_infoCountAggregateOutputType = {
     center_id: number
     center_name: number
-    logo: number
-    website: number
+    address: number
+    email: number
+    registered_date: number
     _all: number
   }
 
@@ -1637,22 +1758,25 @@ export namespace Prisma {
   export type Medicalcenter_infoMinAggregateInputType = {
     center_id?: true
     center_name?: true
-    logo?: true
-    website?: true
+    address?: true
+    email?: true
+    registered_date?: true
   }
 
   export type Medicalcenter_infoMaxAggregateInputType = {
     center_id?: true
     center_name?: true
-    logo?: true
-    website?: true
+    address?: true
+    email?: true
+    registered_date?: true
   }
 
   export type Medicalcenter_infoCountAggregateInputType = {
     center_id?: true
     center_name?: true
-    logo?: true
-    website?: true
+    address?: true
+    email?: true
+    registered_date?: true
     _all?: true
   }
 
@@ -1745,8 +1869,9 @@ export namespace Prisma {
   export type Medicalcenter_infoGroupByOutputType = {
     center_id: number
     center_name: string
-    logo: string
-    website: string
+    address: string | null
+    email: string | null
+    registered_date: Date | null
     _count: Medicalcenter_infoCountAggregateOutputType | null
     _avg: Medicalcenter_infoAvgAggregateOutputType | null
     _sum: Medicalcenter_infoSumAggregateOutputType | null
@@ -1771,8 +1896,9 @@ export namespace Prisma {
   export type medicalcenter_infoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     center_id?: boolean
     center_name?: boolean
-    logo?: boolean
-    website?: boolean
+    address?: boolean
+    email?: boolean
+    registered_date?: boolean
     patient_info?: boolean | medicalcenter_info$patient_infoArgs<ExtArgs>
     room_info?: boolean | medicalcenter_info$room_infoArgs<ExtArgs>
     room_register?: boolean | medicalcenter_info$room_registerArgs<ExtArgs>
@@ -1784,25 +1910,28 @@ export namespace Prisma {
   export type medicalcenter_infoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     center_id?: boolean
     center_name?: boolean
-    logo?: boolean
-    website?: boolean
+    address?: boolean
+    email?: boolean
+    registered_date?: boolean
   }, ExtArgs["result"]["medicalcenter_info"]>
 
   export type medicalcenter_infoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     center_id?: boolean
     center_name?: boolean
-    logo?: boolean
-    website?: boolean
+    address?: boolean
+    email?: boolean
+    registered_date?: boolean
   }, ExtArgs["result"]["medicalcenter_info"]>
 
   export type medicalcenter_infoSelectScalar = {
     center_id?: boolean
     center_name?: boolean
-    logo?: boolean
-    website?: boolean
+    address?: boolean
+    email?: boolean
+    registered_date?: boolean
   }
 
-  export type medicalcenter_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"center_id" | "center_name" | "logo" | "website", ExtArgs["result"]["medicalcenter_info"]>
+  export type medicalcenter_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"center_id" | "center_name" | "address" | "email" | "registered_date", ExtArgs["result"]["medicalcenter_info"]>
   export type medicalcenter_infoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     patient_info?: boolean | medicalcenter_info$patient_infoArgs<ExtArgs>
     room_info?: boolean | medicalcenter_info$room_infoArgs<ExtArgs>
@@ -1826,8 +1955,9 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       center_id: number
       center_name: string
-      logo: string
-      website: string
+      address: string | null
+      email: string | null
+      registered_date: Date | null
     }, ExtArgs["result"]["medicalcenter_info"]>
     composites: {}
   }
@@ -2258,8 +2388,9 @@ export namespace Prisma {
   interface medicalcenter_infoFieldRefs {
     readonly center_id: FieldRef<"medicalcenter_info", 'Int'>
     readonly center_name: FieldRef<"medicalcenter_info", 'String'>
-    readonly logo: FieldRef<"medicalcenter_info", 'String'>
-    readonly website: FieldRef<"medicalcenter_info", 'String'>
+    readonly address: FieldRef<"medicalcenter_info", 'String'>
+    readonly email: FieldRef<"medicalcenter_info", 'String'>
+    readonly registered_date: FieldRef<"medicalcenter_info", 'DateTime'>
   }
     
 
@@ -2980,6 +3111,7 @@ export namespace Prisma {
     patient_name?: boolean
     registered_date?: boolean
     center_id?: boolean
+    bed_info?: boolean | patient_info$bed_infoArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
     patient_uploads?: boolean | patient_info$patient_uploadsArgs<ExtArgs>
     room_register?: boolean | patient_info$room_registerArgs<ExtArgs>
@@ -3011,6 +3143,7 @@ export namespace Prisma {
 
   export type patient_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"patient_id" | "patient_name" | "registered_date" | "center_id", ExtArgs["result"]["patient_info"]>
   export type patient_infoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bed_info?: boolean | patient_info$bed_infoArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
     patient_uploads?: boolean | patient_info$patient_uploadsArgs<ExtArgs>
     room_register?: boolean | patient_info$room_registerArgs<ExtArgs>
@@ -3026,6 +3159,7 @@ export namespace Prisma {
   export type $patient_infoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "patient_info"
     objects: {
+      bed_info: Prisma.$bed_infoPayload<ExtArgs>[]
       medicalcenter_info: Prisma.$medicalcenter_infoPayload<ExtArgs>
       patient_uploads: Prisma.$patient_uploadsPayload<ExtArgs>[]
       room_register: Prisma.$room_registerPayload<ExtArgs>[]
@@ -3429,6 +3563,7 @@ export namespace Prisma {
    */
   export interface Prisma__patient_infoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    bed_info<T extends patient_info$bed_infoArgs<ExtArgs> = {}>(args?: Subset<T, patient_info$bed_infoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     medicalcenter_info<T extends medicalcenter_infoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, medicalcenter_infoDefaultArgs<ExtArgs>>): Prisma__medicalcenter_infoClient<$Result.GetResult<Prisma.$medicalcenter_infoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     patient_uploads<T extends patient_info$patient_uploadsArgs<ExtArgs> = {}>(args?: Subset<T, patient_info$patient_uploadsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$patient_uploadsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     room_register<T extends patient_info$room_registerArgs<ExtArgs> = {}>(args?: Subset<T, patient_info$room_registerArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$room_registerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3858,6 +3993,30 @@ export namespace Prisma {
      * Limit how many patient_infos to delete.
      */
     limit?: number
+  }
+
+  /**
+   * patient_info.bed_info
+   */
+  export type patient_info$bed_infoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the bed_info
+     */
+    select?: bed_infoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the bed_info
+     */
+    omit?: bed_infoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: bed_infoInclude<ExtArgs> | null
+    where?: bed_infoWhereInput
+    orderBy?: bed_infoOrderByWithRelationInput | bed_infoOrderByWithRelationInput[]
+    cursor?: bed_infoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Bed_infoScalarFieldEnum | Bed_infoScalarFieldEnum[]
   }
 
   /**
@@ -5054,6 +5213,7 @@ export namespace Prisma {
     room_number: number | null
     center_id: number | null
     number_of_beds: number | null
+    is_full: boolean | null
   }
 
   export type Room_infoMaxAggregateOutputType = {
@@ -5061,6 +5221,7 @@ export namespace Prisma {
     room_number: number | null
     center_id: number | null
     number_of_beds: number | null
+    is_full: boolean | null
   }
 
   export type Room_infoCountAggregateOutputType = {
@@ -5068,6 +5229,7 @@ export namespace Prisma {
     room_number: number
     center_id: number
     number_of_beds: number
+    is_full: number
     _all: number
   }
 
@@ -5091,6 +5253,7 @@ export namespace Prisma {
     room_number?: true
     center_id?: true
     number_of_beds?: true
+    is_full?: true
   }
 
   export type Room_infoMaxAggregateInputType = {
@@ -5098,6 +5261,7 @@ export namespace Prisma {
     room_number?: true
     center_id?: true
     number_of_beds?: true
+    is_full?: true
   }
 
   export type Room_infoCountAggregateInputType = {
@@ -5105,6 +5269,7 @@ export namespace Prisma {
     room_number?: true
     center_id?: true
     number_of_beds?: true
+    is_full?: true
     _all?: true
   }
 
@@ -5199,6 +5364,7 @@ export namespace Prisma {
     room_number: number
     center_id: number
     number_of_beds: number
+    is_full: boolean
     _count: Room_infoCountAggregateOutputType | null
     _avg: Room_infoAvgAggregateOutputType | null
     _sum: Room_infoSumAggregateOutputType | null
@@ -5225,6 +5391,8 @@ export namespace Prisma {
     room_number?: boolean
     center_id?: boolean
     number_of_beds?: boolean
+    is_full?: boolean
+    bed_info?: boolean | room_info$bed_infoArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
     room_register?: boolean | room_info$room_registerArgs<ExtArgs>
     _count?: boolean | Room_infoCountOutputTypeDefaultArgs<ExtArgs>
@@ -5235,6 +5403,7 @@ export namespace Prisma {
     room_number?: boolean
     center_id?: boolean
     number_of_beds?: boolean
+    is_full?: boolean
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["room_info"]>
 
@@ -5243,6 +5412,7 @@ export namespace Prisma {
     room_number?: boolean
     center_id?: boolean
     number_of_beds?: boolean
+    is_full?: boolean
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["room_info"]>
 
@@ -5251,10 +5421,12 @@ export namespace Prisma {
     room_number?: boolean
     center_id?: boolean
     number_of_beds?: boolean
+    is_full?: boolean
   }
 
-  export type room_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"room_id" | "room_number" | "center_id" | "number_of_beds", ExtArgs["result"]["room_info"]>
+  export type room_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"room_id" | "room_number" | "center_id" | "number_of_beds" | "is_full", ExtArgs["result"]["room_info"]>
   export type room_infoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bed_info?: boolean | room_info$bed_infoArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
     room_register?: boolean | room_info$room_registerArgs<ExtArgs>
     _count?: boolean | Room_infoCountOutputTypeDefaultArgs<ExtArgs>
@@ -5269,6 +5441,7 @@ export namespace Prisma {
   export type $room_infoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "room_info"
     objects: {
+      bed_info: Prisma.$bed_infoPayload<ExtArgs>[]
       medicalcenter_info: Prisma.$medicalcenter_infoPayload<ExtArgs>
       room_register: Prisma.$room_registerPayload<ExtArgs>[]
     }
@@ -5277,6 +5450,7 @@ export namespace Prisma {
       room_number: number
       center_id: number
       number_of_beds: number
+      is_full: boolean
     }, ExtArgs["result"]["room_info"]>
     composites: {}
   }
@@ -5671,6 +5845,7 @@ export namespace Prisma {
    */
   export interface Prisma__room_infoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    bed_info<T extends room_info$bed_infoArgs<ExtArgs> = {}>(args?: Subset<T, room_info$bed_infoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     medicalcenter_info<T extends medicalcenter_infoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, medicalcenter_infoDefaultArgs<ExtArgs>>): Prisma__medicalcenter_infoClient<$Result.GetResult<Prisma.$medicalcenter_infoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     room_register<T extends room_info$room_registerArgs<ExtArgs> = {}>(args?: Subset<T, room_info$room_registerArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$room_registerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -5706,6 +5881,7 @@ export namespace Prisma {
     readonly room_number: FieldRef<"room_info", 'Int'>
     readonly center_id: FieldRef<"room_info", 'Int'>
     readonly number_of_beds: FieldRef<"room_info", 'Int'>
+    readonly is_full: FieldRef<"room_info", 'Boolean'>
   }
     
 
@@ -6102,6 +6278,30 @@ export namespace Prisma {
   }
 
   /**
+   * room_info.bed_info
+   */
+  export type room_info$bed_infoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the bed_info
+     */
+    select?: bed_infoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the bed_info
+     */
+    omit?: bed_infoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: bed_infoInclude<ExtArgs> | null
+    where?: bed_infoWhereInput
+    orderBy?: bed_infoOrderByWithRelationInput | bed_infoOrderByWithRelationInput[]
+    cursor?: bed_infoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Bed_infoScalarFieldEnum | Bed_infoScalarFieldEnum[]
+  }
+
+  /**
    * room_info.room_register
    */
   export type room_info$room_registerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6141,6 +6341,1190 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: room_infoInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model bed_info
+   */
+
+  export type AggregateBed_info = {
+    _count: Bed_infoCountAggregateOutputType | null
+    _avg: Bed_infoAvgAggregateOutputType | null
+    _sum: Bed_infoSumAggregateOutputType | null
+    _min: Bed_infoMinAggregateOutputType | null
+    _max: Bed_infoMaxAggregateOutputType | null
+  }
+
+  export type Bed_infoAvgAggregateOutputType = {
+    bed_id: number | null
+    room_id: number | null
+    assigned_patient_id: number | null
+    assigned_nurse_id: number | null
+  }
+
+  export type Bed_infoSumAggregateOutputType = {
+    bed_id: number | null
+    room_id: number | null
+    assigned_patient_id: number | null
+    assigned_nurse_id: number | null
+  }
+
+  export type Bed_infoMinAggregateOutputType = {
+    bed_id: number | null
+    room_id: number | null
+    bed_letter: string | null
+    is_available: boolean | null
+    is_assigned: boolean | null
+    assigned_patient_id: number | null
+    assigned_nurse_id: number | null
+  }
+
+  export type Bed_infoMaxAggregateOutputType = {
+    bed_id: number | null
+    room_id: number | null
+    bed_letter: string | null
+    is_available: boolean | null
+    is_assigned: boolean | null
+    assigned_patient_id: number | null
+    assigned_nurse_id: number | null
+  }
+
+  export type Bed_infoCountAggregateOutputType = {
+    bed_id: number
+    room_id: number
+    bed_letter: number
+    is_available: number
+    is_assigned: number
+    assigned_patient_id: number
+    assigned_nurse_id: number
+    _all: number
+  }
+
+
+  export type Bed_infoAvgAggregateInputType = {
+    bed_id?: true
+    room_id?: true
+    assigned_patient_id?: true
+    assigned_nurse_id?: true
+  }
+
+  export type Bed_infoSumAggregateInputType = {
+    bed_id?: true
+    room_id?: true
+    assigned_patient_id?: true
+    assigned_nurse_id?: true
+  }
+
+  export type Bed_infoMinAggregateInputType = {
+    bed_id?: true
+    room_id?: true
+    bed_letter?: true
+    is_available?: true
+    is_assigned?: true
+    assigned_patient_id?: true
+    assigned_nurse_id?: true
+  }
+
+  export type Bed_infoMaxAggregateInputType = {
+    bed_id?: true
+    room_id?: true
+    bed_letter?: true
+    is_available?: true
+    is_assigned?: true
+    assigned_patient_id?: true
+    assigned_nurse_id?: true
+  }
+
+  export type Bed_infoCountAggregateInputType = {
+    bed_id?: true
+    room_id?: true
+    bed_letter?: true
+    is_available?: true
+    is_assigned?: true
+    assigned_patient_id?: true
+    assigned_nurse_id?: true
+    _all?: true
+  }
+
+  export type Bed_infoAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which bed_info to aggregate.
+     */
+    where?: bed_infoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of bed_infos to fetch.
+     */
+    orderBy?: bed_infoOrderByWithRelationInput | bed_infoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: bed_infoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` bed_infos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` bed_infos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned bed_infos
+    **/
+    _count?: true | Bed_infoCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Bed_infoAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Bed_infoSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Bed_infoMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Bed_infoMaxAggregateInputType
+  }
+
+  export type GetBed_infoAggregateType<T extends Bed_infoAggregateArgs> = {
+        [P in keyof T & keyof AggregateBed_info]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBed_info[P]>
+      : GetScalarType<T[P], AggregateBed_info[P]>
+  }
+
+
+
+
+  export type bed_infoGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: bed_infoWhereInput
+    orderBy?: bed_infoOrderByWithAggregationInput | bed_infoOrderByWithAggregationInput[]
+    by: Bed_infoScalarFieldEnum[] | Bed_infoScalarFieldEnum
+    having?: bed_infoScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Bed_infoCountAggregateInputType | true
+    _avg?: Bed_infoAvgAggregateInputType
+    _sum?: Bed_infoSumAggregateInputType
+    _min?: Bed_infoMinAggregateInputType
+    _max?: Bed_infoMaxAggregateInputType
+  }
+
+  export type Bed_infoGroupByOutputType = {
+    bed_id: number
+    room_id: number
+    bed_letter: string
+    is_available: boolean
+    is_assigned: boolean
+    assigned_patient_id: number | null
+    assigned_nurse_id: number | null
+    _count: Bed_infoCountAggregateOutputType | null
+    _avg: Bed_infoAvgAggregateOutputType | null
+    _sum: Bed_infoSumAggregateOutputType | null
+    _min: Bed_infoMinAggregateOutputType | null
+    _max: Bed_infoMaxAggregateOutputType | null
+  }
+
+  type GetBed_infoGroupByPayload<T extends bed_infoGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Bed_infoGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Bed_infoGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Bed_infoGroupByOutputType[P]>
+            : GetScalarType<T[P], Bed_infoGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type bed_infoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    bed_id?: boolean
+    room_id?: boolean
+    bed_letter?: boolean
+    is_available?: boolean
+    is_assigned?: boolean
+    assigned_patient_id?: boolean
+    assigned_nurse_id?: boolean
+    user_info?: boolean | bed_info$user_infoArgs<ExtArgs>
+    patient_info?: boolean | bed_info$patient_infoArgs<ExtArgs>
+    room_info?: boolean | room_infoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["bed_info"]>
+
+  export type bed_infoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    bed_id?: boolean
+    room_id?: boolean
+    bed_letter?: boolean
+    is_available?: boolean
+    is_assigned?: boolean
+    assigned_patient_id?: boolean
+    assigned_nurse_id?: boolean
+    user_info?: boolean | bed_info$user_infoArgs<ExtArgs>
+    patient_info?: boolean | bed_info$patient_infoArgs<ExtArgs>
+    room_info?: boolean | room_infoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["bed_info"]>
+
+  export type bed_infoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    bed_id?: boolean
+    room_id?: boolean
+    bed_letter?: boolean
+    is_available?: boolean
+    is_assigned?: boolean
+    assigned_patient_id?: boolean
+    assigned_nurse_id?: boolean
+    user_info?: boolean | bed_info$user_infoArgs<ExtArgs>
+    patient_info?: boolean | bed_info$patient_infoArgs<ExtArgs>
+    room_info?: boolean | room_infoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["bed_info"]>
+
+  export type bed_infoSelectScalar = {
+    bed_id?: boolean
+    room_id?: boolean
+    bed_letter?: boolean
+    is_available?: boolean
+    is_assigned?: boolean
+    assigned_patient_id?: boolean
+    assigned_nurse_id?: boolean
+  }
+
+  export type bed_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"bed_id" | "room_id" | "bed_letter" | "is_available" | "is_assigned" | "assigned_patient_id" | "assigned_nurse_id", ExtArgs["result"]["bed_info"]>
+  export type bed_infoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user_info?: boolean | bed_info$user_infoArgs<ExtArgs>
+    patient_info?: boolean | bed_info$patient_infoArgs<ExtArgs>
+    room_info?: boolean | room_infoDefaultArgs<ExtArgs>
+  }
+  export type bed_infoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user_info?: boolean | bed_info$user_infoArgs<ExtArgs>
+    patient_info?: boolean | bed_info$patient_infoArgs<ExtArgs>
+    room_info?: boolean | room_infoDefaultArgs<ExtArgs>
+  }
+  export type bed_infoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user_info?: boolean | bed_info$user_infoArgs<ExtArgs>
+    patient_info?: boolean | bed_info$patient_infoArgs<ExtArgs>
+    room_info?: boolean | room_infoDefaultArgs<ExtArgs>
+  }
+
+  export type $bed_infoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "bed_info"
+    objects: {
+      user_info: Prisma.$user_infoPayload<ExtArgs> | null
+      patient_info: Prisma.$patient_infoPayload<ExtArgs> | null
+      room_info: Prisma.$room_infoPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      bed_id: number
+      room_id: number
+      bed_letter: string
+      is_available: boolean
+      is_assigned: boolean
+      assigned_patient_id: number | null
+      assigned_nurse_id: number | null
+    }, ExtArgs["result"]["bed_info"]>
+    composites: {}
+  }
+
+  type bed_infoGetPayload<S extends boolean | null | undefined | bed_infoDefaultArgs> = $Result.GetResult<Prisma.$bed_infoPayload, S>
+
+  type bed_infoCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<bed_infoFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Bed_infoCountAggregateInputType | true
+    }
+
+  export interface bed_infoDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['bed_info'], meta: { name: 'bed_info' } }
+    /**
+     * Find zero or one Bed_info that matches the filter.
+     * @param {bed_infoFindUniqueArgs} args - Arguments to find a Bed_info
+     * @example
+     * // Get one Bed_info
+     * const bed_info = await prisma.bed_info.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends bed_infoFindUniqueArgs>(args: SelectSubset<T, bed_infoFindUniqueArgs<ExtArgs>>): Prisma__bed_infoClient<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Bed_info that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {bed_infoFindUniqueOrThrowArgs} args - Arguments to find a Bed_info
+     * @example
+     * // Get one Bed_info
+     * const bed_info = await prisma.bed_info.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends bed_infoFindUniqueOrThrowArgs>(args: SelectSubset<T, bed_infoFindUniqueOrThrowArgs<ExtArgs>>): Prisma__bed_infoClient<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Bed_info that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {bed_infoFindFirstArgs} args - Arguments to find a Bed_info
+     * @example
+     * // Get one Bed_info
+     * const bed_info = await prisma.bed_info.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends bed_infoFindFirstArgs>(args?: SelectSubset<T, bed_infoFindFirstArgs<ExtArgs>>): Prisma__bed_infoClient<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Bed_info that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {bed_infoFindFirstOrThrowArgs} args - Arguments to find a Bed_info
+     * @example
+     * // Get one Bed_info
+     * const bed_info = await prisma.bed_info.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends bed_infoFindFirstOrThrowArgs>(args?: SelectSubset<T, bed_infoFindFirstOrThrowArgs<ExtArgs>>): Prisma__bed_infoClient<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Bed_infos that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {bed_infoFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Bed_infos
+     * const bed_infos = await prisma.bed_info.findMany()
+     * 
+     * // Get first 10 Bed_infos
+     * const bed_infos = await prisma.bed_info.findMany({ take: 10 })
+     * 
+     * // Only select the `bed_id`
+     * const bed_infoWithBed_idOnly = await prisma.bed_info.findMany({ select: { bed_id: true } })
+     * 
+     */
+    findMany<T extends bed_infoFindManyArgs>(args?: SelectSubset<T, bed_infoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Bed_info.
+     * @param {bed_infoCreateArgs} args - Arguments to create a Bed_info.
+     * @example
+     * // Create one Bed_info
+     * const Bed_info = await prisma.bed_info.create({
+     *   data: {
+     *     // ... data to create a Bed_info
+     *   }
+     * })
+     * 
+     */
+    create<T extends bed_infoCreateArgs>(args: SelectSubset<T, bed_infoCreateArgs<ExtArgs>>): Prisma__bed_infoClient<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Bed_infos.
+     * @param {bed_infoCreateManyArgs} args - Arguments to create many Bed_infos.
+     * @example
+     * // Create many Bed_infos
+     * const bed_info = await prisma.bed_info.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends bed_infoCreateManyArgs>(args?: SelectSubset<T, bed_infoCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Bed_infos and returns the data saved in the database.
+     * @param {bed_infoCreateManyAndReturnArgs} args - Arguments to create many Bed_infos.
+     * @example
+     * // Create many Bed_infos
+     * const bed_info = await prisma.bed_info.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Bed_infos and only return the `bed_id`
+     * const bed_infoWithBed_idOnly = await prisma.bed_info.createManyAndReturn({
+     *   select: { bed_id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends bed_infoCreateManyAndReturnArgs>(args?: SelectSubset<T, bed_infoCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Bed_info.
+     * @param {bed_infoDeleteArgs} args - Arguments to delete one Bed_info.
+     * @example
+     * // Delete one Bed_info
+     * const Bed_info = await prisma.bed_info.delete({
+     *   where: {
+     *     // ... filter to delete one Bed_info
+     *   }
+     * })
+     * 
+     */
+    delete<T extends bed_infoDeleteArgs>(args: SelectSubset<T, bed_infoDeleteArgs<ExtArgs>>): Prisma__bed_infoClient<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Bed_info.
+     * @param {bed_infoUpdateArgs} args - Arguments to update one Bed_info.
+     * @example
+     * // Update one Bed_info
+     * const bed_info = await prisma.bed_info.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends bed_infoUpdateArgs>(args: SelectSubset<T, bed_infoUpdateArgs<ExtArgs>>): Prisma__bed_infoClient<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Bed_infos.
+     * @param {bed_infoDeleteManyArgs} args - Arguments to filter Bed_infos to delete.
+     * @example
+     * // Delete a few Bed_infos
+     * const { count } = await prisma.bed_info.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends bed_infoDeleteManyArgs>(args?: SelectSubset<T, bed_infoDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Bed_infos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {bed_infoUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Bed_infos
+     * const bed_info = await prisma.bed_info.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends bed_infoUpdateManyArgs>(args: SelectSubset<T, bed_infoUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Bed_infos and returns the data updated in the database.
+     * @param {bed_infoUpdateManyAndReturnArgs} args - Arguments to update many Bed_infos.
+     * @example
+     * // Update many Bed_infos
+     * const bed_info = await prisma.bed_info.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Bed_infos and only return the `bed_id`
+     * const bed_infoWithBed_idOnly = await prisma.bed_info.updateManyAndReturn({
+     *   select: { bed_id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends bed_infoUpdateManyAndReturnArgs>(args: SelectSubset<T, bed_infoUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Bed_info.
+     * @param {bed_infoUpsertArgs} args - Arguments to update or create a Bed_info.
+     * @example
+     * // Update or create a Bed_info
+     * const bed_info = await prisma.bed_info.upsert({
+     *   create: {
+     *     // ... data to create a Bed_info
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Bed_info we want to update
+     *   }
+     * })
+     */
+    upsert<T extends bed_infoUpsertArgs>(args: SelectSubset<T, bed_infoUpsertArgs<ExtArgs>>): Prisma__bed_infoClient<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Bed_infos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {bed_infoCountArgs} args - Arguments to filter Bed_infos to count.
+     * @example
+     * // Count the number of Bed_infos
+     * const count = await prisma.bed_info.count({
+     *   where: {
+     *     // ... the filter for the Bed_infos we want to count
+     *   }
+     * })
+    **/
+    count<T extends bed_infoCountArgs>(
+      args?: Subset<T, bed_infoCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Bed_infoCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Bed_info.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Bed_infoAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Bed_infoAggregateArgs>(args: Subset<T, Bed_infoAggregateArgs>): Prisma.PrismaPromise<GetBed_infoAggregateType<T>>
+
+    /**
+     * Group by Bed_info.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {bed_infoGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends bed_infoGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: bed_infoGroupByArgs['orderBy'] }
+        : { orderBy?: bed_infoGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, bed_infoGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBed_infoGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the bed_info model
+   */
+  readonly fields: bed_infoFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for bed_info.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__bed_infoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user_info<T extends bed_info$user_infoArgs<ExtArgs> = {}>(args?: Subset<T, bed_info$user_infoArgs<ExtArgs>>): Prisma__user_infoClient<$Result.GetResult<Prisma.$user_infoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    patient_info<T extends bed_info$patient_infoArgs<ExtArgs> = {}>(args?: Subset<T, bed_info$patient_infoArgs<ExtArgs>>): Prisma__patient_infoClient<$Result.GetResult<Prisma.$patient_infoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    room_info<T extends room_infoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, room_infoDefaultArgs<ExtArgs>>): Prisma__room_infoClient<$Result.GetResult<Prisma.$room_infoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the bed_info model
+   */
+  interface bed_infoFieldRefs {
+    readonly bed_id: FieldRef<"bed_info", 'Int'>
+    readonly room_id: FieldRef<"bed_info", 'Int'>
+    readonly bed_letter: FieldRef<"bed_info", 'String'>
+    readonly is_available: FieldRef<"bed_info", 'Boolean'>
+    readonly is_assigned: FieldRef<"bed_info", 'Boolean'>
+    readonly assigned_patient_id: FieldRef<"bed_info", 'Int'>
+    readonly assigned_nurse_id: FieldRef<"bed_info", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * bed_info findUnique
+   */
+  export type bed_infoFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the bed_info
+     */
+    select?: bed_infoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the bed_info
+     */
+    omit?: bed_infoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: bed_infoInclude<ExtArgs> | null
+    /**
+     * Filter, which bed_info to fetch.
+     */
+    where: bed_infoWhereUniqueInput
+  }
+
+  /**
+   * bed_info findUniqueOrThrow
+   */
+  export type bed_infoFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the bed_info
+     */
+    select?: bed_infoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the bed_info
+     */
+    omit?: bed_infoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: bed_infoInclude<ExtArgs> | null
+    /**
+     * Filter, which bed_info to fetch.
+     */
+    where: bed_infoWhereUniqueInput
+  }
+
+  /**
+   * bed_info findFirst
+   */
+  export type bed_infoFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the bed_info
+     */
+    select?: bed_infoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the bed_info
+     */
+    omit?: bed_infoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: bed_infoInclude<ExtArgs> | null
+    /**
+     * Filter, which bed_info to fetch.
+     */
+    where?: bed_infoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of bed_infos to fetch.
+     */
+    orderBy?: bed_infoOrderByWithRelationInput | bed_infoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for bed_infos.
+     */
+    cursor?: bed_infoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` bed_infos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` bed_infos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of bed_infos.
+     */
+    distinct?: Bed_infoScalarFieldEnum | Bed_infoScalarFieldEnum[]
+  }
+
+  /**
+   * bed_info findFirstOrThrow
+   */
+  export type bed_infoFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the bed_info
+     */
+    select?: bed_infoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the bed_info
+     */
+    omit?: bed_infoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: bed_infoInclude<ExtArgs> | null
+    /**
+     * Filter, which bed_info to fetch.
+     */
+    where?: bed_infoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of bed_infos to fetch.
+     */
+    orderBy?: bed_infoOrderByWithRelationInput | bed_infoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for bed_infos.
+     */
+    cursor?: bed_infoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` bed_infos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` bed_infos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of bed_infos.
+     */
+    distinct?: Bed_infoScalarFieldEnum | Bed_infoScalarFieldEnum[]
+  }
+
+  /**
+   * bed_info findMany
+   */
+  export type bed_infoFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the bed_info
+     */
+    select?: bed_infoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the bed_info
+     */
+    omit?: bed_infoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: bed_infoInclude<ExtArgs> | null
+    /**
+     * Filter, which bed_infos to fetch.
+     */
+    where?: bed_infoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of bed_infos to fetch.
+     */
+    orderBy?: bed_infoOrderByWithRelationInput | bed_infoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing bed_infos.
+     */
+    cursor?: bed_infoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` bed_infos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` bed_infos.
+     */
+    skip?: number
+    distinct?: Bed_infoScalarFieldEnum | Bed_infoScalarFieldEnum[]
+  }
+
+  /**
+   * bed_info create
+   */
+  export type bed_infoCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the bed_info
+     */
+    select?: bed_infoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the bed_info
+     */
+    omit?: bed_infoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: bed_infoInclude<ExtArgs> | null
+    /**
+     * The data needed to create a bed_info.
+     */
+    data: XOR<bed_infoCreateInput, bed_infoUncheckedCreateInput>
+  }
+
+  /**
+   * bed_info createMany
+   */
+  export type bed_infoCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many bed_infos.
+     */
+    data: bed_infoCreateManyInput | bed_infoCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * bed_info createManyAndReturn
+   */
+  export type bed_infoCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the bed_info
+     */
+    select?: bed_infoSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the bed_info
+     */
+    omit?: bed_infoOmit<ExtArgs> | null
+    /**
+     * The data used to create many bed_infos.
+     */
+    data: bed_infoCreateManyInput | bed_infoCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: bed_infoIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * bed_info update
+   */
+  export type bed_infoUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the bed_info
+     */
+    select?: bed_infoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the bed_info
+     */
+    omit?: bed_infoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: bed_infoInclude<ExtArgs> | null
+    /**
+     * The data needed to update a bed_info.
+     */
+    data: XOR<bed_infoUpdateInput, bed_infoUncheckedUpdateInput>
+    /**
+     * Choose, which bed_info to update.
+     */
+    where: bed_infoWhereUniqueInput
+  }
+
+  /**
+   * bed_info updateMany
+   */
+  export type bed_infoUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update bed_infos.
+     */
+    data: XOR<bed_infoUpdateManyMutationInput, bed_infoUncheckedUpdateManyInput>
+    /**
+     * Filter which bed_infos to update
+     */
+    where?: bed_infoWhereInput
+    /**
+     * Limit how many bed_infos to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * bed_info updateManyAndReturn
+   */
+  export type bed_infoUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the bed_info
+     */
+    select?: bed_infoSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the bed_info
+     */
+    omit?: bed_infoOmit<ExtArgs> | null
+    /**
+     * The data used to update bed_infos.
+     */
+    data: XOR<bed_infoUpdateManyMutationInput, bed_infoUncheckedUpdateManyInput>
+    /**
+     * Filter which bed_infos to update
+     */
+    where?: bed_infoWhereInput
+    /**
+     * Limit how many bed_infos to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: bed_infoIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * bed_info upsert
+   */
+  export type bed_infoUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the bed_info
+     */
+    select?: bed_infoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the bed_info
+     */
+    omit?: bed_infoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: bed_infoInclude<ExtArgs> | null
+    /**
+     * The filter to search for the bed_info to update in case it exists.
+     */
+    where: bed_infoWhereUniqueInput
+    /**
+     * In case the bed_info found by the `where` argument doesn't exist, create a new bed_info with this data.
+     */
+    create: XOR<bed_infoCreateInput, bed_infoUncheckedCreateInput>
+    /**
+     * In case the bed_info was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<bed_infoUpdateInput, bed_infoUncheckedUpdateInput>
+  }
+
+  /**
+   * bed_info delete
+   */
+  export type bed_infoDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the bed_info
+     */
+    select?: bed_infoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the bed_info
+     */
+    omit?: bed_infoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: bed_infoInclude<ExtArgs> | null
+    /**
+     * Filter which bed_info to delete.
+     */
+    where: bed_infoWhereUniqueInput
+  }
+
+  /**
+   * bed_info deleteMany
+   */
+  export type bed_infoDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which bed_infos to delete
+     */
+    where?: bed_infoWhereInput
+    /**
+     * Limit how many bed_infos to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * bed_info.user_info
+   */
+  export type bed_info$user_infoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the user_info
+     */
+    select?: user_infoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the user_info
+     */
+    omit?: user_infoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: user_infoInclude<ExtArgs> | null
+    where?: user_infoWhereInput
+  }
+
+  /**
+   * bed_info.patient_info
+   */
+  export type bed_info$patient_infoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the patient_info
+     */
+    select?: patient_infoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the patient_info
+     */
+    omit?: patient_infoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: patient_infoInclude<ExtArgs> | null
+    where?: patient_infoWhereInput
+  }
+
+  /**
+   * bed_info without action
+   */
+  export type bed_infoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the bed_info
+     */
+    select?: bed_infoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the bed_info
+     */
+    omit?: bed_infoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: bed_infoInclude<ExtArgs> | null
   }
 
 
@@ -7495,6 +8879,7 @@ export namespace Prisma {
     user_role?: boolean
     center_id?: boolean
     charter_id?: boolean
+    bed_info?: boolean | user_info$bed_infoArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
     user_uploads?: boolean | user_info$user_uploadsArgs<ExtArgs>
     _count?: boolean | User_infoCountOutputTypeDefaultArgs<ExtArgs>
@@ -7534,6 +8919,7 @@ export namespace Prisma {
 
   export type user_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"user_id" | "user_name" | "staff_id" | "password" | "user_role" | "center_id" | "charter_id", ExtArgs["result"]["user_info"]>
   export type user_infoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bed_info?: boolean | user_info$bed_infoArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
     user_uploads?: boolean | user_info$user_uploadsArgs<ExtArgs>
     _count?: boolean | User_infoCountOutputTypeDefaultArgs<ExtArgs>
@@ -7548,6 +8934,7 @@ export namespace Prisma {
   export type $user_infoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "user_info"
     objects: {
+      bed_info: Prisma.$bed_infoPayload<ExtArgs>[]
       medicalcenter_info: Prisma.$medicalcenter_infoPayload<ExtArgs>
       user_uploads: Prisma.$user_uploadsPayload<ExtArgs>[]
     }
@@ -7953,6 +9340,7 @@ export namespace Prisma {
    */
   export interface Prisma__user_infoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    bed_info<T extends user_info$bed_infoArgs<ExtArgs> = {}>(args?: Subset<T, user_info$bed_infoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     medicalcenter_info<T extends medicalcenter_infoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, medicalcenter_infoDefaultArgs<ExtArgs>>): Prisma__medicalcenter_infoClient<$Result.GetResult<Prisma.$medicalcenter_infoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     user_uploads<T extends user_info$user_uploadsArgs<ExtArgs> = {}>(args?: Subset<T, user_info$user_uploadsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$user_uploadsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -8384,6 +9772,30 @@ export namespace Prisma {
      * Limit how many user_infos to delete.
      */
     limit?: number
+  }
+
+  /**
+   * user_info.bed_info
+   */
+  export type user_info$bed_infoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the bed_info
+     */
+    select?: bed_infoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the bed_info
+     */
+    omit?: bed_infoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: bed_infoInclude<ExtArgs> | null
+    where?: bed_infoWhereInput
+    orderBy?: bed_infoOrderByWithRelationInput | bed_infoOrderByWithRelationInput[]
+    cursor?: bed_infoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Bed_infoScalarFieldEnum | Bed_infoScalarFieldEnum[]
   }
 
   /**
@@ -9563,8 +10975,9 @@ export namespace Prisma {
   export const Medicalcenter_infoScalarFieldEnum: {
     center_id: 'center_id',
     center_name: 'center_name',
-    logo: 'logo',
-    website: 'website'
+    address: 'address',
+    email: 'email',
+    registered_date: 'registered_date'
   };
 
   export type Medicalcenter_infoScalarFieldEnum = (typeof Medicalcenter_infoScalarFieldEnum)[keyof typeof Medicalcenter_infoScalarFieldEnum]
@@ -9595,10 +11008,24 @@ export namespace Prisma {
     room_id: 'room_id',
     room_number: 'room_number',
     center_id: 'center_id',
-    number_of_beds: 'number_of_beds'
+    number_of_beds: 'number_of_beds',
+    is_full: 'is_full'
   };
 
   export type Room_infoScalarFieldEnum = (typeof Room_infoScalarFieldEnum)[keyof typeof Room_infoScalarFieldEnum]
+
+
+  export const Bed_infoScalarFieldEnum: {
+    bed_id: 'bed_id',
+    room_id: 'room_id',
+    bed_letter: 'bed_letter',
+    is_available: 'is_available',
+    is_assigned: 'is_assigned',
+    assigned_patient_id: 'assigned_patient_id',
+    assigned_nurse_id: 'assigned_nurse_id'
+  };
+
+  export type Bed_infoScalarFieldEnum = (typeof Bed_infoScalarFieldEnum)[keyof typeof Bed_infoScalarFieldEnum]
 
 
   export const Room_registerScalarFieldEnum: {
@@ -9654,6 +11081,14 @@ export namespace Prisma {
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
+  export const NullsOrder: {
+    first: 'first',
+    last: 'last'
+  };
+
+  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
   /**
    * Field references
    */
@@ -9702,6 +11137,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -9724,8 +11166,9 @@ export namespace Prisma {
     NOT?: medicalcenter_infoWhereInput | medicalcenter_infoWhereInput[]
     center_id?: IntFilter<"medicalcenter_info"> | number
     center_name?: StringFilter<"medicalcenter_info"> | string
-    logo?: StringFilter<"medicalcenter_info"> | string
-    website?: StringFilter<"medicalcenter_info"> | string
+    address?: StringNullableFilter<"medicalcenter_info"> | string | null
+    email?: StringNullableFilter<"medicalcenter_info"> | string | null
+    registered_date?: DateTimeNullableFilter<"medicalcenter_info"> | Date | string | null
     patient_info?: Patient_infoListRelationFilter
     room_info?: Room_infoListRelationFilter
     room_register?: Room_registerListRelationFilter
@@ -9736,8 +11179,9 @@ export namespace Prisma {
   export type medicalcenter_infoOrderByWithRelationInput = {
     center_id?: SortOrder
     center_name?: SortOrder
-    logo?: SortOrder
-    website?: SortOrder
+    address?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    registered_date?: SortOrderInput | SortOrder
     patient_info?: patient_infoOrderByRelationAggregateInput
     room_info?: room_infoOrderByRelationAggregateInput
     room_register?: room_registerOrderByRelationAggregateInput
@@ -9751,8 +11195,9 @@ export namespace Prisma {
     OR?: medicalcenter_infoWhereInput[]
     NOT?: medicalcenter_infoWhereInput | medicalcenter_infoWhereInput[]
     center_name?: StringFilter<"medicalcenter_info"> | string
-    logo?: StringFilter<"medicalcenter_info"> | string
-    website?: StringFilter<"medicalcenter_info"> | string
+    address?: StringNullableFilter<"medicalcenter_info"> | string | null
+    email?: StringNullableFilter<"medicalcenter_info"> | string | null
+    registered_date?: DateTimeNullableFilter<"medicalcenter_info"> | Date | string | null
     patient_info?: Patient_infoListRelationFilter
     room_info?: Room_infoListRelationFilter
     room_register?: Room_registerListRelationFilter
@@ -9763,8 +11208,9 @@ export namespace Prisma {
   export type medicalcenter_infoOrderByWithAggregationInput = {
     center_id?: SortOrder
     center_name?: SortOrder
-    logo?: SortOrder
-    website?: SortOrder
+    address?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    registered_date?: SortOrderInput | SortOrder
     _count?: medicalcenter_infoCountOrderByAggregateInput
     _avg?: medicalcenter_infoAvgOrderByAggregateInput
     _max?: medicalcenter_infoMaxOrderByAggregateInput
@@ -9778,8 +11224,9 @@ export namespace Prisma {
     NOT?: medicalcenter_infoScalarWhereWithAggregatesInput | medicalcenter_infoScalarWhereWithAggregatesInput[]
     center_id?: IntWithAggregatesFilter<"medicalcenter_info"> | number
     center_name?: StringWithAggregatesFilter<"medicalcenter_info"> | string
-    logo?: StringWithAggregatesFilter<"medicalcenter_info"> | string
-    website?: StringWithAggregatesFilter<"medicalcenter_info"> | string
+    address?: StringNullableWithAggregatesFilter<"medicalcenter_info"> | string | null
+    email?: StringNullableWithAggregatesFilter<"medicalcenter_info"> | string | null
+    registered_date?: DateTimeNullableWithAggregatesFilter<"medicalcenter_info"> | Date | string | null
   }
 
   export type patient_infoWhereInput = {
@@ -9790,6 +11237,7 @@ export namespace Prisma {
     patient_name?: StringFilter<"patient_info"> | string
     registered_date?: DateTimeFilter<"patient_info"> | Date | string
     center_id?: IntFilter<"patient_info"> | number
+    bed_info?: Bed_infoListRelationFilter
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
     patient_uploads?: Patient_uploadsListRelationFilter
     room_register?: Room_registerListRelationFilter
@@ -9800,6 +11248,7 @@ export namespace Prisma {
     patient_name?: SortOrder
     registered_date?: SortOrder
     center_id?: SortOrder
+    bed_info?: bed_infoOrderByRelationAggregateInput
     medicalcenter_info?: medicalcenter_infoOrderByWithRelationInput
     patient_uploads?: patient_uploadsOrderByRelationAggregateInput
     room_register?: room_registerOrderByRelationAggregateInput
@@ -9813,6 +11262,7 @@ export namespace Prisma {
     patient_name?: StringFilter<"patient_info"> | string
     registered_date?: DateTimeFilter<"patient_info"> | Date | string
     center_id?: IntFilter<"patient_info"> | number
+    bed_info?: Bed_infoListRelationFilter
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
     patient_uploads?: Patient_uploadsListRelationFilter
     room_register?: Room_registerListRelationFilter
@@ -9906,6 +11356,8 @@ export namespace Prisma {
     room_number?: IntFilter<"room_info"> | number
     center_id?: IntFilter<"room_info"> | number
     number_of_beds?: IntFilter<"room_info"> | number
+    is_full?: BoolFilter<"room_info"> | boolean
+    bed_info?: Bed_infoListRelationFilter
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
     room_register?: Room_registerListRelationFilter
   }
@@ -9915,6 +11367,8 @@ export namespace Prisma {
     room_number?: SortOrder
     center_id?: SortOrder
     number_of_beds?: SortOrder
+    is_full?: SortOrder
+    bed_info?: bed_infoOrderByRelationAggregateInput
     medicalcenter_info?: medicalcenter_infoOrderByWithRelationInput
     room_register?: room_registerOrderByRelationAggregateInput
   }
@@ -9927,6 +11381,8 @@ export namespace Prisma {
     room_number?: IntFilter<"room_info"> | number
     center_id?: IntFilter<"room_info"> | number
     number_of_beds?: IntFilter<"room_info"> | number
+    is_full?: BoolFilter<"room_info"> | boolean
+    bed_info?: Bed_infoListRelationFilter
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
     room_register?: Room_registerListRelationFilter
   }, "room_id">
@@ -9936,6 +11392,7 @@ export namespace Prisma {
     room_number?: SortOrder
     center_id?: SortOrder
     number_of_beds?: SortOrder
+    is_full?: SortOrder
     _count?: room_infoCountOrderByAggregateInput
     _avg?: room_infoAvgOrderByAggregateInput
     _max?: room_infoMaxOrderByAggregateInput
@@ -9951,6 +11408,80 @@ export namespace Prisma {
     room_number?: IntWithAggregatesFilter<"room_info"> | number
     center_id?: IntWithAggregatesFilter<"room_info"> | number
     number_of_beds?: IntWithAggregatesFilter<"room_info"> | number
+    is_full?: BoolWithAggregatesFilter<"room_info"> | boolean
+  }
+
+  export type bed_infoWhereInput = {
+    AND?: bed_infoWhereInput | bed_infoWhereInput[]
+    OR?: bed_infoWhereInput[]
+    NOT?: bed_infoWhereInput | bed_infoWhereInput[]
+    bed_id?: IntFilter<"bed_info"> | number
+    room_id?: IntFilter<"bed_info"> | number
+    bed_letter?: StringFilter<"bed_info"> | string
+    is_available?: BoolFilter<"bed_info"> | boolean
+    is_assigned?: BoolFilter<"bed_info"> | boolean
+    assigned_patient_id?: IntNullableFilter<"bed_info"> | number | null
+    assigned_nurse_id?: IntNullableFilter<"bed_info"> | number | null
+    user_info?: XOR<User_infoNullableScalarRelationFilter, user_infoWhereInput> | null
+    patient_info?: XOR<Patient_infoNullableScalarRelationFilter, patient_infoWhereInput> | null
+    room_info?: XOR<Room_infoScalarRelationFilter, room_infoWhereInput>
+  }
+
+  export type bed_infoOrderByWithRelationInput = {
+    bed_id?: SortOrder
+    room_id?: SortOrder
+    bed_letter?: SortOrder
+    is_available?: SortOrder
+    is_assigned?: SortOrder
+    assigned_patient_id?: SortOrderInput | SortOrder
+    assigned_nurse_id?: SortOrderInput | SortOrder
+    user_info?: user_infoOrderByWithRelationInput
+    patient_info?: patient_infoOrderByWithRelationInput
+    room_info?: room_infoOrderByWithRelationInput
+  }
+
+  export type bed_infoWhereUniqueInput = Prisma.AtLeast<{
+    bed_id?: number
+    AND?: bed_infoWhereInput | bed_infoWhereInput[]
+    OR?: bed_infoWhereInput[]
+    NOT?: bed_infoWhereInput | bed_infoWhereInput[]
+    room_id?: IntFilter<"bed_info"> | number
+    bed_letter?: StringFilter<"bed_info"> | string
+    is_available?: BoolFilter<"bed_info"> | boolean
+    is_assigned?: BoolFilter<"bed_info"> | boolean
+    assigned_patient_id?: IntNullableFilter<"bed_info"> | number | null
+    assigned_nurse_id?: IntNullableFilter<"bed_info"> | number | null
+    user_info?: XOR<User_infoNullableScalarRelationFilter, user_infoWhereInput> | null
+    patient_info?: XOR<Patient_infoNullableScalarRelationFilter, patient_infoWhereInput> | null
+    room_info?: XOR<Room_infoScalarRelationFilter, room_infoWhereInput>
+  }, "bed_id">
+
+  export type bed_infoOrderByWithAggregationInput = {
+    bed_id?: SortOrder
+    room_id?: SortOrder
+    bed_letter?: SortOrder
+    is_available?: SortOrder
+    is_assigned?: SortOrder
+    assigned_patient_id?: SortOrderInput | SortOrder
+    assigned_nurse_id?: SortOrderInput | SortOrder
+    _count?: bed_infoCountOrderByAggregateInput
+    _avg?: bed_infoAvgOrderByAggregateInput
+    _max?: bed_infoMaxOrderByAggregateInput
+    _min?: bed_infoMinOrderByAggregateInput
+    _sum?: bed_infoSumOrderByAggregateInput
+  }
+
+  export type bed_infoScalarWhereWithAggregatesInput = {
+    AND?: bed_infoScalarWhereWithAggregatesInput | bed_infoScalarWhereWithAggregatesInput[]
+    OR?: bed_infoScalarWhereWithAggregatesInput[]
+    NOT?: bed_infoScalarWhereWithAggregatesInput | bed_infoScalarWhereWithAggregatesInput[]
+    bed_id?: IntWithAggregatesFilter<"bed_info"> | number
+    room_id?: IntWithAggregatesFilter<"bed_info"> | number
+    bed_letter?: StringWithAggregatesFilter<"bed_info"> | string
+    is_available?: BoolWithAggregatesFilter<"bed_info"> | boolean
+    is_assigned?: BoolWithAggregatesFilter<"bed_info"> | boolean
+    assigned_patient_id?: IntNullableWithAggregatesFilter<"bed_info"> | number | null
+    assigned_nurse_id?: IntNullableWithAggregatesFilter<"bed_info"> | number | null
   }
 
   export type room_registerWhereInput = {
@@ -10033,6 +11564,7 @@ export namespace Prisma {
     user_role?: StringFilter<"user_info"> | string
     center_id?: IntFilter<"user_info"> | number
     charter_id?: StringFilter<"user_info"> | string
+    bed_info?: Bed_infoListRelationFilter
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
     user_uploads?: User_uploadsListRelationFilter
   }
@@ -10045,6 +11577,7 @@ export namespace Prisma {
     user_role?: SortOrder
     center_id?: SortOrder
     charter_id?: SortOrder
+    bed_info?: bed_infoOrderByRelationAggregateInput
     medicalcenter_info?: medicalcenter_infoOrderByWithRelationInput
     user_uploads?: user_uploadsOrderByRelationAggregateInput
   }
@@ -10060,6 +11593,7 @@ export namespace Prisma {
     user_role?: StringFilter<"user_info"> | string
     center_id?: IntFilter<"user_info"> | number
     charter_id?: StringFilter<"user_info"> | string
+    bed_info?: Bed_infoListRelationFilter
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
     user_uploads?: User_uploadsListRelationFilter
   }, "user_id">
@@ -10160,8 +11694,9 @@ export namespace Prisma {
 
   export type medicalcenter_infoCreateInput = {
     center_name: string
-    logo: string
-    website: string
+    address?: string | null
+    email?: string | null
+    registered_date?: Date | string | null
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
@@ -10172,8 +11707,9 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedCreateInput = {
     center_id?: number
     center_name: string
-    logo: string
-    website: string
+    address?: string | null
+    email?: string | null
+    registered_date?: Date | string | null
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -10183,8 +11719,9 @@ export namespace Prisma {
 
   export type medicalcenter_infoUpdateInput = {
     center_name?: StringFieldUpdateOperationsInput | string
-    logo?: StringFieldUpdateOperationsInput | string
-    website?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -10195,8 +11732,9 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedUpdateInput = {
     center_id?: IntFieldUpdateOperationsInput | number
     center_name?: StringFieldUpdateOperationsInput | string
-    logo?: StringFieldUpdateOperationsInput | string
-    website?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -10207,26 +11745,30 @@ export namespace Prisma {
   export type medicalcenter_infoCreateManyInput = {
     center_id?: number
     center_name: string
-    logo: string
-    website: string
+    address?: string | null
+    email?: string | null
+    registered_date?: Date | string | null
   }
 
   export type medicalcenter_infoUpdateManyMutationInput = {
     center_name?: StringFieldUpdateOperationsInput | string
-    logo?: StringFieldUpdateOperationsInput | string
-    website?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type medicalcenter_infoUncheckedUpdateManyInput = {
     center_id?: IntFieldUpdateOperationsInput | number
     center_name?: StringFieldUpdateOperationsInput | string
-    logo?: StringFieldUpdateOperationsInput | string
-    website?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type patient_infoCreateInput = {
     patient_name: string
     registered_date: Date | string
+    bed_info?: bed_infoCreateNestedManyWithoutPatient_infoInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutPatient_infoInput
     patient_uploads?: patient_uploadsCreateNestedManyWithoutPatient_infoInput
     room_register?: room_registerCreateNestedManyWithoutPatient_infoInput
@@ -10237,6 +11779,7 @@ export namespace Prisma {
     patient_name: string
     registered_date: Date | string
     center_id: number
+    bed_info?: bed_infoUncheckedCreateNestedManyWithoutPatient_infoInput
     patient_uploads?: patient_uploadsUncheckedCreateNestedManyWithoutPatient_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutPatient_infoInput
   }
@@ -10244,6 +11787,7 @@ export namespace Prisma {
   export type patient_infoUpdateInput = {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    bed_info?: bed_infoUpdateManyWithoutPatient_infoNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutPatient_infoNestedInput
     patient_uploads?: patient_uploadsUpdateManyWithoutPatient_infoNestedInput
     room_register?: room_registerUpdateManyWithoutPatient_infoNestedInput
@@ -10254,6 +11798,7 @@ export namespace Prisma {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
     center_id?: IntFieldUpdateOperationsInput | number
+    bed_info?: bed_infoUncheckedUpdateManyWithoutPatient_infoNestedInput
     patient_uploads?: patient_uploadsUncheckedUpdateManyWithoutPatient_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutPatient_infoNestedInput
   }
@@ -10335,6 +11880,8 @@ export namespace Prisma {
   export type room_infoCreateInput = {
     room_number: number
     number_of_beds: number
+    is_full?: boolean
+    bed_info?: bed_infoCreateNestedManyWithoutRoom_infoInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutRoom_infoInput
     room_register?: room_registerCreateNestedManyWithoutRoom_infoInput
   }
@@ -10344,12 +11891,16 @@ export namespace Prisma {
     room_number: number
     center_id: number
     number_of_beds: number
+    is_full?: boolean
+    bed_info?: bed_infoUncheckedCreateNestedManyWithoutRoom_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutRoom_infoInput
   }
 
   export type room_infoUpdateInput = {
     room_number?: IntFieldUpdateOperationsInput | number
     number_of_beds?: IntFieldUpdateOperationsInput | number
+    is_full?: BoolFieldUpdateOperationsInput | boolean
+    bed_info?: bed_infoUpdateManyWithoutRoom_infoNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutRoom_infoNestedInput
     room_register?: room_registerUpdateManyWithoutRoom_infoNestedInput
   }
@@ -10359,6 +11910,8 @@ export namespace Prisma {
     room_number?: IntFieldUpdateOperationsInput | number
     center_id?: IntFieldUpdateOperationsInput | number
     number_of_beds?: IntFieldUpdateOperationsInput | number
+    is_full?: BoolFieldUpdateOperationsInput | boolean
+    bed_info?: bed_infoUncheckedUpdateManyWithoutRoom_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutRoom_infoNestedInput
   }
 
@@ -10367,11 +11920,13 @@ export namespace Prisma {
     room_number: number
     center_id: number
     number_of_beds: number
+    is_full?: boolean
   }
 
   export type room_infoUpdateManyMutationInput = {
     room_number?: IntFieldUpdateOperationsInput | number
     number_of_beds?: IntFieldUpdateOperationsInput | number
+    is_full?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type room_infoUncheckedUpdateManyInput = {
@@ -10379,6 +11934,71 @@ export namespace Prisma {
     room_number?: IntFieldUpdateOperationsInput | number
     center_id?: IntFieldUpdateOperationsInput | number
     number_of_beds?: IntFieldUpdateOperationsInput | number
+    is_full?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type bed_infoCreateInput = {
+    bed_letter: string
+    is_available?: boolean
+    is_assigned?: boolean
+    user_info?: user_infoCreateNestedOneWithoutBed_infoInput
+    patient_info?: patient_infoCreateNestedOneWithoutBed_infoInput
+    room_info: room_infoCreateNestedOneWithoutBed_infoInput
+  }
+
+  export type bed_infoUncheckedCreateInput = {
+    bed_id?: number
+    room_id: number
+    bed_letter: string
+    is_available?: boolean
+    is_assigned?: boolean
+    assigned_patient_id?: number | null
+    assigned_nurse_id?: number | null
+  }
+
+  export type bed_infoUpdateInput = {
+    bed_letter?: StringFieldUpdateOperationsInput | string
+    is_available?: BoolFieldUpdateOperationsInput | boolean
+    is_assigned?: BoolFieldUpdateOperationsInput | boolean
+    user_info?: user_infoUpdateOneWithoutBed_infoNestedInput
+    patient_info?: patient_infoUpdateOneWithoutBed_infoNestedInput
+    room_info?: room_infoUpdateOneRequiredWithoutBed_infoNestedInput
+  }
+
+  export type bed_infoUncheckedUpdateInput = {
+    bed_id?: IntFieldUpdateOperationsInput | number
+    room_id?: IntFieldUpdateOperationsInput | number
+    bed_letter?: StringFieldUpdateOperationsInput | string
+    is_available?: BoolFieldUpdateOperationsInput | boolean
+    is_assigned?: BoolFieldUpdateOperationsInput | boolean
+    assigned_patient_id?: NullableIntFieldUpdateOperationsInput | number | null
+    assigned_nurse_id?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type bed_infoCreateManyInput = {
+    bed_id?: number
+    room_id: number
+    bed_letter: string
+    is_available?: boolean
+    is_assigned?: boolean
+    assigned_patient_id?: number | null
+    assigned_nurse_id?: number | null
+  }
+
+  export type bed_infoUpdateManyMutationInput = {
+    bed_letter?: StringFieldUpdateOperationsInput | string
+    is_available?: BoolFieldUpdateOperationsInput | boolean
+    is_assigned?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type bed_infoUncheckedUpdateManyInput = {
+    bed_id?: IntFieldUpdateOperationsInput | number
+    room_id?: IntFieldUpdateOperationsInput | number
+    bed_letter?: StringFieldUpdateOperationsInput | string
+    is_available?: BoolFieldUpdateOperationsInput | boolean
+    is_assigned?: BoolFieldUpdateOperationsInput | boolean
+    assigned_patient_id?: NullableIntFieldUpdateOperationsInput | number | null
+    assigned_nurse_id?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type room_registerCreateInput = {
@@ -10447,6 +12067,7 @@ export namespace Prisma {
     password: string
     user_role: string
     charter_id: string
+    bed_info?: bed_infoCreateNestedManyWithoutUser_infoInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutUser_infoInput
     user_uploads?: user_uploadsCreateNestedManyWithoutUser_infoInput
   }
@@ -10459,6 +12080,7 @@ export namespace Prisma {
     user_role: string
     center_id: number
     charter_id: string
+    bed_info?: bed_infoUncheckedCreateNestedManyWithoutUser_infoInput
     user_uploads?: user_uploadsUncheckedCreateNestedManyWithoutUser_infoInput
   }
 
@@ -10468,6 +12090,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     user_role?: StringFieldUpdateOperationsInput | string
     charter_id?: StringFieldUpdateOperationsInput | string
+    bed_info?: bed_infoUpdateManyWithoutUser_infoNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutUser_infoNestedInput
     user_uploads?: user_uploadsUpdateManyWithoutUser_infoNestedInput
   }
@@ -10480,6 +12103,7 @@ export namespace Prisma {
     user_role?: StringFieldUpdateOperationsInput | string
     center_id?: IntFieldUpdateOperationsInput | number
     charter_id?: StringFieldUpdateOperationsInput | string
+    bed_info?: bed_infoUncheckedUpdateManyWithoutUser_infoNestedInput
     user_uploads?: user_uploadsUncheckedUpdateManyWithoutUser_infoNestedInput
   }
 
@@ -10598,6 +12222,32 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type Patient_infoListRelationFilter = {
     every?: patient_infoWhereInput
     some?: patient_infoWhereInput
@@ -10628,6 +12278,11 @@ export namespace Prisma {
     none?: user_uploadsWhereInput
   }
 
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
   export type patient_infoOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -10651,8 +12306,9 @@ export namespace Prisma {
   export type medicalcenter_infoCountOrderByAggregateInput = {
     center_id?: SortOrder
     center_name?: SortOrder
-    logo?: SortOrder
-    website?: SortOrder
+    address?: SortOrder
+    email?: SortOrder
+    registered_date?: SortOrder
   }
 
   export type medicalcenter_infoAvgOrderByAggregateInput = {
@@ -10662,15 +12318,17 @@ export namespace Prisma {
   export type medicalcenter_infoMaxOrderByAggregateInput = {
     center_id?: SortOrder
     center_name?: SortOrder
-    logo?: SortOrder
-    website?: SortOrder
+    address?: SortOrder
+    email?: SortOrder
+    registered_date?: SortOrder
   }
 
   export type medicalcenter_infoMinOrderByAggregateInput = {
     center_id?: SortOrder
     center_name?: SortOrder
-    logo?: SortOrder
-    website?: SortOrder
+    address?: SortOrder
+    email?: SortOrder
+    registered_date?: SortOrder
   }
 
   export type medicalcenter_infoSumOrderByAggregateInput = {
@@ -10711,6 +12369,38 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -10722,6 +12412,12 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type Bed_infoListRelationFilter = {
+    every?: bed_infoWhereInput
+    some?: bed_infoWhereInput
+    none?: bed_infoWhereInput
+  }
+
   export type Medicalcenter_infoScalarRelationFilter = {
     is?: medicalcenter_infoWhereInput
     isNot?: medicalcenter_infoWhereInput
@@ -10731,6 +12427,10 @@ export namespace Prisma {
     every?: patient_uploadsWhereInput
     some?: patient_uploadsWhereInput
     none?: patient_uploadsWhereInput
+  }
+
+  export type bed_infoOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type patient_uploadsOrderByRelationAggregateInput = {
@@ -10826,11 +12526,17 @@ export namespace Prisma {
     session_id?: SortOrder
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type room_infoCountOrderByAggregateInput = {
     room_id?: SortOrder
     room_number?: SortOrder
     center_id?: SortOrder
     number_of_beds?: SortOrder
+    is_full?: SortOrder
   }
 
   export type room_infoAvgOrderByAggregateInput = {
@@ -10845,6 +12551,7 @@ export namespace Prisma {
     room_number?: SortOrder
     center_id?: SortOrder
     number_of_beds?: SortOrder
+    is_full?: SortOrder
   }
 
   export type room_infoMinOrderByAggregateInput = {
@@ -10852,6 +12559,7 @@ export namespace Prisma {
     room_number?: SortOrder
     center_id?: SortOrder
     number_of_beds?: SortOrder
+    is_full?: SortOrder
   }
 
   export type room_infoSumOrderByAggregateInput = {
@@ -10861,9 +12569,98 @@ export namespace Prisma {
     number_of_beds?: SortOrder
   }
 
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type User_infoNullableScalarRelationFilter = {
+    is?: user_infoWhereInput | null
+    isNot?: user_infoWhereInput | null
+  }
+
+  export type Patient_infoNullableScalarRelationFilter = {
+    is?: patient_infoWhereInput | null
+    isNot?: patient_infoWhereInput | null
+  }
+
   export type Room_infoScalarRelationFilter = {
     is?: room_infoWhereInput
     isNot?: room_infoWhereInput
+  }
+
+  export type bed_infoCountOrderByAggregateInput = {
+    bed_id?: SortOrder
+    room_id?: SortOrder
+    bed_letter?: SortOrder
+    is_available?: SortOrder
+    is_assigned?: SortOrder
+    assigned_patient_id?: SortOrder
+    assigned_nurse_id?: SortOrder
+  }
+
+  export type bed_infoAvgOrderByAggregateInput = {
+    bed_id?: SortOrder
+    room_id?: SortOrder
+    assigned_patient_id?: SortOrder
+    assigned_nurse_id?: SortOrder
+  }
+
+  export type bed_infoMaxOrderByAggregateInput = {
+    bed_id?: SortOrder
+    room_id?: SortOrder
+    bed_letter?: SortOrder
+    is_available?: SortOrder
+    is_assigned?: SortOrder
+    assigned_patient_id?: SortOrder
+    assigned_nurse_id?: SortOrder
+  }
+
+  export type bed_infoMinOrderByAggregateInput = {
+    bed_id?: SortOrder
+    room_id?: SortOrder
+    bed_letter?: SortOrder
+    is_available?: SortOrder
+    is_assigned?: SortOrder
+    assigned_patient_id?: SortOrder
+    assigned_nurse_id?: SortOrder
+  }
+
+  export type bed_infoSumOrderByAggregateInput = {
+    bed_id?: SortOrder
+    room_id?: SortOrder
+    assigned_patient_id?: SortOrder
+    assigned_nurse_id?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type room_registerRoom_idPatient_idSession_idCompoundUniqueInput = {
@@ -11074,6 +12871,14 @@ export namespace Prisma {
     set?: string
   }
 
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
   export type patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput = {
     create?: XOR<patient_infoCreateWithoutMedicalcenter_infoInput, patient_infoUncheckedCreateWithoutMedicalcenter_infoInput> | patient_infoCreateWithoutMedicalcenter_infoInput[] | patient_infoUncheckedCreateWithoutMedicalcenter_infoInput[]
     connectOrCreate?: patient_infoCreateOrConnectWithoutMedicalcenter_infoInput | patient_infoCreateOrConnectWithoutMedicalcenter_infoInput[]
@@ -11222,6 +13027,13 @@ export namespace Prisma {
     deleteMany?: user_uploadsScalarWhereInput | user_uploadsScalarWhereInput[]
   }
 
+  export type bed_infoCreateNestedManyWithoutPatient_infoInput = {
+    create?: XOR<bed_infoCreateWithoutPatient_infoInput, bed_infoUncheckedCreateWithoutPatient_infoInput> | bed_infoCreateWithoutPatient_infoInput[] | bed_infoUncheckedCreateWithoutPatient_infoInput[]
+    connectOrCreate?: bed_infoCreateOrConnectWithoutPatient_infoInput | bed_infoCreateOrConnectWithoutPatient_infoInput[]
+    createMany?: bed_infoCreateManyPatient_infoInputEnvelope
+    connect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+  }
+
   export type medicalcenter_infoCreateNestedOneWithoutPatient_infoInput = {
     create?: XOR<medicalcenter_infoCreateWithoutPatient_infoInput, medicalcenter_infoUncheckedCreateWithoutPatient_infoInput>
     connectOrCreate?: medicalcenter_infoCreateOrConnectWithoutPatient_infoInput
@@ -11242,6 +13054,13 @@ export namespace Prisma {
     connect?: room_registerWhereUniqueInput | room_registerWhereUniqueInput[]
   }
 
+  export type bed_infoUncheckedCreateNestedManyWithoutPatient_infoInput = {
+    create?: XOR<bed_infoCreateWithoutPatient_infoInput, bed_infoUncheckedCreateWithoutPatient_infoInput> | bed_infoCreateWithoutPatient_infoInput[] | bed_infoUncheckedCreateWithoutPatient_infoInput[]
+    connectOrCreate?: bed_infoCreateOrConnectWithoutPatient_infoInput | bed_infoCreateOrConnectWithoutPatient_infoInput[]
+    createMany?: bed_infoCreateManyPatient_infoInputEnvelope
+    connect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+  }
+
   export type patient_uploadsUncheckedCreateNestedManyWithoutPatient_infoInput = {
     create?: XOR<patient_uploadsCreateWithoutPatient_infoInput, patient_uploadsUncheckedCreateWithoutPatient_infoInput> | patient_uploadsCreateWithoutPatient_infoInput[] | patient_uploadsUncheckedCreateWithoutPatient_infoInput[]
     connectOrCreate?: patient_uploadsCreateOrConnectWithoutPatient_infoInput | patient_uploadsCreateOrConnectWithoutPatient_infoInput[]
@@ -11258,6 +13077,20 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type bed_infoUpdateManyWithoutPatient_infoNestedInput = {
+    create?: XOR<bed_infoCreateWithoutPatient_infoInput, bed_infoUncheckedCreateWithoutPatient_infoInput> | bed_infoCreateWithoutPatient_infoInput[] | bed_infoUncheckedCreateWithoutPatient_infoInput[]
+    connectOrCreate?: bed_infoCreateOrConnectWithoutPatient_infoInput | bed_infoCreateOrConnectWithoutPatient_infoInput[]
+    upsert?: bed_infoUpsertWithWhereUniqueWithoutPatient_infoInput | bed_infoUpsertWithWhereUniqueWithoutPatient_infoInput[]
+    createMany?: bed_infoCreateManyPatient_infoInputEnvelope
+    set?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    disconnect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    delete?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    connect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    update?: bed_infoUpdateWithWhereUniqueWithoutPatient_infoInput | bed_infoUpdateWithWhereUniqueWithoutPatient_infoInput[]
+    updateMany?: bed_infoUpdateManyWithWhereWithoutPatient_infoInput | bed_infoUpdateManyWithWhereWithoutPatient_infoInput[]
+    deleteMany?: bed_infoScalarWhereInput | bed_infoScalarWhereInput[]
   }
 
   export type medicalcenter_infoUpdateOneRequiredWithoutPatient_infoNestedInput = {
@@ -11294,6 +13127,20 @@ export namespace Prisma {
     update?: room_registerUpdateWithWhereUniqueWithoutPatient_infoInput | room_registerUpdateWithWhereUniqueWithoutPatient_infoInput[]
     updateMany?: room_registerUpdateManyWithWhereWithoutPatient_infoInput | room_registerUpdateManyWithWhereWithoutPatient_infoInput[]
     deleteMany?: room_registerScalarWhereInput | room_registerScalarWhereInput[]
+  }
+
+  export type bed_infoUncheckedUpdateManyWithoutPatient_infoNestedInput = {
+    create?: XOR<bed_infoCreateWithoutPatient_infoInput, bed_infoUncheckedCreateWithoutPatient_infoInput> | bed_infoCreateWithoutPatient_infoInput[] | bed_infoUncheckedCreateWithoutPatient_infoInput[]
+    connectOrCreate?: bed_infoCreateOrConnectWithoutPatient_infoInput | bed_infoCreateOrConnectWithoutPatient_infoInput[]
+    upsert?: bed_infoUpsertWithWhereUniqueWithoutPatient_infoInput | bed_infoUpsertWithWhereUniqueWithoutPatient_infoInput[]
+    createMany?: bed_infoCreateManyPatient_infoInputEnvelope
+    set?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    disconnect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    delete?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    connect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    update?: bed_infoUpdateWithWhereUniqueWithoutPatient_infoInput | bed_infoUpdateWithWhereUniqueWithoutPatient_infoInput[]
+    updateMany?: bed_infoUpdateManyWithWhereWithoutPatient_infoInput | bed_infoUpdateManyWithWhereWithoutPatient_infoInput[]
+    deleteMany?: bed_infoScalarWhereInput | bed_infoScalarWhereInput[]
   }
 
   export type patient_uploadsUncheckedUpdateManyWithoutPatient_infoNestedInput = {
@@ -11338,6 +13185,13 @@ export namespace Prisma {
     update?: XOR<XOR<patient_infoUpdateToOneWithWhereWithoutPatient_uploadsInput, patient_infoUpdateWithoutPatient_uploadsInput>, patient_infoUncheckedUpdateWithoutPatient_uploadsInput>
   }
 
+  export type bed_infoCreateNestedManyWithoutRoom_infoInput = {
+    create?: XOR<bed_infoCreateWithoutRoom_infoInput, bed_infoUncheckedCreateWithoutRoom_infoInput> | bed_infoCreateWithoutRoom_infoInput[] | bed_infoUncheckedCreateWithoutRoom_infoInput[]
+    connectOrCreate?: bed_infoCreateOrConnectWithoutRoom_infoInput | bed_infoCreateOrConnectWithoutRoom_infoInput[]
+    createMany?: bed_infoCreateManyRoom_infoInputEnvelope
+    connect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+  }
+
   export type medicalcenter_infoCreateNestedOneWithoutRoom_infoInput = {
     create?: XOR<medicalcenter_infoCreateWithoutRoom_infoInput, medicalcenter_infoUncheckedCreateWithoutRoom_infoInput>
     connectOrCreate?: medicalcenter_infoCreateOrConnectWithoutRoom_infoInput
@@ -11351,11 +13205,36 @@ export namespace Prisma {
     connect?: room_registerWhereUniqueInput | room_registerWhereUniqueInput[]
   }
 
+  export type bed_infoUncheckedCreateNestedManyWithoutRoom_infoInput = {
+    create?: XOR<bed_infoCreateWithoutRoom_infoInput, bed_infoUncheckedCreateWithoutRoom_infoInput> | bed_infoCreateWithoutRoom_infoInput[] | bed_infoUncheckedCreateWithoutRoom_infoInput[]
+    connectOrCreate?: bed_infoCreateOrConnectWithoutRoom_infoInput | bed_infoCreateOrConnectWithoutRoom_infoInput[]
+    createMany?: bed_infoCreateManyRoom_infoInputEnvelope
+    connect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+  }
+
   export type room_registerUncheckedCreateNestedManyWithoutRoom_infoInput = {
     create?: XOR<room_registerCreateWithoutRoom_infoInput, room_registerUncheckedCreateWithoutRoom_infoInput> | room_registerCreateWithoutRoom_infoInput[] | room_registerUncheckedCreateWithoutRoom_infoInput[]
     connectOrCreate?: room_registerCreateOrConnectWithoutRoom_infoInput | room_registerCreateOrConnectWithoutRoom_infoInput[]
     createMany?: room_registerCreateManyRoom_infoInputEnvelope
     connect?: room_registerWhereUniqueInput | room_registerWhereUniqueInput[]
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type bed_infoUpdateManyWithoutRoom_infoNestedInput = {
+    create?: XOR<bed_infoCreateWithoutRoom_infoInput, bed_infoUncheckedCreateWithoutRoom_infoInput> | bed_infoCreateWithoutRoom_infoInput[] | bed_infoUncheckedCreateWithoutRoom_infoInput[]
+    connectOrCreate?: bed_infoCreateOrConnectWithoutRoom_infoInput | bed_infoCreateOrConnectWithoutRoom_infoInput[]
+    upsert?: bed_infoUpsertWithWhereUniqueWithoutRoom_infoInput | bed_infoUpsertWithWhereUniqueWithoutRoom_infoInput[]
+    createMany?: bed_infoCreateManyRoom_infoInputEnvelope
+    set?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    disconnect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    delete?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    connect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    update?: bed_infoUpdateWithWhereUniqueWithoutRoom_infoInput | bed_infoUpdateWithWhereUniqueWithoutRoom_infoInput[]
+    updateMany?: bed_infoUpdateManyWithWhereWithoutRoom_infoInput | bed_infoUpdateManyWithWhereWithoutRoom_infoInput[]
+    deleteMany?: bed_infoScalarWhereInput | bed_infoScalarWhereInput[]
   }
 
   export type medicalcenter_infoUpdateOneRequiredWithoutRoom_infoNestedInput = {
@@ -11380,6 +13259,20 @@ export namespace Prisma {
     deleteMany?: room_registerScalarWhereInput | room_registerScalarWhereInput[]
   }
 
+  export type bed_infoUncheckedUpdateManyWithoutRoom_infoNestedInput = {
+    create?: XOR<bed_infoCreateWithoutRoom_infoInput, bed_infoUncheckedCreateWithoutRoom_infoInput> | bed_infoCreateWithoutRoom_infoInput[] | bed_infoUncheckedCreateWithoutRoom_infoInput[]
+    connectOrCreate?: bed_infoCreateOrConnectWithoutRoom_infoInput | bed_infoCreateOrConnectWithoutRoom_infoInput[]
+    upsert?: bed_infoUpsertWithWhereUniqueWithoutRoom_infoInput | bed_infoUpsertWithWhereUniqueWithoutRoom_infoInput[]
+    createMany?: bed_infoCreateManyRoom_infoInputEnvelope
+    set?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    disconnect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    delete?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    connect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    update?: bed_infoUpdateWithWhereUniqueWithoutRoom_infoInput | bed_infoUpdateWithWhereUniqueWithoutRoom_infoInput[]
+    updateMany?: bed_infoUpdateManyWithWhereWithoutRoom_infoInput | bed_infoUpdateManyWithWhereWithoutRoom_infoInput[]
+    deleteMany?: bed_infoScalarWhereInput | bed_infoScalarWhereInput[]
+  }
+
   export type room_registerUncheckedUpdateManyWithoutRoom_infoNestedInput = {
     create?: XOR<room_registerCreateWithoutRoom_infoInput, room_registerUncheckedCreateWithoutRoom_infoInput> | room_registerCreateWithoutRoom_infoInput[] | room_registerUncheckedCreateWithoutRoom_infoInput[]
     connectOrCreate?: room_registerCreateOrConnectWithoutRoom_infoInput | room_registerCreateOrConnectWithoutRoom_infoInput[]
@@ -11392,6 +13285,60 @@ export namespace Prisma {
     update?: room_registerUpdateWithWhereUniqueWithoutRoom_infoInput | room_registerUpdateWithWhereUniqueWithoutRoom_infoInput[]
     updateMany?: room_registerUpdateManyWithWhereWithoutRoom_infoInput | room_registerUpdateManyWithWhereWithoutRoom_infoInput[]
     deleteMany?: room_registerScalarWhereInput | room_registerScalarWhereInput[]
+  }
+
+  export type user_infoCreateNestedOneWithoutBed_infoInput = {
+    create?: XOR<user_infoCreateWithoutBed_infoInput, user_infoUncheckedCreateWithoutBed_infoInput>
+    connectOrCreate?: user_infoCreateOrConnectWithoutBed_infoInput
+    connect?: user_infoWhereUniqueInput
+  }
+
+  export type patient_infoCreateNestedOneWithoutBed_infoInput = {
+    create?: XOR<patient_infoCreateWithoutBed_infoInput, patient_infoUncheckedCreateWithoutBed_infoInput>
+    connectOrCreate?: patient_infoCreateOrConnectWithoutBed_infoInput
+    connect?: patient_infoWhereUniqueInput
+  }
+
+  export type room_infoCreateNestedOneWithoutBed_infoInput = {
+    create?: XOR<room_infoCreateWithoutBed_infoInput, room_infoUncheckedCreateWithoutBed_infoInput>
+    connectOrCreate?: room_infoCreateOrConnectWithoutBed_infoInput
+    connect?: room_infoWhereUniqueInput
+  }
+
+  export type user_infoUpdateOneWithoutBed_infoNestedInput = {
+    create?: XOR<user_infoCreateWithoutBed_infoInput, user_infoUncheckedCreateWithoutBed_infoInput>
+    connectOrCreate?: user_infoCreateOrConnectWithoutBed_infoInput
+    upsert?: user_infoUpsertWithoutBed_infoInput
+    disconnect?: user_infoWhereInput | boolean
+    delete?: user_infoWhereInput | boolean
+    connect?: user_infoWhereUniqueInput
+    update?: XOR<XOR<user_infoUpdateToOneWithWhereWithoutBed_infoInput, user_infoUpdateWithoutBed_infoInput>, user_infoUncheckedUpdateWithoutBed_infoInput>
+  }
+
+  export type patient_infoUpdateOneWithoutBed_infoNestedInput = {
+    create?: XOR<patient_infoCreateWithoutBed_infoInput, patient_infoUncheckedCreateWithoutBed_infoInput>
+    connectOrCreate?: patient_infoCreateOrConnectWithoutBed_infoInput
+    upsert?: patient_infoUpsertWithoutBed_infoInput
+    disconnect?: patient_infoWhereInput | boolean
+    delete?: patient_infoWhereInput | boolean
+    connect?: patient_infoWhereUniqueInput
+    update?: XOR<XOR<patient_infoUpdateToOneWithWhereWithoutBed_infoInput, patient_infoUpdateWithoutBed_infoInput>, patient_infoUncheckedUpdateWithoutBed_infoInput>
+  }
+
+  export type room_infoUpdateOneRequiredWithoutBed_infoNestedInput = {
+    create?: XOR<room_infoCreateWithoutBed_infoInput, room_infoUncheckedCreateWithoutBed_infoInput>
+    connectOrCreate?: room_infoCreateOrConnectWithoutBed_infoInput
+    upsert?: room_infoUpsertWithoutBed_infoInput
+    connect?: room_infoWhereUniqueInput
+    update?: XOR<XOR<room_infoUpdateToOneWithWhereWithoutBed_infoInput, room_infoUpdateWithoutBed_infoInput>, room_infoUncheckedUpdateWithoutBed_infoInput>
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type medicalcenter_infoCreateNestedOneWithoutRoom_registerInput = {
@@ -11436,6 +13383,13 @@ export namespace Prisma {
     update?: XOR<XOR<room_infoUpdateToOneWithWhereWithoutRoom_registerInput, room_infoUpdateWithoutRoom_registerInput>, room_infoUncheckedUpdateWithoutRoom_registerInput>
   }
 
+  export type bed_infoCreateNestedManyWithoutUser_infoInput = {
+    create?: XOR<bed_infoCreateWithoutUser_infoInput, bed_infoUncheckedCreateWithoutUser_infoInput> | bed_infoCreateWithoutUser_infoInput[] | bed_infoUncheckedCreateWithoutUser_infoInput[]
+    connectOrCreate?: bed_infoCreateOrConnectWithoutUser_infoInput | bed_infoCreateOrConnectWithoutUser_infoInput[]
+    createMany?: bed_infoCreateManyUser_infoInputEnvelope
+    connect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+  }
+
   export type medicalcenter_infoCreateNestedOneWithoutUser_infoInput = {
     create?: XOR<medicalcenter_infoCreateWithoutUser_infoInput, medicalcenter_infoUncheckedCreateWithoutUser_infoInput>
     connectOrCreate?: medicalcenter_infoCreateOrConnectWithoutUser_infoInput
@@ -11449,11 +13403,32 @@ export namespace Prisma {
     connect?: user_uploadsWhereUniqueInput | user_uploadsWhereUniqueInput[]
   }
 
+  export type bed_infoUncheckedCreateNestedManyWithoutUser_infoInput = {
+    create?: XOR<bed_infoCreateWithoutUser_infoInput, bed_infoUncheckedCreateWithoutUser_infoInput> | bed_infoCreateWithoutUser_infoInput[] | bed_infoUncheckedCreateWithoutUser_infoInput[]
+    connectOrCreate?: bed_infoCreateOrConnectWithoutUser_infoInput | bed_infoCreateOrConnectWithoutUser_infoInput[]
+    createMany?: bed_infoCreateManyUser_infoInputEnvelope
+    connect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+  }
+
   export type user_uploadsUncheckedCreateNestedManyWithoutUser_infoInput = {
     create?: XOR<user_uploadsCreateWithoutUser_infoInput, user_uploadsUncheckedCreateWithoutUser_infoInput> | user_uploadsCreateWithoutUser_infoInput[] | user_uploadsUncheckedCreateWithoutUser_infoInput[]
     connectOrCreate?: user_uploadsCreateOrConnectWithoutUser_infoInput | user_uploadsCreateOrConnectWithoutUser_infoInput[]
     createMany?: user_uploadsCreateManyUser_infoInputEnvelope
     connect?: user_uploadsWhereUniqueInput | user_uploadsWhereUniqueInput[]
+  }
+
+  export type bed_infoUpdateManyWithoutUser_infoNestedInput = {
+    create?: XOR<bed_infoCreateWithoutUser_infoInput, bed_infoUncheckedCreateWithoutUser_infoInput> | bed_infoCreateWithoutUser_infoInput[] | bed_infoUncheckedCreateWithoutUser_infoInput[]
+    connectOrCreate?: bed_infoCreateOrConnectWithoutUser_infoInput | bed_infoCreateOrConnectWithoutUser_infoInput[]
+    upsert?: bed_infoUpsertWithWhereUniqueWithoutUser_infoInput | bed_infoUpsertWithWhereUniqueWithoutUser_infoInput[]
+    createMany?: bed_infoCreateManyUser_infoInputEnvelope
+    set?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    disconnect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    delete?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    connect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    update?: bed_infoUpdateWithWhereUniqueWithoutUser_infoInput | bed_infoUpdateWithWhereUniqueWithoutUser_infoInput[]
+    updateMany?: bed_infoUpdateManyWithWhereWithoutUser_infoInput | bed_infoUpdateManyWithWhereWithoutUser_infoInput[]
+    deleteMany?: bed_infoScalarWhereInput | bed_infoScalarWhereInput[]
   }
 
   export type medicalcenter_infoUpdateOneRequiredWithoutUser_infoNestedInput = {
@@ -11476,6 +13451,20 @@ export namespace Prisma {
     update?: user_uploadsUpdateWithWhereUniqueWithoutUser_infoInput | user_uploadsUpdateWithWhereUniqueWithoutUser_infoInput[]
     updateMany?: user_uploadsUpdateManyWithWhereWithoutUser_infoInput | user_uploadsUpdateManyWithWhereWithoutUser_infoInput[]
     deleteMany?: user_uploadsScalarWhereInput | user_uploadsScalarWhereInput[]
+  }
+
+  export type bed_infoUncheckedUpdateManyWithoutUser_infoNestedInput = {
+    create?: XOR<bed_infoCreateWithoutUser_infoInput, bed_infoUncheckedCreateWithoutUser_infoInput> | bed_infoCreateWithoutUser_infoInput[] | bed_infoUncheckedCreateWithoutUser_infoInput[]
+    connectOrCreate?: bed_infoCreateOrConnectWithoutUser_infoInput | bed_infoCreateOrConnectWithoutUser_infoInput[]
+    upsert?: bed_infoUpsertWithWhereUniqueWithoutUser_infoInput | bed_infoUpsertWithWhereUniqueWithoutUser_infoInput[]
+    createMany?: bed_infoCreateManyUser_infoInputEnvelope
+    set?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    disconnect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    delete?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    connect?: bed_infoWhereUniqueInput | bed_infoWhereUniqueInput[]
+    update?: bed_infoUpdateWithWhereUniqueWithoutUser_infoInput | bed_infoUpdateWithWhereUniqueWithoutUser_infoInput[]
+    updateMany?: bed_infoUpdateManyWithWhereWithoutUser_infoInput | bed_infoUpdateManyWithWhereWithoutUser_infoInput[]
+    deleteMany?: bed_infoScalarWhereInput | bed_infoScalarWhereInput[]
   }
 
   export type user_uploadsUncheckedUpdateManyWithoutUser_infoNestedInput = {
@@ -11545,6 +13534,31 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -11589,6 +13603,48 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -11614,9 +13670,50 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type patient_infoCreateWithoutMedicalcenter_infoInput = {
     patient_name: string
     registered_date: Date | string
+    bed_info?: bed_infoCreateNestedManyWithoutPatient_infoInput
     patient_uploads?: patient_uploadsCreateNestedManyWithoutPatient_infoInput
     room_register?: room_registerCreateNestedManyWithoutPatient_infoInput
   }
@@ -11625,6 +13722,7 @@ export namespace Prisma {
     patient_id?: number
     patient_name: string
     registered_date: Date | string
+    bed_info?: bed_infoUncheckedCreateNestedManyWithoutPatient_infoInput
     patient_uploads?: patient_uploadsUncheckedCreateNestedManyWithoutPatient_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutPatient_infoInput
   }
@@ -11642,6 +13740,8 @@ export namespace Prisma {
   export type room_infoCreateWithoutMedicalcenter_infoInput = {
     room_number: number
     number_of_beds: number
+    is_full?: boolean
+    bed_info?: bed_infoCreateNestedManyWithoutRoom_infoInput
     room_register?: room_registerCreateNestedManyWithoutRoom_infoInput
   }
 
@@ -11649,6 +13749,8 @@ export namespace Prisma {
     room_id?: number
     room_number: number
     number_of_beds: number
+    is_full?: boolean
+    bed_info?: bed_infoUncheckedCreateNestedManyWithoutRoom_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutRoom_infoInput
   }
 
@@ -11694,6 +13796,7 @@ export namespace Prisma {
     password: string
     user_role: string
     charter_id: string
+    bed_info?: bed_infoCreateNestedManyWithoutUser_infoInput
     user_uploads?: user_uploadsCreateNestedManyWithoutUser_infoInput
   }
 
@@ -11704,6 +13807,7 @@ export namespace Prisma {
     password: string
     user_role: string
     charter_id: string
+    bed_info?: bed_infoUncheckedCreateNestedManyWithoutUser_infoInput
     user_uploads?: user_uploadsUncheckedCreateNestedManyWithoutUser_infoInput
   }
 
@@ -11793,6 +13897,7 @@ export namespace Prisma {
     room_number?: IntFilter<"room_info"> | number
     center_id?: IntFilter<"room_info"> | number
     number_of_beds?: IntFilter<"room_info"> | number
+    is_full?: BoolFilter<"room_info"> | boolean
   }
 
   export type room_registerUpsertWithWhereUniqueWithoutMedicalcenter_infoInput = {
@@ -11880,10 +13985,38 @@ export namespace Prisma {
     upload_time?: DateTimeFilter<"user_uploads"> | Date | string
   }
 
+  export type bed_infoCreateWithoutPatient_infoInput = {
+    bed_letter: string
+    is_available?: boolean
+    is_assigned?: boolean
+    user_info?: user_infoCreateNestedOneWithoutBed_infoInput
+    room_info: room_infoCreateNestedOneWithoutBed_infoInput
+  }
+
+  export type bed_infoUncheckedCreateWithoutPatient_infoInput = {
+    bed_id?: number
+    room_id: number
+    bed_letter: string
+    is_available?: boolean
+    is_assigned?: boolean
+    assigned_nurse_id?: number | null
+  }
+
+  export type bed_infoCreateOrConnectWithoutPatient_infoInput = {
+    where: bed_infoWhereUniqueInput
+    create: XOR<bed_infoCreateWithoutPatient_infoInput, bed_infoUncheckedCreateWithoutPatient_infoInput>
+  }
+
+  export type bed_infoCreateManyPatient_infoInputEnvelope = {
+    data: bed_infoCreateManyPatient_infoInput | bed_infoCreateManyPatient_infoInput[]
+    skipDuplicates?: boolean
+  }
+
   export type medicalcenter_infoCreateWithoutPatient_infoInput = {
     center_name: string
-    logo: string
-    website: string
+    address?: string | null
+    email?: string | null
+    registered_date?: Date | string | null
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoCreateNestedManyWithoutMedicalcenter_infoInput
@@ -11893,8 +14026,9 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedCreateWithoutPatient_infoInput = {
     center_id?: number
     center_name: string
-    logo: string
-    website: string
+    address?: string | null
+    email?: string | null
+    registered_date?: Date | string | null
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -11956,6 +14090,35 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type bed_infoUpsertWithWhereUniqueWithoutPatient_infoInput = {
+    where: bed_infoWhereUniqueInput
+    update: XOR<bed_infoUpdateWithoutPatient_infoInput, bed_infoUncheckedUpdateWithoutPatient_infoInput>
+    create: XOR<bed_infoCreateWithoutPatient_infoInput, bed_infoUncheckedCreateWithoutPatient_infoInput>
+  }
+
+  export type bed_infoUpdateWithWhereUniqueWithoutPatient_infoInput = {
+    where: bed_infoWhereUniqueInput
+    data: XOR<bed_infoUpdateWithoutPatient_infoInput, bed_infoUncheckedUpdateWithoutPatient_infoInput>
+  }
+
+  export type bed_infoUpdateManyWithWhereWithoutPatient_infoInput = {
+    where: bed_infoScalarWhereInput
+    data: XOR<bed_infoUpdateManyMutationInput, bed_infoUncheckedUpdateManyWithoutPatient_infoInput>
+  }
+
+  export type bed_infoScalarWhereInput = {
+    AND?: bed_infoScalarWhereInput | bed_infoScalarWhereInput[]
+    OR?: bed_infoScalarWhereInput[]
+    NOT?: bed_infoScalarWhereInput | bed_infoScalarWhereInput[]
+    bed_id?: IntFilter<"bed_info"> | number
+    room_id?: IntFilter<"bed_info"> | number
+    bed_letter?: StringFilter<"bed_info"> | string
+    is_available?: BoolFilter<"bed_info"> | boolean
+    is_assigned?: BoolFilter<"bed_info"> | boolean
+    assigned_patient_id?: IntNullableFilter<"bed_info"> | number | null
+    assigned_nurse_id?: IntNullableFilter<"bed_info"> | number | null
+  }
+
   export type medicalcenter_infoUpsertWithoutPatient_infoInput = {
     update: XOR<medicalcenter_infoUpdateWithoutPatient_infoInput, medicalcenter_infoUncheckedUpdateWithoutPatient_infoInput>
     create: XOR<medicalcenter_infoCreateWithoutPatient_infoInput, medicalcenter_infoUncheckedCreateWithoutPatient_infoInput>
@@ -11969,8 +14132,9 @@ export namespace Prisma {
 
   export type medicalcenter_infoUpdateWithoutPatient_infoInput = {
     center_name?: StringFieldUpdateOperationsInput | string
-    logo?: StringFieldUpdateOperationsInput | string
-    website?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -11980,8 +14144,9 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedUpdateWithoutPatient_infoInput = {
     center_id?: IntFieldUpdateOperationsInput | number
     center_name?: StringFieldUpdateOperationsInput | string
-    logo?: StringFieldUpdateOperationsInput | string
-    website?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -12034,6 +14199,7 @@ export namespace Prisma {
   export type patient_infoCreateWithoutPatient_uploadsInput = {
     patient_name: string
     registered_date: Date | string
+    bed_info?: bed_infoCreateNestedManyWithoutPatient_infoInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutPatient_infoInput
     room_register?: room_registerCreateNestedManyWithoutPatient_infoInput
   }
@@ -12043,6 +14209,7 @@ export namespace Prisma {
     patient_name: string
     registered_date: Date | string
     center_id: number
+    bed_info?: bed_infoUncheckedCreateNestedManyWithoutPatient_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutPatient_infoInput
   }
 
@@ -12065,6 +14232,7 @@ export namespace Prisma {
   export type patient_infoUpdateWithoutPatient_uploadsInput = {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    bed_info?: bed_infoUpdateManyWithoutPatient_infoNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutPatient_infoNestedInput
     room_register?: room_registerUpdateManyWithoutPatient_infoNestedInput
   }
@@ -12074,13 +14242,42 @@ export namespace Prisma {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
     center_id?: IntFieldUpdateOperationsInput | number
+    bed_info?: bed_infoUncheckedUpdateManyWithoutPatient_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutPatient_infoNestedInput
+  }
+
+  export type bed_infoCreateWithoutRoom_infoInput = {
+    bed_letter: string
+    is_available?: boolean
+    is_assigned?: boolean
+    user_info?: user_infoCreateNestedOneWithoutBed_infoInput
+    patient_info?: patient_infoCreateNestedOneWithoutBed_infoInput
+  }
+
+  export type bed_infoUncheckedCreateWithoutRoom_infoInput = {
+    bed_id?: number
+    bed_letter: string
+    is_available?: boolean
+    is_assigned?: boolean
+    assigned_patient_id?: number | null
+    assigned_nurse_id?: number | null
+  }
+
+  export type bed_infoCreateOrConnectWithoutRoom_infoInput = {
+    where: bed_infoWhereUniqueInput
+    create: XOR<bed_infoCreateWithoutRoom_infoInput, bed_infoUncheckedCreateWithoutRoom_infoInput>
+  }
+
+  export type bed_infoCreateManyRoom_infoInputEnvelope = {
+    data: bed_infoCreateManyRoom_infoInput | bed_infoCreateManyRoom_infoInput[]
+    skipDuplicates?: boolean
   }
 
   export type medicalcenter_infoCreateWithoutRoom_infoInput = {
     center_name: string
-    logo: string
-    website: string
+    address?: string | null
+    email?: string | null
+    registered_date?: Date | string | null
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoCreateNestedManyWithoutMedicalcenter_infoInput
@@ -12090,8 +14287,9 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedCreateWithoutRoom_infoInput = {
     center_id?: number
     center_name: string
-    logo: string
-    website: string
+    address?: string | null
+    email?: string | null
+    registered_date?: Date | string | null
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -12129,6 +14327,22 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type bed_infoUpsertWithWhereUniqueWithoutRoom_infoInput = {
+    where: bed_infoWhereUniqueInput
+    update: XOR<bed_infoUpdateWithoutRoom_infoInput, bed_infoUncheckedUpdateWithoutRoom_infoInput>
+    create: XOR<bed_infoCreateWithoutRoom_infoInput, bed_infoUncheckedCreateWithoutRoom_infoInput>
+  }
+
+  export type bed_infoUpdateWithWhereUniqueWithoutRoom_infoInput = {
+    where: bed_infoWhereUniqueInput
+    data: XOR<bed_infoUpdateWithoutRoom_infoInput, bed_infoUncheckedUpdateWithoutRoom_infoInput>
+  }
+
+  export type bed_infoUpdateManyWithWhereWithoutRoom_infoInput = {
+    where: bed_infoScalarWhereInput
+    data: XOR<bed_infoUpdateManyMutationInput, bed_infoUncheckedUpdateManyWithoutRoom_infoInput>
+  }
+
   export type medicalcenter_infoUpsertWithoutRoom_infoInput = {
     update: XOR<medicalcenter_infoUpdateWithoutRoom_infoInput, medicalcenter_infoUncheckedUpdateWithoutRoom_infoInput>
     create: XOR<medicalcenter_infoCreateWithoutRoom_infoInput, medicalcenter_infoUncheckedCreateWithoutRoom_infoInput>
@@ -12142,8 +14356,9 @@ export namespace Prisma {
 
   export type medicalcenter_infoUpdateWithoutRoom_infoInput = {
     center_name?: StringFieldUpdateOperationsInput | string
-    logo?: StringFieldUpdateOperationsInput | string
-    website?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -12153,8 +14368,9 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedUpdateWithoutRoom_infoInput = {
     center_id?: IntFieldUpdateOperationsInput | number
     center_name?: StringFieldUpdateOperationsInput | string
-    logo?: StringFieldUpdateOperationsInput | string
-    website?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -12177,10 +14393,169 @@ export namespace Prisma {
     data: XOR<room_registerUpdateManyMutationInput, room_registerUncheckedUpdateManyWithoutRoom_infoInput>
   }
 
+  export type user_infoCreateWithoutBed_infoInput = {
+    user_name: string
+    staff_id: string
+    password: string
+    user_role: string
+    charter_id: string
+    medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutUser_infoInput
+    user_uploads?: user_uploadsCreateNestedManyWithoutUser_infoInput
+  }
+
+  export type user_infoUncheckedCreateWithoutBed_infoInput = {
+    user_id?: number
+    user_name: string
+    staff_id: string
+    password: string
+    user_role: string
+    center_id: number
+    charter_id: string
+    user_uploads?: user_uploadsUncheckedCreateNestedManyWithoutUser_infoInput
+  }
+
+  export type user_infoCreateOrConnectWithoutBed_infoInput = {
+    where: user_infoWhereUniqueInput
+    create: XOR<user_infoCreateWithoutBed_infoInput, user_infoUncheckedCreateWithoutBed_infoInput>
+  }
+
+  export type patient_infoCreateWithoutBed_infoInput = {
+    patient_name: string
+    registered_date: Date | string
+    medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutPatient_infoInput
+    patient_uploads?: patient_uploadsCreateNestedManyWithoutPatient_infoInput
+    room_register?: room_registerCreateNestedManyWithoutPatient_infoInput
+  }
+
+  export type patient_infoUncheckedCreateWithoutBed_infoInput = {
+    patient_id?: number
+    patient_name: string
+    registered_date: Date | string
+    center_id: number
+    patient_uploads?: patient_uploadsUncheckedCreateNestedManyWithoutPatient_infoInput
+    room_register?: room_registerUncheckedCreateNestedManyWithoutPatient_infoInput
+  }
+
+  export type patient_infoCreateOrConnectWithoutBed_infoInput = {
+    where: patient_infoWhereUniqueInput
+    create: XOR<patient_infoCreateWithoutBed_infoInput, patient_infoUncheckedCreateWithoutBed_infoInput>
+  }
+
+  export type room_infoCreateWithoutBed_infoInput = {
+    room_number: number
+    number_of_beds: number
+    is_full?: boolean
+    medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutRoom_infoInput
+    room_register?: room_registerCreateNestedManyWithoutRoom_infoInput
+  }
+
+  export type room_infoUncheckedCreateWithoutBed_infoInput = {
+    room_id?: number
+    room_number: number
+    center_id: number
+    number_of_beds: number
+    is_full?: boolean
+    room_register?: room_registerUncheckedCreateNestedManyWithoutRoom_infoInput
+  }
+
+  export type room_infoCreateOrConnectWithoutBed_infoInput = {
+    where: room_infoWhereUniqueInput
+    create: XOR<room_infoCreateWithoutBed_infoInput, room_infoUncheckedCreateWithoutBed_infoInput>
+  }
+
+  export type user_infoUpsertWithoutBed_infoInput = {
+    update: XOR<user_infoUpdateWithoutBed_infoInput, user_infoUncheckedUpdateWithoutBed_infoInput>
+    create: XOR<user_infoCreateWithoutBed_infoInput, user_infoUncheckedCreateWithoutBed_infoInput>
+    where?: user_infoWhereInput
+  }
+
+  export type user_infoUpdateToOneWithWhereWithoutBed_infoInput = {
+    where?: user_infoWhereInput
+    data: XOR<user_infoUpdateWithoutBed_infoInput, user_infoUncheckedUpdateWithoutBed_infoInput>
+  }
+
+  export type user_infoUpdateWithoutBed_infoInput = {
+    user_name?: StringFieldUpdateOperationsInput | string
+    staff_id?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    user_role?: StringFieldUpdateOperationsInput | string
+    charter_id?: StringFieldUpdateOperationsInput | string
+    medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutUser_infoNestedInput
+    user_uploads?: user_uploadsUpdateManyWithoutUser_infoNestedInput
+  }
+
+  export type user_infoUncheckedUpdateWithoutBed_infoInput = {
+    user_id?: IntFieldUpdateOperationsInput | number
+    user_name?: StringFieldUpdateOperationsInput | string
+    staff_id?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    user_role?: StringFieldUpdateOperationsInput | string
+    center_id?: IntFieldUpdateOperationsInput | number
+    charter_id?: StringFieldUpdateOperationsInput | string
+    user_uploads?: user_uploadsUncheckedUpdateManyWithoutUser_infoNestedInput
+  }
+
+  export type patient_infoUpsertWithoutBed_infoInput = {
+    update: XOR<patient_infoUpdateWithoutBed_infoInput, patient_infoUncheckedUpdateWithoutBed_infoInput>
+    create: XOR<patient_infoCreateWithoutBed_infoInput, patient_infoUncheckedCreateWithoutBed_infoInput>
+    where?: patient_infoWhereInput
+  }
+
+  export type patient_infoUpdateToOneWithWhereWithoutBed_infoInput = {
+    where?: patient_infoWhereInput
+    data: XOR<patient_infoUpdateWithoutBed_infoInput, patient_infoUncheckedUpdateWithoutBed_infoInput>
+  }
+
+  export type patient_infoUpdateWithoutBed_infoInput = {
+    patient_name?: StringFieldUpdateOperationsInput | string
+    registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutPatient_infoNestedInput
+    patient_uploads?: patient_uploadsUpdateManyWithoutPatient_infoNestedInput
+    room_register?: room_registerUpdateManyWithoutPatient_infoNestedInput
+  }
+
+  export type patient_infoUncheckedUpdateWithoutBed_infoInput = {
+    patient_id?: IntFieldUpdateOperationsInput | number
+    patient_name?: StringFieldUpdateOperationsInput | string
+    registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    center_id?: IntFieldUpdateOperationsInput | number
+    patient_uploads?: patient_uploadsUncheckedUpdateManyWithoutPatient_infoNestedInput
+    room_register?: room_registerUncheckedUpdateManyWithoutPatient_infoNestedInput
+  }
+
+  export type room_infoUpsertWithoutBed_infoInput = {
+    update: XOR<room_infoUpdateWithoutBed_infoInput, room_infoUncheckedUpdateWithoutBed_infoInput>
+    create: XOR<room_infoCreateWithoutBed_infoInput, room_infoUncheckedCreateWithoutBed_infoInput>
+    where?: room_infoWhereInput
+  }
+
+  export type room_infoUpdateToOneWithWhereWithoutBed_infoInput = {
+    where?: room_infoWhereInput
+    data: XOR<room_infoUpdateWithoutBed_infoInput, room_infoUncheckedUpdateWithoutBed_infoInput>
+  }
+
+  export type room_infoUpdateWithoutBed_infoInput = {
+    room_number?: IntFieldUpdateOperationsInput | number
+    number_of_beds?: IntFieldUpdateOperationsInput | number
+    is_full?: BoolFieldUpdateOperationsInput | boolean
+    medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutRoom_infoNestedInput
+    room_register?: room_registerUpdateManyWithoutRoom_infoNestedInput
+  }
+
+  export type room_infoUncheckedUpdateWithoutBed_infoInput = {
+    room_id?: IntFieldUpdateOperationsInput | number
+    room_number?: IntFieldUpdateOperationsInput | number
+    center_id?: IntFieldUpdateOperationsInput | number
+    number_of_beds?: IntFieldUpdateOperationsInput | number
+    is_full?: BoolFieldUpdateOperationsInput | boolean
+    room_register?: room_registerUncheckedUpdateManyWithoutRoom_infoNestedInput
+  }
+
   export type medicalcenter_infoCreateWithoutRoom_registerInput = {
     center_name: string
-    logo: string
-    website: string
+    address?: string | null
+    email?: string | null
+    registered_date?: Date | string | null
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoCreateNestedManyWithoutMedicalcenter_infoInput
@@ -12190,8 +14565,9 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedCreateWithoutRoom_registerInput = {
     center_id?: number
     center_name: string
-    logo: string
-    website: string
+    address?: string | null
+    email?: string | null
+    registered_date?: Date | string | null
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -12206,6 +14582,7 @@ export namespace Prisma {
   export type patient_infoCreateWithoutRoom_registerInput = {
     patient_name: string
     registered_date: Date | string
+    bed_info?: bed_infoCreateNestedManyWithoutPatient_infoInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutPatient_infoInput
     patient_uploads?: patient_uploadsCreateNestedManyWithoutPatient_infoInput
   }
@@ -12215,6 +14592,7 @@ export namespace Prisma {
     patient_name: string
     registered_date: Date | string
     center_id: number
+    bed_info?: bed_infoUncheckedCreateNestedManyWithoutPatient_infoInput
     patient_uploads?: patient_uploadsUncheckedCreateNestedManyWithoutPatient_infoInput
   }
 
@@ -12226,6 +14604,8 @@ export namespace Prisma {
   export type room_infoCreateWithoutRoom_registerInput = {
     room_number: number
     number_of_beds: number
+    is_full?: boolean
+    bed_info?: bed_infoCreateNestedManyWithoutRoom_infoInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutRoom_infoInput
   }
 
@@ -12234,6 +14614,8 @@ export namespace Prisma {
     room_number: number
     center_id: number
     number_of_beds: number
+    is_full?: boolean
+    bed_info?: bed_infoUncheckedCreateNestedManyWithoutRoom_infoInput
   }
 
   export type room_infoCreateOrConnectWithoutRoom_registerInput = {
@@ -12254,8 +14636,9 @@ export namespace Prisma {
 
   export type medicalcenter_infoUpdateWithoutRoom_registerInput = {
     center_name?: StringFieldUpdateOperationsInput | string
-    logo?: StringFieldUpdateOperationsInput | string
-    website?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -12265,8 +14648,9 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedUpdateWithoutRoom_registerInput = {
     center_id?: IntFieldUpdateOperationsInput | number
     center_name?: StringFieldUpdateOperationsInput | string
-    logo?: StringFieldUpdateOperationsInput | string
-    website?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -12287,6 +14671,7 @@ export namespace Prisma {
   export type patient_infoUpdateWithoutRoom_registerInput = {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    bed_info?: bed_infoUpdateManyWithoutPatient_infoNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutPatient_infoNestedInput
     patient_uploads?: patient_uploadsUpdateManyWithoutPatient_infoNestedInput
   }
@@ -12296,6 +14681,7 @@ export namespace Prisma {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
     center_id?: IntFieldUpdateOperationsInput | number
+    bed_info?: bed_infoUncheckedUpdateManyWithoutPatient_infoNestedInput
     patient_uploads?: patient_uploadsUncheckedUpdateManyWithoutPatient_infoNestedInput
   }
 
@@ -12313,6 +14699,8 @@ export namespace Prisma {
   export type room_infoUpdateWithoutRoom_registerInput = {
     room_number?: IntFieldUpdateOperationsInput | number
     number_of_beds?: IntFieldUpdateOperationsInput | number
+    is_full?: BoolFieldUpdateOperationsInput | boolean
+    bed_info?: bed_infoUpdateManyWithoutRoom_infoNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutRoom_infoNestedInput
   }
 
@@ -12321,12 +14709,42 @@ export namespace Prisma {
     room_number?: IntFieldUpdateOperationsInput | number
     center_id?: IntFieldUpdateOperationsInput | number
     number_of_beds?: IntFieldUpdateOperationsInput | number
+    is_full?: BoolFieldUpdateOperationsInput | boolean
+    bed_info?: bed_infoUncheckedUpdateManyWithoutRoom_infoNestedInput
+  }
+
+  export type bed_infoCreateWithoutUser_infoInput = {
+    bed_letter: string
+    is_available?: boolean
+    is_assigned?: boolean
+    patient_info?: patient_infoCreateNestedOneWithoutBed_infoInput
+    room_info: room_infoCreateNestedOneWithoutBed_infoInput
+  }
+
+  export type bed_infoUncheckedCreateWithoutUser_infoInput = {
+    bed_id?: number
+    room_id: number
+    bed_letter: string
+    is_available?: boolean
+    is_assigned?: boolean
+    assigned_patient_id?: number | null
+  }
+
+  export type bed_infoCreateOrConnectWithoutUser_infoInput = {
+    where: bed_infoWhereUniqueInput
+    create: XOR<bed_infoCreateWithoutUser_infoInput, bed_infoUncheckedCreateWithoutUser_infoInput>
+  }
+
+  export type bed_infoCreateManyUser_infoInputEnvelope = {
+    data: bed_infoCreateManyUser_infoInput | bed_infoCreateManyUser_infoInput[]
+    skipDuplicates?: boolean
   }
 
   export type medicalcenter_infoCreateWithoutUser_infoInput = {
     center_name: string
-    logo: string
-    website: string
+    address?: string | null
+    email?: string | null
+    registered_date?: Date | string | null
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
@@ -12336,8 +14754,9 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedCreateWithoutUser_infoInput = {
     center_id?: number
     center_name: string
-    logo: string
-    website: string
+    address?: string | null
+    email?: string | null
+    registered_date?: Date | string | null
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -12375,6 +14794,22 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type bed_infoUpsertWithWhereUniqueWithoutUser_infoInput = {
+    where: bed_infoWhereUniqueInput
+    update: XOR<bed_infoUpdateWithoutUser_infoInput, bed_infoUncheckedUpdateWithoutUser_infoInput>
+    create: XOR<bed_infoCreateWithoutUser_infoInput, bed_infoUncheckedCreateWithoutUser_infoInput>
+  }
+
+  export type bed_infoUpdateWithWhereUniqueWithoutUser_infoInput = {
+    where: bed_infoWhereUniqueInput
+    data: XOR<bed_infoUpdateWithoutUser_infoInput, bed_infoUncheckedUpdateWithoutUser_infoInput>
+  }
+
+  export type bed_infoUpdateManyWithWhereWithoutUser_infoInput = {
+    where: bed_infoScalarWhereInput
+    data: XOR<bed_infoUpdateManyMutationInput, bed_infoUncheckedUpdateManyWithoutUser_infoInput>
+  }
+
   export type medicalcenter_infoUpsertWithoutUser_infoInput = {
     update: XOR<medicalcenter_infoUpdateWithoutUser_infoInput, medicalcenter_infoUncheckedUpdateWithoutUser_infoInput>
     create: XOR<medicalcenter_infoCreateWithoutUser_infoInput, medicalcenter_infoUncheckedCreateWithoutUser_infoInput>
@@ -12388,8 +14823,9 @@ export namespace Prisma {
 
   export type medicalcenter_infoUpdateWithoutUser_infoInput = {
     center_name?: StringFieldUpdateOperationsInput | string
-    logo?: StringFieldUpdateOperationsInput | string
-    website?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -12399,8 +14835,9 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedUpdateWithoutUser_infoInput = {
     center_id?: IntFieldUpdateOperationsInput | number
     center_name?: StringFieldUpdateOperationsInput | string
-    logo?: StringFieldUpdateOperationsInput | string
-    website?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -12425,8 +14862,9 @@ export namespace Prisma {
 
   export type medicalcenter_infoCreateWithoutUser_uploadsInput = {
     center_name: string
-    logo: string
-    website: string
+    address?: string | null
+    email?: string | null
+    registered_date?: Date | string | null
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
@@ -12436,8 +14874,9 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedCreateWithoutUser_uploadsInput = {
     center_id?: number
     center_name: string
-    logo: string
-    website: string
+    address?: string | null
+    email?: string | null
+    registered_date?: Date | string | null
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -12455,6 +14894,7 @@ export namespace Prisma {
     password: string
     user_role: string
     charter_id: string
+    bed_info?: bed_infoCreateNestedManyWithoutUser_infoInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutUser_infoInput
   }
 
@@ -12466,6 +14906,7 @@ export namespace Prisma {
     user_role: string
     center_id: number
     charter_id: string
+    bed_info?: bed_infoUncheckedCreateNestedManyWithoutUser_infoInput
   }
 
   export type user_infoCreateOrConnectWithoutUser_uploadsInput = {
@@ -12486,8 +14927,9 @@ export namespace Prisma {
 
   export type medicalcenter_infoUpdateWithoutUser_uploadsInput = {
     center_name?: StringFieldUpdateOperationsInput | string
-    logo?: StringFieldUpdateOperationsInput | string
-    website?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -12497,8 +14939,9 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedUpdateWithoutUser_uploadsInput = {
     center_id?: IntFieldUpdateOperationsInput | number
     center_name?: StringFieldUpdateOperationsInput | string
-    logo?: StringFieldUpdateOperationsInput | string
-    website?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -12522,6 +14965,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     user_role?: StringFieldUpdateOperationsInput | string
     charter_id?: StringFieldUpdateOperationsInput | string
+    bed_info?: bed_infoUpdateManyWithoutUser_infoNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutUser_infoNestedInput
   }
 
@@ -12533,6 +14977,7 @@ export namespace Prisma {
     user_role?: StringFieldUpdateOperationsInput | string
     center_id?: IntFieldUpdateOperationsInput | number
     charter_id?: StringFieldUpdateOperationsInput | string
+    bed_info?: bed_infoUncheckedUpdateManyWithoutUser_infoNestedInput
   }
 
   export type patient_infoCreateManyMedicalcenter_infoInput = {
@@ -12545,6 +14990,7 @@ export namespace Prisma {
     room_id?: number
     room_number: number
     number_of_beds: number
+    is_full?: boolean
   }
 
   export type room_registerCreateManyMedicalcenter_infoInput = {
@@ -12575,6 +15021,7 @@ export namespace Prisma {
   export type patient_infoUpdateWithoutMedicalcenter_infoInput = {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    bed_info?: bed_infoUpdateManyWithoutPatient_infoNestedInput
     patient_uploads?: patient_uploadsUpdateManyWithoutPatient_infoNestedInput
     room_register?: room_registerUpdateManyWithoutPatient_infoNestedInput
   }
@@ -12583,6 +15030,7 @@ export namespace Prisma {
     patient_id?: IntFieldUpdateOperationsInput | number
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    bed_info?: bed_infoUncheckedUpdateManyWithoutPatient_infoNestedInput
     patient_uploads?: patient_uploadsUncheckedUpdateManyWithoutPatient_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutPatient_infoNestedInput
   }
@@ -12596,6 +15044,8 @@ export namespace Prisma {
   export type room_infoUpdateWithoutMedicalcenter_infoInput = {
     room_number?: IntFieldUpdateOperationsInput | number
     number_of_beds?: IntFieldUpdateOperationsInput | number
+    is_full?: BoolFieldUpdateOperationsInput | boolean
+    bed_info?: bed_infoUpdateManyWithoutRoom_infoNestedInput
     room_register?: room_registerUpdateManyWithoutRoom_infoNestedInput
   }
 
@@ -12603,6 +15053,8 @@ export namespace Prisma {
     room_id?: IntFieldUpdateOperationsInput | number
     room_number?: IntFieldUpdateOperationsInput | number
     number_of_beds?: IntFieldUpdateOperationsInput | number
+    is_full?: BoolFieldUpdateOperationsInput | boolean
+    bed_info?: bed_infoUncheckedUpdateManyWithoutRoom_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutRoom_infoNestedInput
   }
 
@@ -12610,6 +15062,7 @@ export namespace Prisma {
     room_id?: IntFieldUpdateOperationsInput | number
     room_number?: IntFieldUpdateOperationsInput | number
     number_of_beds?: IntFieldUpdateOperationsInput | number
+    is_full?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type room_registerUpdateWithoutMedicalcenter_infoInput = {
@@ -12642,6 +15095,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     user_role?: StringFieldUpdateOperationsInput | string
     charter_id?: StringFieldUpdateOperationsInput | string
+    bed_info?: bed_infoUpdateManyWithoutUser_infoNestedInput
     user_uploads?: user_uploadsUpdateManyWithoutUser_infoNestedInput
   }
 
@@ -12652,6 +15106,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     user_role?: StringFieldUpdateOperationsInput | string
     charter_id?: StringFieldUpdateOperationsInput | string
+    bed_info?: bed_infoUncheckedUpdateManyWithoutUser_infoNestedInput
     user_uploads?: user_uploadsUncheckedUpdateManyWithoutUser_infoNestedInput
   }
 
@@ -12688,6 +15143,15 @@ export namespace Prisma {
     upload_time?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type bed_infoCreateManyPatient_infoInput = {
+    bed_id?: number
+    room_id: number
+    bed_letter: string
+    is_available?: boolean
+    is_assigned?: boolean
+    assigned_nurse_id?: number | null
+  }
+
   export type patient_uploadsCreateManyPatient_infoInput = {
     session_id: number
     upload_path: string
@@ -12701,6 +15165,32 @@ export namespace Prisma {
     center_id: number
     reg_date: Date | string
     reg_time: Date | string
+  }
+
+  export type bed_infoUpdateWithoutPatient_infoInput = {
+    bed_letter?: StringFieldUpdateOperationsInput | string
+    is_available?: BoolFieldUpdateOperationsInput | boolean
+    is_assigned?: BoolFieldUpdateOperationsInput | boolean
+    user_info?: user_infoUpdateOneWithoutBed_infoNestedInput
+    room_info?: room_infoUpdateOneRequiredWithoutBed_infoNestedInput
+  }
+
+  export type bed_infoUncheckedUpdateWithoutPatient_infoInput = {
+    bed_id?: IntFieldUpdateOperationsInput | number
+    room_id?: IntFieldUpdateOperationsInput | number
+    bed_letter?: StringFieldUpdateOperationsInput | string
+    is_available?: BoolFieldUpdateOperationsInput | boolean
+    is_assigned?: BoolFieldUpdateOperationsInput | boolean
+    assigned_nurse_id?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type bed_infoUncheckedUpdateManyWithoutPatient_infoInput = {
+    bed_id?: IntFieldUpdateOperationsInput | number
+    room_id?: IntFieldUpdateOperationsInput | number
+    bed_letter?: StringFieldUpdateOperationsInput | string
+    is_available?: BoolFieldUpdateOperationsInput | boolean
+    is_assigned?: BoolFieldUpdateOperationsInput | boolean
+    assigned_nurse_id?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type patient_uploadsUpdateWithoutPatient_infoInput = {
@@ -12748,12 +15238,47 @@ export namespace Prisma {
     reg_time?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type bed_infoCreateManyRoom_infoInput = {
+    bed_id?: number
+    bed_letter: string
+    is_available?: boolean
+    is_assigned?: boolean
+    assigned_patient_id?: number | null
+    assigned_nurse_id?: number | null
+  }
+
   export type room_registerCreateManyRoom_infoInput = {
     patient_id: number
     session_id: number
     center_id: number
     reg_date: Date | string
     reg_time: Date | string
+  }
+
+  export type bed_infoUpdateWithoutRoom_infoInput = {
+    bed_letter?: StringFieldUpdateOperationsInput | string
+    is_available?: BoolFieldUpdateOperationsInput | boolean
+    is_assigned?: BoolFieldUpdateOperationsInput | boolean
+    user_info?: user_infoUpdateOneWithoutBed_infoNestedInput
+    patient_info?: patient_infoUpdateOneWithoutBed_infoNestedInput
+  }
+
+  export type bed_infoUncheckedUpdateWithoutRoom_infoInput = {
+    bed_id?: IntFieldUpdateOperationsInput | number
+    bed_letter?: StringFieldUpdateOperationsInput | string
+    is_available?: BoolFieldUpdateOperationsInput | boolean
+    is_assigned?: BoolFieldUpdateOperationsInput | boolean
+    assigned_patient_id?: NullableIntFieldUpdateOperationsInput | number | null
+    assigned_nurse_id?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type bed_infoUncheckedUpdateManyWithoutRoom_infoInput = {
+    bed_id?: IntFieldUpdateOperationsInput | number
+    bed_letter?: StringFieldUpdateOperationsInput | string
+    is_available?: BoolFieldUpdateOperationsInput | boolean
+    is_assigned?: BoolFieldUpdateOperationsInput | boolean
+    assigned_patient_id?: NullableIntFieldUpdateOperationsInput | number | null
+    assigned_nurse_id?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type room_registerUpdateWithoutRoom_infoInput = {
@@ -12780,12 +15305,47 @@ export namespace Prisma {
     reg_time?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type bed_infoCreateManyUser_infoInput = {
+    bed_id?: number
+    room_id: number
+    bed_letter: string
+    is_available?: boolean
+    is_assigned?: boolean
+    assigned_patient_id?: number | null
+  }
+
   export type user_uploadsCreateManyUser_infoInput = {
     center_id: number
     upload_path: string
     unassigned_uploads: string
     upload_date: Date | string
     upload_time: Date | string
+  }
+
+  export type bed_infoUpdateWithoutUser_infoInput = {
+    bed_letter?: StringFieldUpdateOperationsInput | string
+    is_available?: BoolFieldUpdateOperationsInput | boolean
+    is_assigned?: BoolFieldUpdateOperationsInput | boolean
+    patient_info?: patient_infoUpdateOneWithoutBed_infoNestedInput
+    room_info?: room_infoUpdateOneRequiredWithoutBed_infoNestedInput
+  }
+
+  export type bed_infoUncheckedUpdateWithoutUser_infoInput = {
+    bed_id?: IntFieldUpdateOperationsInput | number
+    room_id?: IntFieldUpdateOperationsInput | number
+    bed_letter?: StringFieldUpdateOperationsInput | string
+    is_available?: BoolFieldUpdateOperationsInput | boolean
+    is_assigned?: BoolFieldUpdateOperationsInput | boolean
+    assigned_patient_id?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type bed_infoUncheckedUpdateManyWithoutUser_infoInput = {
+    bed_id?: IntFieldUpdateOperationsInput | number
+    room_id?: IntFieldUpdateOperationsInput | number
+    bed_letter?: StringFieldUpdateOperationsInput | string
+    is_available?: BoolFieldUpdateOperationsInput | boolean
+    is_assigned?: BoolFieldUpdateOperationsInput | boolean
+    assigned_patient_id?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type user_uploadsUpdateWithoutUser_infoInput = {
