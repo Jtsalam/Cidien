@@ -55,17 +55,16 @@ model room_info {
 }
 
 model bed_info {
-  bed_id              Int          @id @default(autoincrement())
+  bed_id              Int           @id @default(autoincrement())
   room_id             Int
-  bed_letter          String       @db.VarChar(1)
-  is_available        Boolean      @default(false)
-  is_assigned         Boolean      @default(false)
-  assigned_patient_id Int? 
-  assigned_nurse_id   Int? 
-
-  user_info     user_info?    @relation(fields: [assigned_nurse_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
-  patient_info  patient_info? @relation(fields: [assigned_patient_id], references: [patient_id], onDelete: NoAction, onUpdate: NoAction)
-  room_info           room_info    @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction)
+  bed_letter          String        @db.VarChar(1)
+  is_available        Boolean       @default(false)
+  is_assigned         Boolean       @default(false)
+  assigned_patient_id Int?
+  assigned_nurse_id   Int?
+  user_info           user_info?    @relation(fields: [assigned_nurse_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  patient_info        patient_info? @relation(fields: [assigned_patient_id], references: [patient_id], onDelete: NoAction, onUpdate: NoAction)
+  room_info           room_info     @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model room_register {
