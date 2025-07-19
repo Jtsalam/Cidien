@@ -1,6 +1,6 @@
 import os
-import threading
-from flask import Flask, request, render_template, jsonify, send_from_directory, send_file
+import psycopg2
+from flask import Flask, request, render_template, jsonify,send_file
 from flask_socketio import SocketIO
 from flask_cors import CORS
 from functions import no_of_files, recognize_speech_from_audio, all_rooms, aud_info
@@ -9,6 +9,18 @@ from functions import no_of_files, recognize_speech_from_audio, all_rooms, aud_i
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
+
+# Replace these values with your actual DB credentials
+conn = psycopg2.connect(
+    dbname="medicalcentersdb",
+    user="postgres",
+    password="PostSQL@2025",
+    host="localhost",  # or your DB server
+    port="5432"         # default port
+)
+cur = conn.cursor()
+
+
 
 # Initialize recording counters for each room
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # This resolves to /Charting-Device
@@ -35,7 +47,28 @@ def index():
 
 @app.route("/login_val", methods=['POST', 'GET'])
 def submit_btn():
+    selectedOrg = request.form["Organization Name"]
+    staffID = request.form.get("staff_id")
+    cur.execute("SELECT center_id, center_name FROM medicalcenter_info")
+    centerRows = cur.fetchall()
+    center_found = False
+
+    for center_id, center_name in centerRows:
+        if selectedOrg == center_name:
+            center_found = True
+            cur.execute("SELECT staff_id FROM user_info WHERE center_id = %s", (center_id,))
+            staff_rows = cur.fetchall()
+            staff_ids = [row[0] for row in staff_rows]
+            
+            if staffID not in staff_ids:
+                return render_template('login_form.html', error="Invalid Staff ID!")
+            break  # no need to keep looping once found
+
+    if not center_found:
+        return render_template('login_form.html', error="Invalid Center ID!")
+
     return render_template("remote.html")
+
 
 @app.route('/process_audio/room_num', methods=['POST'])
 def room_btn_fn():
@@ -52,7 +85,13 @@ def room_btn_fn():
     audio_file.save(audio_path)
 
     room_number = recognize_speech_from_audio(audio_path)
-    room_number = room_number['transcription']
+    try:
+        room_number = room_number['transcription']
+    except:
+        Exception
+        room_exists = False
+        return jsonify({'message': "Room not heard properly, please try again."})
+        
     # room_list = all_rooms(f'{root}/uploads')
     room_list = all_rooms(os.path.join(BASE_DIR, 'uploads'))
     print(room_list)
