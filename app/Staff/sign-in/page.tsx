@@ -59,13 +59,12 @@ export default function SignInPage() {
     });
   
     const result = await res.json();
-  
     if (res.ok && result.success) {
       // 🌟 Redirect based on role or formType
-      if (result.role === "Staff" || formType === "staff") {
+      if (formType === "staff") {
         // router.push("/user-dashboard"); //Where to put alert information
         setStaffError("");
-        window.location.href = "/Staff/dashboard";
+        window.location.href = `/${result.role}/dashboard`;
         // alert("Staff signed in successfully!");
       } else if (result.role === "room" || formType === "room") {
         // router.push("/room-dashboard");
