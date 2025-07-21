@@ -1,7 +1,6 @@
 "use client"
 
 import RoomPanel from "@/components/Dashboard/RoomPanel";
-import InactivityTracker from "@/components/Dashboard/InactivityTracker";
 
 export default function RoomDashboard() {
     return (
