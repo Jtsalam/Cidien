@@ -8,6 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { LogOut, Hospital, User, Home, Upload, Database, Users } from "lucide-react"
+import DataTable from "@/components/Dashboard/DataTable"
 import LogoutConfirmationModal from "@/components/Dashboard/LogoutConfirmationModal";
 
 export default function MainPanel() {
@@ -46,7 +47,7 @@ export default function MainPanel() {
     },
     {
         value: "data",
-        path: "/Mobile-Charter/StaffDashboard/data.php",
+        path: "",
         icon: Database,
         label: "Data",
       },
@@ -165,7 +166,10 @@ export default function MainPanel() {
           </Tabs>
         </div>
       </div>
-
+      
+      {/* Content Area - Show DataTable only when data tab is active */}
+      {activeTab === "data" && <DataTable />}
+      
       <LogoutConfirmationModal
         open={showLogoutModal}
         onCancel={() => setShowLogoutModal(false)}
