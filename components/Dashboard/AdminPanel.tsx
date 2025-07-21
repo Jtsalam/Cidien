@@ -45,16 +45,16 @@ export default function MainPanel() {
       label: "Home",
     },
     {
+        value: "data",
+        path: "/Mobile-Charter/StaffDashboard/data.php",
+        icon: Database,
+        label: "Data",
+      },
+    {
       value: "uploads",
       path: "/Mobile-Charter/uploads/uploadview.php",
       icon: Upload,
       label: "Uploads",
-    },
-    {
-      value: "data",
-      path: "/Mobile-Charter/StaffDashboard/data.php",
-      icon: Database,
-      label: "Data",
     },
     {
       value: "clients",
