@@ -11,7 +11,13 @@ export function middleware(request: NextRequest) {
   if (pathname.startsWith("/Staff/sign-in") && !orgSubmitted) {
     return NextResponse.redirect(new URL("/Center/sign-in", request.url));
   }
+  
+  // If user has already signed in and tries to access sign in page, redirect to dashboard
+  if (pathname === "/Staff/sign-in" && staffSubmitted) {
+    return NextResponse.redirect(new URL(`/${userRole}/dashboard`, request.url));
+  }
 
+  // If user has selected center, reirect them to staff sign in page
   if (pathname === "/Center/sign-in" && orgSubmitted) {
     return NextResponse.redirect(new URL("/Staff/sign-in", request.url));
   }
@@ -20,14 +26,15 @@ export function middleware(request: NextRequest) {
   if (pathname.startsWith(`/${userRole}/dashboard`) && !staffSubmitted) {
     return NextResponse.redirect(new URL("/Staff/sign-in", request.url));
   }
-  
-  // // Block access to staff dashboard if not staff
-  // if (pathname.startsWith("/Staff/dashboard") && userRole !== "Staff") {
-  //   return NextResponse.redirect(new URL(`/${userRole}/dashboard`, request.url));
-  // }
 
-  if (pathname === "/Staff/sign-in" && staffSubmitted) {
-    return NextResponse.redirect(new URL(`/${userRole}/dashboard`, request.url));
+  // Block access to staff dashboard if staff is Admin
+  if ((pathname === "/Admin/dashboard") && (userRole != "Admin")) {
+    return NextResponse.redirect(new URL("/Staff/sign-in", request.url));
+  }
+  
+  // Block access to admin dashboard if Staff is NOT an admin
+  if ((pathname === "/Staff/dashboard") && (userRole != "Staff")) {
+    return NextResponse.redirect(new URL("/Staff/sign-in", request.url));
   }
 
   // Allow access to the page requested for if the user has submitted
@@ -40,5 +47,5 @@ export const config = {
            "/Staff/sign-in", 
            "/Staff/dashboard",
           "/Admin/dashboard",
-        ]  // Change this to the actual route of your new page
+        ]
 };
