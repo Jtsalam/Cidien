@@ -1,10 +1,15 @@
-// File: app/api/staff/RoomMngr/assign-bed/[bedId]/route.ts (GET + PATCH)
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(req: Request, { params }: { params: { bedId: string } }) {
-  const bedId = parseInt(params.bedId);
-  if (isNaN(bedId)) return NextResponse.json({ error: "Invalid bed ID" }, { status: 400 });
+// GET handler
+export async function GET(
+  req: NextRequest,
+  context: { params: { bedId: string } }
+) {
+  const bedId = parseInt(context.params.bedId);
+  if (isNaN(bedId)) {
+    return NextResponse.json({ error: "Invalid bed ID" }, { status: 400 });
+  }
 
   try {
     const bed = await prisma.bed_info.findUnique({
@@ -15,7 +20,10 @@ export async function GET(req: Request, { params }: { params: { bedId: string } 
       },
     });
 
-    if (!bed) return NextResponse.json({ error: "Bed not found" }, { status: 404 });
+    if (!bed) {
+      return NextResponse.json({ error: "Bed not found" }, { status: 404 });
+    }
+
     return NextResponse.json(bed);
   } catch (error) {
     console.error(error);
@@ -23,15 +31,21 @@ export async function GET(req: Request, { params }: { params: { bedId: string } 
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: { bedId: string } }) {
-  const bedId = parseInt(params.bedId);
-  if (isNaN(bedId)) return NextResponse.json({ error: "Invalid bed ID" }, { status: 400 });
+// PATCH handler
+export async function PATCH(
+  req: NextRequest,
+  context: { params: { bedId: string } }
+) {
+  const bedId = parseInt(context.params.bedId);
+  if (isNaN(bedId)) {
+    return NextResponse.json({ error: "Invalid bed ID" }, { status: 400 });
+  }
 
   const body = await req.json();
   const { patientName, patientId, nurseId, roomId, assignToAllBeds } = body;
 
   try {
-    // If patient name is passed alone, update just the patient name
+    // Update patient name if provided
     if (patientId && patientName) {
       await prisma.patient_info.update({
         where: { patient_id: patientId },
@@ -39,15 +53,15 @@ export async function PATCH(req: Request, { params }: { params: { bedId: string 
       });
     }
 
+    // Assign nurse to all beds in the room if required
     if (assignToAllBeds && nurseId && roomId) {
-      // Assign nurse to all beds in the room
       await prisma.bed_info.updateMany({
         where: { room_id: roomId },
         data: { assigned_nurse_id: nurseId },
       });
     }
 
-    // Assign patient to the current bed only
+    // Assign patient to the specific bed
     await prisma.bed_info.update({
       where: { bed_id: bedId },
       data: { assigned_patient_id: patientId },
