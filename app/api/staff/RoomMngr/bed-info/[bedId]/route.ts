@@ -1,4 +1,4 @@
-// File: app/api/bed-info/[bedId]/route.ts (GET + PATCH)
+// File: app/api/staff/RoomMngr/assign-bed/[bedId]/route.ts (GET + PATCH)
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 

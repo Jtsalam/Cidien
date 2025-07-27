@@ -73,7 +73,7 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
     const fetchRoomsAndBeds = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/rooms?organizationId=${centerId}`);
+        const response = await fetch(`/api/staff/RoomMngr/rooms?organizationId=${centerId}`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch rooms');
@@ -134,7 +134,7 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
     console.log('Saving data:', data);
   
     try {
-      const response = await fetch('/api/assign-bed', {
+      const response = await fetch('/api/staff/RoomMngr/assign-bed', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -153,7 +153,7 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
       }
 
       // Refresh the room data
-      const refreshResponse = await fetch(`/api/rooms?organizationId=${centerId}`);
+      const refreshResponse = await fetch(`/api/staff/RoomMngr/rooms?organizationId=${centerId}`);
       if (refreshResponse.ok) {
         const refreshData = await refreshResponse.json();
         setRooms(refreshData.rooms);
@@ -168,7 +168,7 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
 
   const handleDischarge = async (data: { dischargePatient: boolean }) => {
     try {
-      const response = await fetch('/api/discharge-bed', {
+      const response = await fetch('/api/staff/RoomMngr/discharge-bed', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -184,7 +184,7 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
       }
 
       // Refresh the room data
-      const refreshResponse = await fetch(`/api/rooms?organizationId=${centerId}`);
+      const refreshResponse = await fetch(`/api/staff/RoomMngr/rooms?organizationId=${centerId}`);
       if (refreshResponse.ok) {
         const refreshData = await refreshResponse.json();
         setRooms(refreshData.rooms);

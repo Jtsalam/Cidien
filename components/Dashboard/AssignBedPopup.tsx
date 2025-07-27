@@ -77,7 +77,7 @@ const AssignBedPopup: React.FC<AssignBedPopupProps> = ({
       if (!nurseSearch) return setFilteredNurses([]);
 
       try {
-        const res = await fetch(`/api/nurses?centerId=${centerId}&search=${nurseSearch}`);
+        const res = await fetch(`/api/staff/RoomMngr/nurses?centerId=${centerId}&search=${nurseSearch}`);
         const data = await res.json();
         if (res.ok) {
           setFilteredNurses(data.nurses);

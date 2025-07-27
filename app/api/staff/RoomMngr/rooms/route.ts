@@ -1,6 +1,3 @@
-// app/api/rooms/route.ts (if using App Router) 
-// or pages/api/rooms.ts (if using Pages Router)
-
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from "next/headers";
 import { orgMap } from "@/lib/constants";

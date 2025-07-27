@@ -25,7 +25,7 @@ export default function MainPanel() {
     const fetchCenterId = async () => {
       try {
         setLoadingCenterId(true)
-        const res = await fetch("/api/rooms", { method: "POST" })
+        const res = await fetch("/api/staff/RoomMngr/rooms", { method: "POST" })
   
         if (!res.ok) {
           throw new Error("Failed to fetch center ID")
