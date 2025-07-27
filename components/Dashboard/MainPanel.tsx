@@ -5,18 +5,18 @@ import { getCookie } from "@/utils/getCookie"
 import { orgMap } from "@/lib/constants"
 import { useEffect, useState } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { LogOut, Hospital, User, Home, Upload, Database, Users } from "lucide-react"
-import LogoutConfirmationModal from "@/components/Dashboard/LogoutConfirmationModal";
+import { LogOut, Hospital, User, Home, Upload, Database, Bed, DoorOpen, ArrowLeftRight } from "lucide-react"
+import LogoutConfirmationModal from "@/components/Dashboard/LogoutConfirmationModal"
+import DataTable from "@/components/Dashboard/DataTable"
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
 
 export default function MainPanel() {
   const [displayName, setDisplayName] = useState("")
   const [nurseId, setNurseId] = useState("")
+  const [roomId, setRoomId] = useState("")
   const [orgImage, setOrgImage] = useState("")
   const [showLogoutModal, setShowLogoutModal] = useState(false)
-  const router = useRouter()
-  const pathname = usePathname()
 
   // Mock fetching session data (replace with actual logic)
   useEffect(() => {
@@ -25,9 +25,14 @@ export default function MainPanel() {
     console.log("Organization from cookie:", cookieOrg)
     setDisplayName(orgMap[cookieOrg.trim()])
 
-    const cookieId = getCookie("staff_Id") ?? ""
-    console.log("Staff Id from cookie:", cookieId)
-    setNurseId(cookieId.trim())
+    const staffCookie = getCookie("staff_Id") ?? ""
+    console.log("Staff Id from cookie:", staffCookie)
+    setNurseId(staffCookie.trim())
+
+    const roomCookie = getCookie("room_Id") ?? ""
+    console.log("Room Id from cookie:", roomCookie)
+    setRoomId(roomCookie.trim())
+
     setOrgImage(`${cookieOrg.trim()}`)
   }, [])
 
@@ -45,27 +50,27 @@ export default function MainPanel() {
       label: "Home",
     },
     {
-      value: "uploads",
-      path: "/Mobile-Charter/uploads/uploadview.php",
-      icon: Upload,
-      label: "Uploads",
-    },
-    {
       value: "data",
       path: "/Mobile-Charter/StaffDashboard/data.php",
       icon: Database,
       label: "Data",
     },
     {
+      value: "uploads",
+      path: "/Mobile-Charter/uploads/uploadview.php",
+      icon: Upload,
+      label: "Uploads",
+    },
+    {
       value: "clients",
       path: "/Mobile-Charter/StaffDashboard/clients.php",
-      icon: Users,
-      label: "Patients",
+      icon: Bed,
+      label: "All Beds",
     },
   ]
 
   // Determine the active tab based on the current pathname
-  const activeTab = tabRoutes.find((route) => pathname === route.path)?.value || "home"
+  const [activeTab, setActiveTab] = useState("home")
 
   return (
     <div className="bg-white shadow-lg border-b">
@@ -105,6 +110,52 @@ export default function MainPanel() {
                   <span className="text-sm font-medium text-emerald-100">Staff ID</span>
                 </div>
                 <p className="font-semibold">{nurseId || "Loading..."}</p>
+              </div>
+              <div className="text-right">
+                <div className="flex items-center space-x-2 mb-1">
+                  <DoorOpen className="w-4 h-4 text-emerald-200" />
+                  <span className="text-sm font-medium text-emerald-100">Room ID</span>
+                </div>
+                <TooltipProvider>
+                  <p className="font-semibold flex justify-end items-center">
+                    {roomId || "No rooms assigned."}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          onClick={() => console.log("Switch room clicked")}
+                          variant="ghost"
+                          size="sm"
+                          className="ml-3 h-9 w-9 p-0 
+                                   bg-emerald-500/15 hover:bg-emerald-500/25 
+                                   border border-emerald-400/40 hover:border-emerald-300/60
+                                   rounded-lg shadow-sm hover:shadow-md
+                                   transition-all duration-300 ease-out
+                                   group relative overflow-hidden
+                                   hover:scale-105 active:scale-95"
+                        >
+                          <div
+                            className="absolute inset-0 bg-gradient-to-r from-emerald-400/10 to-emerald-300/10 
+                                     opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                          />
+                          <ArrowLeftRight
+                            className="w-4 h-4 text-emerald-200 
+                                     group-hover:text-white
+                                     group-hover:rotate-180
+                                     transition-all duration-300 ease-out
+                                     relative z-10"
+                          />
+                          <span className="sr-only">Switch to a different room</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="bg-slate-800 text-white border-slate-700">
+                        <div className="flex items-center gap-2">
+                          <ArrowLeftRight className="w-3 h-3" />
+                          <span>Switch Room</span>
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </p>
+                </TooltipProvider>
               </div>
             </div>
 
@@ -153,7 +204,7 @@ export default function MainPanel() {
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
-                    onClick={() => router.push(tab.path)}
+                    onClick={() => setActiveTab(tab.value)}
                     className="flex items-center space-x-2 text-sm font-medium text-gray-600 data-[state=active]:bg-emerald-600 data-[state=active]:text-white rounded-md transition-all duration-200 hover:bg-gray-100 data-[state=active]:hover:bg-emerald-700"
                   >
                     <IconComponent className="w-4 h-4" />
@@ -165,7 +216,10 @@ export default function MainPanel() {
           </Tabs>
         </div>
       </div>
-
+      
+      {/* Content Area - Show DataTable only when data tab is active */}
+      {activeTab === "data" && <DataTable />}
+      
       <LogoutConfirmationModal
         open={showLogoutModal}
         onCancel={() => setShowLogoutModal(false)}
