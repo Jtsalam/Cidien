@@ -2,10 +2,10 @@ import speech_recognition as sr
 from pydub import AudioSegment
 from datetime import datetime
 import os
-import pandas as pd
-import time
-import csv
-import json
+import noisereduce as nr
+import librosa
+import soundfile as sf
+import tempfile
 
 def convert_audio(file_path, target_format='wav'):
     """Convert audio file to the target format."""
@@ -14,30 +14,21 @@ def convert_audio(file_path, target_format='wav'):
     audio.export(new_file_path, format=target_format)
     return new_file_path
 
-# def recognize_speech_from_audio(file_path):
-#     """Recognize speech from an audio file."""
-#     recognizer = sr.Recognizer()
+def denoise_audio(input_path):
+    """Apply noise reduction to an audio file."""
+    y, sr = librosa.load(input_path, sr=None)
+    reduced = nr.reduce_noise(y=y, sr=sr)
     
-#     # Convert audio file to WAV format if necessary
-#     if not file_path.lower().endswith('.wav'):
-#         file_path = convert_audio(file_path)
-    
-#     with sr.AudioFile(file_path) as source:
-#         audio_data = recognizer.record(source)
-    
-#     try:
-#         # Recognize speech using Google Web Speech API
-#         text = recognizer.recognize_google(audio_data)
-#         return(f"{text}")
-#     except sr.UnknownValueError:
-#         return("Audio not properly heard")
-#     except sr.RequestError as e:
-#         return(f"Could not request results from Google Web Speech API; {e}")
+    # Save to a temporary file
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
+    sf.write(temp_file.name, reduced, sr)
+    return temp_file.name
 
 def recognize_speech_from_audio(file_path):
-    """Recognize speech from an audio file (WAV preferred)."""
+    """Recognize speech from an audio file (WAV preferred) with noise reduction."""
     recognizer = sr.Recognizer()
 
+    # Step 1: Convert to WAV if needed
     if not file_path.lower().endswith('.wav'):
         try:
             file_path = convert_audio(file_path)
@@ -46,8 +37,15 @@ def recognize_speech_from_audio(file_path):
         except Exception as e:
             return {"success": False, "error": f"Conversion error: {e}"}
 
+    # Step 2: Denoise audio
     try:
-        with sr.AudioFile(file_path) as source:
+        cleaned_file = denoise_audio(file_path)
+    except Exception as e:
+        return {"success": False, "error": f"Noise reduction failed: {e}"}
+
+    # Step 3: Transcribe
+    try:
+        with sr.AudioFile(cleaned_file) as source:
             audio_data = recognizer.record(source)
         text = recognizer.recognize_google(audio_data)
         return {"success": True, "transcription": text}
@@ -55,6 +53,12 @@ def recognize_speech_from_audio(file_path):
         return {"success": False, "error": "Audio not properly heard"}
     except sr.RequestError as e:
         return {"success": False, "error": f"Google API error: {e}"}
+    finally:
+        os.remove(cleaned_file)  # Clean up temporary file
+
+
+
+
 
 def all_rooms(directory_path):
     try:

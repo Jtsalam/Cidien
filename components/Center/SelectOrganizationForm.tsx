@@ -57,14 +57,14 @@ export default function SelectOrganizationForm({ onSubmit }: Props) {
           </button>
 
           {/* <br /> */}
-          <a
+          {/* <a
             href="https://calendly.com/mobilecharterorg/30min"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:underline hover:text-blue-800 transition-colors"
           >
             Register your account
-          </a>
+          </a> */}
 
 
         </form>
