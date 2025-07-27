@@ -5,7 +5,6 @@ import { getCookie } from "@/utils/getCookie"
 import { orgMap } from "@/lib/constants"
 import { useEffect, useState } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { LogOut, Hospital, User, Upload, Database, Bed, DoorOpen } from "lucide-react"
 import LogoutConfirmationModal from "@/components/Dashboard/LogoutConfirmationModal"
@@ -16,8 +15,6 @@ export default function MainPanel() {
   const [roomId, setRoomId] = useState("")
   const [orgImage, setOrgImage] = useState("")
   const [showLogoutModal, setShowLogoutModal] = useState(false)
-  const router = useRouter()
-  const pathname = usePathname()
 
   // Mock fetching session data (replace with actual logic)
   useEffect(() => {
