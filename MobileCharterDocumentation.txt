@@ -4,7 +4,7 @@ This file is for documentation purposes of our plans, Ideas and updates in devel
 -----------------------------------------------------
 Tags and their meanings:
 [Note]: Important information on development plan
-[sidenote]: Update on a [Note]; always preceeding a [Note]
+[sidenote]: Update on a [Note]; always preceeding a [Note] / [Idea]
 [Idea]: Possible addition to the product
 [error]: A repeatedly encountered issue in development
 -----------------------------------------------------
@@ -28,6 +28,7 @@ be able to effectively do this if Nurses log out of their pages constantly.
 
 
 
+[sidenote]: We are currently deciding to keep in non-centralized for now. As we scale, we will consider using a neon database.
 [Idea]:
 > Make database centralized and accessible to all in such a way that changes made to the database doesn't affect only me but also
 affects everyone who has access to it.
@@ -38,7 +39,6 @@ Consider a case where we get our device working and transmission of text to the 
 One should be able to log in to the room in which the real-time transmission is done and be able to see the live update of
 transmission.
 I'm guessing this would likely mean: Device ---> Database ---> Webpage.
-[sidenote]: We are currently deciding to keep in non-centralized for now. As we scale, we will consider using a neon database.
 ---------------------------
 
 [Note]:
