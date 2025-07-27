@@ -5,20 +5,49 @@ import { getCookie } from "@/utils/getCookie"
 import { orgMap } from "@/lib/constants"
 import { useEffect, useState } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { LogOut, Hospital, User, Home, Upload, Database, Users } from "lucide-react"
 import DataTable from "@/components/Dashboard/DataTable"
 import LogoutConfirmationModal from "@/components/Dashboard/LogoutConfirmationModal";
+import RoomList from '@/components/Dashboard/RoomList';
 
 export default function MainPanel() {
   const [displayName, setDisplayName] = useState("")
   const [nurseId, setNurseId] = useState("")
   const [orgImage, setOrgImage] = useState("")
+  const [centerId, setCenterId] = useState<number | null>(null)
+  const [loadingCenterId, setLoadingCenterId] = useState(true)
+  const [centerError, setCenterError] = useState<string | null>(null)
   const [showLogoutModal, setShowLogoutModal] = useState(false)
-  const router = useRouter()
-  const pathname = usePathname()
 
+  // usEffect to fetch rooms of an organization
+  useEffect(() => {
+    const fetchCenterId = async () => {
+      try {
+        setLoadingCenterId(true)
+        const res = await fetch("/api/rooms", { method: "POST" })
+  
+        if (!res.ok) {
+          throw new Error("Failed to fetch center ID")
+        }
+  
+        const data = await res.json()
+  
+        if (data.success) {
+          setCenterId(data.centerId)
+        } else {
+          setCenterError(data.message || "Center ID not found")
+        }
+      } catch (err) {
+        setCenterError(err instanceof Error ? err.message : "Unknown error")
+      } finally {
+        setLoadingCenterId(false)
+      }
+    }
+  
+    fetchCenterId()
+  }, [])
+  
   // Mock fetching session data (replace with actual logic)
   useEffect(() => {
     // fetch session info here
@@ -66,7 +95,7 @@ export default function MainPanel() {
   ]
 
   // Determine the active tab based on the current pathname
-  const activeTab = tabRoutes.find((route) => pathname === route.path)?.value || "home"
+  const [activeTab, setActiveTab] = useState("home")
 
   return (
     <div className="bg-white shadow-lg border-b">
@@ -154,7 +183,7 @@ export default function MainPanel() {
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
-                    onClick={() => router.push(tab.path)}
+                    onClick={() => setActiveTab(tab.value)}
                     className="flex items-center space-x-2 text-sm font-medium text-gray-600 data-[state=active]:bg-emerald-600 data-[state=active]:text-white rounded-md transition-all duration-200 hover:bg-gray-100 data-[state=active]:hover:bg-emerald-700"
                   >
                     <IconComponent className="w-4 h-4" />
@@ -167,8 +196,21 @@ export default function MainPanel() {
         </div>
       </div>
       
-      {/* Content Area - Show DataTable only when data tab is active */}
+      {/* Content Area */}
       {activeTab === "data" && <DataTable />}
+      {activeTab === "home" && (
+        <>
+          {loadingCenterId ? (
+            <div className="p-6 text-gray-600">Loading rooms...</div>
+          ) : centerError || centerId === null ? (
+            <div className="p-6 bg-red-100 border border-red-300 text-red-700 rounded">
+              Error: {centerError || "Center ID not found"}
+            </div>
+          ) : (
+            <RoomList centerId={centerId} />
+          )}
+        </>
+      )}
       
       <LogoutConfirmationModal
         open={showLogoutModal}
