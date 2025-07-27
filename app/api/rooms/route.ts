@@ -6,18 +6,29 @@ import { cookies } from "next/headers";
 import { orgMap } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 
-
 // Type definitions for Prisma query results
 type RoomWithBeds = {
-    room_id: number;              // Changed from 'id'
-    room_number: number;          // Changed from 'string' to 'number'
-    number_of_beds: number;       // Added missing field
+    room_id: number;
+    room_number: number;
+    number_of_beds: number;
     is_full: boolean;
-    center_id: number;            // Changed from 'organization_id'
+    center_id: number;
     bed_info: {
       bed_id: number;
       bed_letter: string;
       room_id: number;
+      is_assigned: boolean;
+      is_available: boolean;
+      assigned_patient_id: number | null;
+      assigned_nurse_id: number | null;
+      patient_info?: {
+        patient_id: number;
+        patient_name: string;
+      } | null;
+      user_info?: {
+        user_id: number;
+        user_name: string;
+      } | null;
     }[];
   };
 
@@ -33,38 +44,52 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch rooms with their beds
+    // Fetch rooms with their beds and assignment information
     const rooms = await prisma.room_info.findMany({
       where: {
         center_id: parseInt(organizationId),
       },
       include: {
         bed_info: {
-          select: {
-            bed_id: true,
-            bed_letter: true,
-            room_id: true,
+          include: {
+            patient_info: {
+              select: {
+                patient_id: true,
+                patient_name: true,
+              }
+            },
+            user_info: {
+              select: {
+                user_id: true,
+                user_name: true,
+              }
+            }
           },
           orderBy: {
-            bed_letter: 'asc', // Sort beds alphabetically
+            bed_letter: 'asc',
           },
         },
       },
       orderBy: {
-        room_number: 'asc', // Sort rooms by room number
+        room_number: 'asc',
       },
     });
 
     // Transform the data to match our component interface
     const transformedRooms = rooms.map((room: RoomWithBeds) => ({
-        id: room.room_id,                    // Map room_id to id
-        room_number: room.room_number.toString(), // Convert to string if needed
+        id: room.room_id,
+        room_number: room.room_number.toString(),
         is_full: room.is_full,
-        organization_id: room.center_id,     // Map center_id to organization_id
+        organization_id: room.center_id,
         beds: room.bed_info.map((bed) => ({
-          id: bed.bed_id,                    // Map bed_id to id
+          id: bed.bed_id,
+          bed_id: bed.bed_id, // Add this to match frontend expectations
           bed_letter: bed.bed_letter,
           room_id: bed.room_id,
+          is_assigned: bed.is_assigned,
+          is_available: bed.is_available,
+          assigned_patient: bed.patient_info,
+          assigned_nurse: bed.user_info,
         })),
       }));
 
@@ -83,27 +108,41 @@ export async function GET(request: NextRequest) {
     await prisma.$disconnect();
   }
 }
+
 export async function POST(req: Request) {
     const cookieStore = await cookies();
     const org = cookieStore.get("organization")?.value;
-    //Error checking for org value
+    
     if (!org) {
         return new Response(
             JSON.stringify({ success: false, message: "organization cookie not found" }),
             { status: 400 }
         );
     }
-    //Get organization information from database
-    const organization = await prisma.medicalcenter_info.findFirst({
-        where:{center_name:orgMap[org]}
-    })
-    if(organization)
-    {
-        const response = new Response(JSON.stringify({ success: true, centerId: organization.center_id }), { status: 200 });
-        return response
-    }
-    else
-    {
-        return new Response(JSON.stringify({ success: false, message: "Error getting Id for center" }), { status: 401 });
+    
+    try {
+        //Get organization information from database
+        const organization = await prisma.medicalcenter_info.findFirst({
+            where: { center_name: orgMap[org] }
+        });
+        
+        if (organization) {
+            const response = new Response(
+                JSON.stringify({ success: true, centerId: organization.center_id }), 
+                { status: 200 }
+            );
+            return response;
+        } else {
+            return new Response(
+                JSON.stringify({ success: false, message: "Error getting Id for center" }), 
+                { status: 401 }
+            );
+        }
+    } catch (error) {
+        console.error('Error fetching center ID:', error);
+        return new Response(
+            JSON.stringify({ success: false, message: "Internal server error" }), 
+            { status: 500 }
+        );
     }
 }
