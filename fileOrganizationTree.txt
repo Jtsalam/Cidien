@@ -1,0 +1,198 @@
+.
+├── app
+│   ├── api
+│   │   ├── center
+│   │   │   ├── logout
+│   │   │   │   └── route.ts
+│   │   │   └── signIn
+│   │   │       └── route.ts
+│   │   └── staff
+│   │       ├── logout
+│   │       │   └── route.ts
+│   │       └── signIn
+│   │           └── route.ts
+│   ├── Center
+│   │   └── sign-in
+│   │       └── page.tsx
+│   ├── favicon.ico
+│   ├── globals.css
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── Room
+│   │   └── dashboard
+│   │       └── page.tsx
+│   └── Staff
+│       ├── dashboard
+│       │   └── page.tsx
+│       └── sign-in
+│           └── page.tsx
+├── Charting-Device
+│   ├── __pycache__
+│   │   └── functions.cpython-310.pyc
+│   ├── functions.py
+│   ├── Idea Documents
+│   │   ├── Advice1.pdf
+│   │   ├── Advice2.pdf
+│   │   ├── Advice3.pdf
+│   │   ├── Advice4.pdf
+│   │   └── Core idea.pdf
+│   ├── remote.py
+│   ├── static
+│   │   ├── login_form.css
+│   │   ├── remote.css
+│   │   └── remote.js
+│   ├── templates
+│   │   ├── login_form.html
+│   │   └── remote.html
+│   └── uploads
+│       ├── 3438
+│       │   ├── room.recording_1.wav
+│       │   ├── room.recording_1.webm
+│       │   ├── room.recording_3.wav
+│       │   ├── room.recording_3.webm
+│       │   ├── room.recording_4.wav
+│       │   └── room.recording_4.webm
+│       ├── 3439
+│       │   ├── room.recording_1.wav
+│       │   └── room.recording_1.webm
+│       ├── 3461
+│       │   ├── room.recording_1.wav
+│       │   └── room.recording_1.webm
+│       ├── 3463
+│       │   ├── room.recording_1.wav
+│       │   └── room.recording_1.webm
+│       ├── room_aud
+│       │   ├── room.recording_1.wav
+│       │   ├── room.recording_1.webm
+│       │   ├── room.recording_10.webm
+│       │   ├── room.recording_11.webm
+│       │   ├── room.recording_12.webm
+│       │   ├── room.recording_13.webm
+│       │   ├── room.recording_14.webm
+│       │   ├── room.recording_15.webm
+│       │   ├── room.recording_16.webm
+│       │   ├── room.recording_17.webm
+│       │   ├── room.recording_18.wav
+│       │   ├── room.recording_18.webm
+│       │   ├── room.recording_19.wav
+│       │   ├── room.recording_19.webm
+│       │   ├── room.recording_2.wav
+│       │   ├── room.recording_2.webm
+│       │   ├── room.recording_20.wav
+│       │   ├── room.recording_20.webm
+│       │   ├── room.recording_21.wav
+│       │   ├── room.recording_21.webm
+│       │   ├── room.recording_22.wav
+│       │   ├── room.recording_22.webm
+│       │   ├── room.recording_28.wav
+│       │   ├── room.recording_28.webm
+│       │   ├── room.recording_29.wav
+│       │   ├── room.recording_29.webm
+│       │   ├── room.recording_3.wav
+│       │   ├── room.recording_3.webm
+│       │   ├── room.recording_30.wav
+│       │   ├── room.recording_30.webm
+│       │   ├── room.recording_4.wav
+│       │   ├── room.recording_4.webm
+│       │   └── room.recording_9.webm
+│       └── Unassigned
+│           └── nothing.txt
+├── components
+│   ├── Center
+│   │   └── SelectOrganizationForm.tsx
+│   ├── Dashboard
+│   │   ├── DataTable.tsx
+│   │   ├── InactivityTracker.tsx
+│   │   ├── LogoutConfirmationModal.tsx
+│   │   ├── MainPanel.tsx
+│   │   └── RoomPanel.tsx
+│   ├── Staff
+│   │   ├── OrganizationPanel.tsx
+│   │   ├── RoomLoginForm.tsx
+│   │   └── StaffLoginForm.tsx
+│   └── ui
+│       ├── badge.tsx
+│       ├── button.tsx
+│       ├── card.tsx
+│       ├── dialog.tsx
+│       ├── table.tsx
+│       └── tabs.tsx
+├── components.json
+├── eslint.config.mjs
+├── fileOrganizationTree.txt
+├── lib
+│   ├── constants.ts
+│   ├── generated
+│   │   └── prisma
+│   │       ├── client.d.ts
+│   │       ├── client.js
+│   │       ├── default.d.ts
+│   │       ├── default.js
+│   │       ├── edge.d.ts
+│   │       ├── edge.js
+│   │       ├── index-browser.js
+│   │       ├── index.d.ts
+│   │       ├── index.js
+│   │       ├── libquery_engine-darwin-arm64.dylib.node
+│   │       ├── package.json
+│   │       ├── query_engine-windows.dll.node
+│   │       ├── runtime
+│   │       │   ├── edge-esm.js
+│   │       │   ├── edge.js
+│   │       │   ├── index-browser.d.ts
+│   │       │   ├── index-browser.js
+│   │       │   ├── library.d.ts
+│   │       │   ├── library.js
+│   │       │   ├── react-native.js
+│   │       │   └── wasm.js
+│   │       ├── schema.prisma
+│   │       ├── wasm.d.ts
+│   │       └── wasm.js
+│   ├── prisma.ts
+│   └── utils.ts
+├── middleware.ts
+├── MobileCharterDocumentation.txt
+├── next-env.d.ts
+├── next.config.ts
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── postcss.config.mjs
+├── prisma
+│   ├── migrations
+│   │   ├── 20250710033553_init
+│   │   │   └── migration.sql
+│   │   └── migration_lock.toml
+│   └── schema.prisma
+├── public
+│   ├── centerImages
+│   │   ├── EHC.png
+│   │   ├── EMC.png
+│   │   ├── JPCH.png
+│   │   ├── KMC.png
+│   │   └── PVM.png
+│   ├── DocFiles
+│   │   ├── D2_step1.jpg
+│   │   ├── D2_step2.jpg
+│   │   ├── D2_step3.jpg
+│   │   └── RegisterAccountLogic.jpg
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── next.svg
+│   ├── vercel.svg
+│   └── window.svg
+├── README.md
+├── tailwind.config.js
+├── tailwind.config.ts
+├── tsconfig.json
+├── uploads
+│   ├── 3438
+│   ├── 3439
+│   ├── 3461
+│   ├── 3463
+│   ├── room_aud
+│   └── Unassigned
+└── utils
+    └── getCookie.ts
+
+51 directories, 145 files

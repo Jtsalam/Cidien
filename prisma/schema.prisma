@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model medicalcenter_info {
+  center_id     Int             @id @default(autoincrement())
+  center_name   String
+  address       String?         @db.VarChar(400)
+  email         String?         @db.VarChar(400)
+  patient_info  patient_info[]
+  room_info     room_info[]
+  room_register room_register[]
+  user_info     user_info[]
+  user_uploads  user_uploads[]
+}
+
+model patient_info {
+  patient_id         Int                @id @default(autoincrement())
+  patient_name       String
+  registered_date    DateTime           @db.Date
+  center_id          Int
+  dicharged_date     DateTime?          @db.Date
+  is_discharged      Boolean            @default(false)
+  bed_info           bed_info[]
+  medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
+  patient_uploads    patient_uploads[]
+  room_register      room_register[]
+}
+
+model patient_uploads {
+  patient_id    Int
+  session_id    Int
+  upload_path   String
+  patient_notes String
+  upload_time   DateTime     @db.Time(6)
+  patient_info  patient_info @relation(fields: [patient_id], references: [patient_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([patient_id, session_id])
+}
+
+model room_info {
+  room_id            Int                @id @default(autoincrement())
+  room_number        Int
+  center_id          Int
+  number_of_beds     Int
+  is_full            Boolean            @default(false)
+  bed_info           bed_info[]
+  medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
+  room_register      room_register[]
+}
+
+model bed_info {
+  bed_id              Int           @id @default(autoincrement())
+  room_id             Int
+  bed_letter          String        @db.VarChar(1)
+  is_available        Boolean       @default(true)
+  is_assigned         Boolean       @default(false)
+  assigned_patient_id Int?
+  assigned_nurse_id   Int?
+  user_info           user_info?    @relation(fields: [assigned_nurse_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  patient_info        patient_info? @relation(fields: [assigned_patient_id], references: [patient_id], onDelete: NoAction, onUpdate: NoAction)
+  room_info           room_info     @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model room_register {
+  room_id            Int
+  patient_id         Int
+  session_id         Int
+  center_id          Int
+  reg_date           DateTime           @db.Date
+  reg_time           DateTime           @db.Time(6)
+  medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
+  patient_info       patient_info       @relation(fields: [patient_id], references: [patient_id], onDelete: NoAction, onUpdate: NoAction)
+  room_info          room_info          @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([room_id, patient_id, session_id])
+}
+
+model user_info {
+  user_id            Int                @id @default(autoincrement())
+  user_name          String
+  staff_id           String
+  password           String             @db.VarChar(255)
+  user_role          String
+  center_id          Int
+  charter_id         String
+  bed_info           bed_info[]
+  medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
+  user_uploads       user_uploads[]
+}
+
+model user_uploads {
+  user_id            Int
+  center_id          Int
+  upload_path        String
+  unassigned_uploads String
+  upload_date        DateTime           @db.Date
+  upload_time        DateTime           @db.Time(6)
+  medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
+  user_info          user_info          @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([user_id, center_id])
+}

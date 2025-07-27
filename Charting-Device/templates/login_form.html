@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Charter - Sign In</title>
+    <link rel="stylesheet" href="/static/login_form.css">
+</head>
+<body>
+    <div class="container">
+        <h1>SIGN IN</h1>
+        <form action="/login_val" method="POST">
+            <select id="option" name="Organization Name" required>
+                <option value="" disabled selected>Select your Organization</option>
+                <option value="Erindale Health center">Erindale Health Center</option>
+                <option value="Parkville Manor">Parkville Manor</option>
+                <option value="Kenderdine Medical Clinic">Kenderdine Medical Clinic</option>
+                <option value="Jim Pattison Children's Hospital">Jim Pattison Children's Hospital</option>
+                <option value="Evergreen Medical Clinic">Evergreen Medical Clinic</option>
+            </select>
+            
+            <input type="text" 
+                   name="staff_id" 
+                   placeholder="Enter Staff ID" 
+                   required 
+                   autocomplete="username"
+                   aria-label="Staff ID">
+            
+            <input type="submit" value="Sign In">
+        </form>
+
+
+        {% if error %}
+            <div class="error-message">
+                {{ error }}
+            </div>
+        {% endif %}
+    
+    </div>
+</body>
+</html>
