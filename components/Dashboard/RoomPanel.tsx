@@ -61,7 +61,7 @@ export default function MainPanel() {
   ]
 
   // Determine the active tab based on the current pathname
-  const activeTab = tabRoutes.find((route) => pathname === route.path)?.value || "data"
+  const [activeTab, setActiveTab] = useState("data")
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -152,7 +152,7 @@ export default function MainPanel() {
                     <TabsTrigger
                       key={tab.value}
                       value={tab.value}
-                      onClick={() => router.push(tab.path)}
+                      onClick={() => setActiveTab(tab.value)}
                       className="flex items-center space-x-2 text-sm font-medium text-gray-600 data-[state=active]:bg-emerald-600 data-[state=active]:text-white rounded-md transition-all duration-200 hover:bg-gray-100 data-[state=active]:hover:bg-emerald-700"
                     >
                       <IconComponent className="w-4 h-4" />
