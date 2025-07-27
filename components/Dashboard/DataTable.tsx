@@ -29,6 +29,7 @@ export default function DataTable() {
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null)
   const [isReceiving, setIsReceiving] = useState(false)
   const [isConnected, setIsConnected] = useState(false)
+  const [serverError, setServerError] = useState<string | null>(null)
   const tableEndRef = useRef<HTMLDivElement>(null);
 
   const handlePlay = (url: string, index: number) => {
@@ -71,7 +72,10 @@ export default function DataTable() {
   useEffect(() => {
     // Load existing transcriptions
     fetch("http://localhost:5000/transcriptions")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error('Server unavailable');
+        return res.json();
+      })
       .then((json) => {
         setData(
           json.map((item: any, index: number) => ({
@@ -81,10 +85,15 @@ export default function DataTable() {
           })),
         )
         setIsConnected(true)
+        setServerError(null)
       })
       .catch((err) => {
-        console.error("Failed toload data:", err)
+        // Only log in development
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Failed to load data:", err)
+        }
         setIsConnected(false)
+        setServerError('Unable to connect to the transcription server. Please ensure the backend is running.')
       })
 
     socket.on("connect", () => {
@@ -96,6 +105,14 @@ export default function DataTable() {
       console.log("Disconnected from Flask WebSocket")
       setIsConnected(false)
     })
+
+    socket.on("connect_error", (err) => {
+      setIsConnected(false);
+      setServerError('Unable to connect to the transcription server. Please ensure the backend is running.');
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Socket connection error:", err);
+      }
+    });
 
     socket.on("new_transcription", (payload) => {
       console.log("Incoming payload:", payload)
@@ -132,6 +149,7 @@ export default function DataTable() {
 
     return () => {
       socket.disconnect()
+      socket.off("connect_error")
     }
   }, [])
 
@@ -183,7 +201,16 @@ export default function DataTable() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.length > 0 ? (
+                  {serverError ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center py-8 text-red-500">
+                        <div className="flex flex-col items-center space-y-2">
+                          <WifiOff className="w-6 h-6 text-red-400" />
+                          <span>{serverError}</span>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : data.length > 0 ? (
                     data.map((row, i) => (
                       <TableRow
                         key={row.id || `${row.column2}-${row.column3}-${i}`}
