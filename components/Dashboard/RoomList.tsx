@@ -2,7 +2,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, User, Bed, AlertCircle, Stethoscope } from 'lucide-react';
+import AssignBedPopup from '@/components/Dashboard/AssignBedPopup';
 
 interface Room {
   id: number;
@@ -13,8 +14,19 @@ interface Room {
 
 interface Bed {
   id: number;
+  bed_id: number; // Add this to match AssignBedPopup expectations
   bed_letter: string;
   room_id: number;
+  is_assigned: boolean;
+  is_available: boolean;
+  assigned_patient?: {
+    patient_id: number;
+    patient_name: string;
+  } | null;
+  assigned_nurse?: {
+    user_id: number;
+    user_name: string;
+  } | null;
 }
 
 interface RoomWithBeds extends Room {
@@ -27,6 +39,12 @@ interface RoomListProps {
 
 type FilterType = 'all' | 'available' | 'occupied';
 
+interface ToastMessage {
+  id: string;
+  message: string;
+  type: 'success' | 'error';
+}
+
 const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
   const [rooms, setRooms] = useState<RoomWithBeds[]>([]);
   const [filteredRooms, setFilteredRooms] = useState<RoomWithBeds[]>([]);
@@ -35,6 +53,20 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedBed, setSelectedBed] = useState<Bed | null>(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+  // Add toast function
+  const addToast = (message: string, type: 'success' | 'error') => {
+    const id = Date.now().toString();
+    setToasts(prev => [...prev, { id, message, type }]);
+    
+    // Auto remove toast after 3 seconds
+    setTimeout(() => {
+      setToasts(prev => prev.filter(toast => toast.id !== id));
+    }, 3000);
+  };
 
   // Fetch rooms and beds data
   useEffect(() => {
@@ -84,15 +116,92 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
     setSelectedRoom(selectedRoom === roomId ? null : roomId);
   };
 
-  const handleBedClick = (bedId: number, bedLetter: string) => {
-    console.log(`Bed ${bedLetter} clicked (ID: ${bedId})`);
-    // Add your bed click logic here
+  const handleBedClick = (bed: Bed) => {
+    setSelectedBed(bed);
+    setShowPopup(true);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    setSelectedBed(null);
+  };
+  
+  const handleSave = async (data: {
+    patientName: string;
+    nurseId: number | null;
+    assignToAllBeds: boolean;
+  }) => {
+    console.log('Saving data:', data);
+  
+    try {
+      const response = await fetch('/api/assign-bed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bedId: selectedBed?.id,
+          roomId: selectedRoom,
+          centerId,
+          patientName: data.patientName,
+          nurseId: data.nurseId,
+          assignToAllBeds: data.assignToAllBeds,
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to assign bed');
+      }
+
+      // Refresh the room data
+      const refreshResponse = await fetch(`/api/rooms?organizationId=${centerId}`);
+      if (refreshResponse.ok) {
+        const refreshData = await refreshResponse.json();
+        setRooms(refreshData.rooms);
+      }
+  
+      addToast('Bed assigned successfully!', 'success');
+      handleClosePopup();
+    } catch (error) {
+      addToast(`Error saving: ${(error as Error).message}`, 'error');
+    }
+  };
+
+  const handleDischarge = async (data: { dischargePatient: boolean }) => {
+    try {
+      const response = await fetch('/api/discharge-bed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bedId: selectedBed?.id,
+          centerId,
+          dischargePatient: data.dischargePatient,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to discharge bed');
+      }
+
+      // Refresh the room data
+      const refreshResponse = await fetch(`/api/rooms?organizationId=${centerId}`);
+      if (refreshResponse.ok) {
+        const refreshData = await refreshResponse.json();
+        setRooms(refreshData.rooms);
+      }
+
+      const message = data.dischargePatient ? 'Patient discharged successfully!' : 'Bed assignment cleared!';
+      addToast(message, 'success');
+      handleClosePopup();
+    } catch (error) {
+      addToast(`Error discharging: ${(error as Error).message}`, 'error');
+    }
   };
 
   const handleFilterChange = (newFilter: FilterType) => {
     setFilter(newFilter);
     setIsDropdownOpen(false);
-    setSelectedRoom(null); // Close any open room details
+    setSelectedRoom(null);
   };
 
   const getFilterLabel = (filterType: FilterType): string => {
@@ -106,6 +215,18 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
       default:
         return 'Filter';
     }
+  };
+
+  const getBedStatusColor = (bed: Bed) => {
+    if (!bed.is_available) return 'text-red-600 bg-red-50';
+    if (bed.is_assigned) return 'text-orange-600 bg-orange-50';
+    return 'text-green-600 bg-green-50';
+  };
+
+  const getBedStatusText = (bed: Bed) => {
+    if (!bed.is_available) return 'Unavailable';
+    if (bed.is_assigned) return 'Assigned';
+    return 'Available';
   };
 
   if (loading) {
@@ -134,7 +255,31 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-4xl mx-auto relative">
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`px-4 py-3 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 ${
+              toast.type === 'success' 
+                ? 'bg-green-500 text-white' 
+                : 'bg-red-500 text-white'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">{toast.message}</span>
+              <button
+                onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}
+                className="ml-2 text-white hover:text-gray-200"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-4">Room Management</h1>
         
@@ -204,7 +349,7 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-3">
                     <span className="text-blue-600 hover:text-blue-800 font-medium">
-                      [{room.room_number}]
+                      Room {room.room_number}
                     </span>
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -213,7 +358,7 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
                           : 'bg-green-100 text-green-800'
                       }`}
                     >
-                      {room.is_full ? 'Occupied' : 'Available'}
+                      {room.is_full ? 'Full' : 'Available'}
                     </span>
                   </div>
                   <ChevronDown 
@@ -233,15 +378,36 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
                   {room.beds.length === 0 ? (
                     <p className="text-sm text-gray-500">No beds found in this room.</p>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {room.beds.map((bed) => (
-                        <button
+                        <div
                           key={bed.id}
-                          onClick={() => handleBedClick(bed.id, bed.bed_letter)}
-                          className="block text-left text-sm text-blue-600 hover:text-blue-800 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded px-1 py-1"
+                          className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                          onClick={() => handleBedClick(bed)}
                         >
-                          Bed {bed.bed_letter}
-                        </button>
+                          <div className="flex items-center space-x-3">
+                            <Bed className="w-4 h-4 text-gray-500" />
+                            <span className="font-medium">Bed {bed.bed_letter}</span>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getBedStatusColor(bed)}`}>
+                              {getBedStatusText(bed)}
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-center space-x-4 text-sm text-gray-600">
+                            {bed.assigned_patient && (
+                              <div className="flex items-center space-x-1">
+                                <User className="w-3 h-3" />
+                                <span>{bed.assigned_patient.patient_name}</span>
+                              </div>
+                            )}
+                            {bed.assigned_nurse && (
+                              <div className="flex items-center space-x-1">
+                                <Stethoscope className="w-3 h-3 text-blue-600" />
+                                <span className="text-blue-600">{bed.assigned_nurse.user_name}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       ))}
                     </div>
                   )}
@@ -251,6 +417,18 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
           ))
         )}
       </div>
+      
+      {showPopup && selectedBed && (
+        <AssignBedPopup
+          open={showPopup}
+          bed={selectedBed}
+          centerId={centerId}
+          roomId={selectedRoom!}
+          onClose={handleClosePopup}
+          onSave={handleSave}
+          onDischarge={handleDischarge}
+        />
+      )}
     </div>
   );
 };
