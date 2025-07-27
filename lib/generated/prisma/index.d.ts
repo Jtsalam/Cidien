@@ -1726,7 +1726,6 @@ export namespace Prisma {
     center_name: string | null
     address: string | null
     email: string | null
-    registered_date: Date | null
   }
 
   export type Medicalcenter_infoMaxAggregateOutputType = {
@@ -1734,7 +1733,6 @@ export namespace Prisma {
     center_name: string | null
     address: string | null
     email: string | null
-    registered_date: Date | null
   }
 
   export type Medicalcenter_infoCountAggregateOutputType = {
@@ -1742,7 +1740,6 @@ export namespace Prisma {
     center_name: number
     address: number
     email: number
-    registered_date: number
     _all: number
   }
 
@@ -1760,7 +1757,6 @@ export namespace Prisma {
     center_name?: true
     address?: true
     email?: true
-    registered_date?: true
   }
 
   export type Medicalcenter_infoMaxAggregateInputType = {
@@ -1768,7 +1764,6 @@ export namespace Prisma {
     center_name?: true
     address?: true
     email?: true
-    registered_date?: true
   }
 
   export type Medicalcenter_infoCountAggregateInputType = {
@@ -1776,7 +1771,6 @@ export namespace Prisma {
     center_name?: true
     address?: true
     email?: true
-    registered_date?: true
     _all?: true
   }
 
@@ -1871,7 +1865,6 @@ export namespace Prisma {
     center_name: string
     address: string | null
     email: string | null
-    registered_date: Date | null
     _count: Medicalcenter_infoCountAggregateOutputType | null
     _avg: Medicalcenter_infoAvgAggregateOutputType | null
     _sum: Medicalcenter_infoSumAggregateOutputType | null
@@ -1898,7 +1891,6 @@ export namespace Prisma {
     center_name?: boolean
     address?: boolean
     email?: boolean
-    registered_date?: boolean
     patient_info?: boolean | medicalcenter_info$patient_infoArgs<ExtArgs>
     room_info?: boolean | medicalcenter_info$room_infoArgs<ExtArgs>
     room_register?: boolean | medicalcenter_info$room_registerArgs<ExtArgs>
@@ -1912,7 +1904,6 @@ export namespace Prisma {
     center_name?: boolean
     address?: boolean
     email?: boolean
-    registered_date?: boolean
   }, ExtArgs["result"]["medicalcenter_info"]>
 
   export type medicalcenter_infoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1920,7 +1911,6 @@ export namespace Prisma {
     center_name?: boolean
     address?: boolean
     email?: boolean
-    registered_date?: boolean
   }, ExtArgs["result"]["medicalcenter_info"]>
 
   export type medicalcenter_infoSelectScalar = {
@@ -1928,10 +1918,9 @@ export namespace Prisma {
     center_name?: boolean
     address?: boolean
     email?: boolean
-    registered_date?: boolean
   }
 
-  export type medicalcenter_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"center_id" | "center_name" | "address" | "email" | "registered_date", ExtArgs["result"]["medicalcenter_info"]>
+  export type medicalcenter_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"center_id" | "center_name" | "address" | "email", ExtArgs["result"]["medicalcenter_info"]>
   export type medicalcenter_infoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     patient_info?: boolean | medicalcenter_info$patient_infoArgs<ExtArgs>
     room_info?: boolean | medicalcenter_info$room_infoArgs<ExtArgs>
@@ -1957,7 +1946,6 @@ export namespace Prisma {
       center_name: string
       address: string | null
       email: string | null
-      registered_date: Date | null
     }, ExtArgs["result"]["medicalcenter_info"]>
     composites: {}
   }
@@ -2390,7 +2378,6 @@ export namespace Prisma {
     readonly center_name: FieldRef<"medicalcenter_info", 'String'>
     readonly address: FieldRef<"medicalcenter_info", 'String'>
     readonly email: FieldRef<"medicalcenter_info", 'String'>
-    readonly registered_date: FieldRef<"medicalcenter_info", 'DateTime'>
   }
     
 
@@ -2944,6 +2931,8 @@ export namespace Prisma {
     patient_name: string | null
     registered_date: Date | null
     center_id: number | null
+    dicharged_date: Date | null
+    is_discharged: boolean | null
   }
 
   export type Patient_infoMaxAggregateOutputType = {
@@ -2951,6 +2940,8 @@ export namespace Prisma {
     patient_name: string | null
     registered_date: Date | null
     center_id: number | null
+    dicharged_date: Date | null
+    is_discharged: boolean | null
   }
 
   export type Patient_infoCountAggregateOutputType = {
@@ -2958,6 +2949,8 @@ export namespace Prisma {
     patient_name: number
     registered_date: number
     center_id: number
+    dicharged_date: number
+    is_discharged: number
     _all: number
   }
 
@@ -2977,6 +2970,8 @@ export namespace Prisma {
     patient_name?: true
     registered_date?: true
     center_id?: true
+    dicharged_date?: true
+    is_discharged?: true
   }
 
   export type Patient_infoMaxAggregateInputType = {
@@ -2984,6 +2979,8 @@ export namespace Prisma {
     patient_name?: true
     registered_date?: true
     center_id?: true
+    dicharged_date?: true
+    is_discharged?: true
   }
 
   export type Patient_infoCountAggregateInputType = {
@@ -2991,6 +2988,8 @@ export namespace Prisma {
     patient_name?: true
     registered_date?: true
     center_id?: true
+    dicharged_date?: true
+    is_discharged?: true
     _all?: true
   }
 
@@ -3085,6 +3084,8 @@ export namespace Prisma {
     patient_name: string
     registered_date: Date
     center_id: number
+    dicharged_date: Date | null
+    is_discharged: boolean
     _count: Patient_infoCountAggregateOutputType | null
     _avg: Patient_infoAvgAggregateOutputType | null
     _sum: Patient_infoSumAggregateOutputType | null
@@ -3111,6 +3112,8 @@ export namespace Prisma {
     patient_name?: boolean
     registered_date?: boolean
     center_id?: boolean
+    dicharged_date?: boolean
+    is_discharged?: boolean
     bed_info?: boolean | patient_info$bed_infoArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
     patient_uploads?: boolean | patient_info$patient_uploadsArgs<ExtArgs>
@@ -3123,6 +3126,8 @@ export namespace Prisma {
     patient_name?: boolean
     registered_date?: boolean
     center_id?: boolean
+    dicharged_date?: boolean
+    is_discharged?: boolean
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["patient_info"]>
 
@@ -3131,6 +3136,8 @@ export namespace Prisma {
     patient_name?: boolean
     registered_date?: boolean
     center_id?: boolean
+    dicharged_date?: boolean
+    is_discharged?: boolean
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["patient_info"]>
 
@@ -3139,9 +3146,11 @@ export namespace Prisma {
     patient_name?: boolean
     registered_date?: boolean
     center_id?: boolean
+    dicharged_date?: boolean
+    is_discharged?: boolean
   }
 
-  export type patient_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"patient_id" | "patient_name" | "registered_date" | "center_id", ExtArgs["result"]["patient_info"]>
+  export type patient_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"patient_id" | "patient_name" | "registered_date" | "center_id" | "dicharged_date" | "is_discharged", ExtArgs["result"]["patient_info"]>
   export type patient_infoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     bed_info?: boolean | patient_info$bed_infoArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
@@ -3169,6 +3178,8 @@ export namespace Prisma {
       patient_name: string
       registered_date: Date
       center_id: number
+      dicharged_date: Date | null
+      is_discharged: boolean
     }, ExtArgs["result"]["patient_info"]>
     composites: {}
   }
@@ -3600,6 +3611,8 @@ export namespace Prisma {
     readonly patient_name: FieldRef<"patient_info", 'String'>
     readonly registered_date: FieldRef<"patient_info", 'DateTime'>
     readonly center_id: FieldRef<"patient_info", 'Int'>
+    readonly dicharged_date: FieldRef<"patient_info", 'DateTime'>
+    readonly is_discharged: FieldRef<"patient_info", 'Boolean'>
   }
     
 
@@ -10976,8 +10989,7 @@ export namespace Prisma {
     center_id: 'center_id',
     center_name: 'center_name',
     address: 'address',
-    email: 'email',
-    registered_date: 'registered_date'
+    email: 'email'
   };
 
   export type Medicalcenter_infoScalarFieldEnum = (typeof Medicalcenter_infoScalarFieldEnum)[keyof typeof Medicalcenter_infoScalarFieldEnum]
@@ -10987,7 +10999,9 @@ export namespace Prisma {
     patient_id: 'patient_id',
     patient_name: 'patient_name',
     registered_date: 'registered_date',
-    center_id: 'center_id'
+    center_id: 'center_id',
+    dicharged_date: 'dicharged_date',
+    is_discharged: 'is_discharged'
   };
 
   export type Patient_infoScalarFieldEnum = (typeof Patient_infoScalarFieldEnum)[keyof typeof Patient_infoScalarFieldEnum]
@@ -11168,7 +11182,6 @@ export namespace Prisma {
     center_name?: StringFilter<"medicalcenter_info"> | string
     address?: StringNullableFilter<"medicalcenter_info"> | string | null
     email?: StringNullableFilter<"medicalcenter_info"> | string | null
-    registered_date?: DateTimeNullableFilter<"medicalcenter_info"> | Date | string | null
     patient_info?: Patient_infoListRelationFilter
     room_info?: Room_infoListRelationFilter
     room_register?: Room_registerListRelationFilter
@@ -11181,7 +11194,6 @@ export namespace Prisma {
     center_name?: SortOrder
     address?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
-    registered_date?: SortOrderInput | SortOrder
     patient_info?: patient_infoOrderByRelationAggregateInput
     room_info?: room_infoOrderByRelationAggregateInput
     room_register?: room_registerOrderByRelationAggregateInput
@@ -11197,7 +11209,6 @@ export namespace Prisma {
     center_name?: StringFilter<"medicalcenter_info"> | string
     address?: StringNullableFilter<"medicalcenter_info"> | string | null
     email?: StringNullableFilter<"medicalcenter_info"> | string | null
-    registered_date?: DateTimeNullableFilter<"medicalcenter_info"> | Date | string | null
     patient_info?: Patient_infoListRelationFilter
     room_info?: Room_infoListRelationFilter
     room_register?: Room_registerListRelationFilter
@@ -11210,7 +11221,6 @@ export namespace Prisma {
     center_name?: SortOrder
     address?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
-    registered_date?: SortOrderInput | SortOrder
     _count?: medicalcenter_infoCountOrderByAggregateInput
     _avg?: medicalcenter_infoAvgOrderByAggregateInput
     _max?: medicalcenter_infoMaxOrderByAggregateInput
@@ -11226,7 +11236,6 @@ export namespace Prisma {
     center_name?: StringWithAggregatesFilter<"medicalcenter_info"> | string
     address?: StringNullableWithAggregatesFilter<"medicalcenter_info"> | string | null
     email?: StringNullableWithAggregatesFilter<"medicalcenter_info"> | string | null
-    registered_date?: DateTimeNullableWithAggregatesFilter<"medicalcenter_info"> | Date | string | null
   }
 
   export type patient_infoWhereInput = {
@@ -11237,6 +11246,8 @@ export namespace Prisma {
     patient_name?: StringFilter<"patient_info"> | string
     registered_date?: DateTimeFilter<"patient_info"> | Date | string
     center_id?: IntFilter<"patient_info"> | number
+    dicharged_date?: DateTimeNullableFilter<"patient_info"> | Date | string | null
+    is_discharged?: BoolFilter<"patient_info"> | boolean
     bed_info?: Bed_infoListRelationFilter
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
     patient_uploads?: Patient_uploadsListRelationFilter
@@ -11248,6 +11259,8 @@ export namespace Prisma {
     patient_name?: SortOrder
     registered_date?: SortOrder
     center_id?: SortOrder
+    dicharged_date?: SortOrderInput | SortOrder
+    is_discharged?: SortOrder
     bed_info?: bed_infoOrderByRelationAggregateInput
     medicalcenter_info?: medicalcenter_infoOrderByWithRelationInput
     patient_uploads?: patient_uploadsOrderByRelationAggregateInput
@@ -11262,6 +11275,8 @@ export namespace Prisma {
     patient_name?: StringFilter<"patient_info"> | string
     registered_date?: DateTimeFilter<"patient_info"> | Date | string
     center_id?: IntFilter<"patient_info"> | number
+    dicharged_date?: DateTimeNullableFilter<"patient_info"> | Date | string | null
+    is_discharged?: BoolFilter<"patient_info"> | boolean
     bed_info?: Bed_infoListRelationFilter
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
     patient_uploads?: Patient_uploadsListRelationFilter
@@ -11273,6 +11288,8 @@ export namespace Prisma {
     patient_name?: SortOrder
     registered_date?: SortOrder
     center_id?: SortOrder
+    dicharged_date?: SortOrderInput | SortOrder
+    is_discharged?: SortOrder
     _count?: patient_infoCountOrderByAggregateInput
     _avg?: patient_infoAvgOrderByAggregateInput
     _max?: patient_infoMaxOrderByAggregateInput
@@ -11288,6 +11305,8 @@ export namespace Prisma {
     patient_name?: StringWithAggregatesFilter<"patient_info"> | string
     registered_date?: DateTimeWithAggregatesFilter<"patient_info"> | Date | string
     center_id?: IntWithAggregatesFilter<"patient_info"> | number
+    dicharged_date?: DateTimeNullableWithAggregatesFilter<"patient_info"> | Date | string | null
+    is_discharged?: BoolWithAggregatesFilter<"patient_info"> | boolean
   }
 
   export type patient_uploadsWhereInput = {
@@ -11696,7 +11715,6 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
-    registered_date?: Date | string | null
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
@@ -11709,7 +11727,6 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
-    registered_date?: Date | string | null
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -11721,7 +11738,6 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -11734,7 +11750,6 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -11747,14 +11762,12 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
-    registered_date?: Date | string | null
   }
 
   export type medicalcenter_infoUpdateManyMutationInput = {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type medicalcenter_infoUncheckedUpdateManyInput = {
@@ -11762,12 +11775,13 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type patient_infoCreateInput = {
     patient_name: string
     registered_date: Date | string
+    dicharged_date?: Date | string | null
+    is_discharged?: boolean
     bed_info?: bed_infoCreateNestedManyWithoutPatient_infoInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutPatient_infoInput
     patient_uploads?: patient_uploadsCreateNestedManyWithoutPatient_infoInput
@@ -11779,6 +11793,8 @@ export namespace Prisma {
     patient_name: string
     registered_date: Date | string
     center_id: number
+    dicharged_date?: Date | string | null
+    is_discharged?: boolean
     bed_info?: bed_infoUncheckedCreateNestedManyWithoutPatient_infoInput
     patient_uploads?: patient_uploadsUncheckedCreateNestedManyWithoutPatient_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutPatient_infoInput
@@ -11787,6 +11803,8 @@ export namespace Prisma {
   export type patient_infoUpdateInput = {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    dicharged_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    is_discharged?: BoolFieldUpdateOperationsInput | boolean
     bed_info?: bed_infoUpdateManyWithoutPatient_infoNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutPatient_infoNestedInput
     patient_uploads?: patient_uploadsUpdateManyWithoutPatient_infoNestedInput
@@ -11798,6 +11816,8 @@ export namespace Prisma {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
     center_id?: IntFieldUpdateOperationsInput | number
+    dicharged_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    is_discharged?: BoolFieldUpdateOperationsInput | boolean
     bed_info?: bed_infoUncheckedUpdateManyWithoutPatient_infoNestedInput
     patient_uploads?: patient_uploadsUncheckedUpdateManyWithoutPatient_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutPatient_infoNestedInput
@@ -11808,11 +11828,15 @@ export namespace Prisma {
     patient_name: string
     registered_date: Date | string
     center_id: number
+    dicharged_date?: Date | string | null
+    is_discharged?: boolean
   }
 
   export type patient_infoUpdateManyMutationInput = {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    dicharged_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    is_discharged?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type patient_infoUncheckedUpdateManyInput = {
@@ -11820,6 +11844,8 @@ export namespace Prisma {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
     center_id?: IntFieldUpdateOperationsInput | number
+    dicharged_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    is_discharged?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type patient_uploadsCreateInput = {
@@ -12237,17 +12263,6 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type Patient_infoListRelationFilter = {
     every?: patient_infoWhereInput
     some?: patient_infoWhereInput
@@ -12308,7 +12323,6 @@ export namespace Prisma {
     center_name?: SortOrder
     address?: SortOrder
     email?: SortOrder
-    registered_date?: SortOrder
   }
 
   export type medicalcenter_infoAvgOrderByAggregateInput = {
@@ -12320,7 +12334,6 @@ export namespace Prisma {
     center_name?: SortOrder
     address?: SortOrder
     email?: SortOrder
-    registered_date?: SortOrder
   }
 
   export type medicalcenter_infoMinOrderByAggregateInput = {
@@ -12328,7 +12341,6 @@ export namespace Prisma {
     center_name?: SortOrder
     address?: SortOrder
     email?: SortOrder
-    registered_date?: SortOrder
   }
 
   export type medicalcenter_infoSumOrderByAggregateInput = {
@@ -12387,20 +12399,6 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -12410,6 +12408,22 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type Bed_infoListRelationFilter = {
@@ -12442,6 +12456,8 @@ export namespace Prisma {
     patient_name?: SortOrder
     registered_date?: SortOrder
     center_id?: SortOrder
+    dicharged_date?: SortOrder
+    is_discharged?: SortOrder
   }
 
   export type patient_infoAvgOrderByAggregateInput = {
@@ -12454,6 +12470,8 @@ export namespace Prisma {
     patient_name?: SortOrder
     registered_date?: SortOrder
     center_id?: SortOrder
+    dicharged_date?: SortOrder
+    is_discharged?: SortOrder
   }
 
   export type patient_infoMinOrderByAggregateInput = {
@@ -12461,6 +12479,8 @@ export namespace Prisma {
     patient_name?: SortOrder
     registered_date?: SortOrder
     center_id?: SortOrder
+    dicharged_date?: SortOrder
+    is_discharged?: SortOrder
   }
 
   export type patient_infoSumOrderByAggregateInput = {
@@ -12480,6 +12500,28 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type Patient_infoScalarRelationFilter = {
@@ -12526,11 +12568,6 @@ export namespace Prisma {
     session_id?: SortOrder
   }
 
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
   export type room_infoCountOrderByAggregateInput = {
     room_id?: SortOrder
     room_number?: SortOrder
@@ -12567,14 +12604,6 @@ export namespace Prisma {
     room_number?: SortOrder
     center_id?: SortOrder
     number_of_beds?: SortOrder
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type IntNullableFilter<$PrismaModel = never> = {
@@ -12875,10 +12904,6 @@ export namespace Prisma {
     set?: string | null
   }
 
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
   export type patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput = {
     create?: XOR<patient_infoCreateWithoutMedicalcenter_infoInput, patient_infoUncheckedCreateWithoutMedicalcenter_infoInput> | patient_infoCreateWithoutMedicalcenter_infoInput[] | patient_infoUncheckedCreateWithoutMedicalcenter_infoInput[]
     connectOrCreate?: patient_infoCreateOrConnectWithoutMedicalcenter_infoInput | patient_infoCreateOrConnectWithoutMedicalcenter_infoInput[]
@@ -13079,6 +13104,14 @@ export namespace Prisma {
     set?: Date | string
   }
 
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
   export type bed_infoUpdateManyWithoutPatient_infoNestedInput = {
     create?: XOR<bed_infoCreateWithoutPatient_infoInput, bed_infoUncheckedCreateWithoutPatient_infoInput> | bed_infoCreateWithoutPatient_infoInput[] | bed_infoUncheckedCreateWithoutPatient_infoInput[]
     connectOrCreate?: bed_infoCreateOrConnectWithoutPatient_infoInput | bed_infoCreateOrConnectWithoutPatient_infoInput[]
@@ -13217,10 +13250,6 @@ export namespace Prisma {
     connectOrCreate?: room_registerCreateOrConnectWithoutRoom_infoInput | room_registerCreateOrConnectWithoutRoom_infoInput[]
     createMany?: room_registerCreateManyRoom_infoInputEnvelope
     connect?: room_registerWhereUniqueInput | room_registerWhereUniqueInput[]
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type bed_infoUpdateManyWithoutRoom_infoNestedInput = {
@@ -13548,17 +13577,6 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -13631,20 +13649,6 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -13654,6 +13658,22 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -13670,9 +13690,18 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -13713,6 +13742,8 @@ export namespace Prisma {
   export type patient_infoCreateWithoutMedicalcenter_infoInput = {
     patient_name: string
     registered_date: Date | string
+    dicharged_date?: Date | string | null
+    is_discharged?: boolean
     bed_info?: bed_infoCreateNestedManyWithoutPatient_infoInput
     patient_uploads?: patient_uploadsCreateNestedManyWithoutPatient_infoInput
     room_register?: room_registerCreateNestedManyWithoutPatient_infoInput
@@ -13722,6 +13753,8 @@ export namespace Prisma {
     patient_id?: number
     patient_name: string
     registered_date: Date | string
+    dicharged_date?: Date | string | null
+    is_discharged?: boolean
     bed_info?: bed_infoUncheckedCreateNestedManyWithoutPatient_infoInput
     patient_uploads?: patient_uploadsUncheckedCreateNestedManyWithoutPatient_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutPatient_infoInput
@@ -13871,6 +13904,8 @@ export namespace Prisma {
     patient_name?: StringFilter<"patient_info"> | string
     registered_date?: DateTimeFilter<"patient_info"> | Date | string
     center_id?: IntFilter<"patient_info"> | number
+    dicharged_date?: DateTimeNullableFilter<"patient_info"> | Date | string | null
+    is_discharged?: BoolFilter<"patient_info"> | boolean
   }
 
   export type room_infoUpsertWithWhereUniqueWithoutMedicalcenter_infoInput = {
@@ -14016,7 +14051,6 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
-    registered_date?: Date | string | null
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoCreateNestedManyWithoutMedicalcenter_infoInput
@@ -14028,7 +14062,6 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
-    registered_date?: Date | string | null
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -14134,7 +14167,6 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -14146,7 +14178,6 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -14199,6 +14230,8 @@ export namespace Prisma {
   export type patient_infoCreateWithoutPatient_uploadsInput = {
     patient_name: string
     registered_date: Date | string
+    dicharged_date?: Date | string | null
+    is_discharged?: boolean
     bed_info?: bed_infoCreateNestedManyWithoutPatient_infoInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutPatient_infoInput
     room_register?: room_registerCreateNestedManyWithoutPatient_infoInput
@@ -14209,6 +14242,8 @@ export namespace Prisma {
     patient_name: string
     registered_date: Date | string
     center_id: number
+    dicharged_date?: Date | string | null
+    is_discharged?: boolean
     bed_info?: bed_infoUncheckedCreateNestedManyWithoutPatient_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutPatient_infoInput
   }
@@ -14232,6 +14267,8 @@ export namespace Prisma {
   export type patient_infoUpdateWithoutPatient_uploadsInput = {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    dicharged_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    is_discharged?: BoolFieldUpdateOperationsInput | boolean
     bed_info?: bed_infoUpdateManyWithoutPatient_infoNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutPatient_infoNestedInput
     room_register?: room_registerUpdateManyWithoutPatient_infoNestedInput
@@ -14242,6 +14279,8 @@ export namespace Prisma {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
     center_id?: IntFieldUpdateOperationsInput | number
+    dicharged_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    is_discharged?: BoolFieldUpdateOperationsInput | boolean
     bed_info?: bed_infoUncheckedUpdateManyWithoutPatient_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutPatient_infoNestedInput
   }
@@ -14277,7 +14316,6 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
-    registered_date?: Date | string | null
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoCreateNestedManyWithoutMedicalcenter_infoInput
@@ -14289,7 +14327,6 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
-    registered_date?: Date | string | null
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -14358,7 +14395,6 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -14370,7 +14406,6 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -14422,6 +14457,8 @@ export namespace Prisma {
   export type patient_infoCreateWithoutBed_infoInput = {
     patient_name: string
     registered_date: Date | string
+    dicharged_date?: Date | string | null
+    is_discharged?: boolean
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutPatient_infoInput
     patient_uploads?: patient_uploadsCreateNestedManyWithoutPatient_infoInput
     room_register?: room_registerCreateNestedManyWithoutPatient_infoInput
@@ -14432,6 +14469,8 @@ export namespace Prisma {
     patient_name: string
     registered_date: Date | string
     center_id: number
+    dicharged_date?: Date | string | null
+    is_discharged?: boolean
     patient_uploads?: patient_uploadsUncheckedCreateNestedManyWithoutPatient_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutPatient_infoInput
   }
@@ -14509,6 +14548,8 @@ export namespace Prisma {
   export type patient_infoUpdateWithoutBed_infoInput = {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    dicharged_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    is_discharged?: BoolFieldUpdateOperationsInput | boolean
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutPatient_infoNestedInput
     patient_uploads?: patient_uploadsUpdateManyWithoutPatient_infoNestedInput
     room_register?: room_registerUpdateManyWithoutPatient_infoNestedInput
@@ -14519,6 +14560,8 @@ export namespace Prisma {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
     center_id?: IntFieldUpdateOperationsInput | number
+    dicharged_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    is_discharged?: BoolFieldUpdateOperationsInput | boolean
     patient_uploads?: patient_uploadsUncheckedUpdateManyWithoutPatient_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutPatient_infoNestedInput
   }
@@ -14555,7 +14598,6 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
-    registered_date?: Date | string | null
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoCreateNestedManyWithoutMedicalcenter_infoInput
@@ -14567,7 +14609,6 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
-    registered_date?: Date | string | null
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -14582,6 +14623,8 @@ export namespace Prisma {
   export type patient_infoCreateWithoutRoom_registerInput = {
     patient_name: string
     registered_date: Date | string
+    dicharged_date?: Date | string | null
+    is_discharged?: boolean
     bed_info?: bed_infoCreateNestedManyWithoutPatient_infoInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutPatient_infoInput
     patient_uploads?: patient_uploadsCreateNestedManyWithoutPatient_infoInput
@@ -14592,6 +14635,8 @@ export namespace Prisma {
     patient_name: string
     registered_date: Date | string
     center_id: number
+    dicharged_date?: Date | string | null
+    is_discharged?: boolean
     bed_info?: bed_infoUncheckedCreateNestedManyWithoutPatient_infoInput
     patient_uploads?: patient_uploadsUncheckedCreateNestedManyWithoutPatient_infoInput
   }
@@ -14638,7 +14683,6 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -14650,7 +14694,6 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -14671,6 +14714,8 @@ export namespace Prisma {
   export type patient_infoUpdateWithoutRoom_registerInput = {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    dicharged_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    is_discharged?: BoolFieldUpdateOperationsInput | boolean
     bed_info?: bed_infoUpdateManyWithoutPatient_infoNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutPatient_infoNestedInput
     patient_uploads?: patient_uploadsUpdateManyWithoutPatient_infoNestedInput
@@ -14681,6 +14726,8 @@ export namespace Prisma {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
     center_id?: IntFieldUpdateOperationsInput | number
+    dicharged_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    is_discharged?: BoolFieldUpdateOperationsInput | boolean
     bed_info?: bed_infoUncheckedUpdateManyWithoutPatient_infoNestedInput
     patient_uploads?: patient_uploadsUncheckedUpdateManyWithoutPatient_infoNestedInput
   }
@@ -14744,7 +14791,6 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
-    registered_date?: Date | string | null
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
@@ -14756,7 +14802,6 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
-    registered_date?: Date | string | null
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -14825,7 +14870,6 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -14837,7 +14881,6 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -14864,7 +14907,6 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
-    registered_date?: Date | string | null
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
@@ -14876,7 +14918,6 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
-    registered_date?: Date | string | null
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -14929,7 +14970,6 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -14941,7 +14981,6 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    registered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -14984,6 +15023,8 @@ export namespace Prisma {
     patient_id?: number
     patient_name: string
     registered_date: Date | string
+    dicharged_date?: Date | string | null
+    is_discharged?: boolean
   }
 
   export type room_infoCreateManyMedicalcenter_infoInput = {
@@ -15021,6 +15062,8 @@ export namespace Prisma {
   export type patient_infoUpdateWithoutMedicalcenter_infoInput = {
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    dicharged_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    is_discharged?: BoolFieldUpdateOperationsInput | boolean
     bed_info?: bed_infoUpdateManyWithoutPatient_infoNestedInput
     patient_uploads?: patient_uploadsUpdateManyWithoutPatient_infoNestedInput
     room_register?: room_registerUpdateManyWithoutPatient_infoNestedInput
@@ -15030,6 +15073,8 @@ export namespace Prisma {
     patient_id?: IntFieldUpdateOperationsInput | number
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    dicharged_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    is_discharged?: BoolFieldUpdateOperationsInput | boolean
     bed_info?: bed_infoUncheckedUpdateManyWithoutPatient_infoNestedInput
     patient_uploads?: patient_uploadsUncheckedUpdateManyWithoutPatient_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutPatient_infoNestedInput
@@ -15039,6 +15084,8 @@ export namespace Prisma {
     patient_id?: IntFieldUpdateOperationsInput | number
     patient_name?: StringFieldUpdateOperationsInput | string
     registered_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    dicharged_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    is_discharged?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type room_infoUpdateWithoutMedicalcenter_infoInput = {
