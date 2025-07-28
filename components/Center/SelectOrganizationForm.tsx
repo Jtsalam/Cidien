@@ -1,15 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Head from 'next/head';
 
 type Props = {
-  onSubmit: (orgCode: string) => Promise<void>;
+  onSubmit: (orgCode: string, staffId: string, password: string) => Promise<void>;
 };
 
 export default function SelectOrganizationForm({ onSubmit }: Props) {
   const [organization, setOrganization] = useState("");
+  const [staffId, setStaffId] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const passwordRef = useRef<HTMLInputElement>(null);
+
+  const togglePassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,8 +27,18 @@ export default function SelectOrganizationForm({ onSubmit }: Props) {
       return;
     }
 
+    if (!staffId) {
+      setError("Please enter your Staff ID.");
+      return;
+    }
+
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
+
     try {
-      await onSubmit(organization);
+      await onSubmit(organization, staffId, password);
       setError("");
     } catch (err) {
       setError((err as Error).message || "Something went wrong.");
@@ -39,7 +57,7 @@ export default function SelectOrganizationForm({ onSubmit }: Props) {
             onChange={(e) => setOrganization(e.target.value)}
             className="w-full p-2 mb-5 border border-gray-300 rounded-md text-lg"
           >
-            <option value="">Select your Organization</option>
+            <option value="" disabled>Select your Organization</option>
             <option value="EHC">Erindale Health center</option>
             <option value="PVM">Parkville Manor</option>
             <option value="KMC">Kenderdine Medical Clinic</option>
@@ -47,7 +65,37 @@ export default function SelectOrganizationForm({ onSubmit }: Props) {
             <option value="EMC">Evergreen Medical Clinic</option>
           </select>
 
-          {error && <p className="text-red-500">{error}</p>}
+          <input
+            type="text"
+            name="staff_Id"
+            placeholder="Enter Staff Id"
+            value={staffId}
+            onChange={(e) => setStaffId(e.target.value)}
+            required
+            className="w-full p-2 mb-5 border border-gray-300 rounded-md text-lg"
+          />
+
+          <div className="relative w-full mb-5">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="staff_password"
+              ref={passwordRef}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-2 pr-10 border border-gray-300 rounded-md text-lg"
+              placeholder="Enter Password"
+              required
+            />
+            <button
+              type="button"
+              onClick={togglePassword}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer p-1"
+            >
+              <i className={`bi ${showPassword ? "bi-eye" : "bi-eye-slash"}`}></i>
+            </button>
+          </div>
+
+          {error && <p className="text-red-500 mb-5">{error}</p>}
           
           <button
             type="submit"
