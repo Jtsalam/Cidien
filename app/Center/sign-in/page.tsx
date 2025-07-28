@@ -3,20 +3,21 @@
 import SelectOrganizationForm from "@/components/Center/SelectOrganizationForm";
 
 export default function SignIn() {
-  const handleOrgSubmit = async (organization: string) => {
+  const handleOrgSubmit = async (organization: string, staffId: string, password: string) => {
     const res = await fetch("/api/center/signIn", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ organization }),
+      body: JSON.stringify({ organization, staffId, password }),
     });
 
+    const data = await res.json();
+
     if (!res.ok) {
-      throw new Error("Please choose a medical center from the list.");
+      throw new Error(data.error || "Invalid credentials");
     }
 
-    const data = await res.json();
     console.log("Success:", data.message);
     window.location.href = "/Staff/sign-in";
   };
