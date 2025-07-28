@@ -1,29 +1,90 @@
 import { NextResponse } from "next/server";
 import { orgMap } from "@/lib/constants";
+import bcrypt from 'bcryptjs';
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
-    const { organization } = await req.json();
+    const { organization, staffId, password } = await req.json();
 
     if (!organization || !orgMap[organization]) {
       return NextResponse.json({ error: "Invalid organization selected" }, { status: 400 });
     }
 
-    console.log("Received Organization:", organization);
+    if (!staffId) {
+      return NextResponse.json({ error: "Staff ID is required" }, { status: 400 });
+    }
 
-    const response = new NextResponse(
-      JSON.stringify({ message: "Organization submitted successfully" }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+    if (!password) {
+      return NextResponse.json({ error: "Password is required" }, { status: 400 });
+    }
+
+    console.log("Received Organization:", organization);
+    console.log("Received Staff ID:", staffId);
+    
+    // Find the organization in the database
+    const organizationData = await prisma.medicalcenter_info.findFirst({
+      where: { center_name: orgMap[organization] }
+    });
+
+    if (!organizationData) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    }
+    
+    // Convert both to strings
+    const staff_Id = staffId.toString();
+    const staff_password = password.toString();
+    
+    // Find user that matches ID in selected organization
+    const user = await prisma.user_info.findFirst({
+      where: {
+        staff_id: staff_Id,
+        center_id: organizationData.center_id
+      },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    }
+
+    // Verify password
+    const isPasswordCorrect = await bcrypt.compare(staff_password, user.password);
+
+    if (!isPasswordCorrect) {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    }
+
+    // Create response with cookies
+    const response = NextResponse.json(
+      { success: true, role: user.user_role, message: "Login successful" },
+      { status: 200 }
     );
+
+    // Set cookies
+    response.cookies.set("orgSubmitted", "true", {
+      path: "/",
+      maxAge: 3600,
+      sameSite: "lax"
+    });
     
-    response.headers.append("Set-Cookie", `orgSubmitted=true; Path=/; Max-Age=3600; SameSite=Lax`);
-    response.headers.append("Set-Cookie", `organization=${encodeURIComponent(organization)}; Path=/; Max-Age=3600; SameSite=Lax`);
+    response.cookies.set("staffSubmitted", "true", {
+      path: "/",
+      maxAge: 3600,
+      sameSite: "lax"
+    });
     
+    response.cookies.set("user_role", user.user_role, {
+      path: "/",
+      maxAge: 3600,
+      sameSite: "lax"
+    });
+    
+    response.cookies.set("staff_Id", staff_Id, {
+      path: "/",
+      maxAge: 3600,
+      sameSite: "lax"
+    });
+
     return response;
     
   } catch (error) {
