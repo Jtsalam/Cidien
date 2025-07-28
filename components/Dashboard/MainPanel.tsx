@@ -118,7 +118,7 @@ export default function MainPanel() {
                 </div>
                 <TooltipProvider>
                   <p className="font-semibold flex justify-end items-center">
-                    {roomId || "No rooms assigned."}
+                    {roomId || "No rooms assigned"}
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
@@ -140,7 +140,6 @@ export default function MainPanel() {
                           <ArrowLeftRight
                             className="w-4 h-4 text-emerald-200 
                                      group-hover:text-white
-                                     group-hover:rotate-180
                                      transition-all duration-300 ease-out
                                      relative z-10"
                           />
