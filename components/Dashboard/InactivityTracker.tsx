@@ -13,7 +13,7 @@ export default function InactivityTracker() {
 
   const handleLogout = async () => {
     await fetch("/api/staff/logout", { method: "POST" })
-    window.location.href = "/Staff/sign-in"
+    window.location.href = "/sign-in"
   }
 
   const resetInactivityTimer = () => {
