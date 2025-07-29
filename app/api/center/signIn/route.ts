@@ -60,8 +60,7 @@ export async function POST(req: Request) {
       { status: 200 }
     );
 
-    // Set cookies
-    response.cookies.set("orgSubmitted", "true", {
+    response.cookies.set("organization", `${encodeURIComponent(organization)}`, {
       path: "/",
       maxAge: 3600,
       sameSite: "lax"
