@@ -7,9 +7,9 @@ import { useEffect, useState } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { LogOut, Hospital, User, Home, Upload, Database, Users } from "lucide-react"
-import DataTable from "@/components/Dashboard/DataTable"
-import LogoutConfirmationModal from "@/components/Dashboard/LogoutConfirmationModal";
-import RoomList from '@/components/Dashboard/RoomList';
+import DataTable from "@/components/DataTable"
+import LogoutConfirmationModal from "@/components/LogoutConfirmationModal";
+import RoomList from '@/components/Admin/Dashboard/Home/RoomList';
 
 export default function MainPanel() {
   const [displayName, setDisplayName] = useState("")

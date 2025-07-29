@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, User, Bed, AlertCircle, Stethoscope } from 'lucide-react';
-import AssignBedPopup from '@/components/Dashboard/AssignBedPopup';
+import AssignBedPopup from '@/components/Admin/Dashboard/Home/AssignBedPopup';
 
 interface Room {
   id: number;

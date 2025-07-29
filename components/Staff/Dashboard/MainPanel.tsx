@@ -7,8 +7,8 @@ import { useEffect, useState } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { LogOut, Hospital, User, Home, Upload, Database, Bed, DoorOpen, ArrowLeftRight } from "lucide-react"
-import LogoutConfirmationModal from "@/components/Dashboard/LogoutConfirmationModal"
-import DataTable from "@/components/Dashboard/DataTable"
+import LogoutConfirmationModal from "@/components/LogoutConfirmationModal"
+import DataTable from "@/components/DataTable"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
 
 export default function MainPanel() {
