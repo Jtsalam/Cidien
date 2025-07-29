@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Head from 'next/head';
 
 type Props = {
@@ -15,8 +15,28 @@ export default function SelectOrganizationForm({ onSubmit }: Props) {
   const [error, setError] = useState("");
   const passwordRef = useRef<HTMLInputElement>(null);
 
+  // Load remembered organization on component mount
+  useEffect(() => {
+    const rememberedOrg = localStorage.getItem('rememberedOrganization');
+    if (rememberedOrg) {
+      setOrganization(rememberedOrg);
+    }
+  }, []);
+
   const togglePassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleOrganizationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedOrg = e.target.value;
+    setOrganization(selectedOrg);
+    
+    // Remember the selected organization
+    if (selectedOrg) {
+      localStorage.setItem('rememberedOrganization', selectedOrg);
+    } else {
+      localStorage.removeItem('rememberedOrganization');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,7 +74,7 @@ export default function SelectOrganizationForm({ onSubmit }: Props) {
             id="option"
             name="option"
             value={organization}
-            onChange={(e) => setOrganization(e.target.value)}
+            onChange={handleOrganizationChange}
             className="w-full p-2 mb-5 border border-gray-300 rounded-md text-lg"
           >
             <option value="" disabled>Select your Organization</option>
