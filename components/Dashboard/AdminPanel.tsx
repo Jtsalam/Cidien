@@ -63,7 +63,7 @@ export default function MainPanel() {
 
   const handleLogout = async () => {
     await fetch("/api/staff/logout", { method: "POST" })
-    window.location.href = "/Staff/sign-in"
+    window.location.href = "/sign-in"
   }
 
   // Map paths to tab values for active state
