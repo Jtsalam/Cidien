@@ -1,7 +1,7 @@
-//app/page.tsx
-"use client"
+"use client";
+
 import { redirect } from 'next/navigation';
 
 export default function Home() {
-  redirect('/Staff/sign-in'); // Send users directly to staff login
-}
+  redirect('/sign-in'); // Send users directly to unified sign-in
+} 
