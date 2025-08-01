@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Play, Pause, Loader2, Database, Mic, Wifi, WifiOff } from "lucide-react"
 import * as Tooltip from "@radix-ui/react-tooltip"
+import { getCookie } from "@/utils/getCookie"
 
 // Socket will be initialized inside the component
 
@@ -30,6 +31,7 @@ export default function DataTable() {
   const [isConnected, setIsConnected] = useState(false)
   const tableEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<any>(null);
+  const [staffId, setStaffId] = useState<string>("");
 
   const handlePlay = (url: string, index: number) => {
     if (audio) {
@@ -70,7 +72,13 @@ export default function DataTable() {
 
 
 
+
+
   useEffect(() => {
+    // Get staff ID from cookie
+    const staffIdFromCookie = getCookie("staff_Id") || "";
+    setStaffId(staffIdFromCookie);
+
     // Initialize socket connection
     socketRef.current = io("http://localhost:5000", {
       transports: ['polling'],
@@ -79,8 +87,12 @@ export default function DataTable() {
 
     const socket = socketRef.current;
 
-    // Load existing transcriptions
-    fetch("http://localhost:5000/transcriptions")
+    // Load existing transcriptions for this staff member
+    const transcriptionsUrl = staffId 
+      ? `http://localhost:5000/transcriptions/${staffId}`
+      : "http://localhost:5000/transcriptions";
+    
+    fetch(transcriptionsUrl)
       .then((res) => res.json())
       .then((json) => {
         setData(
@@ -97,12 +109,15 @@ export default function DataTable() {
         setIsConnected(false)
       })
 
-    socket.on("connect", () => {
+        socket.on("connect", () => {
       console.log("Connected to Flask WebSocket")
       console.log("Socket ID:", socket.id)
       setIsConnected(true)
       
-
+      // Join staff-specific room if staff ID is available
+      if (staffId) {
+        socket.emit('join_staff_room', { user_id: staffId });
+      }
     })
 
     socket.on("disconnect", () => {
@@ -121,7 +136,6 @@ export default function DataTable() {
     })
 
     socket.on("new_transcription", (payload: any) => {
-      console.log("Incoming payload:", payload)
       setIsReceiving(true)
 
       // Simulate processing delay for better UX
@@ -137,11 +151,8 @@ export default function DataTable() {
           isNew: true,
         }
 
-        console.log("Adding new row:", newRow)
-
         setData((prevData) => {
           const updatedData = [...prevData, { ...newRow, index: prevData.length + 1 }]
-          console.log("Updated data length:", updatedData.length)
           return updatedData
         })
         setIsReceiving(false)
@@ -160,12 +171,47 @@ export default function DataTable() {
 
 
 
+
+
     return () => {
       if (socket) {
         socket.disconnect()
       }
     }
   }, [])
+
+  // Join staff room when staffId is available
+  useEffect(() => {
+    if (socketRef.current && staffId && isConnected) {
+      socketRef.current.emit('join_staff_room', { user_id: staffId });
+      
+      // Also join the room using staffId directly as backup
+      const staffRoom = `staff_${staffId}`;
+      socketRef.current.emit('join_room', { room: staffRoom });
+    }
+  }, [staffId, isConnected])
+
+  // Reload data when staffId becomes available
+  useEffect(() => {
+    if (staffId && isConnected) {
+      const transcriptionsUrl = `http://localhost:5000/transcriptions/${staffId}`;
+      
+      fetch(transcriptionsUrl)
+        .then((res) => res.json())
+        .then((json) => {
+          setData(
+            json.map((item: any, index: number) => ({
+              ...item,
+              id: item.id || Date.now() + index,
+              isNew: false,
+            })),
+          )
+        })
+        .catch((err) => {
+          console.error("Failed to reload data:", err)
+        })
+    }
+  }, [staffId, isConnected])
 
   return (
     <Tooltip.Provider>
@@ -184,6 +230,7 @@ export default function DataTable() {
                     <span className="text-sm font-medium">Processing...</span>
                   </div>
                 )}
+
                 <Badge
                   variant={isConnected ? "default" : "destructive"}
                   className={`flex items-center space-x-1 ${isConnected ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-100" : ""}`}
