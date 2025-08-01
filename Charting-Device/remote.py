@@ -8,7 +8,7 @@ from functions import no_of_files, recognize_speech_from_audio, all_rooms, aud_i
 # Setup Flask app
 app = Flask(__name__)
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=True)
 
 # Replace these values with your actual DB credentials
 conn = psycopg2.connect(
@@ -129,6 +129,14 @@ def serve_audio(filename):
 def get_transcriptions():
     return jsonify(transcriptions)
 
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected to WebSocket')
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('Client disconnected from WebSocket')
+
 
 @app.route('/process_audio/room_data', methods=['POST'])
 def room_data_btn():
@@ -166,7 +174,9 @@ def room_data_btn():
         }
 
         transcriptions.append(data)
-        socketio.emit('new_transcription', data)
+        print(f"Emitting new_transcription: {data}")
+        socketio.emit('new_transcription', data, broadcast=True)
+        print("Emission completed")
 
     return jsonify({'message': 'Room data audio processed and emitted!'})
     
