@@ -8,8 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Play, Pause, Loader2, Database, Mic, Wifi, WifiOff } from "lucide-react"
 import * as Tooltip from "@radix-ui/react-tooltip"
 
-// Initialize socket connection once
-const socket = io("http://localhost:5000") // Adjust to your Flask server address if needed
+// Socket will be initialized inside the component
 
 interface RowData {
   index: number
@@ -30,6 +29,7 @@ export default function DataTable() {
   const [isReceiving, setIsReceiving] = useState(false)
   const [isConnected, setIsConnected] = useState(false)
   const tableEndRef = useRef<HTMLDivElement>(null);
+  const socketRef = useRef<any>(null);
 
   const handlePlay = (url: string, index: number) => {
     if (audio) {
@@ -68,7 +68,17 @@ export default function DataTable() {
     handlePlay(audioUrl, index)
   }
 
+
+
   useEffect(() => {
+    // Initialize socket connection
+    socketRef.current = io("http://localhost:5000", {
+      transports: ['polling'],
+      timeout: 60000
+    });
+
+    const socket = socketRef.current;
+
     // Load existing transcriptions
     fetch("http://localhost:5000/transcriptions")
       .then((res) => res.json())
@@ -83,13 +93,16 @@ export default function DataTable() {
         setIsConnected(true)
       })
       .catch((err) => {
-        console.error("Failed toload data:", err)
+        console.error("Failed to load data:", err)
         setIsConnected(false)
       })
 
     socket.on("connect", () => {
       console.log("Connected to Flask WebSocket")
+      console.log("Socket ID:", socket.id)
       setIsConnected(true)
+      
+
     })
 
     socket.on("disconnect", () => {
@@ -97,15 +110,24 @@ export default function DataTable() {
       setIsConnected(false)
     })
 
-    socket.on("new_transcription", (payload) => {
-      console.log("Incoming payload:", payload)
+    socket.on("connect_error", (error: any) => {
+      console.error("WebSocket connection error:", error)
+      setIsConnected(false)
+    })
+
+    socket.on("error", (error: any) => {
+      console.error("WebSocket error:", error)
+      setIsConnected(false)
+    })
+
+    socket.on("new_transcription", (payload: any) => {
       console.log("Incoming payload:", payload)
       setIsReceiving(true)
 
       // Simulate processing delay for better UX
       setTimeout(() => {
         const newRow = {
-          index: data.length + 1,
+          index: 0, // Will be calculated in setData
           audioUrl: payload.audioUrl || "—",
           column1: payload.column1 || "—",
           column2: payload.column2 || "—",
@@ -115,7 +137,13 @@ export default function DataTable() {
           isNew: true,
         }
 
-        setData((prevData) => [...prevData, newRow])
+        console.log("Adding new row:", newRow)
+
+        setData((prevData) => {
+          const updatedData = [...prevData, { ...newRow, index: prevData.length + 1 }]
+          console.log("Updated data length:", updatedData.length)
+          return updatedData
+        })
         setIsReceiving(false)
 
         // Auto-scroll to new entry
@@ -130,8 +158,12 @@ export default function DataTable() {
       }, 800)
     })
 
+
+
     return () => {
-      socket.disconnect()
+      if (socket) {
+        socket.disconnect()
+      }
     }
   }, [])
 
