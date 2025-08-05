@@ -3,10 +3,10 @@
 import Image from "next/image"
 import { getCookie } from "@/utils/getCookie"
 import { orgMap } from "@/lib/constants"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef, useCallback, useMemo } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
-import { LogOut, Hospital, User, Home, Upload, Database, Bed, DoorOpen, ArrowLeftRight } from "lucide-react"
+import { LogOut, Hospital, User, Home, Upload, Database, Bed, DoorOpen, ArrowLeftRight, ChevronDown } from "lucide-react"
 import LogoutConfirmationModal from "@/components/LogoutConfirmationModal"
 import DataTable from "@/components/DataTable"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
@@ -17,6 +17,11 @@ export default function MainPanel() {
   const [roomId, setRoomId] = useState("")
   const [orgImage, setOrgImage] = useState("")
   const [showLogoutModal, setShowLogoutModal] = useState(false)
+  const [assignedRooms, setAssignedRooms] = useState<string[]>([])
+  const [selectedRoom, setSelectedRoom] = useState<string | null>(null)
+  const [showRoomDropdown, setShowRoomDropdown] = useState(false)
+  const [isLoadingRooms, setIsLoadingRooms] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   // Mock fetching session data (replace with actual logic)
   useEffect(() => {
@@ -36,10 +41,63 @@ export default function MainPanel() {
     setOrgImage(`${cookieOrg.trim()}`)
   }, [])
 
-  const handleLogout = async () => {
+  // Fetch assigned rooms for the staff member
+  useEffect(() => {
+    const fetchAssignedRooms = async () => {
+      if (!nurseId) return;
+      
+      setIsLoadingRooms(true);
+      try {
+        console.log(`Fetching assigned rooms for staff ID: ${nurseId}`);
+        const response = await fetch('/api/staff/assigned-rooms');
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log(`Loaded ${data.rooms?.length || 0} assigned rooms:`, data.rooms);
+          setAssignedRooms(data.rooms || []);
+        } else {
+          console.error('Failed to fetch assigned rooms:', response.status, response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching assigned rooms:', error);
+      } finally {
+        setIsLoadingRooms(false);
+      }
+    };
+
+    fetchAssignedRooms();
+  }, [nurseId]);
+
+  // Click outside handler for dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowRoomDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleLogout = useCallback(async () => {
     await fetch("/api/staff/logout", { method: "POST" })
     window.location.href = "/sign-in"
-  }
+  }, [])
+
+  const handleRoomSelect = useCallback((room: string) => {
+    console.log(`Switching to room: ${room}`);
+    setSelectedRoom(room);
+    setShowRoomDropdown(false);
+  }, []);
+
+  const handleShowAllRooms = useCallback(() => {
+    console.log('Switching to all rooms');
+    setSelectedRoom(null);
+    setShowRoomDropdown(false);
+  }, []);
 
   // Map paths to tab values for active state
   const tabRoutes = [
@@ -71,6 +129,13 @@ export default function MainPanel() {
 
   // Determine the active tab based on the current pathname
   const [activeTab, setActiveTab] = useState("home")
+
+  const getRoomDisplayText = useMemo(() => {
+    if (isLoadingRooms) return "Loading...";
+    if (assignedRooms.length === 0) return "No rooms assigned";
+    if (selectedRoom) return `Room ${selectedRoom}`;
+    return "All rooms";
+  }, [isLoadingRooms, assignedRooms.length, selectedRoom]);
 
   return (
     <div className="bg-white shadow-lg border-b">
@@ -117,43 +182,76 @@ export default function MainPanel() {
                   <span className="text-sm font-medium text-emerald-100">Room ID</span>
                 </div>
                 <TooltipProvider>
-                  <p className="font-semibold flex justify-end items-center">
-                    {roomId || "No rooms assigned"}
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          onClick={() => console.log("Switch room clicked")}
-                          variant="ghost"
-                          size="sm"
-                          className="ml-3 h-9 w-9 p-0 
-                                   bg-emerald-500/15 hover:bg-emerald-500/25 
-                                   border border-emerald-400/40 hover:border-emerald-300/60
-                                   rounded-lg shadow-sm hover:shadow-md
-                                   transition-all duration-300 ease-out
-                                   group relative overflow-hidden
-                                   hover:scale-105 active:scale-95"
-                        >
-                          <div
-                            className="absolute inset-0 bg-gradient-to-r from-emerald-400/10 to-emerald-300/10 
-                                     opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                          />
-                          <ArrowLeftRight
-                            className="w-4 h-4 text-emerald-200 
-                                     group-hover:text-white
-                                     transition-all duration-300 ease-out
-                                     relative z-10"
-                          />
-                          <span className="sr-only">Switch to a different room</span>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" className="bg-slate-800 text-white border-slate-700">
-                        <div className="flex items-center gap-2">
-                          <ArrowLeftRight className="w-3 h-3" />
-                          <span>Switch Room</span>
+                  <div className="relative" ref={dropdownRef}>
+                    <p className="font-semibold flex justify-end items-center">
+                      {getRoomDisplayText}
+                      {assignedRooms.length > 0 && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              onClick={() => setShowRoomDropdown(!showRoomDropdown)}
+                              variant="ghost"
+                              size="sm"
+                              className="ml-3 h-9 w-9 p-0 
+                                       bg-emerald-500/15 hover:bg-emerald-500/25 
+                                       border border-emerald-400/40 hover:border-emerald-300/60
+                                       rounded-lg shadow-sm hover:shadow-md
+                                       transition-all duration-300 ease-out
+                                       group relative overflow-hidden
+                                       hover:scale-105 active:scale-95"
+                            >
+                              <div
+                                className="absolute inset-0 bg-gradient-to-r from-emerald-400/10 to-emerald-300/10 
+                                         opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                              />
+                              <ChevronDown
+                                className={`w-4 h-4 text-emerald-200 
+                                         group-hover:text-white
+                                         transition-all duration-300 ease-out
+                                         relative z-10 ${showRoomDropdown ? 'rotate-180' : ''}`}
+                              />
+                              <span className="sr-only">Switch to a different room</span>
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom" className="bg-slate-800 text-white border-slate-700">
+                            <div className="flex items-center gap-2">
+                              <ArrowLeftRight className="w-3 h-3" />
+                              <span>Switch Room</span>
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                    </p>
+                    
+                    {/* Room Dropdown */}
+                    {showRoomDropdown && assignedRooms.length > 0 && (
+                      <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                        <div className="py-1">
+                          <button
+                            onClick={handleShowAllRooms}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center justify-between"
+                          >
+                            <span>All rooms</span>
+                            {!selectedRoom && (
+                              <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                            )}
+                          </button>
+                          {assignedRooms.map((room) => (
+                            <button
+                              key={room}
+                              onClick={() => handleRoomSelect(room)}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center justify-between"
+                            >
+                              <span>Room {room}</span>
+                              {selectedRoom === room && (
+                                <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                              )}
+                            </button>
+                          ))}
                         </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  </p>
+                      </div>
+                    )}
+                  </div>
                 </TooltipProvider>
               </div>
             </div>
@@ -217,7 +315,9 @@ export default function MainPanel() {
       </div>
       
       {/* Content Area - Show DataTable only when data tab is active */}
-      {activeTab === "data" && <DataTable />}
+      {activeTab === "data" && (
+        <DataTable key={selectedRoom ?? 'all'} selectedRoom={selectedRoom} />
+      )}
       
       <LogoutConfirmationModal
         open={showLogoutModal}
