@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useMemo, useCallback } from "react"
 import io from "socket.io-client"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,22 +18,27 @@ interface RowData {
   column2: string
   column3: string
   column4: string
-  id?: number
+  id?: string | number
   isNew?: boolean
 }
 
-export default function DataTable() {
+interface DataTableProps {
+  selectedRoom?: string | null;
+}
+
+export default function DataTable({ selectedRoom }: DataTableProps) {
   const [data, setData] = useState<RowData[]>([])
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const [playingIndex, setPlayingIndex] = useState<number | null>(null)
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null)
   const [isReceiving, setIsReceiving] = useState(false)
   const [isConnected, setIsConnected] = useState(false)
+  const [loading, setLoading] = useState(true)
   const tableEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<any>(null);
   const [staffId, setStaffId] = useState<string>("");
 
-  const handlePlay = (url: string, index: number) => {
+  const handlePlay = useCallback((url: string, index: number) => {
     if (audio) {
       audio.pause()
       audio.currentTime = 0
@@ -64,15 +69,69 @@ export default function DataTable() {
       setPlayingIndex(null)
       setAudio(null)
     }
-  }
+  }, [audio, playingIndex])
 
-  const handleRowDoubleClick = (audioUrl: string, index: number) => {
+  const handleRowDoubleClick = useCallback((audioUrl: string, index: number) => {
     handlePlay(audioUrl, index)
-  }
+  }, [handlePlay])
 
-
-
-
+  const loadTranscriptions = async (roomFilter?: string) => {
+    try {
+      setLoading(true);
+      let transcriptionsUrl: string;
+      
+      if (roomFilter) {
+        // Load transcriptions for specific room using Next.js API
+        transcriptionsUrl = `/api/staff/transcriptions-by-room?room=${encodeURIComponent(roomFilter)}`;
+        console.log(`Loading transcriptions for room: ${roomFilter}`);
+      } else {
+        // Load all transcriptions for staff member
+        transcriptionsUrl = staffId 
+          ? `http://localhost:5000/transcriptions/${encodeURIComponent(staffId)}`
+          : "http://localhost:5000/transcriptions";
+        console.log('Loading all transcriptions for staff member');
+      }
+      
+      console.log(`Fetching from: ${transcriptionsUrl}`);
+      const response = await fetch(transcriptionsUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // Add timeout
+        signal: AbortSignal.timeout(30000)
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => 'Unknown error');
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+      
+      const json = await response.json();
+      console.log(`Loaded ${json.length} transcriptions`);
+      
+      // Create a Set to track unique IDs and prevent duplicates
+      const existingIds = new Set(data.map(item => String(item.id)));
+      
+      const processedData = json
+        .filter((item: any) => !existingIds.has(String(item.id || item.audioUrl)))
+        .map((item: any, index: number) => ({
+          ...item,
+          id: item.id || `transcription_${Date.now()}_${Math.random().toString(36).substr(2, 9)}_${index}`,
+          isNew: false,
+          index: index + 1
+        }));
+      
+      setData(processedData);
+      setIsConnected(true);
+      setLoading(false);
+    } catch (err) {
+      console.error("Failed to load data:", err);
+      setIsConnected(false);
+      // Don't clear existing data on error, just stop loading
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     // Get staff ID from cookie
@@ -87,29 +146,10 @@ export default function DataTable() {
 
     const socket = socketRef.current;
 
-    // Load existing transcriptions for this staff member
-    const transcriptionsUrl = staffId 
-      ? `http://localhost:5000/transcriptions/${staffId}`
-      : "http://localhost:5000/transcriptions";
-    
-    fetch(transcriptionsUrl)
-      .then((res) => res.json())
-      .then((json) => {
-        setData(
-          json.map((item: any, index: number) => ({
-            ...item,
-            id: item.id || Date.now() + index,
-            isNew: false,
-          })),
-        )
-        setIsConnected(true)
-      })
-      .catch((err) => {
-        console.error("Failed to load data:", err)
-        setIsConnected(false)
-      })
+    // Load transcriptions based on room filter
+    loadTranscriptions(selectedRoom || undefined);
 
-        socket.on("connect", () => {
+    socket.on("connect", () => {
       console.log("Connected to Flask WebSocket")
       console.log("Socket ID:", socket.id)
       setIsConnected(true)
@@ -128,6 +168,13 @@ export default function DataTable() {
     socket.on("connect_error", (error: any) => {
       console.error("WebSocket connection error:", error)
       setIsConnected(false)
+      // Attempt to reconnect after a delay
+      setTimeout(() => {
+        if (socketRef.current && !socketRef.current.connected) {
+          console.log('Attempting to reconnect...');
+          socketRef.current.connect();
+        }
+      }, 5000);
     })
 
     socket.on("error", (error: any) => {
@@ -135,23 +182,65 @@ export default function DataTable() {
       setIsConnected(false)
     })
 
+    socket.on("reconnect", (attemptNumber: number) => {
+      console.log(`Reconnected after ${attemptNumber} attempts`);
+      setIsConnected(true);
+      // Rejoin staff room after reconnection
+      if (staffId) {
+        socket.emit('join_staff_room', { user_id: staffId });
+      }
+    })
+
     socket.on("new_transcription", (payload: any) => {
+      console.log('Received new transcription:', payload);
       setIsReceiving(true)
+
+      // Validate payload
+      if (!payload || typeof payload !== 'object') {
+        console.warn('Invalid transcription payload received:', payload);
+        setIsReceiving(false);
+        return;
+      }
+
+      // Check if the new transcription belongs to the currently selected room
+      if (selectedRoom) {
+        // Extract room number from column1 (format: "room_number bed_letter")
+        const roomFromTranscription = payload.column1?.split(' ')[0];
+        if (roomFromTranscription !== selectedRoom) {
+          console.log(`Ignoring transcription for room ${roomFromTranscription}, current filter: ${selectedRoom}`);
+          setIsReceiving(false);
+          return;
+        }
+      }
 
       // Simulate processing delay for better UX
       setTimeout(() => {
-        const newRow = {
+        const uniqueId = `new_transcription_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const newRow: RowData = {
           index: 0, // Will be calculated in setData
           audioUrl: payload.audioUrl || "—",
           column1: payload.column1 || "—",
           column2: payload.column2 || "—",
           column3: payload.column3 || "—",
           column4: payload.column4 || "—",
-          id: Date.now(),
+          id: uniqueId,
           isNew: true,
         }
 
         setData((prevData) => {
+          // Check for duplicates before adding
+          const isDuplicate = prevData.some(item => 
+            item.audioUrl === newRow.audioUrl && 
+            item.column1 === newRow.column1 && 
+            item.column2 === newRow.column2 && 
+            item.column3 === newRow.column3
+          );
+          
+          if (isDuplicate) {
+            console.log('Duplicate transcription detected, skipping');
+            return prevData;
+          }
+          
           const updatedData = [...prevData, { ...newRow, index: prevData.length + 1 }]
           return updatedData
         })
@@ -164,54 +253,27 @@ export default function DataTable() {
 
         // Remove "new" status after 3 seconds
         setTimeout(() => {
-          setData((prevData) => prevData.map((item) => (item.id === newRow.id ? { ...item, isNew: false } : item)))
+          setData((prevData) => prevData.map((item) => (String(item.id) === String(uniqueId) ? { ...item, isNew: false } : item)))
         }, 3000)
       }, 800)
     })
-
-
-
-
 
     return () => {
       if (socket) {
         socket.disconnect()
       }
     }
-  }, [])
+  }, [selectedRoom, staffId])
 
-  // Join staff room when staffId is available
-  useEffect(() => {
-    if (socketRef.current && staffId && isConnected) {
-      socketRef.current.emit('join_staff_room', { user_id: staffId });
-      
-      // Also join the room using staffId directly as backup
-      const staffRoom = `staff_${staffId}`;
-      socketRef.current.emit('join_room', { room: staffRoom });
-    }
-  }, [staffId, isConnected])
+  
 
-  // Reload data when staffId becomes available
-  useEffect(() => {
-    if (staffId && isConnected) {
-      const transcriptionsUrl = `http://localhost:5000/transcriptions/${staffId}`;
-      
-      fetch(transcriptionsUrl)
-        .then((res) => res.json())
-        .then((json) => {
-          setData(
-            json.map((item: any, index: number) => ({
-              ...item,
-              id: item.id || Date.now() + index,
-              isNew: false,
-            })),
-          )
-        })
-        .catch((err) => {
-          console.error("Failed to reload data:", err)
-        })
-    }
-  }, [staffId, isConnected])
+  // Memoize filtered and processed data
+  const processedData = useMemo(() => {
+    return data.map((row, index) => ({
+      ...row,
+      index: index + 1
+    }));
+  }, [data]);
 
   return (
     <Tooltip.Provider>
@@ -221,7 +283,9 @@ export default function DataTable() {
             <CardTitle className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Database className="w-5 h-5 text-emerald-600" />
-                <span>Real-time Transcriptions</span>
+                <span>
+                  {selectedRoom ? `Room ${selectedRoom} Transcriptions` : "All Rooms Transcriptions"}
+                </span>
               </div>
               <div className="flex items-center space-x-3">
                 {isReceiving && (
@@ -262,10 +326,32 @@ export default function DataTable() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.length > 0 ? (
-                    data.map((row, i) => (
+                  {loading && data.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                        <div className="flex flex-col items-center space-y-3 py-8">
+                          <div className="relative">
+                            <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+                            <div className="absolute inset-0 w-8 h-8 border-2 border-emerald-200 rounded-full animate-pulse"></div>
+                          </div>
+                          <div className="text-center">
+                            <p className="font-medium text-gray-700">
+                              {selectedRoom 
+                                ? `Loading Room ${selectedRoom} Data` 
+                                : "Loading Transcription Data"
+                              }
+                            </p>
+                            <p className="text-sm text-gray-500 mt-1">
+                              Please wait while we fetch the latest information...
+                            </p>
+                          </div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : processedData.length > 0 ? (
+                    processedData.map((row, i) => (
                       <TableRow
-                        key={row.id || `${row.column2}-${row.column3}-${i}`}
+                        key={row.id || `fallback_${i}_${row.column2}_${row.column3}_${Date.now()}`}
                         className={`
                           hover:bg-gray-50 hover:shadow-md transition-all duration-300 cursor-pointer relative
                           ${row.isNew ? "animate-in slide-in-from-bottom-2 duration-500 bg-emerald-50 border-l-4 border-l-emerald-400" : ""}
@@ -277,7 +363,7 @@ export default function DataTable() {
                           <span
                             className={`transition-opacity ${playingIndex === i ? "opacity-0" : "group-hover:opacity-0"}`}
                           >
-                            {i + 1}
+                            {row.index}
                           </span>
                           {row.isNew && (
                             <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
@@ -323,9 +409,28 @@ export default function DataTable() {
                   ) : (
                     <TableRow>
                       <TableCell colSpan={4} className="text-center py-8 text-gray-500">
-                        <div className="flex flex-col items-center space-y-2">
-                          <Loader2 className="w-6 h-6 animate-spin text-emerald-600" />
-                          <span>Waiting for real-time data...</span>
+                        <div className="flex flex-col items-center space-y-3 py-12">
+                          <div className="flex items-center justify-center w-16 h-16 bg-emerald-50 rounded-full">
+                            <Database className="w-8 h-8 text-emerald-600" />
+                          </div>
+                          <div className="text-center">
+                            <p className="font-medium text-gray-700">
+                              {selectedRoom 
+                                ? `Monitoring Room ${selectedRoom}` 
+                                : "Monitoring All Rooms"
+                              }
+                            </p>
+                            <p className="text-sm text-gray-500 mt-1">
+                              Listening for new transcriptions...
+                            </p>
+                            <div className="flex justify-center mt-3">
+                              <div className="flex space-x-1">
+                                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </TableCell>
                     </TableRow>
