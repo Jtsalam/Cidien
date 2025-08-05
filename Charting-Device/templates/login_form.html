@@ -8,27 +8,42 @@
 </head>
 <body>
     <div class="container">
-        <h1>SIGN IN</h1>
+        <div class="header">
+            <div class="user-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </div>
+            <h1>Welcome Back</h1>
+            <p class="subtitle">Please sign in to your account</p>
+        </div>
+        
         <form action="/login_val" method="POST">
-            <select id="option" name="Organization Name" required>
-                <option value="" disabled selected>Select your Organization</option>
-                <option value="Erindale Health center">Erindale Health Center</option>
-                <option value="Parkville Manor">Parkville Manor</option>
-                <option value="Kenderdine Medical Clinic">Kenderdine Medical Clinic</option>
-                <option value="Jim Pattison Children's Hospital">Jim Pattison Children's Hospital</option>
-                <option value="Evergreen Medical Clinic">Evergreen Medical Clinic</option>
-            </select>
+            <div class="form-group">
+                <label for="option">Medical Center</label>
+                <select id="option" name="Organization Name" required>
+                    <option value="" disabled selected>Select your Organization</option>
+                    <option value="Erindale Health center">Erindale Health Center</option>
+                    <option value="Parkville Manor">Parkville Manor</option>
+                    <option value="Kenderdine Medical Clinic">Kenderdine Medical Clinic</option>
+                    <option value="Jim Pattison Children's Hospital">Jim Pattison Children's Hospital</option>
+                    <option value="Evergreen Medical Clinic">Evergreen Medical Clinic</option>
+                </select>
+            </div>
             
-            <input type="text" 
-                   name="staff_id" 
-                   placeholder="Enter Staff ID" 
-                   required 
-                   autocomplete="username"
-                   aria-label="Staff ID">
+            <div class="form-group">
+                <label for="staff_id">Staff ID</label>
+                <input type="text" 
+                       id="staff_id"
+                       name="staff_id" 
+                       placeholder="Enter your Staff ID" 
+                       required 
+                       autocomplete="username"
+                       aria-label="Staff ID">
+            </div>
             
-            <input type="submit" value="Sign In">
+            <input type="submit" value="Sign In" class="submit-btn">
         </form>
-
 
         {% if error %}
             <div class="error-message">
