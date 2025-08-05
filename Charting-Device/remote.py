@@ -1,7 +1,7 @@
 import os
 import psycopg2
 from flask import Flask, request, render_template, jsonify, send_file, session
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, join_room
 from flask_cors import CORS
 from functions import no_of_files, recognize_speech_from_audio, all_rooms, aud_info
 import uuid
@@ -64,7 +64,7 @@ def load_transcriptions_from_database():
             JOIN bed_info bi ON rd.bed_id = bi.bed_id
             JOIN room_info ri ON bi.room_id = ri.room_id
             JOIN user_info ui ON bi.assigned_nurse_id = ui.user_id
-            ORDER BY rd.id DESC
+            ORDER BY rd.id ASC
         """)
         rows = cur.fetchall()
         
@@ -293,7 +293,7 @@ def handle_join_staff_room(data):
         user_id = get_user_id_from_staff_id(staff_id)
         if user_id:
             room = f"staff_{user_id}"
-            socketio.join_room(room)
+            join_room(room)
         else:
             print(f'No user_id found for staff_id: {staff_id}')
 
@@ -301,7 +301,7 @@ def handle_join_staff_room(data):
 def handle_join_room(data):
     room = data.get('room')
     if room:
-        socketio.join_room(room)
+        join_room(room)
 
 @socketio.on('ping')
 def handle_ping():
@@ -390,6 +390,114 @@ def room_data_btn():
         socketio.emit('new_transcription', data, broadcast=True)
 
     return jsonify({'message': 'Room data audio processed and emitted!'})
+
+@app.route('/staff/assigned-rooms', methods=['GET'])
+def get_staff_assigned_rooms_api():
+    """Get list of rooms assigned to the staff member"""
+    staff_id = request.args.get('staff_id')
+    
+    if not staff_id:
+        return jsonify({'error': 'Staff ID is required'}), 400
+    
+    try:
+        # Get user_id from staff_id
+        cur.execute("SELECT user_id FROM user_info WHERE staff_id = %s", (staff_id,))
+        user_result = cur.fetchone()
+        
+        if not user_result:
+            return jsonify({'error': 'Staff member not found'}), 404
+        
+        user_id = user_result[0]
+        
+        # Get unique room numbers assigned to this staff member
+        cur.execute("""
+            SELECT DISTINCT r.room_number 
+            FROM bed_info b 
+            JOIN room_info r ON b.room_id = r.room_id 
+            WHERE b.assigned_nurse_id = %s
+            ORDER BY r.room_number
+        """, (user_id,))
+        rooms = cur.fetchall()
+        
+        room_numbers = [str(room[0]) for room in rooms]
+        return jsonify({'rooms': room_numbers})
+    except Exception as e:
+        print(f"Error getting assigned rooms: {e}")
+        return jsonify({'error': 'Database error'}), 500
+
+@app.route('/staff/transcriptions/<room_number>', methods=['GET'])
+def get_staff_transcriptions_by_room(room_number):
+    """Get transcriptions for a specific room assigned to the staff member"""
+    staff_id = request.args.get('staff_id')
+    
+    if not staff_id:
+        return jsonify([])
+    
+    try:
+        # Get user_id from staff_id
+        cur.execute("SELECT user_id FROM user_info WHERE staff_id = %s", (staff_id,))
+        user_result = cur.fetchone()
+        
+        if not user_result:
+            return jsonify([])
+        
+        user_id = user_result[0]
+        
+        # Get transcriptions for the specific room and staff member
+        cur.execute("""
+            SELECT rd.id, rd.audio_path, rd.bed_id, 
+                   bi.bed_letter, ri.room_number, ui.user_id, ui.staff_id
+            FROM room_data rd
+            JOIN bed_info bi ON rd.bed_id = bi.bed_id
+            JOIN room_info ri ON bi.room_id = ri.room_id
+            JOIN user_info ui ON bi.assigned_nurse_id = ui.user_id
+            WHERE ri.room_number = %s AND ui.user_id = %s
+            ORDER BY rd.id ASC
+        """, (room_number, user_id))
+        rows = cur.fetchall()
+        
+        filtered_transcriptions = []
+        for row in rows:
+            audio_path = row[1]
+            if os.path.exists(audio_path):
+                try:
+                    chart_info = aud_info(audio_path)
+                    transcription_data = {
+                        "column1": f"{row[4]} {row[3]}",  # room_number bed_letter
+                        "column2": chart_info[0],  # date
+                        "column3": chart_info[1],  # time
+                        "column4": chart_info[2],  # note
+                        "audioUrl": f"/audio/{os.path.basename(audio_path)}",
+                        "bed_id": row[2],
+                        "user_id": row[5]
+                    }
+                    filtered_transcriptions.append(transcription_data)
+                except Exception as e:
+                    print(f"Error processing transcription for {audio_path}: {e}")
+                    transcription_data = {
+                        "column1": f"{row[4]} {row[3]}",  # room_number bed_letter
+                        "column2": "Unknown Date",
+                        "column3": "Unknown Time",
+                        "column4": "Audio file exists but transcription failed",
+                        "audioUrl": f"/audio/{os.path.basename(audio_path)}",
+                        "bed_id": row[2],
+                        "user_id": row[5]
+                    }
+                    filtered_transcriptions.append(transcription_data)
+            else:
+                print(f"Audio file not found: {audio_path}")
+                # Remove from database if file doesn't exist
+                try:
+                    cur.execute("DELETE FROM room_data WHERE id = %s", (row[0],))
+                    conn.commit()
+                    print(f"Removed missing audio file record from database: {row[0]}")
+                except Exception as db_error:
+                    print(f"Error removing missing audio record: {db_error}")
+        
+        return jsonify(filtered_transcriptions)
+    except Exception as e:
+        print(f"Error getting transcriptions by room: {e}")
+        return jsonify([])
     
 if __name__ == '__main__':
     print("Running server...")
