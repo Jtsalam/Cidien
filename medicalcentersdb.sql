@@ -5,7 +5,7 @@
 -- Dumped from database version 17.4
 -- Dumped by pg_dump version 17.4
 
--- Started on 2025-08-09 04:48:54
+-- Started on 2025-08-09 04:59:22
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -412,11 +412,11 @@ COPY public.bed_info (bed_id, room_id, bed_letter, is_available, is_assigned, as
 39	15	A	t	f	\N	\N
 40	15	B	t	f	\N	\N
 33	13	A	t	f	\N	\N
-41	16	A	t	f	\N	\N
-34	13	B	f	t	23	1
-37	14	B	f	t	22	1
-38	14	C	f	t	25	1
 36	14	A	t	f	\N	\N
+37	14	B	t	f	\N	\N
+38	14	C	t	f	\N	\N
+34	13	B	t	f	\N	\N
+41	16	A	t	f	\N	\N
 \.
 
 
@@ -442,31 +442,6 @@ COPY public.medicalcenter_info (center_id, center_name, address, email) FROM std
 --
 
 COPY public.patient_info (patient_id, patient_name, registered_date, center_id, dicharged_date, is_discharged) FROM stdin;
-1	Jacob Denver	2019-09-05	1	\N	f
-2	Sarah Green	2013-08-13	1	\N	f
-3	Alex Thompson	2016-03-21	2	\N	f
-4	Emma Roberts	2021-07-12	3	\N	f
-5	Michael Scott	2017-11-08	4	\N	f
-6	David clark	2025-07-25	4	\N	f
-8	Mary Higgins	2025-07-25	4	\N	f
-7	David jones	2025-07-25	4	2025-07-27	t
-10	CB	2025-07-27	4	2025-07-27	t
-12	James something	2025-07-27	4	\N	f
-9	James Bond	2025-07-25	4	2025-07-27	t
-11	John Wick	2025-07-27	4	2025-07-27	t
-15	John Wick	2025-07-27	4	\N	f
-16	Sarah higgins	2025-07-27	4	2025-07-27	t
-17	Mary sharp	2025-07-27	4	2025-07-27	t
-13	Ola Makinde	2025-07-27	4	2025-07-27	t
-14	Ronaldo Nazario	2025-07-27	4	2025-07-27	t
-18	John Adams	2025-07-27	4	2025-07-27	t
-19	harry stones	2025-07-29	4	2025-07-29	t
-20	James Harden	2025-07-29	4	2025-08-01	t
-22	Lady Gaga	2025-08-01	4	\N	f
-21	JRD	2025-07-29	4	2025-08-01	t
-23	Dwayne Johnson	2025-08-02	4	\N	f
-25	Christian jameson	2025-08-09	4	\N	f
-24	John defries	2025-08-09	4	2025-08-09	t
 \.
 
 
@@ -510,9 +485,9 @@ COPY public.room_info (room_id, room_number, center_id, number_of_beds, is_full)
 11	3375	2	3	f
 12	2175	2	1	f
 15	3452	4	2	f
-16	789	4	1	f
-13	3247	4	3	f
 14	2178	4	3	f
+13	3247	4	3	f
+16	789	4	1	f
 \.
 
 
@@ -580,7 +555,7 @@ SELECT pg_catalog.setval('public.medicalcenter_info_center_id_seq', 10, true);
 -- Name: patient_info_patient_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.patient_info_patient_id_seq', 25, true);
+SELECT pg_catalog.setval('public.patient_info_patient_id_seq', 26, true);
 
 
 --
@@ -808,7 +783,7 @@ ALTER TABLE ONLY public.user_uploads
     ADD CONSTRAINT user_uploads_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user_info(user_id);
 
 
--- Completed on 2025-08-09 04:48:54
+-- Completed on 2025-08-09 04:59:22
 
 --
 -- PostgreSQL database dump complete
