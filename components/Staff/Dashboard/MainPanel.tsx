@@ -144,12 +144,6 @@ export default function MainPanel() {
       icon: Upload,
       label: "Uploads",
     },
-    {
-      value: "clients",
-      path: "/Mobile-Charter/StaffDashboard/clients.php",
-      icon: Bed,
-      label: "All Beds",
-    },
   ]
 
   // Determine the active tab based on the current pathname
@@ -319,7 +313,7 @@ export default function MainPanel() {
       <div className="bg-gray-50 px-6 py-3">
         <div className="flex justify-center">
           <Tabs value={activeTab} className="w-full max-w-2xl">
-            <TabsList className="grid w-full grid-cols-3 bg-white shadow-sm border h-12">
+            <TabsList className="grid w-full grid-cols-2 bg-white shadow-sm border h-12">
               {tabRoutes.map((tab) => {
                 const IconComponent = tab.icon
                 return (
