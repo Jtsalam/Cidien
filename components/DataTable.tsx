@@ -24,9 +24,10 @@ interface RowData {
 
 interface DataTableProps {
   selectedRoom?: string | null;
+  initialData?: RowData[];
 }
 
-export default function DataTable({ selectedRoom }: DataTableProps) {
+export default function DataTable({ selectedRoom, initialData }: DataTableProps) {
   const [data, setData] = useState<RowData[]>([])
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const [playingIndex, setPlayingIndex] = useState<number | null>(null)
@@ -37,12 +38,52 @@ export default function DataTable({ selectedRoom }: DataTableProps) {
   const tableEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<any>(null);
   const [staffId, setStaffId] = useState<string>("");
+  const cacheRef = useRef<Record<string, RowData[]>>({})
+  const fetchControllerRef = useRef<AbortController | null>(null)
+  const selectedRoomRef = useRef<string | null | undefined>(selectedRoom)
+  const preloadedAudioRef = useRef<Map<string, HTMLAudioElement>>(new Map())
+  const preloadedObjectUrlRef = useRef<Map<string, string>>(new Map())
+  const prefetchPromisesRef = useRef<Map<string, Promise<void>>>(new Map())
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null)
+
+  // Seed initial cache for instant first render if provided
+  useEffect(() => {
+    if (initialData && initialData.length > 0) {
+      const key = selectedRoom ? `room:${selectedRoom}` : 'all'
+      // Normalize indices and flags
+      const normalized: RowData[] = initialData.map((item, idx) => ({
+        ...item,
+        index: idx + 1,
+        isNew: false,
+      }))
+      cacheRef.current[key] = normalized
+      setData(normalized)
+      setLoading(false)
+      preloadForDataset(normalized)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    selectedRoomRef.current = selectedRoom
+  }, [selectedRoom])
 
   const handlePlay = useCallback((url: string, index: number) => {
+    // Stop any in-flight or playing audio immediately
+    if (currentAudioRef.current) {
+      try {
+        currentAudioRef.current.pause()
+        currentAudioRef.current.currentTime = 0
+        currentAudioRef.current.src = ''
+        currentAudioRef.current.load()
+      } catch {}
+      currentAudioRef.current = null
+    }
     if (audio) {
-      audio.pause()
-      audio.currentTime = 0
-
+      try {
+        audio.pause()
+        audio.currentTime = 0
+      } catch {}
       if (playingIndex === index) {
         setPlayingIndex(null)
         setAudio(null)
@@ -51,25 +92,91 @@ export default function DataTable({ selectedRoom }: DataTableProps) {
     }
 
     setLoadingIndex(index)
-    const newAudio = new Audio(`http://localhost:5000${url}`)
-    
-    newAudio
+    const fullUrl = `http://localhost:5000${url}`
+
+    // Prefer blob URL if preloaded for instant start
+    const objectUrl = preloadedObjectUrlRef.current.get(fullUrl)
+    const preferredSrc = objectUrl ?? fullUrl
+
+    const audioEl = preloadedAudioRef.current.get(preferredSrc) ?? new Audio(preferredSrc)
+    currentAudioRef.current = audioEl
+
+    audioEl
       .play()
       .then(() => {
-        setAudio(newAudio)
+        setAudio(audioEl)
         setPlayingIndex(index)
         setLoadingIndex(null)
+        // Cache this audio element for faster subsequent plays
+        if (!preloadedAudioRef.current.has(preferredSrc)) {
+          preloadedAudioRef.current.set(preferredSrc, audioEl)
+        }
       })
       .catch((err) => {
-        console.error("Playback error:", err)
+        console.error('Playback error:', err)
         setLoadingIndex(null)
       })
 
-    newAudio.onended = () => {
+    audioEl.onended = () => {
       setPlayingIndex(null)
       setAudio(null)
+      currentAudioRef.current = null
     }
   }, [audio, playingIndex])
+
+  const preloadForDataset = useCallback((rows: RowData[]) => {
+    const PREFETCH_COUNT = 3
+    const MAX_CACHE = 10
+    const map = preloadedAudioRef.current
+    const targets = rows.slice(0, PREFETCH_COUNT)
+    for (const row of targets) {
+      const fullUrl = `http://localhost:5000${row.audioUrl}`
+      // Start a high-priority fetch to blob for instant play when clicked
+      const existingUrl = preloadedObjectUrlRef.current.get(fullUrl)
+      if (!existingUrl) {
+        const existingPromise = prefetchPromisesRef.current.get(fullUrl)
+        if (!existingPromise) {
+          const promise = fetch(fullUrl)
+            .then(async (res) => {
+              if (!res.ok) throw new Error('prefetch failed')
+              const blob = await res.blob()
+              const objUrl = URL.createObjectURL(blob)
+              preloadedObjectUrlRef.current.set(fullUrl, objUrl)
+              // Maintain small cache
+              const MAX_URLS = 12
+              if (preloadedObjectUrlRef.current.size > MAX_URLS) {
+                const iterator = preloadedObjectUrlRef.current.keys()
+                const first = iterator.next()
+                if (!first.done) {
+                  const key = first.value as string
+                  const oldUrl = preloadedObjectUrlRef.current.get(key)
+                  if (oldUrl) URL.revokeObjectURL(oldUrl)
+                  preloadedObjectUrlRef.current.delete(key)
+                }
+              }
+            })
+            .catch(() => {})
+            .finally(() => prefetchPromisesRef.current.delete(fullUrl))
+          prefetchPromisesRef.current.set(fullUrl, promise)
+        }
+      }
+      if (!map.has(fullUrl)) {
+        const el = new Audio(fullUrl)
+        el.preload = 'auto'
+        map.set(fullUrl, el)
+        if (map.size > MAX_CACHE) {
+          const iterator = map.keys()
+          const first = iterator.next()
+          if (!first.done) {
+            const firstKey = first.value as string
+            const old = map.get(firstKey)
+            try { old?.pause() } catch {}
+            map.delete(firstKey)
+          }
+        }
+      }
+    }
+  }, [])
 
   const handleRowDoubleClick = useCallback((audioUrl: string, index: number) => {
     handlePlay(audioUrl, index)
@@ -77,77 +184,97 @@ export default function DataTable({ selectedRoom }: DataTableProps) {
 
   const loadTranscriptions = async (roomFilter?: string) => {
     try {
-      setLoading(true);
-      let transcriptionsUrl: string;
-      
-      if (roomFilter) {
-        // Load transcriptions for specific room using Next.js API
-        transcriptionsUrl = `/api/staff/transcriptions-by-room?room=${encodeURIComponent(roomFilter)}`;
-        console.log(`Loading transcriptions for room: ${roomFilter}`);
+      const cacheKey = roomFilter ? `room:${roomFilter}` : 'all'
+
+      // Show cached data immediately if available
+      const cached = cacheRef.current[cacheKey]
+      if (cached && cached.length > 0) {
+        setData(cached)
+        setLoading(false)
+        preloadForDataset(cached)
       } else {
-        // Load all transcriptions for staff member
-        transcriptionsUrl = staffId 
-          ? `http://localhost:5000/transcriptions/${encodeURIComponent(staffId)}`
-          : "http://localhost:5000/transcriptions";
-        console.log('Loading all transcriptions for staff member');
+        // If filtering to a room and we already have 'all' cached, derive immediately
+        if (roomFilter && cacheRef.current['all'] && cacheRef.current['all'].length > 0) {
+          const derived = cacheRef.current['all'].filter((row) => row.column1?.split(' ')[0] === roomFilter)
+          cacheRef.current[cacheKey] = derived
+          setData(derived)
+          setLoading(false)
+          preloadForDataset(derived)
+        } else {
+          setLoading(true)
+        }
       }
-      
-      console.log(`Fetching from: ${transcriptionsUrl}`);
+
+      // Abort any in-flight request
+      if (fetchControllerRef.current) {
+        fetchControllerRef.current.abort()
+      }
+      const controller = new AbortController()
+      fetchControllerRef.current = controller
+
+      let transcriptionsUrl: string
+      if (roomFilter) {
+        transcriptionsUrl = `/api/staff/transcriptions-by-room?room=${encodeURIComponent(roomFilter)}`
+        console.log(`Loading transcriptions for room: ${roomFilter}`)
+      } else {
+        // Use Next API which reads cookie server-side
+        transcriptionsUrl = '/api/staff/transcriptions'
+        console.log('Loading all transcriptions via Next API')
+      }
+
+      console.log(`Fetching from: ${transcriptionsUrl}`)
       const response = await fetch(transcriptionsUrl, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // Add timeout
-        signal: AbortSignal.timeout(30000)
-      });
-      
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
+      })
+
       if (!response.ok) {
-        const errorText = await response.text().catch(() => 'Unknown error');
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
+        const errorText = await response.text().catch(() => 'Unknown error')
+        throw new Error(`HTTP ${response.status}: ${errorText}`)
       }
-      
-      const json = await response.json();
-      console.log(`Loaded ${json.length} transcriptions`);
-      
+
+      const json = await response.json()
+      console.log(`Loaded ${json.length} transcriptions`)
+
       // Create a Set to track unique IDs and prevent duplicates
-      const existingIds = new Set(data.map(item => String(item.id)));
-      
+      const existingIds = new Set((cacheRef.current[cacheKey] || []).map(item => String(item.id)))
+
       const processedData = json
         .filter((item: any) => !existingIds.has(String(item.id || item.audioUrl)))
         .map((item: any, index: number) => ({
           ...item,
           id: item.id || `transcription_${Date.now()}_${Math.random().toString(36).substr(2, 9)}_${index}`,
           isNew: false,
-          index: index + 1
-        }));
-      
-      setData(processedData);
-      setIsConnected(true);
-      setLoading(false);
-    } catch (err) {
-      console.error("Failed to load data:", err);
-      setIsConnected(false);
-      // Don't clear existing data on error, just stop loading
-      setLoading(false);
-    }
-  };
+          index: index + 1,
+        }))
 
+      cacheRef.current[cacheKey] = processedData
+      setData(processedData)
+      preloadForDataset(processedData)
+      setIsConnected(true)
+      setLoading(false)
+    } catch (err: any) {
+      if (err?.name === 'AbortError') {
+        return
+      }
+      console.error('Failed to load data:', err)
+      setIsConnected(false)
+      setLoading(false)
+    }
+  }
+
+  // Initialize socket once
   useEffect(() => {
-    // Get staff ID from cookie
     const staffIdFromCookie = getCookie("staff_Id") || "";
     setStaffId(staffIdFromCookie);
 
-    // Initialize socket connection
     socketRef.current = io("http://localhost:5000", {
       transports: ['polling'],
-      timeout: 60000
+      timeout: 60000,
     });
 
     const socket = socketRef.current;
-
-    // Load transcriptions based on room filter
-    loadTranscriptions(selectedRoom || undefined);
 
     socket.on("connect", () => {
       console.log("Connected to Flask WebSocket")
@@ -185,9 +312,8 @@ export default function DataTable({ selectedRoom }: DataTableProps) {
     socket.on("reconnect", (attemptNumber: number) => {
       console.log(`Reconnected after ${attemptNumber} attempts`);
       setIsConnected(true);
-      // Rejoin staff room after reconnection
-      if (staffId) {
-        socket.emit('join_staff_room', { user_id: staffId });
+      if (staffIdFromCookie) {
+        socket.emit('join_staff_room', { user_id: staffIdFromCookie });
       }
     })
 
@@ -203,11 +329,12 @@ export default function DataTable({ selectedRoom }: DataTableProps) {
       }
 
       // Check if the new transcription belongs to the currently selected room
-      if (selectedRoom) {
+      const currentSelected = selectedRoomRef.current
+      if (currentSelected) {
         // Extract room number from column1 (format: "room_number bed_letter")
         const roomFromTranscription = payload.column1?.split(' ')[0];
-        if (roomFromTranscription !== selectedRoom) {
-          console.log(`Ignoring transcription for room ${roomFromTranscription}, current filter: ${selectedRoom}`);
+        if (roomFromTranscription !== currentSelected) {
+          console.log(`Ignoring transcription for room ${roomFromTranscription}, current filter: ${currentSelected}`);
           setIsReceiving(false);
           return;
         }
@@ -263,7 +390,22 @@ export default function DataTable({ selectedRoom }: DataTableProps) {
         socket.disconnect()
       }
     }
-  }, [selectedRoom, staffId])
+  }, [])
+
+  // Load data on mount and whenever room filter changes
+  useEffect(() => {
+    loadTranscriptions(selectedRoom || undefined)
+    return () => {
+      if (fetchControllerRef.current) {
+        fetchControllerRef.current.abort()
+      }
+      preloadedAudioRef.current.forEach((a) => { try { a.pause() } catch {} })
+      preloadedAudioRef.current.clear()
+      // Revoke blob URLs
+      preloadedObjectUrlRef.current.forEach((u) => { try { URL.revokeObjectURL(u) } catch {} })
+      preloadedObjectUrlRef.current.clear()
+    }
+  }, [selectedRoom])
 
   
 
