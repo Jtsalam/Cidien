@@ -5,7 +5,7 @@ import io from "socket.io-client"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Play, Pause, Loader2, Database, Mic, Wifi, WifiOff } from "lucide-react"
+import { Play, Pause, Loader2, Database, Mic, Wifi, WifiOff, Bed } from "lucide-react"
 import * as Tooltip from "@radix-ui/react-tooltip"
 import { getCookie } from "@/utils/getCookie"
 
@@ -410,12 +410,57 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
   
 
   // Memoize filtered and processed data
+  const [bedFilter, setBedFilter] = useState<string>('ALL')
+
   const processedData = useMemo(() => {
-    return data.map((row, index) => ({
+    const base = data
+    const filtered = selectedRoom && bedFilter !== 'ALL'
+      ? base.filter((row) => {
+          const parts = row.column1?.split(' ')
+          const bed = parts?.[1]
+          return bed === bedFilter
+        })
+      : base
+    return filtered.map((row, index) => ({
       ...row,
-      index: index + 1
-    }));
-  }, [data]);
+      index: index + 1,
+    }))
+  }, [data, bedFilter, selectedRoom])
+
+  // Beds dropdown options
+  const [bedOptions, setBedOptions] = useState<string[]>([])
+
+  useEffect(() => {
+    if (!selectedRoom) {
+      setBedOptions([])
+      setBedFilter('ALL')
+      return
+    }
+
+    // Fetch assigned beds for the selected room
+    const controller = new AbortController()
+    fetch(`/api/staff/assigned-beds?room=${encodeURIComponent(selectedRoom)}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const json = await res.json()
+        const beds: string[] = Array.isArray(json?.beds) ? json.beds : []
+        setBedOptions(beds)
+        // Keep selection if still valid; otherwise reset to ALL
+        setBedFilter((prev) => (prev === 'ALL' || beds.includes(prev) ? prev : 'ALL'))
+      })
+      .catch((e) => {
+        if ((e as any)?.name !== 'AbortError') {
+          console.warn('Failed to load beds', e)
+        }
+        setBedOptions([])
+        setBedFilter('ALL')
+      })
+    return () => controller.abort()
+  }, [selectedRoom])
 
   return (
     <Tooltip.Provider>
@@ -430,6 +475,58 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
                 </span>
               </div>
               <div className="flex items-center space-x-3">
+                {selectedRoom && (
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-600"><Bed className="w-5 h-5 text-black" /></span>
+                    <div className="relative">
+                      <button
+                        className="px-3 py-1.5 text-sm border rounded-md bg-white hover:bg-gray-50"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          const menu = document.getElementById('bed-filter-menu')
+                          if (menu) {
+                            const isHidden = menu.getAttribute('data-open') !== 'true'
+                            menu.setAttribute('data-open', isHidden ? 'true' : 'false')
+                            menu.style.display = isHidden ? 'block' : 'none'
+                          }
+                        }}
+                        title="Filter by bed"
+                      >
+                        {bedFilter === 'ALL' ? 'All beds' : `Bed ${bedFilter}`}
+                      </button>
+                      <div
+                        id="bed-filter-menu"
+                        data-open="false"
+                        className="absolute right-0 mt-1 w-36 bg-white border rounded-md shadow z-20"
+                        style={{ display: 'none' }}
+                      >
+                        <button
+                          className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 ${bedFilter === 'ALL' ? 'font-semibold' : ''}`}
+                          onClick={() => {
+                            setBedFilter('ALL')
+                            const menu = document.getElementById('bed-filter-menu')
+                            if (menu) { menu.setAttribute('data-open', 'false'); (menu as HTMLElement).style.display = 'none' }
+                          }}
+                        >
+                          All beds
+                        </button>
+                        {bedOptions.map((b) => (
+                          <button
+                            key={b}
+                            className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 ${bedFilter === b ? 'font-semibold' : ''}`}
+                            onClick={() => {
+                              setBedFilter(b)
+                              const menu = document.getElementById('bed-filter-menu')
+                              if (menu) { menu.setAttribute('data-open', 'false'); (menu as HTMLElement).style.display = 'none' }
+                            }}
+                          >
+                            Bed {b}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
                 {isReceiving && (
                   <div className="flex items-center space-x-2 text-blue-600">
                     <Mic className="w-4 h-4 animate-pulse" />
