@@ -6,7 +6,7 @@ import { orgMap } from "@/lib/constants"
 import { useEffect, useState, useRef, useCallback, useMemo } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
-import { LogOut, Hospital, User, Home, Upload, Database, Bed, DoorOpen, ArrowLeftRight, ChevronDown } from "lucide-react"
+import { LogOut, Hospital, User, Upload, Database, Bed, DoorOpen, ArrowLeftRight, ChevronDown } from "lucide-react"
 import LogoutConfirmationModal from "@/components/LogoutConfirmationModal"
 import DataTable from "@/components/DataTable"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
@@ -22,6 +22,32 @@ export default function MainPanel() {
   const [showRoomDropdown, setShowRoomDropdown] = useState(false)
   const [isLoadingRooms, setIsLoadingRooms] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const transcriptionCacheRef = useRef<Record<string, any[]>>({})
+  const prefetchControllerRef = useRef<AbortController | null>(null)
+
+  const cacheKeyForRoom = useCallback((room?: string | null) => (room ? `room:${room}` : 'all'), [])
+
+  const prefetchTranscriptions = useCallback(async (room?: string | null) => {
+    try {
+      // Abort any previous prefetch to prioritize newest selection
+      if (prefetchControllerRef.current) prefetchControllerRef.current.abort()
+      const controller = new AbortController()
+      prefetchControllerRef.current = controller
+
+      const url = room
+        ? `/api/staff/transcriptions-by-room?room=${encodeURIComponent(room)}`
+        : `/api/staff/transcriptions`
+
+      const res = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' }, signal: controller.signal })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const json = await res.json()
+      transcriptionCacheRef.current[cacheKeyForRoom(room)] = Array.isArray(json) ? json : []
+    } catch (e: any) {
+      if (e?.name === 'AbortError') return
+      // Silent failure; DataTable will still fetch on mount
+      console.warn('Prefetch failed', e)
+    }
+  }, [cacheKeyForRoom])
 
   // Mock fetching session data (replace with actual logic)
   useEffect(() => {
@@ -91,22 +117,21 @@ export default function MainPanel() {
     console.log(`Switching to room: ${room}`);
     setSelectedRoom(room);
     setShowRoomDropdown(false);
+    // Warm cache for selected room and also keep 'all' warm
+    prefetchTranscriptions(room)
+    prefetchTranscriptions(null)
   }, []);
 
   const handleShowAllRooms = useCallback(() => {
     console.log('Switching to all rooms');
     setSelectedRoom(null);
     setShowRoomDropdown(false);
+    // Warm 'all' cache
+    prefetchTranscriptions(null)
   }, []);
 
   // Map paths to tab values for active state
   const tabRoutes = [
-    {
-      value: "home",
-      path: "/Mobile-Charter/StaffDashboard/userdashboard.php",
-      icon: Home,
-      label: "Home",
-    },
     {
       value: "data",
       path: "/Mobile-Charter/StaffDashboard/data.php",
@@ -128,7 +153,7 @@ export default function MainPanel() {
   ]
 
   // Determine the active tab based on the current pathname
-  const [activeTab, setActiveTab] = useState("home")
+  const [activeTab, setActiveTab] = useState("data")
 
   const getRoomDisplayText = useMemo(() => {
     if (isLoadingRooms) return "Loading...";
@@ -294,7 +319,7 @@ export default function MainPanel() {
       <div className="bg-gray-50 px-6 py-3">
         <div className="flex justify-center">
           <Tabs value={activeTab} className="w-full max-w-2xl">
-            <TabsList className="grid w-full grid-cols-4 bg-white shadow-sm border h-12">
+            <TabsList className="grid w-full grid-cols-3 bg-white shadow-sm border h-12">
               {tabRoutes.map((tab) => {
                 const IconComponent = tab.icon
                 return (
@@ -316,7 +341,10 @@ export default function MainPanel() {
       
       {/* Content Area - Show DataTable only when data tab is active */}
       {activeTab === "data" && (
-        <DataTable key={selectedRoom ?? 'all'} selectedRoom={selectedRoom} />
+        <DataTable
+          selectedRoom={selectedRoom}
+          initialData={transcriptionCacheRef.current[cacheKeyForRoom(selectedRoom)] || []}
+        />
       )}
       
       <LogoutConfirmationModal
