@@ -6,7 +6,7 @@ import { orgMap } from "@/lib/constants"
 import { useEffect, useState } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
-import { LogOut, Hospital, User, Home, Upload, Database, Users } from "lucide-react"
+import { LogOut, Hospital, User, Home, TriangleAlert, Database, FileArchive } from "lucide-react"
 import DataTable from "@/components/DataTable"
 import LogoutConfirmationModal from "@/components/LogoutConfirmationModal";
 import RoomList from '@/components/Admin/Dashboard/Home/RoomList';
@@ -81,16 +81,16 @@ export default function MainPanel() {
         label: "Data",
       },
     {
-      value: "uploads",
+      value: "unassigned",
       path: "/Mobile-Charter/uploads/uploadview.php",
-      icon: Upload,
-      label: "Uploads",
+      icon: TriangleAlert,
+      label: "Unnasigned Notes",
     },
     {
-      value: "clients",
-      path: "/Mobile-Charter/StaffDashboard/clients.php",
-      icon: Users,
-      label: "Patients",
+      value: "archive",
+      path: "/Mobile-Charter/uploads/uploadview.php",
+      icon: FileArchive,
+      label: "Archived Notes",
     },
   ]
 

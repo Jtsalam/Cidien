@@ -6,7 +6,7 @@ import { orgMap } from "@/lib/constants"
 import { useEffect, useState, useRef, useCallback, useMemo } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
-import { LogOut, Hospital, User, Upload, Database, Bed, DoorOpen, ArrowLeftRight, ChevronDown } from "lucide-react"
+import { LogOut, Hospital, User, TriangleAlert, Database,  FileArchive, DoorOpen, ArrowLeftRight, ChevronDown } from "lucide-react"
 import LogoutConfirmationModal from "@/components/LogoutConfirmationModal"
 import DataTable from "@/components/DataTable"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
@@ -139,10 +139,16 @@ export default function MainPanel() {
       label: "Data",
     },
     {
-      value: "uploads",
+      value: "unassigned",
       path: "/Mobile-Charter/uploads/uploadview.php",
-      icon: Upload,
-      label: "Uploads",
+      icon: TriangleAlert,
+      label: "Unnasigned Notes",
+    },
+    {
+      value: "archive",
+      path: "/Mobile-Charter/uploads/uploadview.php",
+      icon: FileArchive,
+      label: "Archived Notes",
     },
   ]
 
@@ -313,7 +319,7 @@ export default function MainPanel() {
       <div className="bg-gray-50 px-6 py-3">
         <div className="flex justify-center">
           <Tabs value={activeTab} className="w-full max-w-2xl">
-            <TabsList className="grid w-full grid-cols-2 bg-white shadow-sm border h-12">
+            <TabsList className="grid w-full grid-cols-3 bg-white shadow-sm border h-12">
               {tabRoutes.map((tab) => {
                 const IconComponent = tab.icon
                 return (
