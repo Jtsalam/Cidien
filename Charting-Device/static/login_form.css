@@ -1,47 +1,188 @@
-body, html {
-    height: 100%;
+/* Mobile Charter - Sign In Styles */
+
+* {
     margin: 0;
-    font-family: Arial, sans-serif;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    background-color: #f4f4f4;
+    justify-content: center;
+    padding: 16px;
 }
 
 .container {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid #e5e7eb;
+    width: 100%;
+    max-width: 448px;
+    text-align: center;
+}
+
+.header {
+    margin-bottom: 2rem;
+}
+
+.user-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    border-radius: 50%;
+    margin: 0 auto 1rem;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 400px;
 }
 
-.container input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 2px solid #4CAF50;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 16px;
-}
-
-.container input[type="submit"] {
-    width: 100%;
-    padding: 10px;
-    background-color: #f44336;
+.user-icon svg {
+    width: 40px;
+    height: 40px;
     color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
+    stroke-width: 2;
 }
 
-.container input[type="submit"]:hover {
-    background-color: #d32f2f;
+h1 {
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+    font-size: 1.875rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+.subtitle {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-bottom: 0;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    text-align: left;
+}
+
+label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+select, input[type="text"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background-color: #fff;
+}
+
+select:focus, input[type="text"]:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.submit-btn:hover {
+    background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.submit-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+}
+
+.error-message {
+    margin-top: 1rem;
+    padding: 12px;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 0.5rem;
+    color: #dc2626;
+    font-size: 0.875rem;
+    text-align: center;
+    display: none;
+}
+
+.error-message:not(:empty) {
+    display: block;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 480px) {
+    body {
+        padding: 16px;
+    }
+    
+    .container {
+        padding: 1.5rem;
+    }
+    
+    .user-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .user-icon svg {
+        width: 30px;
+        height: 30px;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    select, input[type="text"], .submit-btn {
+        font-size: 0.875rem;
+        padding: 10px 14px;
+    }
+    
+    select {
+        padding-right: 36px;
+    }
 }

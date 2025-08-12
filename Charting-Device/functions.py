@@ -6,10 +6,15 @@ import re
 import logging
 import wave
 import contextlib
+import noisereduce as nr
+import librosa
+import soundfile as sf
+import tempfile
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 def convert_audio(file_path, target_format='wav'):
     """Convert audio file to WAV format with consistent parameters."""
@@ -32,64 +37,48 @@ def convert_audio(file_path, target_format='wav'):
         logger.error(f"Audio conversion failed: {e}")
         return None
 
-def recognize_speech_from_audio(file_path, expected_rooms=None):
-    """Recognize speech with improved reliability for room numbers."""
+def denoise_audio(input_path):
+    """Apply noise reduction to an audio file."""
+    y, sr = librosa.load(input_path, sr=None)
+    reduced = nr.reduce_noise(y=y, sr=sr)
+    
+    # Save to a temporary file
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
+    sf.write(temp_file.name, reduced, sr)
+    return temp_file.name
+
+def recognize_speech_from_audio(file_path):
+    """Recognize speech from an audio file (WAV preferred) with noise reduction."""
     recognizer = sr.Recognizer()
-    
-    # Configure recognizer settings
-    recognizer.dynamic_energy_threshold = True
-    recognizer.pause_threshold = 0.8
-    
-    # Convert to WAV if needed
+
+    # Step 1: Convert to WAV if needed
     if not file_path.lower().endswith('.wav'):
         file_path = convert_audio(file_path)
         if not file_path:
             return {"success": False, "error": "Audio conversion failed"}
 
+    # Step 2: Denoise audio
     try:
-        # Verify audio file properties
-        with contextlib.closing(wave.open(file_path, 'r')) as audio_file:
-            frames = audio_file.getnframes()
-            if frames < 1600:  # Less than 0.1s of audio at 16kHz
-                return {"success": False, "error": "Audio too short"}
-
-        with sr.AudioFile(file_path) as source:
-            # Adjust for ambient noise and record
-            recognizer.adjust_for_ambient_noise(source, duration=0.5)
-            audio_data = recognizer.record(source)
-            
-            # First try with Google Web Speech API
-            try:
-                text = recognizer.recognize_google(audio_data, show_all=False)
-                text = text.strip().upper()
-                
-                # If we have expected rooms, validate against them
-                if expected_rooms:
-                    # Extract all 4-digit numbers from transcription
-                    found_numbers = re.findall(r'\b\d{4}\b', text)
-                    for number in found_numbers:
-                        if number in expected_rooms:
-                            return {"success": True, "transcription": number}
-                    
-                    # If no valid room found
-                    return {"success": False, "error": "No valid room number detected"}
-                
-                return {"success": True, "transcription": text}
-                
-            except sr.UnknownValueError:
-                return {"success": False, "error": "Audio not clear"}
-            except sr.RequestError as e:
-                logger.warning(f"Google API failed, trying Sphinx: {e}")
-                # Fallback to CMU Sphinx if Google fails
-                try:
-                    text = recognizer.recognize_sphinx(audio_data)
-                    return {"success": True, "transcription": text.strip()}
-                except:
-                    return {"success": False, "error": "All recognition attempts failed"}
-
+        cleaned_file = denoise_audio(file_path)
     except Exception as e:
-        logger.error(f"Recognition error: {e}")
-        return {"success": False, "error": f"Processing error: {e}"}
+        return {"success": False, "error": f"Noise reduction failed: {e}"}
+
+    # Step 3: Transcribe
+    try:
+        with sr.AudioFile(cleaned_file) as source:
+            audio_data = recognizer.record(source)
+        text = recognizer.recognize_google(audio_data)
+        return {"success": True, "transcription": text}
+    except sr.UnknownValueError:
+        return {"success": False, "error": "Audio not properly heard"}
+    except sr.RequestError as e:
+        return {"success": False, "error": f"Google API error: {e}"}
+    finally:
+        os.remove(cleaned_file)  # Clean up temporary file
+
+
+
+
 
 def all_rooms(directory_path):
     """Get list of valid room numbers from directory structure."""

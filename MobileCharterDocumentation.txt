@@ -1,14 +1,20 @@
-MOBILE CHARTER FOR NURSES IN CANADA
------------------------------------
+This file is for documentation purposes of our plans, Ideas and updates in developing this product.
+
+
+-----------------------------------------------------
+Tags and their meanings:
+[Note]: Important information on development plan
+[sidenote]: Update on a [Note]; always preceeding a [Note] / [Idea]
+[Idea]: Possible addition to the product
+[error]: A repeatedly encountered issue in development
+-----------------------------------------------------
 
 
 
-
-
-
-
-
-Notes made:
+[sidenote]: We've decided on going fully software with this product as we feel it would make scaling a lot easier. For now,
+each nurse goes on the webpage on their phone, selects their organization and logs in with their staff Id. through this we 
+would be able to keep track of each nurse and the room assigned to them.
+[Note]:
 > Nurse Connects to device on the webpage
 > In the UserDashboard page, Nurse should be able to click on the Device widget and register both name and Charter ID.
 > Nurse should be able to Override Charter ID.
@@ -20,7 +26,10 @@ one would be logging out on all automatically when the pages are refreshed. Isra
 interfere with admins or IT operators who for some reason may want to have access to the pages of specific nurses, they wouldn't
 be able to effectively do this if Nurses log out of their pages constantly.
 
-**Idea**
+
+
+[sidenote]: We are currently deciding to keep in non-centralized for now. As we scale, we will consider using a neon database.
+[Idea]:
 > Make database centralized and accessible to all in such a way that changes made to the database doesn't affect only me but also
 affects everyone who has access to it.
 ---------------------------
@@ -30,7 +39,9 @@ Consider a case where we get our device working and transmission of text to the 
 One should be able to log in to the room in which the real-time transmission is done and be able to see the live update of
 transmission.
 I'm guessing this would likely mean: Device ---> Database ---> Webpage.
+---------------------------
 
+[Note]:
 -----------------------------------------------------------------------------
 Room Unassigned decision in uploads of the Staff. Is it necessary, is it not?
 -----------------------------------------------------------------------------
@@ -53,12 +64,18 @@ It's too rough to execute and doesn't flow well when thinking about the user exp
 Proferred solution to this problem?
 Scrap the whole idea of "Unassigned" tab, simply alert the Nurse when a room hasn't been properly recorded by the device, this could be
 done by both blinking of a red light, beeping, or both.
+--------------------------------------------------------------------------------
 
 
-> Note: we've recently made a decision to change our tech stack to a more modern one: NextJS, and are currently in the process of converting
+
+[Note]:
+we've recently made a decision to change our tech stack to a more modern one: NextJS, and are currently in the process of converting
 what we have so far to a NextJS project.
 
 
+-------------------------------------------------------------------------
+[sidenote]: I have decided to halt Account registration process
+[Note]:
 REGISTER ACCOUNT LOGIC **(DRAFT 2)-> ##NOTE: I HAVE MADE CHANGES TO THIS LOGIC AND PUT THEM IN PICTURE FORMAT(FIND IN "DocFiles" folder)
 > Make google form requesting for:
     Name of organization
@@ -77,54 +94,11 @@ the info to the database.
 
 > In the zoom meeting we talk about what the device is about, how to make use of the device, explain the role of an IT personell
 and set up an IT Id and password that can be registered on the system.
-
 > The following pages needed for the latter stages of this process would be done later
-
-[sidenote]: for the logic in the DocFiles folder:
-    > Changing status to "verified" triggers the SVM option
-    > Calendly/zoom option can be replaced by simpling sending a Page of the next steps to take.
+-------------------------------------------------------------------------
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-SAMPLE EXCERPT OF CONFIRMATION EMAIL TO SEND ORGANIZATION (GOTTEN FROM CHATGPT):
-Subject: Request for Confirmation and Identity Verification
-
-Dear [Organization Name or Contact Person],
-
-Thank you for submitting your information to our system. To proceed with verifying your organization's legitimacy and complete the registration process, we kindly ask you to confirm your details.
-
-Please reply to this email with the following:
-
-A confirmation of your intent to register (e.g., you may simply reply with "Yes, I confirm").
-
-A clear photo or scanned copy of your government-issued ID or official organizational identification.
-
-This step helps us ensure the integrity and security of our platform by verifying that all entries are legitimate and authorized.
-
-If you have any questions or concerns, feel free to reach out.
-
-Best regards,
-[Your Full Name]
-[Your Position]
-[Organization or Company Name]
-[Email Address]
-[Phone Number, if needed]
+[Note]:
+> Transformer model; for medical jargon. Needs to be tightened for accuracy 
+> Edit for texts and version history.
+> Login to charting device with staff ID -> Keep track of Nurse
