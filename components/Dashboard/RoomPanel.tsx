@@ -24,6 +24,8 @@ export default function MainPanel() {
   const [recordingType, setRecordingType] = useState<'room' | 'note' | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false)
+
 
   const startRecording = async (type: 'room' | 'note') => {
     try {
@@ -55,8 +57,10 @@ export default function MainPanel() {
   const stopRecording = () => {
     if (mediaRecorder) {
       mediaRecorder.stop();
+      setIsProcessing(true)
       mediaRecorder.stream.getTracks().forEach(track => track.stop());
       setIsRecording(false);
+      setIsProcessing(false)
       setRecordingType(null);
     }
   };
@@ -115,13 +119,14 @@ export default function MainPanel() {
               {/* Logo Section */}
               <div className="flex items-center space-x-4">
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2">
-                  <Image
-                    src={`/centerImages/${orgImage}.png`}
-                    alt="Organization logo"
-                    width={60}
-                    height={60}
-                    className="rounded-md"
-                  />
+                {orgImage && (
+                    <Image 
+                      src={`/centerImages/${orgImage}.png`}
+                      alt="Organization logo"
+                      width={60}
+                      height={60}
+                    />
+                  )}
                 </div>
                 <div className="hidden sm:block">
                   <h1 className="text-lg font-semibold">Room Dashboard</h1>

@@ -1,3 +1,4 @@
+//app/Staff/dashboard/page.tsx
 "use client"
 
 import MainPanel from "@/components/Dashboard/MainPanel";

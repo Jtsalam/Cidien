@@ -72,6 +72,8 @@ export default function SignInPage() {
         // router.push("/room-dashboard");
         setRoomError("");
         alert("Room sign in successful!");
+        console.log("Redirecting to /Room/dashboard");
+        window.location.href = "/Room/dashboard";
       } else {
         router.push("/dashboard"); // fallback if needed
       }

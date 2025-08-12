@@ -16,8 +16,18 @@ warnings.filterwarnings("ignore", category=NotOpenSSLWarning)
 
 # Setup Flask app
 app = Flask(__name__)
-CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
+CORS(app, resources={
+    r"/*": {
+        "origins": ["http://localhost:3000"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
+socketio = SocketIO(app, 
+    cors_allowed_origins="http://localhost:3000",
+    logger=True,
+    engineio_logger=True
+)
 
 # Initialize recording counters for each room
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -36,6 +46,10 @@ room_number = ""
 audio_path = ""
 transcriptions = []  # Global list to store all transcriptions
 
+
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({"error": "Endpoint not found"}), 404
 @app.route("/", methods=['GET'])
 def index():
     return render_template("login_form.html")
@@ -47,10 +61,10 @@ def submit_btn():
 @app.route('/process_audio/room_num', methods=['POST'])
 def room_btn_fn():
     global room_exists, room_number, audio_path
-
     recording_counters['room_aud'] += 1
 
     if 'audio' not in request.files:
+        logger.error("No audio file in request")
         return jsonify({'message': 'No audio file found in request'}), 400
 
     audio_file = request.files['audio']
@@ -116,6 +130,9 @@ def room_data_btn():
     audio_path = os.path.join(BASE_DIR, 'uploads', room_name, f'room.recording_{recording_counters[room_name]}.webm')
     audio_file.save(audio_path)
     filename = os.path.basename(audio_path)
+    
+    # Emit processing start
+    socketio.emit('transcription_start')  # Add this line
 
     # Process and emit transcription data
     chart_info = aud_info(audio_path)
@@ -138,6 +155,7 @@ def room_data_btn():
     socketio.emit('new_transcription', data)
 
     return jsonify({'message': 'Room data audio processed and emitted!'})
+
     
 if __name__ == '__main__':
     print("Running server...")
@@ -145,4 +163,4 @@ if __name__ == '__main__':
     # Create all required room directories if they don't exist
     for room in ['3438', '3439', '3461', '3463', 'Unassigned', 'room_aud']:
         os.makedirs(os.path.join('uploads', room), exist_ok=True)
-    socketio.run(app, host='0.0.0.0', port=3000)
+    socketio.run(app, host='0.0.0.0', port=5001)
