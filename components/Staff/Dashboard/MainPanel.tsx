@@ -26,6 +26,7 @@ export default function MainPanel() {
   const transcriptionCacheRef = useRef<Record<string, any[]>>({})
   const prefetchControllerRef = useRef<AbortController | null>(null)
 
+
   const cacheKeyForRoom = useCallback((room?: string | null) => (room ? `room:${room}` : 'all'), [])
 
   const prefetchTranscriptions = useCallback(async (room?: string | null) => {
