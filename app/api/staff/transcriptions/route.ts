@@ -17,7 +17,7 @@ export async function GET(_request: NextRequest) {
     const timeout = setTimeout(() => controller.abort(), 10000)
 
     const response = await fetch(
-      `http://localhost:5000/transcriptions/${encodeURIComponent(staffId)}`,
+      `http://localhost:5001/transcriptions/${encodeURIComponent(staffId)}`,
       {
         method: 'GET',
         headers: {

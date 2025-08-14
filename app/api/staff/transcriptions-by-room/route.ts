@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Call Flask backend to get transcriptions for specific room
-    const response = await fetch(`http://localhost:5000/staff/transcriptions/${roomNumber}?staff_id=${staffId}`, {
+    const response = await fetch(`http://localhost:5001/staff/transcriptions/${roomNumber}?staff_id=${staffId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

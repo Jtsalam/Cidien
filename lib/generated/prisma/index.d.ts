@@ -75,7 +75,7 @@ export type user_uploads = $Result.DefaultSelection<Prisma.$user_uploadsPayload>
  */
 export class PrismaClient<
   ClientOptions extends Prisma.PrismaClientOptions = Prisma.PrismaClientOptions,
-  U = 'log' extends keyof ClientOptions ? ClientOptions['log'] extends Array<Prisma.LogLevel | Prisma.LogDefinition> ? Prisma.GetEvents<ClientOptions['log']> : never : never,
+  const U = 'log' extends keyof ClientOptions ? ClientOptions['log'] extends Array<Prisma.LogLevel | Prisma.LogDefinition> ? Prisma.GetEvents<ClientOptions['log']> : never : never,
   ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs
 > {
   [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['other'] }
@@ -107,13 +107,6 @@ export class PrismaClient<
    * Disconnect from the database
    */
   $disconnect(): $Utils.JsPromise<void>;
-
-  /**
-   * Add a middleware
-   * @deprecated since 4.16.0. For new code, prefer client extensions instead.
-   * @see https://pris.ly/d/extensions
-   */
-  $use(cb: Prisma.Middleware): void
 
 /**
    * Executes a prepared raw query and returns the number of affected rows.
@@ -331,8 +324,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.11.1
-   * Query Engine version: f40f79ec31188888a2e33acda0ecc8fd10a853a9
+   * Prisma Client JS version: 6.14.0
+   * Query Engine version: 717184b7b35ea05dfa71a3236b7af656013e1e49
    */
   export type PrismaVersion = {
     client: string
@@ -1453,16 +1446,24 @@ export namespace Prisma {
     /**
      * @example
      * ```
-     * // Defaults to stdout
+     * // Shorthand for `emit: 'stdout'`
      * log: ['query', 'info', 'warn', 'error']
      * 
-     * // Emit as events
+     * // Emit as events only
      * log: [
-     *   { emit: 'stdout', level: 'query' },
-     *   { emit: 'stdout', level: 'info' },
-     *   { emit: 'stdout', level: 'warn' }
-     *   { emit: 'stdout', level: 'error' }
+     *   { emit: 'event', level: 'query' },
+     *   { emit: 'event', level: 'info' },
+     *   { emit: 'event', level: 'warn' }
+     *   { emit: 'event', level: 'error' }
      * ]
+     * 
+     * / Emit as events and log to stdout
+     * og: [
+     *  { emit: 'stdout', level: 'query' },
+     *  { emit: 'stdout', level: 'info' },
+     *  { emit: 'stdout', level: 'warn' }
+     *  { emit: 'stdout', level: 'error' }
+     * 
      * ```
      * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/logging#the-log-option).
      */
@@ -1470,7 +1471,7 @@ export namespace Prisma {
     /**
      * The default values for transactionOptions
      * maxWait ?= 2000
-     * timeout ?= 5000
+     * timeout ?= 5001
      */
     transactionOptions?: {
       maxWait?: number
@@ -1512,10 +1513,15 @@ export namespace Prisma {
     emit: 'stdout' | 'event'
   }
 
-  export type GetLogType<T extends LogLevel | LogDefinition> = T extends LogDefinition ? T['emit'] extends 'event' ? T['level'] : never : never
-  export type GetEvents<T extends any> = T extends Array<LogLevel | LogDefinition> ?
-    GetLogType<T[0]> | GetLogType<T[1]> | GetLogType<T[2]> | GetLogType<T[3]>
-    : never
+  export type CheckIsLogLevel<T> = T extends LogLevel ? T : never;
+
+  export type GetLogType<T> = CheckIsLogLevel<
+    T extends LogDefinition ? T['level'] : T
+  >;
+
+  export type GetEvents<T extends any[]> = T extends Array<LogLevel | LogDefinition>
+    ? GetLogType<T[number]>
+    : never;
 
   export type QueryEvent = {
     timestamp: Date
@@ -1555,25 +1561,6 @@ export namespace Prisma {
     | 'runCommandRaw'
     | 'findRaw'
     | 'groupBy'
-
-  /**
-   * These options are being passed into the middleware as "params"
-   */
-  export type MiddlewareParams = {
-    model?: ModelName
-    action: PrismaAction
-    args: any
-    dataPath: string[]
-    runInTransaction: boolean
-  }
-
-  /**
-   * The `T` type makes sure, that the `return proceed` is not forgotten in the middleware implementation
-   */
-  export type Middleware<T = any> = (
-    params: MiddlewareParams,
-    next: (params: MiddlewareParams) => $Utils.JsPromise<T>,
-  ) => $Utils.JsPromise<T>
 
   // tested in getLogLevel.test.ts
   export function getLogLevel(log: Array<LogLevel | LogDefinition>): LogLevel | undefined;
@@ -1846,22 +1833,22 @@ export namespace Prisma {
   export type Medicalcenter_infoMinAggregateOutputType = {
     center_id: number | null
     center_name: string | null
-    address: string | null
-    email: string | null
+    logo: string | null
+    website: string | null
   }
 
   export type Medicalcenter_infoMaxAggregateOutputType = {
     center_id: number | null
     center_name: string | null
-    address: string | null
-    email: string | null
+    logo: string | null
+    website: string | null
   }
 
   export type Medicalcenter_infoCountAggregateOutputType = {
     center_id: number
     center_name: number
-    address: number
-    email: number
+    logo: number
+    website: number
     _all: number
   }
 
@@ -1877,22 +1864,22 @@ export namespace Prisma {
   export type Medicalcenter_infoMinAggregateInputType = {
     center_id?: true
     center_name?: true
-    address?: true
-    email?: true
+    logo?: true
+    website?: true
   }
 
   export type Medicalcenter_infoMaxAggregateInputType = {
     center_id?: true
     center_name?: true
-    address?: true
-    email?: true
+    logo?: true
+    website?: true
   }
 
   export type Medicalcenter_infoCountAggregateInputType = {
     center_id?: true
     center_name?: true
-    address?: true
-    email?: true
+    logo?: true
+    website?: true
     _all?: true
   }
 
@@ -1985,8 +1972,8 @@ export namespace Prisma {
   export type Medicalcenter_infoGroupByOutputType = {
     center_id: number
     center_name: string
-    address: string | null
-    email: string | null
+    logo: string | null
+    website: string | null
     _count: Medicalcenter_infoCountAggregateOutputType | null
     _avg: Medicalcenter_infoAvgAggregateOutputType | null
     _sum: Medicalcenter_infoSumAggregateOutputType | null
@@ -2011,8 +1998,8 @@ export namespace Prisma {
   export type medicalcenter_infoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     center_id?: boolean
     center_name?: boolean
-    address?: boolean
-    email?: boolean
+    logo?: boolean
+    website?: boolean
     patient_info?: boolean | medicalcenter_info$patient_infoArgs<ExtArgs>
     room_info?: boolean | medicalcenter_info$room_infoArgs<ExtArgs>
     room_register?: boolean | medicalcenter_info$room_registerArgs<ExtArgs>
@@ -2024,25 +2011,25 @@ export namespace Prisma {
   export type medicalcenter_infoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     center_id?: boolean
     center_name?: boolean
-    address?: boolean
-    email?: boolean
+    logo?: boolean
+    website?: boolean
   }, ExtArgs["result"]["medicalcenter_info"]>
 
   export type medicalcenter_infoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     center_id?: boolean
     center_name?: boolean
-    address?: boolean
-    email?: boolean
+    logo?: boolean
+    website?: boolean
   }, ExtArgs["result"]["medicalcenter_info"]>
 
   export type medicalcenter_infoSelectScalar = {
     center_id?: boolean
     center_name?: boolean
-    address?: boolean
-    email?: boolean
+    logo?: boolean
+    website?: boolean
   }
 
-  export type medicalcenter_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"center_id" | "center_name" | "address" | "email", ExtArgs["result"]["medicalcenter_info"]>
+  export type medicalcenter_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"center_id" | "center_name" | "logo" | "website", ExtArgs["result"]["medicalcenter_info"]>
   export type medicalcenter_infoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     patient_info?: boolean | medicalcenter_info$patient_infoArgs<ExtArgs>
     room_info?: boolean | medicalcenter_info$room_infoArgs<ExtArgs>
@@ -2066,8 +2053,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       center_id: number
       center_name: string
-      address: string | null
-      email: string | null
+      logo: string | null
+      website: string | null
     }, ExtArgs["result"]["medicalcenter_info"]>
     composites: {}
   }
@@ -2498,8 +2485,8 @@ export namespace Prisma {
   interface medicalcenter_infoFieldRefs {
     readonly center_id: FieldRef<"medicalcenter_info", 'Int'>
     readonly center_name: FieldRef<"medicalcenter_info", 'String'>
-    readonly address: FieldRef<"medicalcenter_info", 'String'>
-    readonly email: FieldRef<"medicalcenter_info", 'String'>
+    readonly logo: FieldRef<"medicalcenter_info", 'String'>
+    readonly website: FieldRef<"medicalcenter_info", 'String'>
   }
     
 
@@ -12210,8 +12197,8 @@ export namespace Prisma {
   export const Medicalcenter_infoScalarFieldEnum: {
     center_id: 'center_id',
     center_name: 'center_name',
-    address: 'address',
-    email: 'email'
+    logo: 'logo',
+    website: 'website'
   };
 
   export type Medicalcenter_infoScalarFieldEnum = (typeof Medicalcenter_infoScalarFieldEnum)[keyof typeof Medicalcenter_infoScalarFieldEnum]
@@ -12411,8 +12398,8 @@ export namespace Prisma {
     NOT?: medicalcenter_infoWhereInput | medicalcenter_infoWhereInput[]
     center_id?: IntFilter<"medicalcenter_info"> | number
     center_name?: StringFilter<"medicalcenter_info"> | string
-    address?: StringNullableFilter<"medicalcenter_info"> | string | null
-    email?: StringNullableFilter<"medicalcenter_info"> | string | null
+    logo?: StringNullableFilter<"medicalcenter_info"> | string | null
+    website?: StringNullableFilter<"medicalcenter_info"> | string | null
     patient_info?: Patient_infoListRelationFilter
     room_info?: Room_infoListRelationFilter
     room_register?: Room_registerListRelationFilter
@@ -12423,8 +12410,8 @@ export namespace Prisma {
   export type medicalcenter_infoOrderByWithRelationInput = {
     center_id?: SortOrder
     center_name?: SortOrder
-    address?: SortOrderInput | SortOrder
-    email?: SortOrderInput | SortOrder
+    logo?: SortOrderInput | SortOrder
+    website?: SortOrderInput | SortOrder
     patient_info?: patient_infoOrderByRelationAggregateInput
     room_info?: room_infoOrderByRelationAggregateInput
     room_register?: room_registerOrderByRelationAggregateInput
@@ -12438,8 +12425,8 @@ export namespace Prisma {
     OR?: medicalcenter_infoWhereInput[]
     NOT?: medicalcenter_infoWhereInput | medicalcenter_infoWhereInput[]
     center_name?: StringFilter<"medicalcenter_info"> | string
-    address?: StringNullableFilter<"medicalcenter_info"> | string | null
-    email?: StringNullableFilter<"medicalcenter_info"> | string | null
+    logo?: StringNullableFilter<"medicalcenter_info"> | string | null
+    website?: StringNullableFilter<"medicalcenter_info"> | string | null
     patient_info?: Patient_infoListRelationFilter
     room_info?: Room_infoListRelationFilter
     room_register?: Room_registerListRelationFilter
@@ -12450,8 +12437,8 @@ export namespace Prisma {
   export type medicalcenter_infoOrderByWithAggregationInput = {
     center_id?: SortOrder
     center_name?: SortOrder
-    address?: SortOrderInput | SortOrder
-    email?: SortOrderInput | SortOrder
+    logo?: SortOrderInput | SortOrder
+    website?: SortOrderInput | SortOrder
     _count?: medicalcenter_infoCountOrderByAggregateInput
     _avg?: medicalcenter_infoAvgOrderByAggregateInput
     _max?: medicalcenter_infoMaxOrderByAggregateInput
@@ -12465,8 +12452,8 @@ export namespace Prisma {
     NOT?: medicalcenter_infoScalarWhereWithAggregatesInput | medicalcenter_infoScalarWhereWithAggregatesInput[]
     center_id?: IntWithAggregatesFilter<"medicalcenter_info"> | number
     center_name?: StringWithAggregatesFilter<"medicalcenter_info"> | string
-    address?: StringNullableWithAggregatesFilter<"medicalcenter_info"> | string | null
-    email?: StringNullableWithAggregatesFilter<"medicalcenter_info"> | string | null
+    logo?: StringNullableWithAggregatesFilter<"medicalcenter_info"> | string | null
+    website?: StringNullableWithAggregatesFilter<"medicalcenter_info"> | string | null
   }
 
   export type patient_infoWhereInput = {
@@ -12994,8 +12981,8 @@ export namespace Prisma {
 
   export type medicalcenter_infoCreateInput = {
     center_name: string
-    address?: string | null
-    email?: string | null
+    logo?: string | null
+    website?: string | null
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
@@ -13006,8 +12993,8 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedCreateInput = {
     center_id?: number
     center_name: string
-    address?: string | null
-    email?: string | null
+    logo?: string | null
+    website?: string | null
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -13017,8 +13004,8 @@ export namespace Prisma {
 
   export type medicalcenter_infoUpdateInput = {
     center_name?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -13029,8 +13016,8 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedUpdateInput = {
     center_id?: IntFieldUpdateOperationsInput | number
     center_name?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -13041,21 +13028,21 @@ export namespace Prisma {
   export type medicalcenter_infoCreateManyInput = {
     center_id?: number
     center_name: string
-    address?: string | null
-    email?: string | null
+    logo?: string | null
+    website?: string | null
   }
 
   export type medicalcenter_infoUpdateManyMutationInput = {
     center_name?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type medicalcenter_infoUncheckedUpdateManyInput = {
     center_id?: IntFieldUpdateOperationsInput | number
     center_name?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type patient_infoCreateInput = {
@@ -13644,8 +13631,8 @@ export namespace Prisma {
   export type medicalcenter_infoCountOrderByAggregateInput = {
     center_id?: SortOrder
     center_name?: SortOrder
-    address?: SortOrder
-    email?: SortOrder
+    logo?: SortOrder
+    website?: SortOrder
   }
 
   export type medicalcenter_infoAvgOrderByAggregateInput = {
@@ -13655,15 +13642,15 @@ export namespace Prisma {
   export type medicalcenter_infoMaxOrderByAggregateInput = {
     center_id?: SortOrder
     center_name?: SortOrder
-    address?: SortOrder
-    email?: SortOrder
+    logo?: SortOrder
+    website?: SortOrder
   }
 
   export type medicalcenter_infoMinOrderByAggregateInput = {
     center_id?: SortOrder
     center_name?: SortOrder
-    address?: SortOrder
-    email?: SortOrder
+    logo?: SortOrder
+    website?: SortOrder
   }
 
   export type medicalcenter_infoSumOrderByAggregateInput = {
@@ -15473,8 +15460,8 @@ export namespace Prisma {
 
   export type medicalcenter_infoCreateWithoutPatient_infoInput = {
     center_name: string
-    address?: string | null
-    email?: string | null
+    logo?: string | null
+    website?: string | null
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoCreateNestedManyWithoutMedicalcenter_infoInput
@@ -15484,8 +15471,8 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedCreateWithoutPatient_infoInput = {
     center_id?: number
     center_name: string
-    address?: string | null
-    email?: string | null
+    logo?: string | null
+    website?: string | null
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -15589,8 +15576,8 @@ export namespace Prisma {
 
   export type medicalcenter_infoUpdateWithoutPatient_infoInput = {
     center_name?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -15600,8 +15587,8 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedUpdateWithoutPatient_infoInput = {
     center_id?: IntFieldUpdateOperationsInput | number
     center_name?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -15740,8 +15727,8 @@ export namespace Prisma {
 
   export type medicalcenter_infoCreateWithoutRoom_infoInput = {
     center_name: string
-    address?: string | null
-    email?: string | null
+    logo?: string | null
+    website?: string | null
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoCreateNestedManyWithoutMedicalcenter_infoInput
@@ -15751,8 +15738,8 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedCreateWithoutRoom_infoInput = {
     center_id?: number
     center_name: string
-    address?: string | null
-    email?: string | null
+    logo?: string | null
+    website?: string | null
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -15819,8 +15806,8 @@ export namespace Prisma {
 
   export type medicalcenter_infoUpdateWithoutRoom_infoInput = {
     center_name?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -15830,8 +15817,8 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedUpdateWithoutRoom_infoInput = {
     center_id?: IntFieldUpdateOperationsInput | number
     center_name?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -16120,8 +16107,8 @@ export namespace Prisma {
 
   export type medicalcenter_infoCreateWithoutRoom_registerInput = {
     center_name: string
-    address?: string | null
-    email?: string | null
+    logo?: string | null
+    website?: string | null
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoCreateNestedManyWithoutMedicalcenter_infoInput
@@ -16131,8 +16118,8 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedCreateWithoutRoom_registerInput = {
     center_id?: number
     center_name: string
-    address?: string | null
-    email?: string | null
+    logo?: string | null
+    website?: string | null
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -16205,8 +16192,8 @@ export namespace Prisma {
 
   export type medicalcenter_infoUpdateWithoutRoom_registerInput = {
     center_name?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -16216,8 +16203,8 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedUpdateWithoutRoom_registerInput = {
     center_id?: IntFieldUpdateOperationsInput | number
     center_name?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -16315,8 +16302,8 @@ export namespace Prisma {
 
   export type medicalcenter_infoCreateWithoutUser_infoInput = {
     center_name: string
-    address?: string | null
-    email?: string | null
+    logo?: string | null
+    website?: string | null
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
@@ -16326,8 +16313,8 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedCreateWithoutUser_infoInput = {
     center_id?: number
     center_name: string
-    address?: string | null
-    email?: string | null
+    logo?: string | null
+    website?: string | null
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -16394,8 +16381,8 @@ export namespace Prisma {
 
   export type medicalcenter_infoUpdateWithoutUser_infoInput = {
     center_name?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -16405,8 +16392,8 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedUpdateWithoutUser_infoInput = {
     center_id?: IntFieldUpdateOperationsInput | number
     center_name?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -16431,8 +16418,8 @@ export namespace Prisma {
 
   export type medicalcenter_infoCreateWithoutUser_uploadsInput = {
     center_name: string
-    address?: string | null
-    email?: string | null
+    logo?: string | null
+    website?: string | null
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
@@ -16442,8 +16429,8 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedCreateWithoutUser_uploadsInput = {
     center_id?: number
     center_name: string
-    address?: string | null
-    email?: string | null
+    logo?: string | null
+    website?: string | null
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -16494,8 +16481,8 @@ export namespace Prisma {
 
   export type medicalcenter_infoUpdateWithoutUser_uploadsInput = {
     center_name?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -16505,8 +16492,8 @@ export namespace Prisma {
   export type medicalcenter_infoUncheckedUpdateWithoutUser_uploadsInput = {
     center_id?: IntFieldUpdateOperationsInput | number
     center_name?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput

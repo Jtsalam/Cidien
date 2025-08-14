@@ -10,7 +10,6 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -39,7 +38,7 @@ CREATE TABLE public.bed_info (
 );
 
 
-ALTER TABLE public.bed_info OWNER TO postgres;
+ALTER TABLE public.bed_info OWNER TO ayoogunade;
 
 --
 -- TOC entry 228 (class 1259 OID 16517)
@@ -55,7 +54,7 @@ CREATE SEQUENCE public.bed_info_bed_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.bed_info_bed_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.bed_info_bed_id_seq OWNER TO ayoogunade;
 
 --
 -- TOC entry 4938 (class 0 OID 0)
@@ -79,7 +78,7 @@ CREATE TABLE public.medicalcenter_info (
 );
 
 
-ALTER TABLE public.medicalcenter_info OWNER TO postgres;
+ALTER TABLE public.medicalcenter_info OWNER TO ayoogunade;
 
 --
 -- TOC entry 217 (class 1259 OID 16389)
@@ -95,7 +94,7 @@ CREATE SEQUENCE public.medicalcenter_info_center_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.medicalcenter_info_center_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.medicalcenter_info_center_id_seq OWNER TO ayoogunade;
 
 --
 -- TOC entry 4939 (class 0 OID 0)
@@ -121,7 +120,7 @@ CREATE TABLE public.patient_info (
 );
 
 
-ALTER TABLE public.patient_info OWNER TO postgres;
+ALTER TABLE public.patient_info OWNER TO ayoogunade;
 
 --
 -- TOC entry 219 (class 1259 OID 16398)
@@ -137,7 +136,7 @@ CREATE SEQUENCE public.patient_info_patient_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.patient_info_patient_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.patient_info_patient_id_seq OWNER TO ayoogunade;
 
 --
 -- TOC entry 4940 (class 0 OID 0)
@@ -162,7 +161,7 @@ CREATE TABLE public.patient_uploads (
 );
 
 
-ALTER TABLE public.patient_uploads OWNER TO postgres;
+ALTER TABLE public.patient_uploads OWNER TO ayoogunade;
 
 --
 -- TOC entry 231 (class 1259 OID 16673)
@@ -176,7 +175,7 @@ CREATE TABLE public.room_data (
 );
 
 
-ALTER TABLE public.room_data OWNER TO postgres;
+ALTER TABLE public.room_data OWNER TO ayoogunade;
 
 --
 -- TOC entry 230 (class 1259 OID 16672)
@@ -192,7 +191,7 @@ CREATE SEQUENCE public.room_data_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.room_data_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.room_data_id_seq OWNER TO ayoogunade;
 
 --
 -- TOC entry 4941 (class 0 OID 0)
@@ -217,7 +216,7 @@ CREATE TABLE public.room_info (
 );
 
 
-ALTER TABLE public.room_info OWNER TO postgres;
+ALTER TABLE public.room_info OWNER TO ayoogunade;
 
 --
 -- TOC entry 222 (class 1259 OID 16424)
@@ -233,7 +232,7 @@ CREATE SEQUENCE public.room_info_room_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.room_info_room_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.room_info_room_id_seq OWNER TO ayoogunade;
 
 --
 -- TOC entry 4942 (class 0 OID 0)
@@ -259,7 +258,7 @@ CREATE TABLE public.room_register (
 );
 
 
-ALTER TABLE public.room_register OWNER TO postgres;
+ALTER TABLE public.room_register OWNER TO ayoogunade;
 
 --
 -- TOC entry 226 (class 1259 OID 16457)
@@ -277,7 +276,7 @@ CREATE TABLE public.user_info (
 );
 
 
-ALTER TABLE public.user_info OWNER TO postgres;
+ALTER TABLE public.user_info OWNER TO ayoogunade;
 
 --
 -- TOC entry 225 (class 1259 OID 16456)
@@ -293,7 +292,7 @@ CREATE SEQUENCE public.user_info_user_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.user_info_user_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.user_info_user_id_seq OWNER TO ayoogunade;
 
 --
 -- TOC entry 4943 (class 0 OID 0)
@@ -319,7 +318,7 @@ CREATE TABLE public.user_uploads (
 );
 
 
-ALTER TABLE public.user_uploads OWNER TO postgres;
+ALTER TABLE public.user_uploads OWNER TO ayoogunade;
 
 --
 -- TOC entry 4738 (class 2604 OID 16521)

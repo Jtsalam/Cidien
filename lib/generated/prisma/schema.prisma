@@ -11,8 +11,8 @@ datasource db {
 model medicalcenter_info {
   center_id     Int             @id @default(autoincrement())
   center_name   String
-  address       String?         @db.VarChar(400)
-  email         String?         @db.VarChar(400)
+  logo          String?         @db.VarChar(400)
+  website       String?         @db.VarChar(400)
   patient_info  patient_info[]
   room_info     room_info[]
   room_register room_register[]

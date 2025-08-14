@@ -1,3 +1,4 @@
+//components/Staff/Dashboard/MainPanel
 "use client"
 
 import Image from "next/image"

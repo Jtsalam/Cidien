@@ -1,5 +1,11 @@
 .
 ├── app
+│   ├── (Admin)
+│   │   └── dashboard
+│   │       └── AdminDashboard.tsx
+│   ├── (Staff)
+│   │   └── dashboard
+│   │       └── StaffDashboard.tsx
 │   ├── api
 │   │   ├── center
 │   │   │   ├── logout
@@ -7,20 +13,38 @@
 │   │   │   └── signIn
 │   │   │       └── route.ts
 │   │   └── staff
+│   │       ├── assigned-beds
+│   │       │   └── route.ts
+│   │       ├── assigned-rooms
+│   │       │   └── route.ts
 │   │       ├── logout
 │   │       │   └── route.ts
-│   │       └── signIn
+│   │       ├── RoomMngr
+│   │       │   ├── assign-bed
+│   │       │   │   └── route.ts
+│   │       │   ├── bed-info
+│   │       │   │   └── [bedId]
+│   │       │   ├── discharge-bed
+│   │       │   │   └── route.ts
+│   │       │   ├── nurses
+│   │       │   │   └── route.ts
+│   │       │   └── rooms
+│   │       │       └── route.ts
+│   │       ├── transcriptions
+│   │       │   └── route.ts
+│   │       └── transcriptions-by-room
 │   │           └── route.ts
-│   ├── Center
-│   │   └── sign-in
-│   │       └── page.tsx
+│   ├── dashboard
+│   │   └── page.tsx
 │   ├── favicon.ico
 │   ├── globals.css
 │   ├── layout.tsx
 │   ├── page.tsx
 │   ├── Room
 │   │   └── dashboard
-│   │       └── page.tsx
+│   │       └── layout.tsx
+│   ├── sign-in
+│   │   └── page.tsx
 │   └── Staff
 │       ├── dashboard
 │       │   └── page.tsx
@@ -28,14 +52,9 @@
 │           └── page.tsx
 ├── Charting-Device
 │   ├── __pycache__
-│   │   └── functions.cpython-310.pyc
+│   │   ├── functions.cpython-310.pyc
+│   │   └── remote.cpython-39.pyc
 │   ├── functions.py
-│   ├── Idea Documents
-│   │   ├── Advice1.pdf
-│   │   ├── Advice2.pdf
-│   │   ├── Advice3.pdf
-│   │   ├── Advice4.pdf
-│   │   └── Core idea.pdf
 │   ├── remote.py
 │   ├── static
 │   │   ├── login_form.css
@@ -44,83 +63,55 @@
 │   ├── templates
 │   │   ├── login_form.html
 │   │   └── remote.html
+│   ├── test.ipynb
 │   └── uploads
 │       ├── 3438
-│       │   ├── room.recording_1.wav
-│       │   ├── room.recording_1.webm
-│       │   ├── room.recording_3.wav
-│       │   ├── room.recording_3.webm
-│       │   ├── room.recording_4.wav
-│       │   └── room.recording_4.webm
-│       ├── 3439
-│       │   ├── room.recording_1.wav
-│       │   └── room.recording_1.webm
+│       │   {* lots of room.recording_xx.webm and .wav files*}
 │       ├── 3461
-│       │   ├── room.recording_1.wav
-│       │   └── room.recording_1.webm
-│       ├── 3463
-│       │   ├── room.recording_1.wav
-│       │   └── room.recording_1.webm
+│       │   ├{* lots of room.recording_xx.webm and .wav files*}
 │       ├── room_aud
-│       │   ├── room.recording_1.wav
-│       │   ├── room.recording_1.webm
-│       │   ├── room.recording_10.webm
-│       │   ├── room.recording_11.webm
-│       │   ├── room.recording_12.webm
-│       │   ├── room.recording_13.webm
-│       │   ├── room.recording_14.webm
-│       │   ├── room.recording_15.webm
-│       │   ├── room.recording_16.webm
-│       │   ├── room.recording_17.webm
-│       │   ├── room.recording_18.wav
-│       │   ├── room.recording_18.webm
-│       │   ├── room.recording_19.wav
-│       │   ├── room.recording_19.webm
-│       │   ├── room.recording_2.wav
-│       │   ├── room.recording_2.webm
-│       │   ├── room.recording_20.wav
-│       │   ├── room.recording_20.webm
-│       │   ├── room.recording_21.wav
-│       │   ├── room.recording_21.webm
-│       │   ├── room.recording_22.wav
-│       │   ├── room.recording_22.webm
-│       │   ├── room.recording_28.wav
-│       │   ├── room.recording_28.webm
-│       │   ├── room.recording_29.wav
-│       │   ├── room.recording_29.webm
-│       │   ├── room.recording_3.wav
-│       │   ├── room.recording_3.webm
-│       │   ├── room.recording_30.wav
-│       │   ├── room.recording_30.webm
-│       │   ├── room.recording_4.wav
-│       │   ├── room.recording_4.webm
-│       │   └── room.recording_9.webm
+│       │   ├── nothing.txt
+│       │   {* lots of room.recording_xx.webm files*}
 │       └── Unassigned
-│           └── nothing.txt
+│           ├── nothing.txt
+│           {* lots of room.recording_xx.webm files*}
+│           └── room.recording_2.webm
 ├── components
+│   ├── Admin
+│   │   └── Dashboard
+│   │       ├── Home
+│   │       │   ├── AssignBedPopup.tsx
+│   │       │   └── RoomList.tsx
+│   │       └── MainPanel.tsx
 │   ├── Center
 │   │   └── SelectOrganizationForm.tsx
+│   ├── context
+│   │   └── socket.tsx
 │   ├── Dashboard
 │   │   ├── DataTable.tsx
-│   │   ├── InactivityTracker.tsx
-│   │   ├── LogoutConfirmationModal.tsx
-│   │   ├── MainPanel.tsx
 │   │   └── RoomPanel.tsx
+│   ├── DataTable.tsx
+│   ├── ErrorBoundary.tsx
+│   ├── InactivityTracker.tsx
+│   ├── LogoutConfirmationModal.tsx
 │   ├── Staff
-│   │   ├── OrganizationPanel.tsx
-│   │   ├── RoomLoginForm.tsx
-│   │   └── StaffLoginForm.tsx
+│   │   └── Dashboard
+│   │       └── MainPanel.tsx
 │   └── ui
 │       ├── badge.tsx
 │       ├── button.tsx
 │       ├── card.tsx
+│       ├── checkbox.tsx
 │       ├── dialog.tsx
+│       ├── input.tsx
 │       ├── table.tsx
-│       └── tabs.tsx
+│       ├── tabs.tsx
+│       └── tooltip.tsx
 ├── components.json
 ├── eslint.config.mjs
 ├── fileOrganizationTree.txt
 ├── lib
+│   ├── api.ts
 │   ├── constants.ts
 │   ├── generated
 │   │   └── prisma
@@ -136,6 +127,7 @@
 │   │       ├── libquery_engine-darwin-arm64.dylib.node
 │   │       ├── package.json
 │   │       ├── query_engine-windows.dll.node
+            {*lots of query_engine-windows.dll.node.tmp files*}
 │   │       ├── runtime
 │   │       │   ├── edge-esm.js
 │   │       │   ├── edge.js
@@ -144,12 +136,15 @@
 │   │       │   ├── library.d.ts
 │   │       │   ├── library.js
 │   │       │   ├── react-native.js
+│   │       │   ├── wasm-compiler-edge.js
+│   │       │   ├── wasm-engine-edge.js
 │   │       │   └── wasm.js
 │   │       ├── schema.prisma
 │   │       ├── wasm.d.ts
 │   │       └── wasm.js
 │   ├── prisma.ts
 │   └── utils.ts
+├── medicalcentersdb.sql
 ├── middleware.ts
 ├── MobileCharterDocumentation.txt
 ├── next-env.d.ts
@@ -195,4 +190,4 @@
 └── utils
     └── getCookie.ts
 
-51 directories, 145 files
+68 directories, 196 files

@@ -1,8 +1,8 @@
 //app/Staff/dashboard/page.tsx
 "use client"
 
-import MainPanel from "@/components/Dashboard/MainPanel";
-import InactivityTracker from "@/components/Dashboard/InactivityTracker";
+import MainPanel from "@/components/Staff/Dashboard/MainPanel";
+import InactivityTracker from "@/components/InactivityTracker";
 import { Smartphone, Zap } from "lucide-react"
 
 export default function Dashboard() {

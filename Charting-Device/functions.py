@@ -1,61 +1,51 @@
+# Charting-Device/functions.py
+import os
+from datetime import datetime
+import tempfile
+
 import speech_recognition as sr
 from pydub import AudioSegment
-from datetime import datetime
-import os
-import re
-import logging
-import wave
-import contextlib
 import noisereduce as nr
 import librosa
 import soundfile as sf
-import tempfile
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
+def ensure_dir(path: str):
+    """Ensure a directory exists."""
+    os.makedirs(path, exist_ok=True)
 
 def convert_audio(file_path, target_format='wav'):
-    """Convert audio file to WAV format with consistent parameters."""
-    try:
-        audio = AudioSegment.from_file(file_path)
-        
-        # Standardize audio parameters
-        audio = audio.set_frame_rate(16000)  # 16kHz sample rate
-        audio = audio.set_channels(1)       # Mono
-        audio = audio.set_sample_width(2)   # 16-bit
-        
-        new_file_path = file_path.rsplit('.', 1)[0] + '.' + target_format
-        audio.export(new_file_path, format=target_format, parameters=[
-            '-ar', '16000',     # Audio sample rate
-            '-ac', '1',         # Audio channels
-            '-acodec', 'pcm_s16le'  # Audio codec
-        ])
-        return new_file_path
-    except Exception as e:
-        logger.error(f"Audio conversion failed: {e}")
-        return None
+    """Convert audio file to the target format (requires ffmpeg installed)."""
+    audio = AudioSegment.from_file(file_path)
+    new_file_path = file_path.rsplit('.', 1)[0] + '.' + target_format
+    audio.export(new_file_path, format=target_format)
+    return new_file_path
 
 def denoise_audio(input_path):
     """Apply noise reduction to an audio file."""
-    y, sr = librosa.load(input_path, sr=None)
-    reduced = nr.reduce_noise(y=y, sr=sr)
-    
-    # Save to a temporary file
+    # Avoid shadowing the speech_recognition alias 'sr'
+    y, sample_rate = librosa.load(input_path, sr=None)
+    reduced = nr.reduce_noise(y=y, sr=sample_rate)
+
+    # Save to a temporary cleaned wav file
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
-    sf.write(temp_file.name, reduced, sr)
+    sf.write(temp_file.name, reduced, sample_rate)
     return temp_file.name
 
 def recognize_speech_from_audio(file_path):
-    """Recognize speech from an audio file (WAV preferred) with noise reduction."""
+    """
+    Recognize speech from an audio file (WAV preferred) with noise reduction.
+    Returns a dict: { success: bool, transcription?: str, error?: str }
+    """
     recognizer = sr.Recognizer()
 
     # Step 1: Convert to WAV if needed
     if not file_path.lower().endswith('.wav'):
-        file_path = convert_audio(file_path)
-        if not file_path:
-            return {"success": False, "error": "Audio conversion failed"}
+        try:
+            file_path = convert_audio(file_path)
+            if not file_path or not os.path.exists(file_path):
+                return {"success": False, "error": "Audio conversion failed."}
+        except Exception as e:
+            return {"success": False, "error": f"Conversion error: {e}"}
 
     # Step 2: Denoise audio
     try:
@@ -74,57 +64,47 @@ def recognize_speech_from_audio(file_path):
     except sr.RequestError as e:
         return {"success": False, "error": f"Google API error: {e}"}
     finally:
-        os.remove(cleaned_file)  # Clean up temporary file
-
-
-
-
+        # Clean up temporary file
+        try:
+            os.remove(cleaned_file)
+        except Exception:
+            pass
 
 def all_rooms(directory_path):
-    """Get list of valid room numbers from directory structure."""
     try:
         entries = os.listdir(directory_path)
-        return [
-            entry for entry in entries 
-            if (
-                os.path.isdir(os.path.join(directory_path, entry)) 
-                and entry.isdigit() 
-                and len(entry) == 4
-            )
-        ]  # Only 4-digit room numbers
-    except Exception as e:
-        logger.error(f"Error listing rooms: {e}")
+        folders = [
+            entry for entry in entries
+            if (os.path.isdir(os.path.join(directory_path, entry))) and entry.isnumeric()
+        ]
+        return folders
+    except FileNotFoundError:
+        return []
+    except PermissionError:
         return []
 
 def no_of_files(folder_path):
-    """Count files in directory with error handling."""
-    try:
-        return len([name for name in os.listdir(folder_path) 
-                  if os.path.isfile(os.path.join(folder_path, name))])
-    except Exception as e:
-        logger.error(f"Error counting files: {e}")
+    if not os.path.isdir(folder_path):
         return 0
+    items = os.listdir(folder_path)
+    files = [item for item in items if os.path.isfile(os.path.join(folder_path, item))]
+    return len(files)
 
-def aud_info(audio_path):
-    """Get audio metadata and transcription with improved reliability."""
+def aud_info(file_path):
+    """Return [date, time, transcription-or-error] for an audio file path."""
     try:
-        # Get file metadata
-        aud_time = os.path.getmtime(audio_path)
+        aud_time = os.path.getmtime(file_path)
         dt = datetime.fromtimestamp(aud_time)
-        date = dt.strftime("%B %d, %Y")
-        d_time = dt.strftime("%I:%M %p")
-        
-        # Get transcription with room number validation
-        valid_rooms = all_rooms(os.path.dirname(os.path.dirname(audio_path)))
-        result = recognize_speech_from_audio(audio_path, valid_rooms)
-        
-        if result["success"]:
-            chart = result["transcription"]
-        else:
-            chart = result.get("error", "Transcription failed")
-            logger.warning(f"Transcription failed for {audio_path}: {chart}")
-        
-        return [date, d_time, chart]
-    except Exception as e:
-        logger.error(f"Error in aud_info: {e}")
-        return ["Date error", "Time error", "Info error"]
+        date_str = dt.strftime("%B %d, %Y")
+        time_str = dt.strftime("%I:%M %p")
+    except Exception:
+        date_str = "Unknown Date"
+        time_str = "Unknown Time"
+
+    result = recognize_speech_from_audio(file_path)
+    if isinstance(result, dict) and result.get("success"):
+        chart = result["transcription"]
+    else:
+        chart = (result.get("error") if isinstance(result, dict) else "Could not transcribe") or "Could not transcribe"
+
+    return [date_str, time_str, chart]
