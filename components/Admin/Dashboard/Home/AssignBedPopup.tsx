@@ -149,6 +149,16 @@ const AssignBedPopup: React.FC<AssignBedPopupProps> = ({
 
   const hasExistingAssignment = bed.assigned_patient || bed.assigned_nurse;
 
+  const isNurseSelectionIncomplete = nurseSearch !== '' && !selectedNurse;
+
+  const isSaveDisabled = isNurseSelectionIncomplete || (hasExistingAssignment && !hasChanges());
+
+  const getSaveButtonTitle = () => {
+    if (isNurseSelectionIncomplete) return 'Select a valid nurse from the list or clear the search.';
+    if (hasExistingAssignment && !hasChanges()) return 'No changes made';
+    return '';
+  };
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
@@ -263,9 +273,9 @@ const AssignBedPopup: React.FC<AssignBedPopupProps> = ({
             </Button>
             <Button 
               onClick={handleSave}
-              disabled={hasExistingAssignment ? !hasChanges() : false}
-              className={hasExistingAssignment && !hasChanges() ? 'opacity-50 cursor-not-allowed' : ''}
-              title={hasExistingAssignment && !hasChanges() ? 'No changes made' : ''}
+              disabled={isSaveDisabled}
+              className={isSaveDisabled ? 'opacity-50 cursor-not-allowed' : ''}
+              title={getSaveButtonTitle()}
             >
               {hasExistingAssignment ? 'Update Assignment' : 'Assign Bed'}
             </Button>
