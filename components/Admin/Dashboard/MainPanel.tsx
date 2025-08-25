@@ -198,6 +198,7 @@ export default function MainPanel() {
       
       {/* Content Area */}
       {activeTab === "data" && <NothingToSee />}
+      {activeTab === "unassigned" && <NothingToSee />}
       {activeTab === "home" && (
         <>
           {loadingCenterId ? (
