@@ -151,7 +151,7 @@ const AssignBedPopup: React.FC<AssignBedPopupProps> = ({
 
   const isNurseSelectionIncomplete = nurseSearch !== '' && !selectedNurse;
 
-  const isSaveDisabled = isNurseSelectionIncomplete || (hasExistingAssignment && !hasChanges());
+  const isSaveDisabled = isNurseSelectionIncomplete || (!!hasExistingAssignment && !hasChanges());
 
   const getSaveButtonTitle = () => {
     if (isNurseSelectionIncomplete) return 'Select a valid nurse from the list or clear the search.';
