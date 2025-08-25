@@ -6,7 +6,7 @@ import { getCookie } from '@/utils/getCookie';
 
 // Import the dashboard components
 import StaffDashboard from "../Staff/dashboard/StaffDashboard";
-import AdminDashboard from "../(Admin)/dashboard/AdminDashboard";
+import AdminDashboard from "../Admin/dashboard/AdminDashboard";
 
 export default function DashboardPage() {
   const [role, setRole] = useState<string | null>(null);

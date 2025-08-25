@@ -7,7 +7,7 @@ import { useEffect, useState } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { LogOut, Hospital, User, Home, TriangleAlert, Database, FileArchive } from "lucide-react"
-import DataTable from "@/components/DataTable"
+import NothingToSee from "@/components/NothingTosee"
 import LogoutConfirmationModal from "@/components/LogoutConfirmationModal";
 import RoomList from '@/components/Admin/Dashboard/Home/RoomList';
 
@@ -197,7 +197,7 @@ export default function MainPanel() {
       </div>
       
       {/* Content Area */}
-      {activeTab === "data" && <DataTable />}
+      {activeTab === "data" && <NothingToSee />}
       {activeTab === "home" && (
         <>
           {loadingCenterId ? (
