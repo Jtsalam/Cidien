@@ -2,6 +2,7 @@ let isRecording = false;
 let mediaRecorder;
 let audioChunks = [];
 let buttonColor = '';
+let currentRoom = '';
 
 async function initAudio() {
     try {
@@ -46,6 +47,9 @@ async function initAudio() {
                     if(result.message){
                         document.getElementById('status').innerText = result.message;
                     }
+                    if (result.room_number) {
+                        currentRoom = result.room_number;
+                    }
                 } else {
                     console.error('Failed to send file to server:', response.statusText);
                     document.getElementById('status').innerText = 'Failed to send file to server';
@@ -70,7 +74,17 @@ function startRecording(color) {
 
     if (!isRecording) {
         mediaRecorder.start();
-        document.getElementById('status').innerText = `Recording from ${color} button...`;
+        let statusText;
+        if (color === 'green') {
+            statusText = "Recording room information....";
+        } else if (color === 'red') {
+            if (currentRoom) {
+                statusText = `Charting to ${currentRoom}......`;
+            } else {
+                statusText = "Charting note... (No room specified)";
+            }
+        }
+        document.getElementById('status').innerText = statusText;
         isRecording = true;
         console.log(`Recording started with ${color} button`);
     }

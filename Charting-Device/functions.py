@@ -6,6 +6,7 @@ import noisereduce as nr
 import librosa
 import soundfile as sf
 import tempfile
+import re
 
 def convert_audio(file_path, target_format='wav'):
     """Convert audio file to the target format."""
@@ -97,3 +98,16 @@ def aud_info(folder_path):
         chart = result.get("error", "Could not transcribe")
 
     return [date, d_time, chart]
+
+def extract_room_bed(text: str) -> str | None:
+    # Regex pattern: optional "room", digits, optional "bed"/space, single letter
+    pattern = re.compile(r'(?:room\s*)?(\d{2,5})(?:\s*bed\s*|\s*)([a-zA-Z])', re.IGNORECASE)
+    
+    match = pattern.search(text)
+    if not match:
+        return None
+    
+    room = match.group(1)
+    bed = match.group(2).upper()
+    
+    return f"{room} {bed}"

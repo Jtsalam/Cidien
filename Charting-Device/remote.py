@@ -3,7 +3,7 @@ import psycopg2
 from flask import Flask, request, render_template, jsonify, send_file, session
 from flask_socketio import SocketIO, join_room
 from flask_cors import CORS
-from functions import no_of_files, recognize_speech_from_audio, all_rooms, aud_info
+from functions import no_of_files, recognize_speech_from_audio, aud_info, extract_room_bed
 import uuid
 
 # Setup Flask app
@@ -15,7 +15,7 @@ socketio = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=
 # Organization name mapping
 ORG_MAPPING = {
     'EHC': 'EHC',
-    'EMC': 'EMC', 
+    'EMC': 'EMC',
     'JPCH': 'JPCH',
     'KMC': 'KMC',
     'PVM': 'PVM',
@@ -195,6 +195,7 @@ def room_btn_fn():
     room_number = recognize_speech_from_audio(audio_path)
     try:
         room_number = room_number['transcription']
+        room_number = extract_room_bed(room_number)
     except:
         Exception
         room_exists = False
@@ -215,7 +216,7 @@ def room_btn_fn():
         room_exists = False
         return jsonify({'message': "Room Access Denied! Please try again."})
 
-    return jsonify({'message': 'Room audio processed successfully!'})
+    return jsonify({'message': 'Room audio processed successfully!', 'room_number': room_number})
 
 
 @app.route('/audio/<filename>')
