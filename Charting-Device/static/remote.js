@@ -3,38 +3,73 @@ let mediaRecorder;
 let audioChunks = [];
 let buttonColor = '';
 let currentRoom = '';
+let socket; // To hold the socket instance
+let liveTranscriptionText = ''; // To store transcription without displaying it
+
+// Connect to the Socket.IO server
+try {
+    socket = io.connect(window.location.origin);
+    
+    socket.on('connect', () => {
+        console.log('Successfully connected to WebSocket server.');
+    });
+
+    socket.on('stream-transcription', (data) => {
+        if (isRecording && buttonColor === 'red') {
+            // Store the live transcription without updating the UI
+            liveTranscriptionText = data.transcription;
+        }
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Disconnected from WebSocket server.');
+    });
+
+} catch (e) {
+    console.error("Failed to connect to WebSocket server:", e);
+}
+
 
 async function initAudio() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
 
-        mediaRecorder.ondataavailable = (event) => {
+        mediaRecorder.ondataavailable = async (event) => {
             if (event.data.size > 0) {
                 audioChunks.push(event.data);
+                // If streaming, send data over WebSocket
+                if (socket && socket.connected && buttonColor === 'red') {
+                    socket.emit('stream-audio', event.data);
+                }
             }
         };
 
         mediaRecorder.onstop = async () => {
             const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            
+            // For red button, use the stored transcription text
+            if (buttonColor === 'red') {
+                const finalTranscription = liveTranscriptionText;
+                document.getElementById('status').innerText = `Processing completed and emitted to dashboard.`;
+            }
+
+            // Reset audio chunks for the next recording
             audioChunks = [];
 
-            // Send audio file to the server
+            // Send the complete audio file to the server for saving
             const formData = new FormData();
-            // Ensure the key 'audio' matches what the server expects
             formData.append('audio', audioBlob, 'recording.webm');
 
             try {
                 let btn_color = `${buttonColor}`;
-
-                // Check btn_color value correctly
                 let endpoint;
                 if (btn_color === 'green') {
                     endpoint = `/process_audio/room_num`;
-                } else if (btn_color === 'red') { // Corrected syntax for comparing btn_color with 'red'
+                } else if (btn_color === 'red') {
                     endpoint = `/process_audio/room_data`;
                 } else {
-                    throw new Error('Invalid button color');
+                    return; // Don't send if color is invalid
                 }
 
                 const response = await fetch(endpoint, {
@@ -42,15 +77,13 @@ async function initAudio() {
                     body: formData,
                 });
 
-                if (response.ok) {
+                if (response.ok && buttonColor === 'green') {
                     const result = await response.json();
-                    if(result.message){
-                        document.getElementById('status').innerText = result.message;
-                    }
+                    document.getElementById('status').innerText = result.message || 'Processing complete.';
                     if (result.room_number) {
                         currentRoom = result.room_number;
                     }
-                } else {
+                } else if (!response.ok) {
                     console.error('Failed to send file to server:', response.statusText);
                     document.getElementById('status').innerText = 'Failed to send file to server';
                 }
@@ -73,7 +106,17 @@ function startRecording(color) {
     }
 
     if (!isRecording) {
-        mediaRecorder.start();
+        audioChunks = [];
+        liveTranscriptionText = ''; // Reset for new recording
+        
+        // Use a smaller timeslice for smoother streaming on red button
+        if (color === 'red') {
+            if (socket && socket.connected) socket.emit('start-stream');
+            mediaRecorder.start(250); // Send audio every 250ms
+        } else {
+            mediaRecorder.start(); // No timeslice for green button (collects all at the end)
+        }
+
         let statusText;
         if (color === 'green') {
             statusText = "Recording room information....";
@@ -92,8 +135,13 @@ function startRecording(color) {
 
 function stopRecording(color) {
     if (isRecording) {
+        if (color === 'red' && socket && socket.connected) {
+            socket.emit('end-stream');
+        }
         mediaRecorder.stop();
-        document.getElementById('status').innerText = `Recording from ${color} button stopped`;
+        if (buttonColor !== 'red') {
+             document.getElementById('status').innerText = 'Processing recording...';
+        }
         isRecording = false;
         console.log(`Recording stopped with ${color} button`);
     }

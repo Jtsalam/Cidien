@@ -5,6 +5,7 @@ from flask_socketio import SocketIO, join_room
 from flask_cors import CORS
 from functions import no_of_files, recognize_speech_from_audio, aud_info, extract_room_bed
 import uuid
+import tempfile
 
 # Setup Flask app
 app = Flask(__name__)
@@ -53,6 +54,7 @@ room_exists = False
 room_number = ""
 audio_path = ""
 transcriptions = []  # Global list to store all transcriptions
+audio_buffers = {} # For streaming audio
 
 def load_transcriptions_from_database():
     """Load all transcriptions from the database on startup"""
@@ -307,6 +309,81 @@ def handle_join_room(data):
 @socketio.on('ping')
 def handle_ping():
     socketio.emit('pong', {'message': 'pong'})
+
+
+@socketio.on('start-stream')
+def handle_start_stream():
+    """Initializes an audio buffer for a new stream."""
+    print(f"Starting stream for client: {request.sid}")
+    audio_buffers[request.sid] = bytearray()
+
+@socketio.on('stream-audio')
+def handle_stream_audio(data):
+    """Receives an audio chunk, buffers it, and transcribes."""
+    if request.sid not in audio_buffers:
+        return  # Or handle error
+
+    audio_buffers[request.sid].extend(data)
+    buffer_data = audio_buffers[request.sid]
+    
+    transcription = ""
+    temp_audio_path = ""
+    try:
+        # Use a temporary file to store the current buffer
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.webm', mode='wb') as temp_audio:
+            temp_audio.write(buffer_data)
+            temp_audio_path = temp_audio.name
+
+        # Recognize speech from the temporary audio file
+        result = recognize_speech_from_audio(temp_audio_path)
+        if result and 'transcription' in result:
+            transcription = result['transcription']
+        
+        # Emit the latest full transcription back to the client
+        socketio.emit('stream-transcription', {'transcription': transcription}, room=request.sid)
+
+    except Exception as e:
+        print(f"Error during stream transcription for {request.sid}: {e}")
+    finally:
+        # Clean up the temporary file
+        if temp_audio_path and os.path.exists(temp_audio_path):
+            os.remove(temp_audio_path)
+
+@socketio.on('end-stream')
+def handle_end_stream():
+    """Cleans up the audio buffer when the stream ends."""
+    print(f"Ending stream for client: {request.sid}")
+    if request.sid in audio_buffers:
+        del audio_buffers[request.sid]
+
+
+@app.route('/transcribe_chunk', methods=['POST'])
+def transcribe_chunk():
+    if 'audio' not in request.files:
+        return jsonify({'error': 'No audio file found in request'}), 400
+
+    audio_file = request.files['audio']
+    
+    # Use a temporary file to store the chunk
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.webm') as temp_audio:
+        audio_file.save(temp_audio.name)
+        temp_audio_path = temp_audio.name
+
+    transcription = ""
+    try:
+        # Recognize speech from the temporary audio file
+        result = recognize_speech_from_audio(temp_audio_path)
+        if result and 'transcription' in result:
+            transcription = result['transcription']
+    except Exception as e:
+        print(f"Error during chunk transcription: {e}")
+        # Return empty transcription on error, client will ignore it
+        return jsonify({'transcription': ''})
+    finally:
+        # Clean up the temporary file
+        os.remove(temp_audio_path)
+
+    return jsonify({'transcription': transcription})
 
 
 @app.route('/process_audio/room_data', methods=['POST'])
