@@ -31,6 +31,7 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
   const [data, setData] = useState<RowData[]>([])
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const [playingIndex, setPlayingIndex] = useState<number | null>(null)
+  const [activeUrl, setActiveUrl] = useState<string | null>(null)
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null)
   const [isReceiving, setIsReceiving] = useState(false)
   const [isConnected, setIsConnected] = useState(false)
@@ -69,60 +70,60 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
   }, [selectedRoom])
 
   const handlePlay = useCallback((url: string, index: number) => {
-    // Stop any in-flight or playing audio immediately
-    if (currentAudioRef.current) {
-      try {
-        currentAudioRef.current.pause()
-        currentAudioRef.current.currentTime = 0
-        currentAudioRef.current.src = ''
-        currentAudioRef.current.load()
-      } catch {}
-      currentAudioRef.current = null
-    }
-    if (audio) {
-      try {
-        audio.pause()
-        audio.currentTime = 0
-      } catch {}
-      if (playingIndex === index) {
-        setPlayingIndex(null)
-        setAudio(null)
-        return
+    const fullUrl = `http://localhost:5000${url}`;
+
+    // Case 1: Interacting with the currently active audio track
+    if (activeUrl === fullUrl && audio) {
+      if (audio.paused) {
+        // If it's paused, the user wants to play from the beginning.
+        audio.currentTime = 0;
+        audio.play().catch(e => console.error("Playback error:", e));
+        setPlayingIndex(index);
+      } else {
+        // If it's playing, the user wants to pause/stop it.
+        audio.pause();
+        setPlayingIndex(null);
       }
+      return;
     }
 
-    setLoadingIndex(index)
-    const fullUrl = `http://localhost:5000${url}`
+    // Case 2: A different audio is already playing or we are playing a new one.
+    // Stop and clean up any existing audio element.
+    if (audio) {
+      audio.pause();
+    }
 
-    // Prefer blob URL if preloaded for instant start
-    const objectUrl = preloadedObjectUrlRef.current.get(fullUrl)
-    const preferredSrc = objectUrl ?? fullUrl
+    // Play a new audio file
+    setLoadingIndex(index);
+    setActiveUrl(fullUrl); // Set the new active URL
 
-    const audioEl = preloadedAudioRef.current.get(preferredSrc) ?? new Audio(preferredSrc)
-    currentAudioRef.current = audioEl
-
-    audioEl
-      .play()
+    const objectUrl = preloadedObjectUrlRef.current.get(fullUrl);
+    const preferredSrc = objectUrl ?? fullUrl;
+    
+    const newAudioEl = new Audio(preferredSrc);
+    
+    newAudioEl.play()
       .then(() => {
-        setAudio(audioEl)
-        setPlayingIndex(index)
-        setLoadingIndex(null)
-        // Cache this audio element for faster subsequent plays
-        if (!preloadedAudioRef.current.has(preferredSrc)) {
-          preloadedAudioRef.current.set(preferredSrc, audioEl)
-        }
+        setAudio(newAudioEl);
+        setPlayingIndex(index);
+        setLoadingIndex(null);
       })
       .catch((err) => {
-        console.error('Playback error:', err)
-        setLoadingIndex(null)
-      })
+        console.error('Playback error:', err);
+        setLoadingIndex(null);
+        setPlayingIndex(null);
+        setActiveUrl(null); // Reset on error
+      });
 
-    audioEl.onended = () => {
-      setPlayingIndex(null)
-      setAudio(null)
-      currentAudioRef.current = null
-    }
-  }, [audio, playingIndex])
+    newAudioEl.onended = () => {
+      setPlayingIndex(null);
+      setActiveUrl(null); // Reset so it can be played again from the start
+    };
+    
+    // Store the new audio element in state.
+    setAudio(newAudioEl);
+
+  }, [audio, activeUrl, playingIndex]);
 
   const preloadForDataset = useCallback((rows: RowData[]) => {
     const PREFETCH_COUNT = 3
