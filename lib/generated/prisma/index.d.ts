@@ -7719,18 +7719,21 @@ export namespace Prisma {
     id: number | null
     bed_id: number | null
     audio_path: string | null
+    patient_note: string | null
   }
 
   export type Room_dataMaxAggregateOutputType = {
     id: number | null
     bed_id: number | null
     audio_path: string | null
+    patient_note: string | null
   }
 
   export type Room_dataCountAggregateOutputType = {
     id: number
     bed_id: number
     audio_path: number
+    patient_note: number
     _all: number
   }
 
@@ -7749,18 +7752,21 @@ export namespace Prisma {
     id?: true
     bed_id?: true
     audio_path?: true
+    patient_note?: true
   }
 
   export type Room_dataMaxAggregateInputType = {
     id?: true
     bed_id?: true
     audio_path?: true
+    patient_note?: true
   }
 
   export type Room_dataCountAggregateInputType = {
     id?: true
     bed_id?: true
     audio_path?: true
+    patient_note?: true
     _all?: true
   }
 
@@ -7854,6 +7860,7 @@ export namespace Prisma {
     id: number
     bed_id: number
     audio_path: string
+    patient_note: string
     _count: Room_dataCountAggregateOutputType | null
     _avg: Room_dataAvgAggregateOutputType | null
     _sum: Room_dataSumAggregateOutputType | null
@@ -7879,6 +7886,7 @@ export namespace Prisma {
     id?: boolean
     bed_id?: boolean
     audio_path?: boolean
+    patient_note?: boolean
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["room_data"]>
 
@@ -7886,6 +7894,7 @@ export namespace Prisma {
     id?: boolean
     bed_id?: boolean
     audio_path?: boolean
+    patient_note?: boolean
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["room_data"]>
 
@@ -7893,6 +7902,7 @@ export namespace Prisma {
     id?: boolean
     bed_id?: boolean
     audio_path?: boolean
+    patient_note?: boolean
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["room_data"]>
 
@@ -7900,9 +7910,10 @@ export namespace Prisma {
     id?: boolean
     bed_id?: boolean
     audio_path?: boolean
+    patient_note?: boolean
   }
 
-  export type room_dataOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bed_id" | "audio_path", ExtArgs["result"]["room_data"]>
+  export type room_dataOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bed_id" | "audio_path" | "patient_note", ExtArgs["result"]["room_data"]>
   export type room_dataInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }
@@ -7922,6 +7933,7 @@ export namespace Prisma {
       id: number
       bed_id: number
       audio_path: string
+      patient_note: string
     }, ExtArgs["result"]["room_data"]>
     composites: {}
   }
@@ -8349,6 +8361,7 @@ export namespace Prisma {
     readonly id: FieldRef<"room_data", 'Int'>
     readonly bed_id: FieldRef<"room_data", 'Int'>
     readonly audio_path: FieldRef<"room_data", 'String'>
+    readonly patient_note: FieldRef<"room_data", 'String'>
   }
     
 
@@ -12267,7 +12280,8 @@ export namespace Prisma {
   export const Room_dataScalarFieldEnum: {
     id: 'id',
     bed_id: 'bed_id',
-    audio_path: 'audio_path'
+    audio_path: 'audio_path',
+    patient_note: 'patient_note'
   };
 
   export type Room_dataScalarFieldEnum = (typeof Room_dataScalarFieldEnum)[keyof typeof Room_dataScalarFieldEnum]
@@ -12744,6 +12758,7 @@ export namespace Prisma {
     id?: IntFilter<"room_data"> | number
     bed_id?: IntFilter<"room_data"> | number
     audio_path?: StringFilter<"room_data"> | string
+    patient_note?: StringFilter<"room_data"> | string
     bed_info?: XOR<Bed_infoScalarRelationFilter, bed_infoWhereInput>
   }
 
@@ -12751,6 +12766,7 @@ export namespace Prisma {
     id?: SortOrder
     bed_id?: SortOrder
     audio_path?: SortOrder
+    patient_note?: SortOrder
     bed_info?: bed_infoOrderByWithRelationInput
   }
 
@@ -12761,6 +12777,7 @@ export namespace Prisma {
     NOT?: room_dataWhereInput | room_dataWhereInput[]
     bed_id?: IntFilter<"room_data"> | number
     audio_path?: StringFilter<"room_data"> | string
+    patient_note?: StringFilter<"room_data"> | string
     bed_info?: XOR<Bed_infoScalarRelationFilter, bed_infoWhereInput>
   }, "id">
 
@@ -12768,6 +12785,7 @@ export namespace Prisma {
     id?: SortOrder
     bed_id?: SortOrder
     audio_path?: SortOrder
+    patient_note?: SortOrder
     _count?: room_dataCountOrderByAggregateInput
     _avg?: room_dataAvgOrderByAggregateInput
     _max?: room_dataMaxOrderByAggregateInput
@@ -12782,6 +12800,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"room_data"> | number
     bed_id?: IntWithAggregatesFilter<"room_data"> | number
     audio_path?: StringWithAggregatesFilter<"room_data"> | string
+    patient_note?: StringWithAggregatesFilter<"room_data"> | string
   }
 
   export type room_registerWhereInput = {
@@ -13314,6 +13333,7 @@ export namespace Prisma {
 
   export type room_dataCreateInput = {
     audio_path: string
+    patient_note: string
     bed_info: bed_infoCreateNestedOneWithoutRoom_dataInput
   }
 
@@ -13321,10 +13341,12 @@ export namespace Prisma {
     id?: number
     bed_id: number
     audio_path: string
+    patient_note: string
   }
 
   export type room_dataUpdateInput = {
     audio_path?: StringFieldUpdateOperationsInput | string
+    patient_note?: StringFieldUpdateOperationsInput | string
     bed_info?: bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput
   }
 
@@ -13332,22 +13354,26 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     bed_id?: IntFieldUpdateOperationsInput | number
     audio_path?: StringFieldUpdateOperationsInput | string
+    patient_note?: StringFieldUpdateOperationsInput | string
   }
 
   export type room_dataCreateManyInput = {
     id?: number
     bed_id: number
     audio_path: string
+    patient_note: string
   }
 
   export type room_dataUpdateManyMutationInput = {
     audio_path?: StringFieldUpdateOperationsInput | string
+    patient_note?: StringFieldUpdateOperationsInput | string
   }
 
   export type room_dataUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     bed_id?: IntFieldUpdateOperationsInput | number
     audio_path?: StringFieldUpdateOperationsInput | string
+    patient_note?: StringFieldUpdateOperationsInput | string
   }
 
   export type room_registerCreateInput = {
@@ -14034,6 +14060,7 @@ export namespace Prisma {
     id?: SortOrder
     bed_id?: SortOrder
     audio_path?: SortOrder
+    patient_note?: SortOrder
   }
 
   export type room_dataAvgOrderByAggregateInput = {
@@ -14045,12 +14072,14 @@ export namespace Prisma {
     id?: SortOrder
     bed_id?: SortOrder
     audio_path?: SortOrder
+    patient_note?: SortOrder
   }
 
   export type room_dataMinOrderByAggregateInput = {
     id?: SortOrder
     bed_id?: SortOrder
     audio_path?: SortOrder
+    patient_note?: SortOrder
   }
 
   export type room_dataSumOrderByAggregateInput = {
@@ -15856,11 +15885,13 @@ export namespace Prisma {
 
   export type room_dataCreateWithoutBed_infoInput = {
     audio_path: string
+    patient_note: string
   }
 
   export type room_dataUncheckedCreateWithoutBed_infoInput = {
     id?: number
     audio_path: string
+    patient_note: string
   }
 
   export type room_dataCreateOrConnectWithoutBed_infoInput = {
@@ -15970,6 +16001,7 @@ export namespace Prisma {
     id?: IntFilter<"room_data"> | number
     bed_id?: IntFilter<"room_data"> | number
     audio_path?: StringFilter<"room_data"> | string
+    patient_note?: StringFilter<"room_data"> | string
   }
 
   export type user_infoUpsertWithoutBed_infoInput = {
@@ -16885,20 +16917,24 @@ export namespace Prisma {
   export type room_dataCreateManyBed_infoInput = {
     id?: number
     audio_path: string
+    patient_note: string
   }
 
   export type room_dataUpdateWithoutBed_infoInput = {
     audio_path?: StringFieldUpdateOperationsInput | string
+    patient_note?: StringFieldUpdateOperationsInput | string
   }
 
   export type room_dataUncheckedUpdateWithoutBed_infoInput = {
     id?: IntFieldUpdateOperationsInput | number
     audio_path?: StringFieldUpdateOperationsInput | string
+    patient_note?: StringFieldUpdateOperationsInput | string
   }
 
   export type room_dataUncheckedUpdateManyWithoutBed_infoInput = {
     id?: IntFieldUpdateOperationsInput | number
     audio_path?: StringFieldUpdateOperationsInput | string
+    patient_note?: StringFieldUpdateOperationsInput | string
   }
 
   export type bed_infoCreateManyUser_infoInput = {
