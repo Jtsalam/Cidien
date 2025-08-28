@@ -54,13 +54,12 @@ room_exists = False
 room_number = ""
 audio_path = ""
 transcriptions = []  # Global list to store all transcriptions
-audio_buffers = {} # For streaming audio
 
 def load_transcriptions_from_database():
     """Load all transcriptions from the database on startup"""
     try:
         cur.execute("""
-            SELECT rd.id, rd.audio_path, rd.bed_id, 
+            SELECT rd.id, rd.audio_path, rd.bed_id, rd.patient_note,
                    bi.bed_letter, ri.room_number, ui.user_id, ui.staff_id
             FROM room_data rd
             JOIN bed_info bi ON rd.bed_id = bi.bed_id
@@ -74,30 +73,38 @@ def load_transcriptions_from_database():
         for row in rows:
             # Process each transcription
             audio_path = row[1]
+            patient_note_from_db = row[3]
+
             if os.path.exists(audio_path):
                 try:
-                    chart_info = aud_info(audio_path)
+                    # If there's a note in the DB, use it. Otherwise, generate it.
+                    note_to_use = patient_note_from_db
+                    chart_info = aud_info(audio_path) # Still need for date/time
+
+                    if not note_to_use:
+                        note_to_use = chart_info[2]
+
                     transcription_data = {
-                        "column1": f"{row[4]} {row[3]}",  # room_number bed_letter
+                        "column1": f"{row[5]} {row[4]}",  # room_number bed_letter
                         "column2": chart_info[0],  # date
                         "column3": chart_info[1],  # time
-                        "column4": chart_info[2],  # note
+                        "column4": note_to_use,    # Use the note from DB or newly generated
                         "audioUrl": f"/audio/{os.path.basename(audio_path)}",
                         "bed_id": row[2],
-                        "user_id": row[5]
+                        "user_id": row[6]
                     }
                     loaded_transcriptions.append(transcription_data)
                 except Exception as e:
                     print(f"Error processing transcription for {audio_path}: {e}")
                     # If audio processing fails, still include basic info
                     transcription_data = {
-                        "column1": f"{row[4]} {row[3]}",  # room_number bed_letter
+                        "column1": f"{row[5]} {row[4]}",  # room_number bed_letter
                         "column2": "Unknown Date",
                         "column3": "Unknown Time",
-                        "column4": "Audio file exists but transcription failed",
+                        "column4": patient_note_from_db or "Audio file exists but transcription failed",
                         "audioUrl": f"/audio/{os.path.basename(audio_path)}",
                         "bed_id": row[2],
-                        "user_id": row[5]
+                        "user_id": row[6]
                     }
                     loaded_transcriptions.append(transcription_data)
             else:
@@ -311,52 +318,6 @@ def handle_ping():
     socketio.emit('pong', {'message': 'pong'})
 
 
-@socketio.on('start-stream')
-def handle_start_stream():
-    """Initializes an audio buffer for a new stream."""
-    print(f"Starting stream for client: {request.sid}")
-    audio_buffers[request.sid] = bytearray()
-
-@socketio.on('stream-audio')
-def handle_stream_audio(data):
-    """Receives an audio chunk, buffers it, and transcribes."""
-    if request.sid not in audio_buffers:
-        return  # Or handle error
-
-    audio_buffers[request.sid].extend(data)
-    buffer_data = audio_buffers[request.sid]
-    
-    transcription = ""
-    temp_audio_path = ""
-    try:
-        # Use a temporary file to store the current buffer
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.webm', mode='wb') as temp_audio:
-            temp_audio.write(buffer_data)
-            temp_audio_path = temp_audio.name
-
-        # Recognize speech from the temporary audio file
-        result = recognize_speech_from_audio(temp_audio_path)
-        if result and 'transcription' in result:
-            transcription = result['transcription']
-        
-        # Emit the latest full transcription back to the client
-        socketio.emit('stream-transcription', {'transcription': transcription}, room=request.sid)
-
-    except Exception as e:
-        print(f"Error during stream transcription for {request.sid}: {e}")
-    finally:
-        # Clean up the temporary file
-        if temp_audio_path and os.path.exists(temp_audio_path):
-            os.remove(temp_audio_path)
-
-@socketio.on('end-stream')
-def handle_end_stream():
-    """Cleans up the audio buffer when the stream ends."""
-    print(f"Ending stream for client: {request.sid}")
-    if request.sid in audio_buffers:
-        del audio_buffers[request.sid]
-
-
 @app.route('/transcribe_chunk', methods=['POST'])
 def transcribe_chunk():
     if 'audio' not in request.files:
@@ -427,22 +388,25 @@ def room_data_btn():
         audio_path = os.path.join(org_audio_path, filename)
         audio_file.save(audio_path)
 
+        # Always transcribe the full audio file on the server for maximum accuracy.
+        chart_info = aud_info(audio_path)
+        note_to_save = chart_info[2]
+
         # Store in database
         try:
-            cur.execute("INSERT INTO room_data (bed_id, audio_path) VALUES (%s, %s)", 
-                       (bed_id, audio_path))
+            cur.execute("INSERT INTO room_data (bed_id, audio_path, patient_note) VALUES (%s, %s, %s)", 
+                       (bed_id, audio_path, note_to_save))
             conn.commit()
         except Exception as e:
             print(f"Database error: {e}")
             conn.rollback()
 
-        # Process transcription
-        chart_info = aud_info(audio_path)
+        # Prepare data for WebSocket emission
         chart_data = {
             'room_id': room_number,
             'date': chart_info[0],
             'time': chart_info[1],
-            'note': chart_info[2],
+            'note': note_to_save,
         }
 
         data = {
@@ -523,7 +487,7 @@ def get_staff_transcriptions_by_room(room_number):
         
         # Get transcriptions for the specific room and staff member
         cur.execute("""
-            SELECT rd.id, rd.audio_path, rd.bed_id, 
+            SELECT rd.id, rd.audio_path, rd.bed_id, rd.patient_note,
                    bi.bed_letter, ri.room_number, ui.user_id, ui.staff_id
             FROM room_data rd
             JOIN bed_info bi ON rd.bed_id = bi.bed_id
@@ -537,29 +501,36 @@ def get_staff_transcriptions_by_room(room_number):
         filtered_transcriptions = []
         for row in rows:
             audio_path = row[1]
+            patient_note_from_db = row[3]
+
             if os.path.exists(audio_path):
                 try:
-                    chart_info = aud_info(audio_path)
+                    note_to_use = patient_note_from_db
+                    chart_info = aud_info(audio_path) # For date/time
+
+                    if not note_to_use:
+                        note_to_use = chart_info[2]
+                        
                     transcription_data = {
-                        "column1": f"{row[4]} {row[3]}",  # room_number bed_letter
+                        "column1": f"{row[5]} {row[4]}",  # room_number bed_letter
                         "column2": chart_info[0],  # date
                         "column3": chart_info[1],  # time
-                        "column4": chart_info[2],  # note
+                        "column4": note_to_use,  # note
                         "audioUrl": f"/audio/{os.path.basename(audio_path)}",
                         "bed_id": row[2],
-                        "user_id": row[5]
+                        "user_id": row[6]
                     }
                     filtered_transcriptions.append(transcription_data)
                 except Exception as e:
                     print(f"Error processing transcription for {audio_path}: {e}")
                     transcription_data = {
-                        "column1": f"{row[4]} {row[3]}",  # room_number bed_letter
+                        "column1": f"{row[5]} {row[4]}",  # room_number bed_letter
                         "column2": "Unknown Date",
                         "column3": "Unknown Time",
-                        "column4": "Audio file exists but transcription failed",
+                        "column4": patient_note_from_db or "Audio file exists but transcription failed",
                         "audioUrl": f"/audio/{os.path.basename(audio_path)}",
                         "bed_id": row[2],
-                        "user_id": row[5]
+                        "user_id": row[6]
                     }
                     filtered_transcriptions.append(transcription_data)
             else:
