@@ -1,4 +1,5 @@
 import speech_recognition as sr
+import whisper
 from pydub import AudioSegment
 from datetime import datetime
 import os
@@ -34,15 +35,18 @@ def recognize_speech_from_audio(file_path):
         try:
             file_path = convert_audio(file_path)
             if not file_path or not os.path.exists(file_path):
-                return {"success": False, "error": "Audio conversion failed."}
+                return {"success": False, "error": "[Audio Conversion Failed]"}
         except Exception as e:
-            return {"success": False, "error": f"Conversion error: {e}"}
+            # Log the detailed error for debugging, but return a generic message.
+            print(f"CONVERSION ERROR: {e}")
+            return {"success": False, "error": "[Audio Processing Error]"}
 
     # Step 2: Denoise audio
     try:
         cleaned_file = denoise_audio(file_path)
     except Exception as e:
-        return {"success": False, "error": f"Noise reduction failed: {e}"}
+        print(f"NOISE REDUCTION ERROR: {e}")
+        return {"success": False, "error": "[Audio Processing Error]"}
 
     # Step 3: Transcribe
     try:
@@ -53,7 +57,8 @@ def recognize_speech_from_audio(file_path):
     except sr.UnknownValueError:
         return {"success": False, "error": "Audio not properly heard"}
     except sr.RequestError as e:
-        return {"success": False, "error": f"Google API error: {e}"}
+        print(f"GOOGLE API ERROR: {e}")
+        return {"success": False, "error": "[Transcription Service Error]"}
     finally:
         os.remove(cleaned_file)  # Clean up temporary file
 
@@ -95,7 +100,8 @@ def aud_info(folder_path):
     if isinstance(result, dict) and result.get("success"):
         chart = result["transcription"]
     else:
-        chart = result.get("error", "Could not transcribe")
+        # Use the clean error message from the result dict
+        chart = result.get("error", "[Could not transcribe]")
 
     return [date, d_time, chart]
 
