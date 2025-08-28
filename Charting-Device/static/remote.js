@@ -3,74 +3,34 @@ let mediaRecorder;
 let audioChunks = [];
 let buttonColor = '';
 let currentRoom = '';
-let socket; // To hold the socket instance
-let liveTranscriptionText = ''; // To store transcription without displaying it
-
-// Connect to the Socket.IO server
-try {
-    socket = io.connect(window.location.origin);
-    
-    socket.on('connect', () => {
-        console.log('Successfully connected to WebSocket server.');
-    });
-
-    socket.on('stream-transcription', (data) => {
-        if (isRecording && buttonColor === 'red') {
-            // Store the live transcription without updating the UI
-            liveTranscriptionText = data.transcription;
-        }
-    });
-
-    socket.on('disconnect', () => {
-        console.log('Disconnected from WebSocket server.');
-    });
-
-} catch (e) {
-    console.error("Failed to connect to WebSocket server:", e);
-}
-
 
 async function initAudio() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
 
-        mediaRecorder.ondataavailable = async (event) => {
+        mediaRecorder.ondataavailable = (event) => {
             if (event.data.size > 0) {
                 audioChunks.push(event.data);
-                // If streaming, send data over WebSocket
-                if (socket && socket.connected && buttonColor === 'red') {
-                    socket.emit('stream-audio', event.data);
-                }
             }
         };
 
         mediaRecorder.onstop = async () => {
             const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-            
-            // For red button, use the stored transcription text
+            audioChunks = [];
+
             if (buttonColor === 'red') {
-                const finalTranscription = liveTranscriptionText;
                 document.getElementById('status').innerText = `Processing completed and emitted to dashboard.`;
             }
-
-            // Reset audio chunks for the next recording
-            audioChunks = [];
 
             // Send the complete audio file to the server for saving
             const formData = new FormData();
             formData.append('audio', audioBlob, 'recording.webm');
 
             try {
-                let btn_color = `${buttonColor}`;
-                let endpoint;
-                if (btn_color === 'green') {
-                    endpoint = `/process_audio/room_num`;
-                } else if (btn_color === 'red') {
-                    endpoint = `/process_audio/room_data`;
-                } else {
-                    return; // Don't send if color is invalid
-                }
+                const endpoint = buttonColor === 'green' 
+                    ? `/process_audio/room_num` 
+                    : `/process_audio/room_data`;
 
                 const response = await fetch(endpoint, {
                     method: 'POST',
@@ -107,15 +67,7 @@ function startRecording(color) {
 
     if (!isRecording) {
         audioChunks = [];
-        liveTranscriptionText = ''; // Reset for new recording
-        
-        // Use a smaller timeslice for smoother streaming on red button
-        if (color === 'red') {
-            if (socket && socket.connected) socket.emit('start-stream');
-            mediaRecorder.start(250); // Send audio every 250ms
-        } else {
-            mediaRecorder.start(); // No timeslice for green button (collects all at the end)
-        }
+        mediaRecorder.start();
 
         let statusText;
         if (color === 'green') {
@@ -135,9 +87,6 @@ function startRecording(color) {
 
 function stopRecording(color) {
     if (isRecording) {
-        if (color === 'red' && socket && socket.connected) {
-            socket.emit('end-stream');
-        }
         mediaRecorder.stop();
         if (buttonColor !== 'red') {
              document.getElementById('status').innerText = 'Processing recording...';
