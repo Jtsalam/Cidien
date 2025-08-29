@@ -1471,7 +1471,7 @@ export namespace Prisma {
     /**
      * The default values for transactionOptions
      * maxWait ?= 2000
-     * timeout ?= 5001
+     * timeout ?= 5000
      */
     transactionOptions?: {
       maxWait?: number
@@ -4235,6 +4235,7 @@ export namespace Prisma {
     session_id: number | null
     upload_path: string | null
     patient_notes: string | null
+    is_approved: boolean | null
     upload_time: Date | null
   }
 
@@ -4243,6 +4244,7 @@ export namespace Prisma {
     session_id: number | null
     upload_path: string | null
     patient_notes: string | null
+    is_approved: boolean | null
     upload_time: Date | null
   }
 
@@ -4251,6 +4253,7 @@ export namespace Prisma {
     session_id: number
     upload_path: number
     patient_notes: number
+    is_approved: number
     upload_time: number
     _all: number
   }
@@ -4271,6 +4274,7 @@ export namespace Prisma {
     session_id?: true
     upload_path?: true
     patient_notes?: true
+    is_approved?: true
     upload_time?: true
   }
 
@@ -4279,6 +4283,7 @@ export namespace Prisma {
     session_id?: true
     upload_path?: true
     patient_notes?: true
+    is_approved?: true
     upload_time?: true
   }
 
@@ -4287,6 +4292,7 @@ export namespace Prisma {
     session_id?: true
     upload_path?: true
     patient_notes?: true
+    is_approved?: true
     upload_time?: true
     _all?: true
   }
@@ -4382,6 +4388,7 @@ export namespace Prisma {
     session_id: number
     upload_path: string
     patient_notes: string
+    is_approved: boolean
     upload_time: Date
     _count: Patient_uploadsCountAggregateOutputType | null
     _avg: Patient_uploadsAvgAggregateOutputType | null
@@ -4409,6 +4416,7 @@ export namespace Prisma {
     session_id?: boolean
     upload_path?: boolean
     patient_notes?: boolean
+    is_approved?: boolean
     upload_time?: boolean
     patient_info?: boolean | patient_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["patient_uploads"]>
@@ -4418,6 +4426,7 @@ export namespace Prisma {
     session_id?: boolean
     upload_path?: boolean
     patient_notes?: boolean
+    is_approved?: boolean
     upload_time?: boolean
     patient_info?: boolean | patient_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["patient_uploads"]>
@@ -4427,6 +4436,7 @@ export namespace Prisma {
     session_id?: boolean
     upload_path?: boolean
     patient_notes?: boolean
+    is_approved?: boolean
     upload_time?: boolean
     patient_info?: boolean | patient_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["patient_uploads"]>
@@ -4436,10 +4446,11 @@ export namespace Prisma {
     session_id?: boolean
     upload_path?: boolean
     patient_notes?: boolean
+    is_approved?: boolean
     upload_time?: boolean
   }
 
-  export type patient_uploadsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"patient_id" | "session_id" | "upload_path" | "patient_notes" | "upload_time", ExtArgs["result"]["patient_uploads"]>
+  export type patient_uploadsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"patient_id" | "session_id" | "upload_path" | "patient_notes" | "is_approved" | "upload_time", ExtArgs["result"]["patient_uploads"]>
   export type patient_uploadsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     patient_info?: boolean | patient_infoDefaultArgs<ExtArgs>
   }
@@ -4460,6 +4471,7 @@ export namespace Prisma {
       session_id: number
       upload_path: string
       patient_notes: string
+      is_approved: boolean
       upload_time: Date
     }, ExtArgs["result"]["patient_uploads"]>
     composites: {}
@@ -4889,6 +4901,7 @@ export namespace Prisma {
     readonly session_id: FieldRef<"patient_uploads", 'Int'>
     readonly upload_path: FieldRef<"patient_uploads", 'String'>
     readonly patient_notes: FieldRef<"patient_uploads", 'String'>
+    readonly is_approved: FieldRef<"patient_uploads", 'Boolean'>
     readonly upload_time: FieldRef<"patient_uploads", 'DateTime'>
   }
     
@@ -12221,6 +12234,7 @@ export namespace Prisma {
     session_id: 'session_id',
     upload_path: 'upload_path',
     patient_notes: 'patient_notes',
+    is_approved: 'is_approved',
     upload_time: 'upload_time'
   };
 
@@ -12535,6 +12549,7 @@ export namespace Prisma {
     session_id?: IntFilter<"patient_uploads"> | number
     upload_path?: StringFilter<"patient_uploads"> | string
     patient_notes?: StringFilter<"patient_uploads"> | string
+    is_approved?: BoolFilter<"patient_uploads"> | boolean
     upload_time?: DateTimeFilter<"patient_uploads"> | Date | string
     patient_info?: XOR<Patient_infoScalarRelationFilter, patient_infoWhereInput>
   }
@@ -12544,6 +12559,7 @@ export namespace Prisma {
     session_id?: SortOrder
     upload_path?: SortOrder
     patient_notes?: SortOrder
+    is_approved?: SortOrder
     upload_time?: SortOrder
     patient_info?: patient_infoOrderByWithRelationInput
   }
@@ -12557,6 +12573,7 @@ export namespace Prisma {
     session_id?: IntFilter<"patient_uploads"> | number
     upload_path?: StringFilter<"patient_uploads"> | string
     patient_notes?: StringFilter<"patient_uploads"> | string
+    is_approved?: BoolFilter<"patient_uploads"> | boolean
     upload_time?: DateTimeFilter<"patient_uploads"> | Date | string
     patient_info?: XOR<Patient_infoScalarRelationFilter, patient_infoWhereInput>
   }, "patient_id_session_id">
@@ -12566,6 +12583,7 @@ export namespace Prisma {
     session_id?: SortOrder
     upload_path?: SortOrder
     patient_notes?: SortOrder
+    is_approved?: SortOrder
     upload_time?: SortOrder
     _count?: patient_uploadsCountOrderByAggregateInput
     _avg?: patient_uploadsAvgOrderByAggregateInput
@@ -12582,6 +12600,7 @@ export namespace Prisma {
     session_id?: IntWithAggregatesFilter<"patient_uploads"> | number
     upload_path?: StringWithAggregatesFilter<"patient_uploads"> | string
     patient_notes?: StringWithAggregatesFilter<"patient_uploads"> | string
+    is_approved?: BoolWithAggregatesFilter<"patient_uploads"> | boolean
     upload_time?: DateTimeWithAggregatesFilter<"patient_uploads"> | Date | string
   }
 
@@ -13120,6 +13139,7 @@ export namespace Prisma {
     session_id: number
     upload_path: string
     patient_notes: string
+    is_approved?: boolean
     upload_time: Date | string
     patient_info: patient_infoCreateNestedOneWithoutPatient_uploadsInput
   }
@@ -13129,6 +13149,7 @@ export namespace Prisma {
     session_id: number
     upload_path: string
     patient_notes: string
+    is_approved?: boolean
     upload_time: Date | string
   }
 
@@ -13136,6 +13157,7 @@ export namespace Prisma {
     session_id?: IntFieldUpdateOperationsInput | number
     upload_path?: StringFieldUpdateOperationsInput | string
     patient_notes?: StringFieldUpdateOperationsInput | string
+    is_approved?: BoolFieldUpdateOperationsInput | boolean
     upload_time?: DateTimeFieldUpdateOperationsInput | Date | string
     patient_info?: patient_infoUpdateOneRequiredWithoutPatient_uploadsNestedInput
   }
@@ -13145,6 +13167,7 @@ export namespace Prisma {
     session_id?: IntFieldUpdateOperationsInput | number
     upload_path?: StringFieldUpdateOperationsInput | string
     patient_notes?: StringFieldUpdateOperationsInput | string
+    is_approved?: BoolFieldUpdateOperationsInput | boolean
     upload_time?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -13153,6 +13176,7 @@ export namespace Prisma {
     session_id: number
     upload_path: string
     patient_notes: string
+    is_approved?: boolean
     upload_time: Date | string
   }
 
@@ -13160,6 +13184,7 @@ export namespace Prisma {
     session_id?: IntFieldUpdateOperationsInput | number
     upload_path?: StringFieldUpdateOperationsInput | string
     patient_notes?: StringFieldUpdateOperationsInput | string
+    is_approved?: BoolFieldUpdateOperationsInput | boolean
     upload_time?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -13168,6 +13193,7 @@ export namespace Prisma {
     session_id?: IntFieldUpdateOperationsInput | number
     upload_path?: StringFieldUpdateOperationsInput | string
     patient_notes?: StringFieldUpdateOperationsInput | string
+    is_approved?: BoolFieldUpdateOperationsInput | boolean
     upload_time?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -13849,6 +13875,7 @@ export namespace Prisma {
     session_id?: SortOrder
     upload_path?: SortOrder
     patient_notes?: SortOrder
+    is_approved?: SortOrder
     upload_time?: SortOrder
   }
 
@@ -13862,6 +13889,7 @@ export namespace Prisma {
     session_id?: SortOrder
     upload_path?: SortOrder
     patient_notes?: SortOrder
+    is_approved?: SortOrder
     upload_time?: SortOrder
   }
 
@@ -13870,6 +13898,7 @@ export namespace Prisma {
     session_id?: SortOrder
     upload_path?: SortOrder
     patient_notes?: SortOrder
+    is_approved?: SortOrder
     upload_time?: SortOrder
   }
 
@@ -15488,6 +15517,7 @@ export namespace Prisma {
     session_id: number
     upload_path: string
     patient_notes: string
+    is_approved?: boolean
     upload_time: Date | string
   }
 
@@ -15495,6 +15525,7 @@ export namespace Prisma {
     session_id: number
     upload_path: string
     patient_notes: string
+    is_approved?: boolean
     upload_time: Date | string
   }
 
@@ -15619,6 +15650,7 @@ export namespace Prisma {
     session_id?: IntFilter<"patient_uploads"> | number
     upload_path?: StringFilter<"patient_uploads"> | string
     patient_notes?: StringFilter<"patient_uploads"> | string
+    is_approved?: BoolFilter<"patient_uploads"> | boolean
     upload_time?: DateTimeFilter<"patient_uploads"> | Date | string
   }
 
@@ -16716,6 +16748,7 @@ export namespace Prisma {
     session_id: number
     upload_path: string
     patient_notes: string
+    is_approved?: boolean
     upload_time: Date | string
   }
 
@@ -16759,6 +16792,7 @@ export namespace Prisma {
     session_id?: IntFieldUpdateOperationsInput | number
     upload_path?: StringFieldUpdateOperationsInput | string
     patient_notes?: StringFieldUpdateOperationsInput | string
+    is_approved?: BoolFieldUpdateOperationsInput | boolean
     upload_time?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -16766,6 +16800,7 @@ export namespace Prisma {
     session_id?: IntFieldUpdateOperationsInput | number
     upload_path?: StringFieldUpdateOperationsInput | string
     patient_notes?: StringFieldUpdateOperationsInput | string
+    is_approved?: BoolFieldUpdateOperationsInput | boolean
     upload_time?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -16773,6 +16808,7 @@ export namespace Prisma {
     session_id?: IntFieldUpdateOperationsInput | number
     upload_path?: StringFieldUpdateOperationsInput | string
     patient_notes?: StringFieldUpdateOperationsInput | string
+    is_approved?: BoolFieldUpdateOperationsInput | boolean
     upload_time?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

@@ -39,6 +39,7 @@ model patient_uploads {
   session_id    Int
   upload_path   String
   patient_notes String
+  is_approved   Boolean @default(false)
   upload_time   DateTime     @db.Time(6)
   patient_info  patient_info @relation(fields: [patient_id], references: [patient_id], onDelete: NoAction, onUpdate: NoAction)
 
@@ -87,7 +88,6 @@ model room_register {
   medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
   patient_info       patient_info       @relation(fields: [patient_id], references: [patient_id], onDelete: NoAction, onUpdate: NoAction)
   room_info          room_info          @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction)
-
   @@id([room_id, patient_id, session_id])
 }
 

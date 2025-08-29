@@ -1,0 +1,282 @@
+Project Handoff Document: Transcription Notes Dashboard
+
+Project Overview:
+This project is a web-based dashboard for managing transcription notes (primarily for nurses/staff). It provides a live table of 
+transcriptions, allows audio playback, editing, approval, and maintains an archived notes section. 
+The system integrates real-time updates via Socket.io and manages audio preloading for a smooth experience.
+
+1. Current Features
+
+1.1 Live Notes Table
+- Displays transcription entries in a table format.
+- Columns: #, Date, Time, Patient Note, Actions.
+- Supports:
+  - Audio playback for each row (play/pause with loading indicator).
+  - Inline editing of notes (Patient Note column) via textarea.
+  - Deletion of entries.
+  - Highlighting new entries in red text briefly when received via socket.
+
+1.2 Approval Workflow
+- Newly added entries can be approved via a green check button.
+- Intended behavior: approved entries move from Live Notes to Archived Notes tab.
+
+1.3 Archived Notes
+- Intended to display all approved entries.
+- Currently: tab exists but content is empty (component not implemented yet).
+
+1.4 Real-Time Updates
+- Uses Socket.io to receive new transcriptions live.
+- New entries are added to the live table automatically.
+- Socket connection status is displayed (connected/disconnected/receiving).
+
+1.5 Audio Preloading
+- Preloads the first few audio files for smooth playback.
+- Caches audio elements and object URLs for efficiency.
+
+2. Current Implementations
+
+- Tech Stack:
+  - Frontend: React/Next.js, TypeScript
+  - Components: Card, Table, Badge (custom UI library)
+  - Audio: HTMLAudioElement preloading
+  - Real-time: Socket.io
+  - Backend: Python (db.py, functions.py, remote.py)
+- Key Components:
+  - DataTable.tsx: main table component (~700 lines)
+  - AudioPlayerButton: handles play/pause/loading
+  - EditableCell: inline editing of notes
+  - TableStatusBar: shows loading/error messages
+
+- State Management:
+  - data: array of live transcription notes
+  - archivedData: (not implemented yet) should store approved notes
+  - playingIndex, loadingIndex: audio state
+  - editingRowId, editingValue: editing state
+  - bedFilter, selectedRoom: filtering options
+  - isReceiving, isConnected: socket status
+
+3. Current Bugs / Issues
+
+2. Archived Notes Tab
+   - Clicking the tab shows no content.
+   - The component for archived notes hasn’t been implemented.
+
+3. Approve Button
+   - Initially had TypeScript issues with IDs (resolved using string coercion).
+   - Needs to move entries to archived notes after approval.
+
+4. Restore Functionality
+   - No current system for restoring approved notes back to live table if mistakes occur.
+
+5. Code Organization
+   - DataTable.tsx is ~700 lines; hard to maintain.
+   - Components like AudioPlayerButton, EditableCell, and status bar could be extracted.
+
+4. Possible Solutions / Recommendations
+
+4.1 Approval Workflow
+  - isApproved = false → red text
+  - isApproved = true → default text color
+- Clicking Approve sets isApproved = true and moves the entry to archived notes.
+
+4.2 Archived Notes Tab Implementation
+- Create a new state: archivedData: RowData[].
+- Render the same table component but with:
+  - Approve button hidden.
+  - Delete and Restore buttons visible.
+- Implement handleRestore to move notes back to live table if needed.
+
+4.3 Component Refactoring
+- Extract smaller components from DataTable.tsx:
+  - AudioPlayerButton
+  - EditableCell
+  - TableStatusBar
+  - ActionButtons (Approve/Delete/Restore)
+- Benefits:
+  - Easier maintenance
+  - Reusable for both live and archived notes tables
+  - Improves readability and testing
+
+4.4 Real-Time Updates
+- Keep Socket.io connection.
+- Ensure new entries also respect the isApproved flag logic.
+- Consider adding a queue for unapproved entries to highlight until user approves.
+
+5. Recommended Workflow
+1. Live Notes Table
+   - New entry received → red text
+   - User edits note if needed
+   - User clicks Approve → row moves to Archived Notes
+2. Archived Notes Table
+   - Approved notes listed
+   - Actions:
+     - Delete: remove permanently
+     - Restore: move back to live notes if mistake occurs (permissions required)
+3. Audio
+   - Plays directly from table row
+   - Preloaded for smooth playback
+
+6. Notes for Developer Handoff
+- Data Flow:
+  - data → live table
+  - archivedData → archived table (to be implemented)
+- Socket.io Events:
+  - new_transcription → adds new row to live table
+  - connect/disconnect → sets isConnected
+- Backend API Endpoints:
+  - /api/transcriptions → fetch all
+  - /api/transcriptions/:id → PATCH (edit), DELETE
+  - /api/transcriptions/:id/approve → PATCH (approve)
+  - /api/staff/transcriptions-by-room?room=ROOM_NAME → fetch by room
+
+- Permissions:
+  - Approve/Restore/Delete may be role-specific
+  - Consider adding role checks if restoring archived notes
+
+
+
+File Organization Tree
+.
+├── app
+│   ├── (Admin)
+│   │   └── dashboard
+│   │       └── AdminDashboard.tsx
+│   ├── (Staff)
+│   │   └── dashboard
+│   │       └── StaffDashboard.tsx
+│   ├── api
+│   │   ├── center
+│   │   │   ├── logout
+│   │   │   │   └── route.ts
+│   │   │   └── signIn
+│   │   │       └── route.ts
+│   │   └── staff
+│   │       ├── assigned-beds
+│   │       │   └── route.ts
+│   │       ├── assigned-rooms
+│   │       │   └── route.ts
+│   │       ├── logout
+│   │       │   └── route.ts
+│   │       ├── RoomMngr
+│   │       │   ├── assign-bed
+│   │       │   │   └── route.ts
+│   │       │   ├── bed-info
+│   │       │   │   └── [bedId]
+│   │       │   ├── discharge-bed
+│   │       │   │   └── route.ts
+│   │       │   ├── nurses
+│   │       │   │   └── route.ts
+│   │       │   └── rooms
+│   │       │       └── route.ts
+│   │       ├── transcriptions
+│   │       │   └── route.ts
+│   │       └── transcriptions-by-room
+│   │           └── route.ts
+│   ├── dashboard
+│   │   └── page.tsx
+│   ├── favicon.ico
+│   ├── globals.css
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── Room
+│   │   └── dashboard
+│   │       └── layout.tsx
+│   ├── sign-in
+│   │   └── page.tsx
+│   └── Staff
+│       ├── dashboard
+│       │   └── page.tsx
+│       └── sign-in
+│           └── page.tsx
+├── Charting-Device
+│   ├── __pycache__
+│   │   ├── functions.cpython-310.pyc
+│   │   └── remote.cpython-39.pyc
+│   ├── functions.py
+│   ├── remote.py
+│   ├── static
+│   │   ├── login_form.css
+│   │   ├── remote.css
+│   │   └── remote.js
+│   ├── templates
+│   │   ├── login_form.html
+│   │   └── remote.html
+│   ├── test.ipynb
+│   └── uploads
+│       ├── 3438
+│       │   {* lots of room.recording_xx.webm and .wav files*}
+│       ├── 3461
+│       │   ├{* lots of room.recording_xx.webm and .wav files*}
+│       ├── room_aud
+│       │   ├── nothing.txt
+│       │   {* lots of room.recording_xx.webm files*}
+│       └── Unassigned
+│           ├── nothing.txt
+│           {* lots of room.recording_xx.webm files*}
+│           └── room.recording_2.webm
+├── components
+│   ├── Admin
+│   │   └── Dashboard
+│   │       ├── Home
+│   │       │   ├── AssignBedPopup.tsx
+│   │       │   └── RoomList.tsx
+│   │       └── MainPanel.tsx
+│   ├── Center
+│   │   └── SelectOrganizationForm.tsx
+│   ├── context
+│   │   └── socket.tsx
+│   ├── Dashboard
+│   │   ├── DataTable.tsx
+│   │   └── RoomPanel.tsx
+│   ├── DataTable.tsx
+│   ├── ErrorBoundary.tsx
+│   ├── InactivityTracker.tsx
+│   ├── LogoutConfirmationModal.tsx
+│   ├── Staff
+│   │   └── Dashboard
+│   │       └── MainPanel.tsx
+│   └── ui
+│       ├── badge.tsx
+│       ├── button.tsx
+│       ├── card.tsx
+│       ├── checkbox.tsx
+│       ├── dialog.tsx
+│       ├── input.tsx
+│       ├── table.tsx
+│       ├── tabs.tsx
+│       └── tooltip.tsx
+├── components.json
+├── eslint.config.mjs
+├── fileOrganizationTree.txt
+├── lib
+│   ├── api.ts
+│   ├── constants.ts
+│   ├── generated
+│   │   └── prisma
+│   │       ├── client.d.ts
+            {*lots of other client files*}
+│   │       ├── package.json
+│   │       ├── query_engine-windows.dll.node
+            {*lots of query_engine-windows.dll.node.tmp files*}
+│   │       ├── runtime
+│   │       │   ├── {*lots of runtime files*}
+│   │       ├── schema.prisma
+│   │       ├── wasm.d.ts
+│   │       └── wasm.js
+│   ├── prisma.ts
+│   └── utils.ts
+├── medicalcentersdb.sql
+├── middleware.ts
+├── MobileCharterDocumentation.txt
+├── next-env.d.ts
+├── next.config.ts
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── postcss.config.mjs
+├── prisma
+│   ├── migrations
+│   │   ├── 20250710033553_init
+│   │   │   └── migration.sql
+│   │   └── migration_lock.toml
+│   └── schema.prisma

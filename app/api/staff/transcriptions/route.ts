@@ -1,3 +1,4 @@
+//app/api/staff/transcriptions/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 

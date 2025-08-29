@@ -1,12 +1,13 @@
-// components/Datable.tsx
+// components/DataTable.tsx
 "use client"
 
 import { useEffect, useState, useRef, useMemo, useCallback } from "react"
 import io from "socket.io-client"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { Play, Pause, Loader2, Trash, Edit, Wifi, WifiOff, Mic, Check } from "lucide-react"
+import { Play, Pause, Loader2, Trash, Edit, Wifi, WifiOff, Check, RotateCcw, Mic } from "lucide-react"
 import { getCookie } from "@/utils/getCookie"
 
 interface RowData {
@@ -16,23 +17,24 @@ interface RowData {
   column2: string
   column3: string
   column4: string
-  id?: string | number
+  id?: string
   isNew?: boolean
   isApproved?: boolean
-
+  patient_id?: number
+  session_id?: number
 }
 
 interface DataTableProps {
-  selectedRoom?: string | null;
-  initialData?: RowData[];
+  selectedRoom?: string | null
+  initialData?: RowData[]
 }
 
-const AudioPlayerButton = ({ 
-  url, 
-  index, 
-  playingIndex, 
+const AudioPlayerButton = ({
+  url,
+  index,
+  playingIndex,
   loadingIndex,
-  onClick 
+  onClick
 }: {
   url: string
   index: number
@@ -40,7 +42,7 @@ const AudioPlayerButton = ({
   loadingIndex: number | null
   onClick: () => void
 }) => (
-  <button 
+  <button
     onClick={onClick}
     aria-label={playingIndex === index ? "Pause audio" : "Play audio"}
     disabled={loadingIndex === index}
@@ -79,13 +81,13 @@ const EditableCell = ({
           autoFocus
         />
         <div className="flex space-x-2">
-          <button 
+          <button
             onClick={onSave}
             className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Save
           </button>
-          <button 
+          <button
             onClick={onCancel}
             className="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
           >
@@ -116,8 +118,8 @@ const TableStatusBar = ({ loading, error }: { loading: boolean; error: string | 
 )
 
 export default function DataTable({ selectedRoom, initialData }: DataTableProps) {
-  // State management
   const [data, setData] = useState<RowData[]>([])
+  const [archivedData, setArchivedData] = useState<RowData[]>([])
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const [playingIndex, setPlayingIndex] = useState<number | null>(null)
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null)
@@ -128,10 +130,8 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
   const [editingRowId, setEditingRowId] = useState<string | null>(null)
   const [editingValue, setEditingValue] = useState<string>("")
   const [bedFilter, setBedFilter] = useState<string>('ALL')
-  const [archivedData, setArchivedData] = useState<RowData[]>([])
+  const [activeTab, setActiveTab] = useState<string>("live")
 
-
-  // Refs
   const tableEndRef = useRef<HTMLDivElement>(null)
   const socketRef = useRef<any>(null)
   const staffIdRef = useRef<string>("")
@@ -143,42 +143,47 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
   const prefetchPromisesRef = useRef<Map<string, Promise<void>>>(new Map())
   const currentAudioRef = useRef<HTMLAudioElement | null>(null)
 
-  // Initial data setup
   useEffect(() => {
     const staffId = getCookie("staff_Id") || ""
     staffIdRef.current = staffId
 
     if (initialData && initialData.length > 0) {
       const key = selectedRoom ? `room:${selectedRoom}` : 'all'
-      const normalized: RowData[] = initialData.map((item, idx) => ({
+      
+      // Separate approved and non-approved items
+      const approved = initialData.filter(item => item.isApproved === true)
+      const live = initialData.filter(item => item.isApproved !== true)
+      
+      const normalizedLive: RowData[] = live.map((item, idx) => ({
         ...item,
         index: idx + 1,
+        id: `${item.patient_id}_${item.session_id}`,
         isNew: false,
       }))
-      cacheRef.current[key] = normalized
-      setData(normalized)
+      
+      const normalizedArchived: RowData[] = approved.map((item, idx) => ({
+        ...item,
+        index: idx + 1,
+        id: `${item.patient_id}_${item.session_id}`,
+        isNew: false,
+      }))
+      
+      cacheRef.current[key] = normalizedLive
+      setData(normalizedLive)
+      setArchivedData(normalizedArchived)
       setLoading(false)
-      preloadForDataset(normalized)
+      preloadForDataset(normalizedLive)
     }
   }, [initialData, selectedRoom])
 
-
-  // Room change effect
   useEffect(() => {
     selectedRoomRef.current = selectedRoom
     loadTranscriptions(selectedRoom || undefined)
   }, [selectedRoom])
 
-  // Audio playback handler
   const handlePlay = useCallback((url: string, index: number) => {
-    // Clean up previous audio
     if (currentAudioRef.current) {
-      try {
-        currentAudioRef.current.pause()
-        currentAudioRef.current.currentTime = 0
-      } catch {}
-      
-      // Toggle off if clicking same row
+      try { currentAudioRef.current.pause(); currentAudioRef.current.currentTime = 0 } catch {}
       if (playingIndex === index) {
         setPlayingIndex(null)
         setAudio(null)
@@ -219,7 +224,6 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
     }
   }, [playingIndex])
 
-  // Data preloading
   const preloadForDataset = useCallback((rows: RowData[]) => {
     const PREFETCH_COUNT = 3
     const MAX_CACHE = 10
@@ -228,8 +232,6 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
 
     targets.forEach(row => {
       const fullUrl = `http://localhost:5001${row.audioUrl}`
-      
-      // Prefetch audio blob if not already cached
       if (!preloadedObjectUrlRef.current.has(fullUrl) && !prefetchPromisesRef.current.has(fullUrl)) {
         const promise = fetch(fullUrl)
           .then(async res => {
@@ -237,8 +239,6 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
             const blob = await res.blob()
             const objUrl = URL.createObjectURL(blob)
             preloadedObjectUrlRef.current.set(fullUrl, objUrl)
-            
-            // Clean up oldest if cache is full
             if (preloadedObjectUrlRef.current.size > 12) {
               const firstKey = preloadedObjectUrlRef.current.keys().next().value
               const oldUrl = preloadedObjectUrlRef.current.get(firstKey)
@@ -252,13 +252,10 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
         prefetchPromisesRef.current.set(fullUrl, promise)
       }
 
-      // Preload audio element if not already cached
       if (!map.has(fullUrl)) {
         const el = new Audio(fullUrl)
         el.preload = 'auto'
         map.set(fullUrl, el)
-        
-        // Clean up oldest if cache is full
         if (map.size > MAX_CACHE) {
           const firstKey = map.keys().next().value
           const old = map.get(firstKey)
@@ -269,13 +266,10 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
     })
   }, [])
 
-  // Data loading function
   const loadTranscriptions = async (roomFilter?: string) => {
     try {
       const cacheKey = roomFilter ? `room:${roomFilter}` : 'all'
       const cached = cacheRef.current[cacheKey]
-      
-      // Use cached data if available
       if (cached && cached.length > 0) {
         setData(cached)
         setLoading(false)
@@ -285,12 +279,7 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
 
       setLoading(true)
       setError(null)
-
-      // Abort previous request if exists
-      if (fetchControllerRef.current) {
-        fetchControllerRef.current.abort()
-      }
-
+      if (fetchControllerRef.current) fetchControllerRef.current.abort()
       const controller = new AbortController()
       fetchControllerRef.current = controller
 
@@ -302,25 +291,35 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
       
       const json = await response.json()
-      const existingIds = new Set((cacheRef.current[cacheKey] || []).map(item => String(item.id)))
+      
+      // Separate approved and non-approved items
+      const approved = json.filter((item: any) => item.is_approved === true)
+      const live = json.filter((item: any) => item.is_approved !== true)
 
-      const processedData = json
-        .filter((item: any) => !existingIds.has(String(item.id || item.audioUrl)))
-        .map((item: any, idx: number) => ({
-          ...item,
-          id: item.id || `transcription_${Date.now()}_${Math.random().toString(36).substr(2, 9)}_${idx}`,
-          isNew: false,
-          index: idx + 1,
-        }))
+      const processedLive = live.map((item: any, idx: number) => ({
+        ...item,
+        id: `${item.patient_id}_${item.session_id}`,
+        isNew: false,
+        isApproved: false,
+        index: idx + 1,
+      }))
 
-      cacheRef.current[cacheKey] = processedData
-      setData(processedData)
-      preloadForDataset(processedData)
+      const processedArchived = approved.map((item: any, idx: number) => ({
+        ...item,
+        id: `${item.patient_id}_${item.session_id}`,
+        isNew: false,
+        isApproved: true,
+        index: idx + 1,
+      }))
+
+      cacheRef.current[cacheKey] = processedLive
+      setData(processedLive)
+      setArchivedData(processedArchived)
+      preloadForDataset(processedLive)
       setIsConnected(true)
       setLoading(false)
     } catch (err: any) {
       if (err?.name === 'AbortError') return
-      
       console.error('Failed to load data:', err)
       setError('Failed to load transcriptions. Please try again.')
       setIsConnected(false)
@@ -329,19 +328,13 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
     }
   }
 
-  // Socket connection management
   useEffect(() => {
-    const socket = io("http://localhost:5001", { 
-      transports: ['polling'], 
-      timeout: 60000 
-    })
+    const socket = io("http://localhost:5001", { transports: ['polling'], timeout: 60000 })
     socketRef.current = socket
 
     const handleConnect = () => {
       setIsConnected(true)
-      if (staffIdRef.current) {
-        socket.emit('join_staff_room', { user_id: staffIdRef.current })
-      }
+      if (staffIdRef.current) socket.emit('join_staff_room', { user_id: staffIdRef.current })
     }
 
     const handleNewTranscription = (payload: any) => {
@@ -358,7 +351,10 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
       }
 
       setTimeout(() => {
-        const uniqueId = payload.id || `new_transcription_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        const uniqueId = payload.patient_id && payload.session_id
+          ? `${payload.patient_id}_${payload.session_id}`
+          : `new_transcription_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+
         const newRow: RowData = {
           index: 0,
           audioUrl: payload.audioUrl || "—",
@@ -368,25 +364,18 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
           column4: payload.column4 || "—",
           id: uniqueId,
           isNew: true,
+          isApproved: false,
         }
 
         setData(prev => {
-          if (prev.some(item => item.id === uniqueId || item.audioUrl === newRow.audioUrl)) {
-            return prev
-          }
+          if (prev.some(item => item.id === uniqueId || item.audioUrl === newRow.audioUrl)) return prev
           return [...prev, { ...newRow, index: prev.length + 1 }]
         })
 
         setIsReceiving(false)
-
+        setTimeout(() => tableEndRef.current?.scrollIntoView({ behavior: "smooth" }), 100)
         setTimeout(() => {
-          tableEndRef.current?.scrollIntoView({ behavior: "smooth" })
-        }, 100)
-
-        setTimeout(() => {
-          setData(prev => prev.map(item => 
-            item.id === uniqueId ? { ...item, isNew: false } : item
-          ))
+          setData(prev => prev.map(item => item.id === uniqueId ? { ...item, isNew: false } : item))
         }, 3000)
       }, 800)
     }
@@ -405,53 +394,36 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
     }
   }, [])
 
-  // Cleanup effect
   useEffect(() => {
     return () => {
-      // Clean up fetch requests
-      if (fetchControllerRef.current) {
-        fetchControllerRef.current.abort()
-      }
-
-      // Clean up audio objects
-      preloadedAudioRef.current.forEach(audio => {
-        try {
-          audio.pause()
-          audio.src = ''
-        } catch {}
-      })
+      if (fetchControllerRef.current) fetchControllerRef.current.abort()
+      preloadedAudioRef.current.forEach(audio => { try { audio.pause(); audio.src='' } catch{} })
       preloadedAudioRef.current.clear()
-
-      // Clean up object URLs
-      preloadedObjectUrlRef.current.forEach(url => {
-        try {
-          URL.revokeObjectURL(url)
-        } catch {}
-      })
+      preloadedObjectUrlRef.current.forEach(url => { try { URL.revokeObjectURL(url) } catch{} })
       preloadedObjectUrlRef.current.clear()
     }
   }, [])
 
-  // Processed data with filtering
   const processedData = useMemo(() => {
-    const base = data
+    const base = activeTab === "live" ? data : archivedData
     const filtered = selectedRoom && bedFilter !== 'ALL'
       ? base.filter(row => row.column1?.split(' ')[1] === bedFilter)
       : base
     return filtered.map((row, index) => ({ ...row, index: index + 1 }))
-  }, [data, bedFilter, selectedRoom])
+  }, [data, archivedData, bedFilter, selectedRoom, activeTab])
 
-  // Action handlers
   const handleDelete = async (row: RowData) => {
     if (!confirm("Are you sure you want to delete this transcription?")) return
-    
     try {
       if (!row.id?.toString().startsWith("new_transcription")) {
-        await fetch(`/api/transcriptions/${row.id}`, { 
-          method: "DELETE" 
-        })
+        const [patientId, sessionId] = row.id.split('_')
+        await fetch(`/api/staff/transcriptions/${patientId}/${sessionId}`, { method: "DELETE" })
       }
-      setData(prev => prev.filter(r => r.id !== row.id))
+      if (activeTab === "live") {
+        setData(prev => prev.filter(r => r.id !== row.id))
+      } else {
+        setArchivedData(prev => prev.filter(r => r.id !== row.id))
+      }
     } catch (err) {
       console.error("Failed to delete:", err)
       setError("Failed to delete transcription")
@@ -461,19 +433,13 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
 
   const handleSaveEdit = async (rowId: string) => {
     try {
-      if (!rowId.toString().startsWith("new_transcription")) {
-        await fetch(`/api/transcriptions/${rowId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ column4: editingValue }),
-        })
-      }
-      
-      setData(prev =>
-        prev.map(r =>
-          r.id === rowId ? { ...r, column4: editingValue } : r
-        )
-      )
+      const [patientId, sessionId] = rowId.split('_')
+      await fetch(`/api/staff/transcriptions/${patientId}/${sessionId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ column4: editingValue }),
+      })
+      setData(prev => prev.map(r => r.id === rowId ? { ...r, column4: editingValue } : r))
       setEditingRowId(null)
       setEditingValue("")
     } catch (err) {
@@ -482,23 +448,44 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
       setTimeout(() => setError(null), 3000)
     }
   }
+
   const handleApprove = async (rowId: string) => {
-    const row = data.find(r => r.id === rowId);
-    if (!row) return;
-  
+    const row = data.find(r => r.id === rowId)
+    if (!row) return
     try {
-      await fetch(`/api/transcriptions/${rowId}/approve`, { method: 'PATCH' });
-      
-      // Move to archive
-      setData(prev => prev.filter(r => r.id !== rowId));
-      setArchivedData(prev => [...prev, { ...row, isApproved: true }]);
+      const [patientId, sessionId] = rowId.split('_')
+      await fetch(`/api/staff/transcriptions/${patientId}/${sessionId}/approve`, { 
+        method: 'PATCH',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_approved: true })
+      })
+      setData(prev => prev.filter(r => r.id !== rowId))
+      setArchivedData(prev => [...prev, { ...row, isApproved: true }])
     } catch (err) {
-      console.error(err);
-      setError("Failed to approve");
-      setTimeout(() => setError(null), 3000);
+      console.error(err)
+      setError("Failed to approve")
+      setTimeout(() => setError(null), 3000)
     }
-  };
-  
+  }
+
+  const handleRestore = async (rowId: string) => {
+    const row = archivedData.find(r => r.id === rowId)
+    if (!row) return
+    try {
+      const [patientId, sessionId] = rowId.split('_')
+      await fetch(`/api/staff/transcriptions/${patientId}/${sessionId}/restore`, { 
+        method: 'PATCH',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_approved: false })
+      })
+      setArchivedData(prev => prev.filter(r => r.id !== rowId))
+      setData(prev => [...prev, { ...row, isApproved: false }])
+    } catch (err) {
+      console.error(err)
+      setError("Failed to restore")
+      setTimeout(() => setError(null), 3000)
+    }
+  }
 
   return (
     <div className="p-6">
@@ -507,178 +494,181 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
           <CardTitle className="flex items-center justify-between">
             <span>Transcriptions</span>
             <div className="flex items-center space-x-2">
+              {isReceiving && (
+                <Badge variant="outline" className="text-blue-600 border-blue-300">
+                  <Mic className="mr-1 h-4 w-4 animate-pulse" /> Receiving
+                </Badge>
+              )}
               {isConnected ? (
                 <Badge variant="outline" className="text-green-600 border-green-300">
-                  <Wifi className="w-4 h-4 mr-1" /> Connected
+                  <Wifi className="mr-1 h-4 w-4" /> Connected
                 </Badge>
               ) : (
                 <Badge variant="outline" className="text-red-600 border-red-300">
-                  <WifiOff className="w-4 h-4 mr-1" /> Disconnected
-                </Badge>
-              )}
-              {isReceiving && (
-                <Badge variant="outline" className="animate-pulse">
-                  <Mic className="w-4 h-4 mr-1" /> Receiving
+                  <WifiOff className="mr-1 h-4 w-4" /> Offline
                 </Badge>
               )}
             </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <TableStatusBar loading={loading} error={error} />
-
-          <div className="overflow-y-auto max-h-[calc(100vh-200px)] border rounded-md">
-            <Table>
-              <colgroup>
-                <col style={{ width: '5%' }} />
-                <col style={{ width: '15%' }} />
-                <col style={{ width: '15%' }} />
-                <col style={{ width: '55%' }} />
-                <col style={{ width: '10%' }} />
-              </colgroup>
-              <TableHeader className="sticky top-0 bg-white z-10">
-                <TableRow className="bg-gray-50">
-                  <TableHead>#</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Time</TableHead>
-                  <TableHead>Patient Note</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {processedData.length === 0 && !loading ? (
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="live">
+                Live Notes {data.length > 0 && `(${data.length})`}
+              </TabsTrigger>
+              <TabsTrigger value="archived">
+                Archived Notes {archivedData.length > 0 && `(${archivedData.length})`}
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="live">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center text-gray-500 py-8">
-                      No transcriptions found
-                    </TableCell>
+                    <TableHead className="w-[50px]">#</TableHead>
+                    <TableHead className="w-[80px]">Audio</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Time</TableHead>
+                    <TableHead>Patient Info</TableHead>
+                    <TableHead>Patient Note</TableHead>
+                    <TableHead className="w-[120px]">Actions</TableHead>
                   </TableRow>
-                ) : (
-                  processedData.map((row, i) => {
-                    const rowKey = row.id || `row_${i}_${row.column2}_${row.column3}`
-                    const isEditing = editingRowId === row.id?.toString()
-
-                    return (
-                      <TableRow
-                        key={rowKey}
-                        className={row.isNew ? "bg-emerald-50 border-l-4 border-l-emerald-400" : ""}
-                      >
+                </TableHeader>
+                <TableBody>
+                  {processedData.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center text-gray-500 py-8">
+                        No live transcriptions available
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    processedData.map((row, idx) => (
+                      <TableRow key={row.id} className={row.isNew ? "text-red-600" : ""}>
                         <TableCell>{row.index}</TableCell>
-                        <TableCell>{row.column2}</TableCell>
-                        <TableCell>{row.column3}</TableCell>
-                        <TableCell className={!row.isApproved ? "text-red-500 font-medium" : ""}>
-                          <EditableCell
-                            value={isEditing ? editingValue : row.column4}
-                            isEditing={isEditing}
-                            onChange={setEditingValue}
-                            onSave={() => handleSaveEdit(row.id!.toString())}
-                            onCancel={() => {
-                              setEditingRowId(null)
-                              setEditingValue("")
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell className="flex space-x-2">
+                        <TableCell>
                           <AudioPlayerButton
                             url={row.audioUrl}
-                            index={i}
+                            index={idx}
                             playingIndex={playingIndex}
                             loadingIndex={loadingIndex}
-                            onClick={() => handlePlay(row.audioUrl, i)}
+                            onClick={() => handlePlay(row.audioUrl, idx)}
                           />
-
-                          {!isEditing && (
-                            <button
-                              onClick={() => {
-                                setEditingRowId(row.id?.toString() || null)
-                                setEditingValue(row.column4)
-                              }}
-                              className="p-1 rounded hover:bg-gray-100"
-                              title="Edit"
-                            >
-                              <Edit className="w-4 h-4 text-blue-600" />
-                            </button>
-                          )}
-
-                          {!row.isApproved && (
-                            <button
-                              onClick={() => handleApprove(row.id?.toString() || '')}
-                              className="p-1 rounded hover:bg-gray-100"
+                        </TableCell>
+                        <TableCell>{row.column1}</TableCell>
+                        <TableCell>{row.column2}</TableCell>
+                        <TableCell>{row.column3}</TableCell>
+                        <TableCell>
+                          <EditableCell
+                            value={editingRowId === row.id ? editingValue : row.column4}
+                            isEditing={editingRowId === row.id}
+                            onChange={setEditingValue}
+                            onSave={() => handleSaveEdit(row.id!)}
+                            onCancel={() => { setEditingRowId(null); setEditingValue('') }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex space-x-2">
+                            {editingRowId !== row.id && (
+                              <button 
+                                onClick={() => {
+                                  setEditingRowId(row.id!)
+                                  setEditingValue(row.column4)
+                                }} 
+                                title="Edit"
+                                className="p-1 rounded hover:bg-gray-100"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
+                            )}
+                            <button 
+                              onClick={() => handleApprove(row.id!)} 
                               title="Approve"
+                              className="p-1 rounded hover:bg-gray-100"
                             >
                               <Check className="w-4 h-4 text-green-600" />
                             </button>
-                          )}
-
-                          <button
-                            onClick={() => handleDelete(row)}
-                            className="p-1 rounded hover:bg-gray-100"
-                            title="Delete"
-                          >
-                            <Trash className="w-4 h-4 text-red-600" />
-                          </button>
+                            <button 
+                              onClick={() => handleDelete(row)} 
+                              title="Delete"
+                              className="p-1 rounded hover:bg-gray-100"
+                            >
+                              <Trash className="w-4 h-4 text-red-600" />
+                            </button>
+                          </div>
                         </TableCell>
                       </TableRow>
-                    )
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </div>
-          <div ref={tableEndRef} />
-        </CardContent>
-      </Card>
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>Archived Notes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-y-auto max-h-[calc(100vh-200px)] border rounded-md">
-            <Table>
-              <colgroup>
-                <col style={{ width: '5%' }} />
-                <col style={{ width: '15%' }} />
-                <col style={{ width: '15%' }} />
-                <col style={{ width: '55%' }} />
-                <col style={{ width: '10%' }} />
-              </colgroup>
-              <TableHeader className="sticky top-0 bg-white z-10">
-                <TableRow className="bg-gray-50">
-                  <TableHead>#</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Time</TableHead>
-                  <TableHead>Patient Note</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {archivedData.length === 0 ? (
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TabsContent>
+            
+            <TabsContent value="archived">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center text-gray-500 py-8">
-                      No archived notes
-                    </TableCell>
+                    <TableHead className="w-[50px]">#</TableHead>
+                    <TableHead className="w-[80px]">Audio</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Time</TableHead>
+                    <TableHead>Patient Info</TableHead>
+                    <TableHead>Patient Note</TableHead>
+                    <TableHead className="w-[120px]">Actions</TableHead>
                   </TableRow>
-                ) : (
-                  archivedData.map((row, i) => (
-                    <TableRow key={row.id}>
-                      <TableCell>{i + 1}</TableCell>
-                      <TableCell>{row.column2}</TableCell>
-                      <TableCell>{row.column3}</TableCell>
-                      <TableCell>{row.column4}</TableCell>
-                      <TableCell className="flex space-x-2">
-                        <AudioPlayerButton
-                          url={row.audioUrl}
-                          index={i}
-                          playingIndex={playingIndex}
-                          loadingIndex={loadingIndex}
-                          onClick={() => handlePlay(row.audioUrl, i)}
-                        />
+                </TableHeader>
+                <TableBody>
+                  {archivedData.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center text-gray-500 py-8">
+                        No archived transcriptions available
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                  ) : (
+                    archivedData.map((row, idx) => (
+                      <TableRow key={row.id}>
+                        <TableCell>{idx + 1}</TableCell>
+                        <TableCell>
+                          <AudioPlayerButton
+                            url={row.audioUrl}
+                            index={idx + 1000} // Offset to avoid conflicts with live table
+                            playingIndex={playingIndex}
+                            loadingIndex={loadingIndex}
+                            onClick={() => handlePlay(row.audioUrl, idx + 1000)}
+                          />
+                        </TableCell>
+                        <TableCell>{row.column1}</TableCell>
+                        <TableCell>{row.column2}</TableCell>
+                        <TableCell>{row.column3}</TableCell>
+                        <TableCell>{row.column4}</TableCell>
+                        <TableCell>
+                          <div className="flex space-x-2">
+                            <button 
+                              onClick={() => handleRestore(row.id!)} 
+                              title="Restore to Live"
+                              className="p-1 rounded hover:bg-gray-100"
+                            >
+                              <RotateCcw className="w-4 h-4 text-blue-600" />
+                            </button>
+                            <button 
+                              onClick={() => handleDelete(row)} 
+                              title="Delete"
+                              className="p-1 rounded hover:bg-gray-100"
+                            >
+                              <Trash className="w-4 h-4 text-red-600" />
+                            </button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TabsContent>
+          </Tabs>
+          
+          <TableStatusBar loading={loading} error={error} />
+          <div ref={tableEndRef} />
         </CardContent>
       </Card>
     </div>
