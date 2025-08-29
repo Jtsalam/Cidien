@@ -1,13 +1,53 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 
-const prisma = new PrismaClient()
-
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params
+    const { id } = await params
+    const body = await request.json()
+    console.log('Approve API called with ID:', id)
 
-    // Parse id to extract patient_id and session_id
+    // Handle new transcriptions that start with "new_transcription"
+    if (id.startsWith('new_transcription')) {
+      // For new transcriptions, we need to create the database record first
+      const { patient_id, session_id, upload_path, patient_notes, upload_time } = body
+
+      if (!patient_id || !session_id) {
+        return NextResponse.json({ error: 'Missing required data for new transcription' }, { status: 400 })
+      }
+
+      // Get any existing patient from JPCH to use as a valid foreign key
+      const existingPatient = await prisma.patient_info.findFirst({
+        where: {
+          medicalcenter_info: {
+            center_name: "Jim Pattison Children's Hospital"
+          }
+        }
+      })
+
+      if (!existingPatient) {
+        return NextResponse.json({ error: 'No valid patient found' }, { status: 400 })
+      }
+
+      console.log('Using patient ID:', existingPatient.patient_id)
+
+      // Create the transcription record as approved
+      const created = await prisma.patient_uploads.create({
+        data: {
+          patient_id: existingPatient.patient_id,
+          session_id: parseInt(session_id),
+          upload_path: upload_path || '',
+          patient_notes: patient_notes || '',
+          upload_time: upload_time ? new Date(upload_time) : new Date(),
+          is_approved: true
+        }
+      })
+
+      console.log('Created new transcription:', created)
+      return NextResponse.json(created)
+    }
+
+    // Handle existing transcriptions
     const [patient_id_str, session_id_str] = id.split('_')
     const patient_id = parseInt(patient_id_str)
     const session_id = parseInt(session_id_str)

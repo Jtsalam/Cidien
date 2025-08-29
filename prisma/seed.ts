@@ -21,8 +21,8 @@ async function main() {
     const medicalCenter = await prisma.medicalcenter_info.create({
       data: {
         center_name: center.name,
-        logo: `/centerImages/${center.code}.png`,
-        website: `https://www.${center.code.toLowerCase()}.com`
+        address: `123 ${center.name} Street`,
+        email: `info@${center.code.toLowerCase()}.com`
       }
     })
     createdCenters.push({ ...medicalCenter, code: center.code })

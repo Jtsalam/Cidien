@@ -5,7 +5,6 @@ import { useEffect, useState, useRef, useMemo, useCallback } from "react"
 import io from "socket.io-client"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Play, Pause, Loader2, Trash, Edit, Wifi, WifiOff, Check, RotateCcw, Mic } from "lucide-react"
 import { getCookie } from "@/utils/getCookie"
@@ -119,7 +118,6 @@ const TableStatusBar = ({ loading, error }: { loading: boolean; error: string | 
 
 export default function DataTable({ selectedRoom, initialData }: DataTableProps) {
   const [data, setData] = useState<RowData[]>([])
-  const [archivedData, setArchivedData] = useState<RowData[]>([])
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const [playingIndex, setPlayingIndex] = useState<number | null>(null)
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null)
@@ -130,7 +128,6 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
   const [editingRowId, setEditingRowId] = useState<string | null>(null)
   const [editingValue, setEditingValue] = useState<string>("")
   const [bedFilter, setBedFilter] = useState<string>('ALL')
-  const [activeTab, setActiveTab] = useState<string>("live")
 
   const tableEndRef = useRef<HTMLDivElement>(null)
   const socketRef = useRef<any>(null)
@@ -150,8 +147,7 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
     if (initialData && initialData.length > 0) {
       const key = selectedRoom ? `room:${selectedRoom}` : 'all'
       
-      // Separate approved and non-approved items
-      const approved = initialData.filter(item => item.isApproved === true)
+      // Only get non-approved items for Live Notes
       const live = initialData.filter(item => item.isApproved !== true)
       
       const normalizedLive: RowData[] = live.map((item, idx) => ({
@@ -161,16 +157,8 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
         isNew: false,
       }))
       
-      const normalizedArchived: RowData[] = approved.map((item, idx) => ({
-        ...item,
-        index: idx + 1,
-        id: `${item.patient_id}_${item.session_id}`,
-        isNew: false,
-      }))
-      
       cacheRef.current[key] = normalizedLive
       setData(normalizedLive)
-      setArchivedData(normalizedArchived)
       setLoading(false)
       preloadForDataset(normalizedLive)
     }
@@ -292,8 +280,7 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
       
       const json = await response.json()
       
-      // Separate approved and non-approved items
-      const approved = json.filter((item: any) => item.is_approved === true)
+      // Only get non-approved items for Live Notes
       const live = json.filter((item: any) => item.is_approved !== true)
 
       const processedLive = live.map((item: any, idx: number) => ({
@@ -304,17 +291,8 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
         index: idx + 1,
       }))
 
-      const processedArchived = approved.map((item: any, idx: number) => ({
-        ...item,
-        id: `${item.patient_id}_${item.session_id}`,
-        isNew: false,
-        isApproved: true,
-        index: idx + 1,
-      }))
-
       cacheRef.current[cacheKey] = processedLive
       setData(processedLive)
-      setArchivedData(processedArchived)
       preloadForDataset(processedLive)
       setIsConnected(true)
       setLoading(false)
@@ -405,25 +383,22 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
   }, [])
 
   const processedData = useMemo(() => {
-    const base = activeTab === "live" ? data : archivedData
     const filtered = selectedRoom && bedFilter !== 'ALL'
-      ? base.filter(row => row.column1?.split(' ')[1] === bedFilter)
-      : base
+      ? data.filter(row => row.column1?.split(' ')[1] === bedFilter)
+      : data
     return filtered.map((row, index) => ({ ...row, index: index + 1 }))
-  }, [data, archivedData, bedFilter, selectedRoom, activeTab])
+  }, [data, bedFilter, selectedRoom])
 
   const handleDelete = async (row: RowData) => {
     if (!confirm("Are you sure you want to delete this transcription?")) return
+    if (!row.id) return // Guard against undefined id
+    
     try {
-      if (!row.id?.toString().startsWith("new_transcription")) {
+      if (!row.id.toString().startsWith("new_transcription")) {
         const [patientId, sessionId] = row.id.split('_')
         await fetch(`/api/staff/transcriptions/${patientId}/${sessionId}`, { method: "DELETE" })
       }
-      if (activeTab === "live") {
-        setData(prev => prev.filter(r => r.id !== row.id))
-      } else {
-        setArchivedData(prev => prev.filter(r => r.id !== row.id))
-      }
+      setData(prev => prev.filter(r => r.id !== row.id))
     } catch (err) {
       console.error("Failed to delete:", err)
       setError("Failed to delete transcription")
@@ -453,14 +428,35 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
     const row = data.find(r => r.id === rowId)
     if (!row) return
     try {
-      const [patientId, sessionId] = rowId.split('_')
-      await fetch(`/api/staff/transcriptions/${patientId}/${sessionId}/approve`, { 
+      let apiUrl: string
+      let requestBody: any = { is_approved: true }
+
+      if (rowId.startsWith('new_transcription')) {
+        // For new transcriptions, we need to create the database record
+        const session_id = Math.floor(Math.random() * 2000000000) // Random 32-bit safe integer
+        
+        apiUrl = `/api/staff/transcriptions/${rowId}/approve`
+        requestBody = {
+          patient_id: 1, // API will find a valid patient, this is just to satisfy the check
+          session_id, 
+          upload_path: row.audioUrl,
+          patient_notes: row.column4,
+          upload_time: new Date().toISOString()
+        }
+      } else {
+        // For existing transcriptions
+        const [patientId, sessionId] = rowId.split('_')
+        apiUrl = `/api/staff/transcriptions/${patientId}/${sessionId}/approve`
+      }
+
+      await fetch(apiUrl, { 
         method: 'PATCH',
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ is_approved: true })
+        body: JSON.stringify(requestBody)
       })
+      
+      // Remove from live data - it will now appear in the top-level Archived Notes tab
       setData(prev => prev.filter(r => r.id !== rowId))
-      setArchivedData(prev => [...prev, { ...row, isApproved: true }])
     } catch (err) {
       console.error(err)
       setError("Failed to approve")
@@ -468,31 +464,13 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
     }
   }
 
-  const handleRestore = async (rowId: string) => {
-    const row = archivedData.find(r => r.id === rowId)
-    if (!row) return
-    try {
-      const [patientId, sessionId] = rowId.split('_')
-      await fetch(`/api/staff/transcriptions/${patientId}/${sessionId}/restore`, { 
-        method: 'PATCH',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ is_approved: false })
-      })
-      setArchivedData(prev => prev.filter(r => r.id !== rowId))
-      setData(prev => [...prev, { ...row, isApproved: false }])
-    } catch (err) {
-      console.error(err)
-      setError("Failed to restore")
-      setTimeout(() => setError(null), 3000)
-    }
-  }
 
   return (
     <div className="p-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>Transcriptions</span>
+            <span>Live Notes {data.length > 0 && `(${data.length})`}</span>
             <div className="flex items-center space-x-2">
               {isReceiving && (
                 <Badge variant="outline" className="text-blue-600 border-blue-300">
@@ -512,25 +490,14 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="live">
-                Live Notes {data.length > 0 && `(${data.length})`}
-              </TabsTrigger>
-              <TabsTrigger value="archived">
-                Archived Notes {archivedData.length > 0 && `(${archivedData.length})`}
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="live">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[50px]">#</TableHead>
                     <TableHead className="w-[80px]">Audio</TableHead>
+                    <TableHead>Room</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead>Time</TableHead>
-                    <TableHead>Patient Info</TableHead>
                     <TableHead>Patient Note</TableHead>
                     <TableHead className="w-[120px]">Actions</TableHead>
                   </TableRow>
@@ -544,7 +511,7 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
                     </TableRow>
                   ) : (
                     processedData.map((row, idx) => (
-                      <TableRow key={row.id} className={row.isNew ? "text-red-600" : ""}>
+                      <TableRow key={row.id} className={!row.isApproved ? "text-red-600" : ""}>
                         <TableCell>{row.index}</TableCell>
                         <TableCell>
                           <AudioPlayerButton
@@ -602,70 +569,6 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
                   )}
                 </TableBody>
               </Table>
-            </TabsContent>
-            
-            <TabsContent value="archived">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[50px]">#</TableHead>
-                    <TableHead className="w-[80px]">Audio</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Time</TableHead>
-                    <TableHead>Patient Info</TableHead>
-                    <TableHead>Patient Note</TableHead>
-                    <TableHead className="w-[120px]">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {archivedData.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center text-gray-500 py-8">
-                        No archived transcriptions available
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    archivedData.map((row, idx) => (
-                      <TableRow key={row.id}>
-                        <TableCell>{idx + 1}</TableCell>
-                        <TableCell>
-                          <AudioPlayerButton
-                            url={row.audioUrl}
-                            index={idx + 1000} // Offset to avoid conflicts with live table
-                            playingIndex={playingIndex}
-                            loadingIndex={loadingIndex}
-                            onClick={() => handlePlay(row.audioUrl, idx + 1000)}
-                          />
-                        </TableCell>
-                        <TableCell>{row.column1}</TableCell>
-                        <TableCell>{row.column2}</TableCell>
-                        <TableCell>{row.column3}</TableCell>
-                        <TableCell>{row.column4}</TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <button 
-                              onClick={() => handleRestore(row.id!)} 
-                              title="Restore to Live"
-                              className="p-1 rounded hover:bg-gray-100"
-                            >
-                              <RotateCcw className="w-4 h-4 text-blue-600" />
-                            </button>
-                            <button 
-                              onClick={() => handleDelete(row)} 
-                              title="Delete"
-                              className="p-1 rounded hover:bg-gray-100"
-                            >
-                              <Trash className="w-4 h-4 text-red-600" />
-                            </button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </TabsContent>
-          </Tabs>
           
           <TableStatusBar loading={loading} error={error} />
           <div ref={tableEndRef} />

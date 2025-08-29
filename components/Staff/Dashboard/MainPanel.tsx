@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button"
 import { LogOut, Hospital, User, TriangleAlert, Database,  FileArchive, DoorOpen, ArrowLeftRight, ChevronDown } from "lucide-react"
 import LogoutConfirmationModal from "@/components/LogoutConfirmationModal"
 import DataTable from "@/components/DataTable"
+import ArchivedNotes from "@/components/ArchivedNotes"
+import UnassignedNotes from "@/components/UnassignedNotes"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
 
 export default function MainPanel() {
@@ -341,12 +343,20 @@ export default function MainPanel() {
         </div>
       </div>
       
-      {/* Content Area - Show DataTable only when data tab is active */}
+      {/* Content Area - Show different components based on active tab */}
       {activeTab === "data" && (
         <DataTable
           selectedRoom={selectedRoom}
           initialData={transcriptionCacheRef.current[cacheKeyForRoom(selectedRoom)] || []}
         />
+      )}
+      
+      {activeTab === "unassigned" && (
+        <UnassignedNotes selectedRoom={selectedRoom} />
+      )}
+      
+      {activeTab === "archive" && (
+        <ArchivedNotes selectedRoom={selectedRoom} />
       )}
       
       <LogoutConfirmationModal

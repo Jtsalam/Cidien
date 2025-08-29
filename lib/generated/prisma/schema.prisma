@@ -11,8 +11,8 @@ datasource db {
 model medicalcenter_info {
   center_id     Int             @id @default(autoincrement())
   center_name   String
-  logo          String?         @db.VarChar(400)
-  website       String?         @db.VarChar(400)
+  address       String?         @db.VarChar(400)
+  email         String?         @db.VarChar(400)
   patient_info  patient_info[]
   room_info     room_info[]
   room_register room_register[]
@@ -64,10 +64,10 @@ model bed_info {
   is_assigned         Boolean       @default(false)
   assigned_patient_id Int?
   assigned_nurse_id   Int?
-  room_data           room_data[]
   user_info           user_info?    @relation(fields: [assigned_nurse_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
   patient_info        patient_info? @relation(fields: [assigned_patient_id], references: [patient_id], onDelete: NoAction, onUpdate: NoAction)
   room_info           room_info     @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction)
+  room_data           room_data[]
 }
 
 model room_data {
