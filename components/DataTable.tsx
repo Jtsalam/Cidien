@@ -445,8 +445,7 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
         }
       } else {
         // For existing transcriptions
-        const [patientId, sessionId] = rowId.split('_')
-        apiUrl = `/api/staff/transcriptions/${patientId}/${sessionId}/approve`
+        apiUrl = `/api/staff/transcriptions/${rowId}/approve`
       }
 
       await fetch(apiUrl, { 

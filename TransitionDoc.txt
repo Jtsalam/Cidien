@@ -1,282 +1,292 @@
-Project Handoff Document: Transcription Notes Dashboard
+Mobile Charter - Medical Center Audio Transcription Management System
+================================================================================
 
-Project Overview:
-This project is a web-based dashboard for managing transcription notes (primarily for nurses/staff). It provides a live table of 
-transcriptions, allows audio playback, editing, approval, and maintains an archived notes section. 
-The system integrates real-time updates via Socket.io and manages audio preloading for a smooth experience.
+QUICK START CONTEXT FOR NEW CONVERSATIONS
+If you're starting a new conversation about this project, this document contains everything you need to know about the system, its architecture, features, known issues, and solutions.
 
-1. Current Features
+================================================================================
+1. PROJECT OVERVIEW
+================================================================================
 
-1.1 Live Notes Table
-- Displays transcription entries in a table format.
-- Columns: #, Date, Time, Patient Note, Actions.
-- Supports:
-  - Audio playback for each row (play/pause with loading indicator).
-  - Inline editing of notes (Patient Note column) via textarea.
-  - Deletion of entries.
-  - Highlighting new entries in red text briefly when received via socket.
+Mobile Charter is a comprehensive medical center management system focused on audio transcription workflow for healthcare staff. The system manages audio recordings from patient rooms, provides real-time transcription capabilities, and implements an approval workflow for clinical notes.
 
-1.2 Approval Workflow
-- Newly added entries can be approved via a green check button.
-- Intended behavior: approved entries move from Live Notes to Archived Notes tab.
+Key Purpose:
+- Staff (nurses, doctors) receive live audio transcriptions from patient rooms
+- They can review, edit, and approve these transcriptions
+- Approved notes move to an archived section for record keeping
+- Real-time updates ensure immediate notification of new transcriptions
 
-1.3 Archived Notes
-- Intended to display all approved entries.
-- Currently: tab exists but content is empty (component not implemented yet).
+Target Users:
+- Medical center staff (nurses, doctors)
+- Administrators managing room assignments and bed allocation
+- Multiple medical centers: JPCH, EHC, EMC, KMC, PVM
 
-1.4 Real-Time Updates
-- Uses Socket.io to receive new transcriptions live.
-- New entries are added to the live table automatically.
-- Socket connection status is displayed (connected/disconnected/receiving).
+================================================================================
+2. SYSTEM ARCHITECTURE & TECH STACK
+================================================================================
 
-1.5 Audio Preloading
-- Preloads the first few audio files for smooth playback.
-- Caches audio elements and object URLs for efficiency.
+Frontend:
+- Next.js 14+ with TypeScript
+- React components with Tailwind CSS
+- Socket.io client for real-time updates
+- Audio handling with HTMLAudioElement
+- Custom UI components (shadcn/ui-based)
 
-2. Current Implementations
+Backend:
+- Next.js API routes (TypeScript)
+- Prisma ORM with PostgreSQL database
+- Python services for audio processing (Charting-Device/)
+- Socket.io server for real-time communication
 
-- Tech Stack:
-  - Frontend: React/Next.js, TypeScript
-  - Components: Card, Table, Badge (custom UI library)
-  - Audio: HTMLAudioElement preloading
-  - Real-time: Socket.io
-  - Backend: Python (db.py, functions.py, remote.py)
-- Key Components:
-  - DataTable.tsx: main table component (~700 lines)
-  - AudioPlayerButton: handles play/pause/loading
-  - EditableCell: inline editing of notes
-  - TableStatusBar: shows loading/error messages
+Database (PostgreSQL):
+- patient_info: Patient records linked to medical centers
+- patient_uploads: Audio transcriptions with approval status
+- medicalcenter_info: Hospital/center information
+- staff management and room assignments
 
-- State Management:
-  - data: array of live transcription notes
-  - archivedData: (not implemented yet) should store approved notes
-  - playingIndex, loadingIndex: audio state
-  - editingRowId, editingValue: editing state
-  - bedFilter, selectedRoom: filtering options
-  - isReceiving, isConnected: socket status
+Key Technologies:
+- Audio: WebM/WAV file handling and streaming
+- Real-time: Socket.io for live transcription delivery
+- Authentication: Cookie-based session management
+- File uploads: Audio file storage and serving
 
-3. Current Bugs / Issues
+================================================================================
+3. CORE FEATURES & WORKFLOW
+================================================================================
 
-2. Archived Notes Tab
-   - Clicking the tab shows no content.
-   - The component for archived notes hasn’t been implemented.
+3.1 Live Notes Dashboard
+- Real-time table showing unapproved transcriptions (is_approved = false)
+- Columns: Index, Date, Time, Patient Notes, Actions
+- Audio playback with play/pause controls and loading states
+- Inline editing of patient notes via textarea
+- Approval workflow with green check button
+- Delete functionality for removing unwanted entries
+- Room filtering to show transcriptions by specific room
+- Connection status indicators (Connected/Disconnected/Receiving)
 
-3. Approve Button
-   - Initially had TypeScript issues with IDs (resolved using string coercion).
-   - Needs to move entries to archived notes after approval.
+3.2 Archived Notes System
+- Shows approved transcriptions (is_approved = true)
+- Same table interface as Live Notes
+- Restore functionality to move notes back to Live Notes
+- Permanent delete option
 
-4. Restore Functionality
-   - No current system for restoring approved notes back to live table if mistakes occur.
+3.3 Real-Time Audio Transcription Flow
+1. Audio recorded in patient rooms via Charting-Device Python services
+2. Files uploaded to /uploads/Audio/[CENTER]/[FILES] or /uploads/room_aud/
+3. Transcription data sent via Socket.io to live dashboard
+4. Staff see new entries highlighted in red initially
+5. Staff can edit notes, then approve to move to archived section
 
-5. Code Organization
-   - DataTable.tsx is ~700 lines; hard to maintain.
-   - Components like AudioPlayerButton, EditableCell, and status bar could be extracted.
+3.4 Audio Management
+- Preloading system for smooth playback (first 3 files cached)
+- Audio caching with LRU eviction (MAX_CACHE = 10)
+- Support for both .wav and .webm formats
+- Automatic audio element cleanup
 
-4. Possible Solutions / Recommendations
+3.5 User Management & Roles
+- Center selection (JPCH, EHC, EMC, KMC, PVM)
+- Staff authentication with role-based dashboards
+- Admin dashboard for room and bed management
+- Room assignment and bed allocation features
 
-4.1 Approval Workflow
-  - isApproved = false → red text
-  - isApproved = true → default text color
-- Clicking Approve sets isApproved = true and moves the entry to archived notes.
+================================================================================
+4. CRITICAL BUG FIXES & SOLUTIONS IMPLEMENTED
+================================================================================
 
-4.2 Archived Notes Tab Implementation
-- Create a new state: archivedData: RowData[].
-- Render the same table component but with:
-  - Approve button hidden.
-  - Delete and Restore buttons visible.
-- Implement handleRestore to move notes back to live table if needed.
+4.1 MAJOR FIX: Transcription Approval API Route Mismatch (SOLVED)
+Problem: HTTP 404 error on approve button - "PATCH /api/staff/transcriptions/7/1000/approve 404"
 
-4.3 Component Refactoring
+Root Cause:
+- API route expected: /api/staff/transcriptions/[id]/approve (single combined ID)
+- Frontend was calling: /api/staff/transcriptions/7/1000/approve (separate patient_id/session_id)
+
+Solution Applied:
+- Fixed DataTable.tsx handleApprove function
+- Changed from: `/api/staff/transcriptions/${patientId}/${sessionId}/approve`
+- To: `/api/staff/transcriptions/${rowId}/approve`
+- Where rowId = `${patient_id}_${session_id}`
+
+File: /components/DataTable.tsx:448
+
+4.2 Database Integration Fixes
+- Fixed patient_id and session_id composite key handling
+- Resolved Prisma schema compatibility with existing data
+- Added is_approved field to patient_uploads table for workflow
+
+4.3 Socket.io Connection Management
+- Implemented connection status tracking
+- Added reconnection logic for dropped connections
+- Visual indicators for real-time data flow
+
+================================================================================
+5. FILE STRUCTURE & KEY COMPONENTS
+================================================================================
+
+Key Frontend Files:
+- /components/DataTable.tsx - Main transcription table (700+ lines)
+- /components/ArchivedNotes.tsx - Approved transcriptions view
+- /components/UnassignedNotes.tsx - Unassigned transcription handling
+- /app/api/staff/transcriptions/[id]/approve/route.ts - Approval API endpoint
+- /app/api/staff/transcriptions/route.ts - Main transcriptions API
+
+Database:
+- /prisma/schema.prisma - Database schema
+- /medicalcentersdb.sql - Database structure
+- /prisma/migrations/ - Database migration history
+
+Python Services:
+- /Charting-Device/remote.py - Audio capture and processing
+- /Charting-Device/functions.py - Utility functions
+- /Charting-Device/db.py - Database operations
+
+Audio Storage:
+- /uploads/Audio/[CENTER]/ - Organized by medical center
+- /uploads/room_aud/ - General room audio storage
+- /Charting-Device/uploads/ - Legacy audio storage
+
+================================================================================
+6. DATABASE SCHEMA (KEY TABLES)
+================================================================================
+
+patient_uploads (main transcription table):
+- patient_id (int) + session_id (int) = composite primary key
+- upload_path: path to audio file
+- patient_notes: transcribed/edited text
+- upload_time: timestamp
+- is_approved: boolean (false = live notes, true = archived)
+
+patient_info:
+- patient_id: primary key
+- Links to medicalcenter_info
+
+medicalcenter_info:
+- center_name: "Jim Pattison Children's Hospital", etc.
+- Links patients to specific medical centers
+
+================================================================================
+7. API ENDPOINTS
+================================================================================
+
+GET /api/staff/transcriptions
+- Fetch all transcriptions for current staff member
+- Returns both approved and unapproved
+
+GET /api/staff/transcriptions-by-room?room=[ROOM_NAME]
+- Filter transcriptions by specific room
+- Used for room-based filtering in dashboard
+
+PATCH /api/staff/transcriptions/[id]/approve
+- Approve transcription (set is_approved = true)
+- [id] format: "patient_id_session_id" (e.g., "7_1000")
+- For new transcriptions: handles "new_transcription_[uuid]" format
+
+PATCH /api/staff/transcriptions/[id]
+- Edit transcription content
+- Update patient_notes field
+
+DELETE /api/staff/transcriptions/[id]
+- Delete transcription record
+
+PATCH /api/staff/transcriptions/[id]/restore
+- Restore archived note back to live notes (set is_approved = false)
+
+================================================================================
+8. KNOWN ISSUES & FUTURE IMPROVEMENTS
+================================================================================
+
+8.1 Current Challenges:
+- DataTable.tsx is 700+ lines and needs refactoring
+- Audio preloading could be optimized for larger datasets
+- Error handling for network failures needs improvement
+- Role-based permissions not fully implemented
+
+8.2 Recommended Improvements:
 - Extract smaller components from DataTable.tsx:
-  - AudioPlayerButton
-  - EditableCell
-  - TableStatusBar
-  - ActionButtons (Approve/Delete/Restore)
-- Benefits:
-  - Easier maintenance
-  - Reusable for both live and archived notes tables
-  - Improves readability and testing
+  * AudioPlayerButton
+  * EditableCell  
+  * TableStatusBar
+  * ActionButtons
+- Implement comprehensive error boundaries
+- Add pagination for large transcription lists
+- Enhanced filtering and search capabilities
+- Better mobile responsiveness
 
-4.4 Real-Time Updates
-- Keep Socket.io connection.
-- Ensure new entries also respect the isApproved flag logic.
-- Consider adding a queue for unapproved entries to highlight until user approves.
+8.3 Security Considerations:
+- Audio files should have access controls
+- Transcription approval should have audit trails
+- Staff permissions need granular controls
 
-5. Recommended Workflow
-1. Live Notes Table
-   - New entry received → red text
-   - User edits note if needed
-   - User clicks Approve → row moves to Archived Notes
-2. Archived Notes Table
-   - Approved notes listed
-   - Actions:
-     - Delete: remove permanently
-     - Restore: move back to live notes if mistake occurs (permissions required)
-3. Audio
-   - Plays directly from table row
-   - Preloaded for smooth playback
+================================================================================
+9. DEVELOPMENT COMMANDS
+================================================================================
 
-6. Notes for Developer Handoff
-- Data Flow:
-  - data → live table
-  - archivedData → archived table (to be implemented)
-- Socket.io Events:
-  - new_transcription → adds new row to live table
-  - connect/disconnect → sets isConnected
-- Backend API Endpoints:
-  - /api/transcriptions → fetch all
-  - /api/transcriptions/:id → PATCH (edit), DELETE
-  - /api/transcriptions/:id/approve → PATCH (approve)
-  - /api/staff/transcriptions-by-room?room=ROOM_NAME → fetch by room
+Setup:
+```bash
+npm install
+npx prisma generate
+npx prisma migrate dev
+npm run dev
+```
 
-- Permissions:
-  - Approve/Restore/Delete may be role-specific
-  - Consider adding role checks if restoring archived notes
+Database:
+```bash
+npx prisma studio  # Database GUI
+npx prisma migrate reset  # Reset database
+```
 
+Testing:
+```bash
+npm run build  # Production build test
+npm run lint   # Code linting
+```
 
+================================================================================
+10. SOCKET.IO EVENTS
+================================================================================
 
-File Organization Tree
-.
-├── app
-│   ├── (Admin)
-│   │   └── dashboard
-│   │       └── AdminDashboard.tsx
-│   ├── (Staff)
-│   │   └── dashboard
-│   │       └── StaffDashboard.tsx
-│   ├── api
-│   │   ├── center
-│   │   │   ├── logout
-│   │   │   │   └── route.ts
-│   │   │   └── signIn
-│   │   │       └── route.ts
-│   │   └── staff
-│   │       ├── assigned-beds
-│   │       │   └── route.ts
-│   │       ├── assigned-rooms
-│   │       │   └── route.ts
-│   │       ├── logout
-│   │       │   └── route.ts
-│   │       ├── RoomMngr
-│   │       │   ├── assign-bed
-│   │       │   │   └── route.ts
-│   │       │   ├── bed-info
-│   │       │   │   └── [bedId]
-│   │       │   ├── discharge-bed
-│   │       │   │   └── route.ts
-│   │       │   ├── nurses
-│   │       │   │   └── route.ts
-│   │       │   └── rooms
-│   │       │       └── route.ts
-│   │       ├── transcriptions
-│   │       │   └── route.ts
-│   │       └── transcriptions-by-room
-│   │           └── route.ts
-│   ├── dashboard
-│   │   └── page.tsx
-│   ├── favicon.ico
-│   ├── globals.css
-│   ├── layout.tsx
-│   ├── page.tsx
-│   ├── Room
-│   │   └── dashboard
-│   │       └── layout.tsx
-│   ├── sign-in
-│   │   └── page.tsx
-│   └── Staff
-│       ├── dashboard
-│       │   └── page.tsx
-│       └── sign-in
-│           └── page.tsx
-├── Charting-Device
-│   ├── __pycache__
-│   │   ├── functions.cpython-310.pyc
-│   │   └── remote.cpython-39.pyc
-│   ├── functions.py
-│   ├── remote.py
-│   ├── static
-│   │   ├── login_form.css
-│   │   ├── remote.css
-│   │   └── remote.js
-│   ├── templates
-│   │   ├── login_form.html
-│   │   └── remote.html
-│   ├── test.ipynb
-│   └── uploads
-│       ├── 3438
-│       │   {* lots of room.recording_xx.webm and .wav files*}
-│       ├── 3461
-│       │   ├{* lots of room.recording_xx.webm and .wav files*}
-│       ├── room_aud
-│       │   ├── nothing.txt
-│       │   {* lots of room.recording_xx.webm files*}
-│       └── Unassigned
-│           ├── nothing.txt
-│           {* lots of room.recording_xx.webm files*}
-│           └── room.recording_2.webm
-├── components
-│   ├── Admin
-│   │   └── Dashboard
-│   │       ├── Home
-│   │       │   ├── AssignBedPopup.tsx
-│   │       │   └── RoomList.tsx
-│   │       └── MainPanel.tsx
-│   ├── Center
-│   │   └── SelectOrganizationForm.tsx
-│   ├── context
-│   │   └── socket.tsx
-│   ├── Dashboard
-│   │   ├── DataTable.tsx
-│   │   └── RoomPanel.tsx
-│   ├── DataTable.tsx
-│   ├── ErrorBoundary.tsx
-│   ├── InactivityTracker.tsx
-│   ├── LogoutConfirmationModal.tsx
-│   ├── Staff
-│   │   └── Dashboard
-│   │       └── MainPanel.tsx
-│   └── ui
-│       ├── badge.tsx
-│       ├── button.tsx
-│       ├── card.tsx
-│       ├── checkbox.tsx
-│       ├── dialog.tsx
-│       ├── input.tsx
-│       ├── table.tsx
-│       ├── tabs.tsx
-│       └── tooltip.tsx
-├── components.json
-├── eslint.config.mjs
-├── fileOrganizationTree.txt
-├── lib
-│   ├── api.ts
-│   ├── constants.ts
-│   ├── generated
-│   │   └── prisma
-│   │       ├── client.d.ts
-            {*lots of other client files*}
-│   │       ├── package.json
-│   │       ├── query_engine-windows.dll.node
-            {*lots of query_engine-windows.dll.node.tmp files*}
-│   │       ├── runtime
-│   │       │   ├── {*lots of runtime files*}
-│   │       ├── schema.prisma
-│   │       ├── wasm.d.ts
-│   │       └── wasm.js
-│   ├── prisma.ts
-│   └── utils.ts
-├── medicalcentersdb.sql
-├── middleware.ts
-├── MobileCharterDocumentation.txt
-├── next-env.d.ts
-├── next.config.ts
-├── package-lock.json
-├── package.json
-├── postcss.config.js
-├── postcss.config.mjs
-├── prisma
-│   ├── migrations
-│   │   ├── 20250710033553_init
-│   │   │   └── migration.sql
-│   │   └── migration_lock.toml
-│   └── schema.prisma
+Client-side events handled:
+- 'new_transcription' - New audio transcription received
+- 'connect' - Socket connection established  
+- 'disconnect' - Socket connection lost
+- 'receiving' - Data actively being received
+
+Data format for new_transcription:
+```javascript
+{
+  id: "new_transcription_[uuid]",
+  audioUrl: "/path/to/audio.webm",
+  column1: "date",
+  column2: "time", 
+  column3: "room_info",
+  column4: "transcribed_text",
+  isNew: true,
+  isApproved: false
+}
+```
+
+================================================================================
+11. DEBUGGING TIPS
+================================================================================
+
+Common Issues:
+1. 404 on approval: Check API route structure matches frontend calls
+2. Socket not connecting: Verify Socket.io server is running
+3. Audio not playing: Check file paths and CORS settings
+4. Database errors: Run `npx prisma generate` after schema changes
+
+Useful Console Commands:
+- Check socket status: Look for connection badges in UI
+- Audio cache: Check browser Network tab for preloaded files
+- Database: Use Prisma Studio to inspect data directly
+
+================================================================================
+CONCLUSION
+================================================================================
+
+This is a production medical transcription system with real-time capabilities. The main workflow is: audio recording → live transcription → staff review/edit → approval → archived storage. The recent fix for the approval API route mismatch resolved the critical 404 error that was preventing the approval workflow from functioning.
+
+Key files to focus on for future development:
+- DataTable.tsx (main UI component)
+- /api/staff/transcriptions/ routes (backend logic)
+- Prisma schema (database structure)
+- Socket context (real-time functionality)
