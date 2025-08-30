@@ -53,16 +53,34 @@ export async function GET(request: NextRequest) {
     })
 
     // Format the data to match the expected structure
-    const formattedData = transcriptions.map(upload => ({
-      patient_id: upload.patient_id,
-      session_id: upload.session_id,
-      audioUrl: upload.upload_path,
-      column1: `${roomNumber} ${new Date().toLocaleDateString()}`, // Room and Date
-      column2: upload.upload_time.toISOString(), // Time
-      column3: upload.patient_info.patient_name, // Patient Info
-      column4: upload.patient_notes, // Patient Note
-      is_approved: upload.is_approved
-    }))
+    const formattedData = transcriptions.map(upload => {
+      // Handle invalid or null upload_time by using current date
+      const date = upload.upload_time && !isNaN(new Date(upload.upload_time).getTime()) 
+        ? new Date(upload.upload_time) 
+        : new Date()
+        
+      const formattedDate = date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      })
+      const formattedTime = date.toLocaleTimeString('en-US', { 
+        hour: 'numeric', 
+        minute: '2-digit', 
+        hour12: true 
+      })
+      
+      return {
+        patient_id: upload.patient_id,
+        session_id: upload.session_id,
+        audioUrl: upload.upload_path,
+        column1: upload.patient_info.patient_name || roomNumber, // Room/Patient info
+        column2: formattedDate, // Formatted date
+        column3: formattedTime, // Formatted time
+        column4: upload.patient_notes, // Patient Note
+        is_approved: upload.is_approved
+      }
+    })
 
     return NextResponse.json(formattedData)
 

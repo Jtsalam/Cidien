@@ -2,12 +2,12 @@
 "use client"
 
 import { useEffect, useState, useRef, useMemo, useCallback } from "react"
-import io from "socket.io-client"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Play, Pause, Loader2, Trash, Edit, Wifi, WifiOff, Check, RotateCcw, Mic } from "lucide-react"
 import { getCookie } from "@/utils/getCookie"
+import { useSocket } from "@/components/context/socket"
 
 interface RowData {
   index: number
@@ -121,13 +121,16 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const [playingIndex, setPlayingIndex] = useState<number | null>(null)
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null)
-  const [isReceiving, setIsReceiving] = useState(false)
-  const [isConnected, setIsConnected] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [editingRowId, setEditingRowId] = useState<string | null>(null)
   const [editingValue, setEditingValue] = useState<string>("")
   const [bedFilter, setBedFilter] = useState<string>('ALL')
+
+  // Use global socket context
+  const socketContext = useSocket()
+  const { socket, isConnected, isReceiving, transcriptions, removeTranscription } = socketContext
+  console.log('DataTable socket context:', { socket: !!socket, isConnected, isReceiving, transcriptionsCount: transcriptions.length })
 
   const tableEndRef = useRef<HTMLDivElement>(null)
   const socketRef = useRef<any>(null)
@@ -142,31 +145,27 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
 
   useEffect(() => {
     const staffId = getCookie("staff_Id") || ""
+    console.log('Staff ID from cookie:', staffId)
     staffIdRef.current = staffId
+    
+    // Try to join room if socket is already connected
+    if (socket && isConnected && staffId) {
+      console.log('Joining staff room immediately with ID:', staffId)
+      socket.emit('join_staff_room', { user_id: staffId })
+    }
 
+    // Don't load initial data since we're using global socket context
+    // The global transcriptions will handle all data loading
     if (initialData && initialData.length > 0) {
-      const key = selectedRoom ? `room:${selectedRoom}` : 'all'
-      
-      // Only get non-approved items for Live Notes
-      const live = initialData.filter(item => item.isApproved !== true)
-      
-      const normalizedLive: RowData[] = live.map((item, idx) => ({
-        ...item,
-        index: idx + 1,
-        id: `${item.patient_id}_${item.session_id}`,
-        isNew: false,
-      }))
-      
-      cacheRef.current[key] = normalizedLive
-      setData(normalizedLive)
+      console.log('Ignoring initialData since using global socket context, initialData length:', initialData.length)
       setLoading(false)
-      preloadForDataset(normalizedLive)
     }
   }, [initialData, selectedRoom])
 
   useEffect(() => {
     selectedRoomRef.current = selectedRoom
-    loadTranscriptions(selectedRoom || undefined)
+    // Don't load transcriptions separately since we're using global socket context
+    // loadTranscriptions(selectedRoom || undefined)
   }, [selectedRoom])
 
   const handlePlay = useCallback((url: string, index: number) => {
@@ -294,83 +293,75 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
       cacheRef.current[cacheKey] = processedLive
       setData(processedLive)
       preloadForDataset(processedLive)
-      setIsConnected(true)
       setLoading(false)
     } catch (err: any) {
       if (err?.name === 'AbortError') return
       console.error('Failed to load data:', err)
       setError('Failed to load transcriptions. Please try again.')
-      setIsConnected(false)
       setLoading(false)
       setTimeout(() => setError(null), 5000)
     }
   }
 
+  // Sync global transcriptions to local state and join staff room
   useEffect(() => {
-    const socket = io("http://localhost:5001", { transports: ['polling'], timeout: 60000 })
-    socketRef.current = socket
-
-    const handleConnect = () => {
-      setIsConnected(true)
-      if (staffIdRef.current) socket.emit('join_staff_room', { user_id: staffIdRef.current })
+    if (socket && isConnected && staffIdRef.current) {
+      console.log('Joining staff room with ID:', staffIdRef.current)
+      socket.emit('join_staff_room', { user_id: staffIdRef.current })
+    } else {
+      console.log('Not joining staff room - socket:', !!socket, 'connected:', isConnected, 'staffId:', staffIdRef.current)
     }
+  }, [socket, isConnected])
 
-    const handleNewTranscription = (payload: any) => {
-      setIsReceiving(true)
-      if (!payload || typeof payload !== 'object') {
-        setIsReceiving(false)
-        return
-      }
-
-      const currentSelected = selectedRoomRef.current
-      if (currentSelected && payload.column1?.split(' ')[0] !== currentSelected) {
-        setIsReceiving(false)
-        return
-      }
-
+  // Update local data with global transcriptions (filtered for unapproved only)  
+  useEffect(() => {
+    if (transcriptions.length === 0) return
+    
+    console.log('Global transcriptions updated:', transcriptions)
+    console.log('First transcription details:', transcriptions[0])
+    
+    const unapprovedTranscriptions = transcriptions
+      .filter((t: any) => {
+        console.log('Filtering transcription:', { id: t.id, isApproved: t.isApproved, is_approved: t.is_approved })
+        return t.isApproved === false || t.is_approved === false
+      })
+      .map((t: any, index: number) => ({
+        ...t,
+        audioUrl: t.audioUrl || t.upload_path || "—",
+        column1: t.column1 || t.patient_name || "—",
+        column2: t.column2 || "—", 
+        column3: t.column3 || "—",
+        column4: t.column4 || t.patient_notes || "—",
+        index: index + 1,
+        isNew: t.isNew || false,
+        isApproved: false
+      }))
+    
+    console.log('Filtered unapproved transcriptions:', unapprovedTranscriptions)
+    
+    if (unapprovedTranscriptions.length > 0) {
+      setData(prevData => {
+        // Replace data entirely with global transcriptions to avoid duplicates
+        const processedData = unapprovedTranscriptions.map((transcription: any, index: number) => ({
+          ...transcription,
+          index: index + 1
+        }))
+        
+        console.log('Setting data from global transcriptions:')
+        console.log('- Count:', processedData.length)
+        console.log('- IDs:', processedData.map(p => p.id))
+        console.log('- Full data:', processedData)
+        
+        return processedData
+      })
+      
+      // Scroll to bottom and remove new highlight after 3 seconds
+      setTimeout(() => tableEndRef.current?.scrollIntoView({ behavior: "smooth" }), 100)
       setTimeout(() => {
-        const uniqueId = payload.patient_id && payload.session_id
-          ? `${payload.patient_id}_${payload.session_id}`
-          : `new_transcription_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-
-        const newRow: RowData = {
-          index: 0,
-          audioUrl: payload.audioUrl || "—",
-          column1: payload.column1 || "—",
-          column2: payload.column2 || "—",
-          column3: payload.column3 || "—",
-          column4: payload.column4 || "—",
-          id: uniqueId,
-          isNew: true,
-          isApproved: false,
-        }
-
-        setData(prev => {
-          if (prev.some(item => item.id === uniqueId || item.audioUrl === newRow.audioUrl)) return prev
-          return [...prev, { ...newRow, index: prev.length + 1 }]
-        })
-
-        setIsReceiving(false)
-        setTimeout(() => tableEndRef.current?.scrollIntoView({ behavior: "smooth" }), 100)
-        setTimeout(() => {
-          setData(prev => prev.map(item => item.id === uniqueId ? { ...item, isNew: false } : item))
-        }, 3000)
-      }, 800)
+        setData(prev => prev.map(item => ({ ...item, isNew: false })))
+      }, 3000)
     }
-
-    socket.on("connect", handleConnect)
-    socket.on("disconnect", () => setIsConnected(false))
-    socket.on("connect_error", () => setIsConnected(false))
-    socket.on("error", () => setIsConnected(false))
-    socket.on("reconnect", handleConnect)
-    socket.on("new_transcription", handleNewTranscription)
-
-    return () => {
-      socket.disconnect()
-      socket.off("connect", handleConnect)
-      socket.off("new_transcription", handleNewTranscription)
-    }
-  }, [])
+  }, [transcriptions])
 
   useEffect(() => {
     return () => {
@@ -393,12 +384,30 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
     if (!confirm("Are you sure you want to delete this transcription?")) return
     if (!row.id) return // Guard against undefined id
     
+    console.log('Attempting to delete transcription with ID:', row.id)
+    
     try {
       if (!row.id.toString().startsWith("new_transcription")) {
-        const [patientId, sessionId] = row.id.split('_')
-        await fetch(`/api/staff/transcriptions/${patientId}/${sessionId}`, { method: "DELETE" })
+        const response = await fetch(`/api/staff/transcriptions/${row.id}`, { method: "DELETE" })
+        console.log('Delete response status:', response.status)
+        
+        if (!response.ok) {
+          throw new Error(`Delete failed with status ${response.status}`)
+        }
+        
+        console.log('Delete successful, removing from local and global data')
       }
-      setData(prev => prev.filter(r => r.id !== row.id))
+      
+      // Remove from global context first (this will trigger data refresh)
+      removeTranscription(row.id)
+      
+      // Also remove from local data as backup
+      setData(prev => {
+        const filtered = prev.filter(r => r.id !== row.id)
+        console.log('Local data after delete:', filtered.length, 'items')
+        return filtered
+      })
+      
     } catch (err) {
       console.error("Failed to delete:", err)
       setError("Failed to delete transcription")
@@ -503,14 +512,19 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
                 </TableHeader>
                 <TableBody>
                   {processedData.length === 0 ? (
-                    <TableRow>
+                    <TableRow key="empty-state">
                       <TableCell colSpan={7} className="text-center text-gray-500 py-8">
                         No live transcriptions available
                       </TableCell>
                     </TableRow>
                   ) : (
-                    processedData.map((row, idx) => (
-                      <TableRow key={row.id} className={!row.isApproved ? "text-red-600" : ""}>
+                    processedData.map((row, idx) => {
+                      const uniqueKey = row.id || `temp-${idx}-${Date.now()}`
+                      if (!row.id) {
+                        console.warn('Row missing ID, using temp key:', uniqueKey, row)
+                      }
+                      return (
+                        <TableRow key={uniqueKey} className={!row.isApproved ? "text-red-600" : ""}>
                         <TableCell>{row.index}</TableCell>
                         <TableCell>
                           <AudioPlayerButton
@@ -564,7 +578,8 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
                           </div>
                         </TableCell>
                       </TableRow>
-                    ))
+                      )
+                    })
                   )}
                 </TableBody>
               </Table>

@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 
-const prisma = new PrismaClient()
-
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params
+    const { id } = await params
     const body = await request.json()
     const { column4 } = body
 
@@ -31,5 +29,29 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   } catch (error) {
     console.error('PATCH error:', error)
     return NextResponse.json({ error: 'Failed to update note' }, { status: 500 })
+  }
+}
+
+export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params
+    
+    // Parse id to extract patient_id and session_id
+    const [patient_id_str, session_id_str] = id.split('_')
+    const patient_id = parseInt(patient_id_str)
+    const session_id = parseInt(session_id_str)
+
+    if (isNaN(patient_id) || isNaN(session_id)) {
+      return NextResponse.json({ error: 'Invalid ID format' }, { status: 400 })
+    }
+
+    const deleted = await prisma.patient_uploads.delete({
+      where: { patient_id_session_id: { patient_id, session_id } }
+    })
+
+    return NextResponse.json(deleted)
+  } catch (error) {
+    console.error('DELETE error:', error)
+    return NextResponse.json({ error: 'Failed to delete transcription' }, { status: 500 })
   }
 }

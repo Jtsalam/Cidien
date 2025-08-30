@@ -155,8 +155,7 @@ export default function ArchivedNotes({ selectedRoom }: ArchivedNotesProps) {
     if (!row.id) return
     
     try {
-      const [patientId, sessionId] = row.id.split('_')
-      await fetch(`/api/staff/transcriptions/${patientId}/${sessionId}`, { method: "DELETE" })
+      await fetch(`/api/staff/transcriptions/${row.id}`, { method: "DELETE" })
       setArchivedData(prev => prev.filter(r => r.id !== row.id))
     } catch (err) {
       console.error("Failed to delete:", err)

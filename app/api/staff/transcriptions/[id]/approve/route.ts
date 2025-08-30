@@ -31,7 +31,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
       console.log('Using patient ID:', existingPatient.patient_id)
 
-      // Create the transcription record as approved
+      // Create the transcription record with specified approval status
       const created = await prisma.patient_uploads.create({
         data: {
           patient_id: existingPatient.patient_id,
@@ -39,7 +39,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
           upload_path: upload_path || '',
           patient_notes: patient_notes || '',
           upload_time: upload_time ? new Date(upload_time) : new Date(),
-          is_approved: true
+          is_approved: body.is_approved !== undefined ? body.is_approved : true
         }
       })
 

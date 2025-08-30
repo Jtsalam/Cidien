@@ -108,12 +108,82 @@ Solution Applied:
 
 File: /components/DataTable.tsx:448
 
-4.2 Database Integration Fixes
+4.2 MAJOR FIX: Date/Time Formatting Inconsistency Between Live and Archived Notes (SOLVED)
+Problem: When transcriptions move from Live Notes to Archived Notes, the date/time format changes:
+- Live Notes: "2178 B", "August 29, 2025", "10:47 PM" (Room, Date, Time)
+- Archived Notes: "Jim Pattison Children's Hospital", "1970-01-01T04:48:59.719Z", "Patient JPCH 1"
+
+Root Cause:
+- API was returning raw database fields without consistent formatting
+- Live Notes received formatted data from Socket.io
+- Archived Notes received raw database timestamps and different column mappings
+
+Solution Applied:
+- Updated /app/api/staff/transcriptions/route.ts to format dates consistently
+- Updated /app/api/staff/transcriptions-by-room/route.ts with same formatting
+- Date formatting: toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+- Time formatting: toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+- Column mapping now consistent: column1=Room/Patient, column2=Date, column3=Time, column4=Notes
+
+Files Modified:
+- /app/api/staff/transcriptions/route.ts:50-73
+- /app/api/staff/transcriptions-by-room/route.ts:56-79
+
+4.3 MAJOR FIX: Archived Notes Delete Not Working + Date Shows 1969 (SOLVED)
+Problem 1: Delete button in Archived Notes removed items from UI but they reappeared after refresh
+Problem 2: Dates showing as "December 31, 1969" instead of current dates
+
+Root Causes:
+1. DELETE API endpoint did not exist - ArchivedNotes was calling non-existent `/api/staff/transcriptions/${patientId}/${sessionId}`
+2. Database records had invalid/null upload_time values causing Unix epoch (0) to display as Dec 31, 1969
+
+Solution Applied:
+1. Created DELETE method in /app/api/staff/transcriptions/[id]/route.ts
+2. Fixed ArchivedNotes.tsx to use correct API route format `/api/staff/transcriptions/${rowId}`
+3. Added date validation in both API routes to handle invalid timestamps
+4. Invalid dates now fallback to current date instead of epoch
+
+Files Modified:
+- /app/api/staff/transcriptions/[id]/route.ts:37-59 (added DELETE method)
+- /components/ArchivedNotes.tsx:158 (fixed API route)
+- /app/api/staff/transcriptions/route.ts:52-54 (date validation)
+- /app/api/staff/transcriptions-by-room/route.ts:58-60 (date validation)
+
+4.4 MAJOR FIX: Transcriptions Lost on Refresh + Not Saved Outside Data Tab (SOLVED)
+Problem 1: New transcriptions disappeared when refreshing Live Notes tab
+Problem 2: Transcriptions made while not on Data tab were lost completely
+
+Root Causes:
+1. New transcriptions only existed in component state, never saved to database until approval
+2. Socket.io connection only worked when DataTable component was mounted (Data tab active)
+3. No global state management for transcriptions across tabs
+
+Solution Applied:
+1. Auto-save new transcriptions to database immediately as unapproved entries
+2. Implemented global SocketProvider for cross-tab Socket.io connection
+3. Updated approval API to support saving with is_approved=false
+4. Modified socket context to handle auto-save for all new transcriptions
+5. Updated DataTable to use global socket context instead of local connection
+
+Technical Implementation:
+- Modified socket context to auto-save new transcriptions via API
+- Added is_approved parameter to approval API route
+- Wrapped Staff dashboard with SocketProvider
+- Replaced DataTable's local socket with global useSocket hook
+- New transcriptions now persist across page refreshes and tab switches
+
+Files Modified:
+- /components/context/socket.tsx:37-93 (auto-save logic)
+- /app/api/staff/transcriptions/[id]/approve/route.ts:42 (is_approved support)
+- /app/Staff/dashboard/page.tsx:11,50 (SocketProvider wrapper)
+- /components/DataTable.tsx:10,131,310-349 (global socket integration)
+
+4.5 Database Integration Fixes
 - Fixed patient_id and session_id composite key handling
 - Resolved Prisma schema compatibility with existing data
 - Added is_approved field to patient_uploads table for workflow
 
-4.3 Socket.io Connection Management
+4.6 Socket.io Connection Management
 - Implemented connection status tracking
 - Added reconnection logic for dropped connections
 - Visual indicators for real-time data flow
