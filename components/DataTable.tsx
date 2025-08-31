@@ -126,6 +126,7 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
   const [editingRowId, setEditingRowId] = useState<string | null>(null)
   const [editingValue, setEditingValue] = useState<string>("")
   const [bedFilter, setBedFilter] = useState<string>('ALL')
+  const [bulkApproving, setBulkApproving] = useState<boolean>(false)
 
   // Use global socket context
   const socketContext = useSocket()
@@ -463,12 +464,77 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
         body: JSON.stringify(requestBody)
       })
       
-      // Remove from live data - it will now appear in the top-level Archived Notes tab
+      // Remove from global context first (this will trigger data refresh)
+      removeTranscription(rowId)
+      
+      // Remove from local data as backup - it will now appear in the top-level Archived Notes tab
       setData(prev => prev.filter(r => r.id !== rowId))
     } catch (err) {
       console.error(err)
       setError("Failed to approve")
       setTimeout(() => setError(null), 3000)
+    }
+  }
+
+  const handleBulkApprove = async () => {
+    if (processedData.length === 0) return
+    
+    if (!confirm(`Are you sure you want to approve all ${processedData.length} transcriptions?`)) {
+      return
+    }
+    
+    setBulkApproving(true)
+    
+    try {
+      // Process all transcriptions in parallel
+      const approvalPromises = processedData.map(async (row) => {
+        const rowId = row.id!
+        let apiUrl: string
+        let requestBody: any = { is_approved: true }
+
+        if (rowId.startsWith('new_transcription')) {
+          // For new transcriptions, we need to create the database record
+          const session_id = Math.floor(Math.random() * 2000000000) // Random 32-bit safe integer
+          
+          apiUrl = `/api/staff/transcriptions/${rowId}/approve`
+          requestBody = {
+            patient_id: 1, // API will find a valid patient, this is just to satisfy the check
+            session_id, 
+            upload_path: row.audioUrl,
+            patient_notes: row.column4,
+            upload_time: new Date().toISOString()
+          }
+        } else {
+          // For existing transcriptions
+          apiUrl = `/api/staff/transcriptions/${rowId}/approve`
+        }
+
+        return fetch(apiUrl, { 
+          method: 'PATCH',
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestBody)
+        })
+      })
+      
+      // Wait for all approvals to complete
+      await Promise.all(approvalPromises)
+      
+      // Remove all approved items from global context
+      processedData.forEach(row => {
+        if (row.id) {
+          removeTranscription(row.id)
+        }
+      })
+      
+      // Clear all local data since all items have been approved
+      setData([])
+      
+    } catch (err) {
+      console.error('Bulk approval failed:', err)
+      setError("Some approvals failed. Please try again.")
+      setTimeout(() => setError(null), 3000)
+    } finally {
+      setBulkApproving(false)
     }
   }
 
@@ -480,6 +546,25 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
           <CardTitle className="flex items-center justify-between">
             <span>Live Notes {data.length > 0 && `(${data.length})`}</span>
             <div className="flex items-center space-x-2">
+              {processedData.length > 0 && (
+                <button
+                  onClick={handleBulkApprove}
+                  disabled={bulkApproving}
+                  className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1"
+                >
+                  {bulkApproving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Approving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>Approve All ({processedData.length})</span>
+                    </>
+                  )}
+                </button>
+              )}
               {isReceiving && (
                 <Badge variant="outline" className="text-blue-600 border-blue-300">
                   <Mic className="mr-1 h-4 w-4 animate-pulse" /> Receiving
@@ -561,13 +646,6 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
                                 <Edit className="w-4 h-4" />
                               </button>
                             )}
-                            <button 
-                              onClick={() => handleApprove(row.id!)} 
-                              title="Approve"
-                              className="p-1 rounded hover:bg-gray-100"
-                            >
-                              <Check className="w-4 h-4 text-green-600" />
-                            </button>
                             <button 
                               onClick={() => handleDelete(row)} 
                               title="Delete"

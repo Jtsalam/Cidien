@@ -2,6 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from "next/headers";
 import { prisma } from '@/lib/prisma'
+import fs from 'fs'
+import path from 'path'
 
 export async function GET(request: NextRequest) {
   try {
@@ -29,7 +31,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Get transcriptions for specific room from the database
+    // Get transcriptions from patient_uploads table (the source of truth for transcriptions)
     const transcriptions = await prisma.patient_uploads.findMany({
       include: {
         patient_info: {
@@ -41,10 +43,6 @@ export async function GET(request: NextRequest) {
       where: {
         patient_info: {
           center_id: user.center_id
-        },
-        // Filter by room - this might need adjustment based on how room info is stored
-        upload_path: {
-          contains: roomNumber
         }
       },
       orderBy: {
@@ -52,35 +50,88 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // Format the data to match the expected structure
-    const formattedData = transcriptions.map(upload => {
-      // Handle invalid or null upload_time by using current date
-      const date = upload.upload_time && !isNaN(new Date(upload.upload_time).getTime()) 
-        ? new Date(upload.upload_time) 
-        : new Date()
-        
-      const formattedDate = date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      })
-      const formattedTime = date.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit', 
-        hour12: true 
-      })
-      
-      return {
-        patient_id: upload.patient_id,
-        session_id: upload.session_id,
-        audioUrl: upload.upload_path,
-        column1: upload.patient_info.patient_name || roomNumber, // Room/Patient info
-        column2: formattedDate, // Formatted date
-        column3: formattedTime, // Formatted time
-        column4: upload.patient_notes, // Patient Note
-        is_approved: upload.is_approved
+    // Get room_data to match audio files with room/bed information
+    const roomDataEntries = await prisma.room_data.findMany({
+      include: {
+        bed_info: {
+          include: {
+            room_info: true,
+            user_info: true
+          }
+        }
+      },
+      where: {
+        bed_info: {
+          room_info: {
+            room_number: parseInt(roomNumber)
+          },
+          user_info: {
+            center_id: user.center_id
+          }
+        }
       }
     })
+
+    // Format the data to match the expected structure, using transcriptions as primary source
+    const formattedData = transcriptions
+      .map(upload => {
+        // Handle invalid or null upload_time by using current date
+        const date = upload.upload_time && !isNaN(new Date(upload.upload_time).getTime()) 
+          ? new Date(upload.upload_time) 
+          : new Date()
+          
+        const formattedDate = date.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })
+        const formattedTime = date.toLocaleTimeString('en-US', { 
+          hour: 'numeric', 
+          minute: '2-digit', 
+          hour12: true 
+        })
+        
+        // Find corresponding room_data to get room and bed info
+        const uploadFileName = upload.upload_path.split('/').pop() || upload.upload_path
+        const matchingRoomData = roomDataEntries.find(roomData => {
+          const audioFileName = roomData.audio_path.split('/').pop() || roomData.audio_path
+          
+          // Try multiple matching strategies
+          if (audioFileName === uploadFileName) return true
+          if (roomData.audio_path.includes(uploadFileName)) return true
+          if (upload.upload_path.includes(audioFileName)) return true
+          
+          // Check without extensions
+          const audioNameNoExt = audioFileName.replace(/\.(wav|webm|mp3|m4a)$/i, '')
+          const uploadNameNoExt = uploadFileName.replace(/\.(wav|webm|mp3|m4a)$/i, '')
+          if (audioNameNoExt === uploadNameNoExt) return true
+          
+          return false
+        })
+        
+        // Use room info if available, otherwise fallback to patient info
+        const roomInfo = matchingRoomData 
+          ? `${matchingRoomData.bed_info.room_info.room_number} ${matchingRoomData.bed_info.bed_letter}`
+          : upload.patient_info.patient_name || 'Unknown Room'
+        
+        return {
+          patient_id: upload.patient_id,
+          session_id: upload.session_id,
+          audioUrl: `/audio/${uploadFileName}`,
+          column1: roomInfo,
+          column2: formattedDate,
+          column3: formattedTime,
+          column4: upload.patient_notes,
+          is_approved: upload.is_approved,
+          roomMatch: roomInfo.includes(roomNumber) // For filtering
+        }
+      })
+      .filter(item => item.roomMatch) // Only show items for the requested room
+      .map(item => {
+        // Remove the roomMatch field before returning
+        const { roomMatch, ...finalItem } = item
+        return finalItem
+      })
 
     return NextResponse.json(formattedData)
 

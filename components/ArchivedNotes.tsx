@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Play, Pause, Loader2, Trash, RotateCcw, Wifi, WifiOff } from "lucide-react"
+import { Play, Pause, Loader2, Trash, Wifi, WifiOff } from "lucide-react"
 
 interface RowData {
   index: number
@@ -164,28 +164,6 @@ export default function ArchivedNotes({ selectedRoom }: ArchivedNotesProps) {
     }
   }
 
-  const handleRestore = async (rowId: string) => {
-    const row = archivedData.find(r => r.id === rowId)
-    if (!row) return
-    try {
-      const response = await fetch(`/api/staff/transcriptions/${rowId}/restore`, { 
-        method: 'PATCH',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ is_approved: false })
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`)
-      }
-
-      // Remove from archived data - user will need to go to Data tab to see it in Live Notes
-      setArchivedData(prev => prev.filter(r => r.id !== rowId))
-    } catch (err) {
-      console.error('Restore error:', err)
-      setError("Failed to restore")
-      setTimeout(() => setError(null), 3000)
-    }
-  }
 
   return (
     <div className="p-6">
@@ -253,13 +231,6 @@ export default function ArchivedNotes({ selectedRoom }: ArchivedNotesProps) {
                     <TableCell>{row.column4}</TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <button 
-                          onClick={() => handleRestore(row.id!)} 
-                          title="Restore to Live Notes"
-                          className="p-1 rounded hover:bg-gray-100"
-                        >
-                          <RotateCcw className="w-4 h-4 text-blue-600" />
-                        </button>
                         <button 
                           onClick={() => handleDelete(row)} 
                           title="Delete"
