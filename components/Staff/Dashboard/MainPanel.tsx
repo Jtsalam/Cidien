@@ -8,6 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { LogOut, Hospital, User, TriangleAlert, Database,  FileArchive, DoorOpen, ArrowLeftRight, ChevronDown } from "lucide-react"
 import LogoutConfirmationModal from "@/components/LogoutConfirmationModal"
+import ApproveNotesModal from "@/components/ApproveNotesConfirmation"
 import DataTable from "@/components/DataTable"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
 
@@ -17,6 +18,7 @@ export default function MainPanel() {
   const [roomId, setRoomId] = useState("")
   const [orgImage, setOrgImage] = useState("")
   const [showLogoutModal, setShowLogoutModal] = useState(false)
+  const [showApproveNotesModal, setShowApproveNotesModal] = useState(false)
   const [assignedRooms, setAssignedRooms] = useState<string[]>([])
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null)
   const [showRoomDropdown, setShowRoomDropdown] = useState(false)
@@ -352,6 +354,27 @@ export default function MainPanel() {
         onCancel={() => setShowLogoutModal(false)}
         onConfirm={handleLogout}
       />
+
+      <ApproveNotesModal
+      open={showApproveNotesModal}
+      onCancel={() => setShowApproveNotesModal(false)}
+      onConfirm={handleLogout}
+      />
+      
+      <div className="flex justify-end pr-8">   {/* or pr-6, pr-8 */}
+        <Button 
+          variant="ghost"
+          size="sm"
+          className="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded shadow -mt-2"
+          onClick={() => setShowApproveNotesModal(true)}   
+        >
+        <span>Approve Notes</span>
+        </Button>
+      </div>
+
+
+
+
     </div>
   )
 }
