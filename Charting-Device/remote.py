@@ -5,7 +5,7 @@ from flask_socketio import SocketIO, join_room
 from flask_cors import CORS
 from functions import no_of_files, recognize_speech_from_audio, aud_info, extract_room_bed
 import uuid
-import tempfile
+from datetime import datetime
 
 # Setup Flask app
 app = Flask(__name__)
@@ -55,72 +55,7 @@ room_number = ""
 audio_path = ""
 transcriptions = []  # Global list to store all transcriptions
 
-def load_transcriptions_from_database():
-    """Load all transcriptions from the database on startup"""
-    try:
-        cur.execute("""
-            SELECT rd.id, rd.audio_path, rd.bed_id, rd.patient_note,
-                   bi.bed_letter, ri.room_number, ui.user_id, ui.staff_id
-            FROM room_data rd
-            JOIN bed_info bi ON rd.bed_id = bi.bed_id
-            JOIN room_info ri ON bi.room_id = ri.room_id
-            JOIN user_info ui ON bi.assigned_nurse_id = ui.user_id
-            ORDER BY rd.id ASC
-        """)
-        rows = cur.fetchall()
-        
-        loaded_transcriptions = []
-        for row in rows:
-            # Process each transcription
-            audio_path = row[1]
-            patient_note_from_db = row[3]
 
-            if os.path.exists(audio_path):
-                try:
-                    # If there's a note in the DB, use it. Otherwise, generate it.
-                    note_to_use = patient_note_from_db
-                    chart_info = aud_info(audio_path) # Still need for date/time
-
-                    if not note_to_use:
-                        note_to_use = chart_info[2]
-
-                    transcription_data = {
-                        "column1": f"{row[5]} {row[4]}",  # room_number bed_letter
-                        "column2": chart_info[0],  # date
-                        "column3": chart_info[1],  # time
-                        "column4": note_to_use,    # Use the note from DB or newly generated
-                        "audioUrl": f"/audio/{os.path.basename(audio_path)}",
-                        "bed_id": row[2],
-                        "user_id": row[6]
-                    }
-                    loaded_transcriptions.append(transcription_data)
-                except Exception as e:
-                    print(f"Error processing transcription for {audio_path}: {e}")
-                    # If audio processing fails, still include basic info
-                    transcription_data = {
-                        "column1": f"{row[5]} {row[4]}",  # room_number bed_letter
-                        "column2": "Unknown Date",
-                        "column3": "Unknown Time",
-                        "column4": patient_note_from_db or "Audio file exists but transcription failed",
-                        "audioUrl": f"/audio/{os.path.basename(audio_path)}",
-                        "bed_id": row[2],
-                        "user_id": row[6]
-                    }
-                    loaded_transcriptions.append(transcription_data)
-            else:
-                print(f"Audio file not found: {audio_path}")
-                # Remove from database if file doesn't exist
-                try:
-                    cur.execute("DELETE FROM room_data WHERE id = %s", (row[0],))
-                    conn.commit()
-                    print(f"Removed missing audio file record from database: {row[0]}")
-                except Exception as db_error:
-                    print(f"Error removing missing audio record: {db_error}")
-        
-        return loaded_transcriptions
-    except Exception as e:
-        print(f"Error loading transcriptions from database: {e}")
-        return []
 
 def get_staff_assigned_rooms(user_id):
     """Get list of rooms and bed letters assigned to a staff member"""
@@ -149,6 +84,84 @@ def get_user_id_from_staff_id(staff_id):
     cur.execute("SELECT user_id FROM user_info WHERE staff_id = %s", (staff_id,))
     result = cur.fetchone()
     return result[0] if result else None
+
+def get_fresh_staff_transcriptions(user_id, room_filter=None):
+    """Get fresh transcriptions from database for a specific user_id, optionally filtered by room"""
+    try:
+        # Build query with optional room filter
+        base_query = """
+            SELECT rd.id, rd.audio_path, rd.bed_id, rd.patient_note,
+                   bi.bed_letter, ri.room_number, ui.user_id, ui.staff_id
+            FROM room_data rd
+            JOIN bed_info bi ON rd.bed_id = bi.bed_id
+            JOIN room_info ri ON bi.room_id = ri.room_id
+            JOIN user_info ui ON bi.assigned_nurse_id = ui.user_id
+            WHERE ui.user_id = %s
+        """
+        
+        if room_filter:
+            base_query += " AND ri.room_number = %s"
+            cur.execute(base_query + " ORDER BY rd.id ASC", (user_id, room_filter))
+        else:
+            cur.execute(base_query + " ORDER BY rd.id ASC", (user_id,))
+        rows = cur.fetchall()
+        
+        fresh_transcriptions = []
+        for row in rows:
+            # Process each transcription
+            audio_path = row[1]
+            patient_note_from_db = row[3]
+
+            if os.path.exists(audio_path):
+                try:
+                    # Always get date/time from file metadata (no audio processing)
+                    aud_time = os.path.getmtime(audio_path)
+                    dt = datetime.fromtimestamp(aud_time)
+                    date = dt.strftime("%B %d, %Y")
+                    d_time = dt.strftime("%I:%M %p")
+                    
+                    # Always use the database note - never transcribe existing entries
+                    note_to_use = patient_note_from_db or "[No transcription available]"
+
+                    transcription_data = {
+                        "id": row[0],  # Include the database ID
+                        "column1": f"{row[5]} {row[4]}",  # room_number bed_letter
+                        "column2": date,  # date
+                        "column3": d_time,  # time
+                        "column4": note_to_use,    # Use the note from DB
+                        "audioUrl": f"/audio/{os.path.basename(audio_path)}",
+                        "bed_id": row[2],
+                        "user_id": row[6]
+                    }
+                    fresh_transcriptions.append(transcription_data)
+                except Exception as e:
+                    print(f"Error processing transcription for {audio_path}: {e}")
+                    # If audio processing fails, still include basic info
+                    transcription_data = {
+                        "id": row[0],  # Include the database ID
+                        "column1": f"{row[5]} {row[4]}",  # room_number bed_letter
+                        "column2": "Unknown Date",
+                        "column3": "Unknown Time",
+                        "column4": patient_note_from_db or "Audio file exists but transcription failed",
+                        "audioUrl": f"/audio/{os.path.basename(audio_path)}",
+                        "bed_id": row[2],
+                        "user_id": row[6]
+                    }
+                    fresh_transcriptions.append(transcription_data)
+            else:
+                print(f"Audio file not found: {audio_path}")
+                # Remove from database if file doesn't exist
+                try:
+                    cur.execute("DELETE FROM room_data WHERE id = %s", (row[0],))
+                    conn.commit()
+                    print(f"Removed missing audio file record from database: {row[0]}")
+                except Exception as db_error:
+                    print(f"Error removing missing audio record: {db_error}")
+        
+        return fresh_transcriptions
+    except Exception as e:
+        print(f"Error loading fresh transcriptions from database: {e}")
+        return []
 
 @app.route("/", methods=['GET'])
 def index():
@@ -271,9 +284,8 @@ def get_transcriptions():
     if 'user_id' not in session:
         return jsonify([])
     
-    # Filter transcriptions for the logged-in staff member
-    staff_transcriptions = [t for t in transcriptions if t.get('user_id') == session['user_id']]
-    return jsonify(staff_transcriptions)
+    # Always fetch fresh data from database, not cached list
+    return jsonify(get_fresh_staff_transcriptions(session['user_id']))
 
 @app.route('/transcriptions/<staff_id>', methods=['GET'])
 def get_staff_transcriptions(staff_id):
@@ -282,9 +294,8 @@ def get_staff_transcriptions(staff_id):
     if not user_id:
         return jsonify([])
     
-    # Filter transcriptions for the specific staff member
-    staff_transcriptions = [t for t in transcriptions if t.get('user_id') == user_id]
-    return jsonify(staff_transcriptions)
+    # Always fetch fresh data from database, not cached list
+    return jsonify(get_fresh_staff_transcriptions(user_id))
 
 
 
@@ -318,33 +329,7 @@ def handle_ping():
     socketio.emit('pong', {'message': 'pong'})
 
 
-@app.route('/transcribe_chunk', methods=['POST'])
-def transcribe_chunk():
-    if 'audio' not in request.files:
-        return jsonify({'error': 'No audio file found in request'}), 400
 
-    audio_file = request.files['audio']
-    
-    # Use a temporary file to store the chunk
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.webm') as temp_audio:
-        audio_file.save(temp_audio.name)
-        temp_audio_path = temp_audio.name
-
-    transcription = ""
-    try:
-        # Recognize speech from the temporary audio file
-        result = recognize_speech_from_audio(temp_audio_path)
-        if result and 'transcription' in result:
-            transcription = result['transcription']
-    except Exception as e:
-        print(f"Error during chunk transcription: {e}")
-        # Return empty transcription on error, client will ignore it
-        return jsonify({'transcription': ''})
-    finally:
-        # Clean up the temporary file
-        os.remove(temp_audio_path)
-
-    return jsonify({'transcription': transcription})
 
 
 @app.route('/process_audio/room_data', methods=['POST'])
@@ -392,10 +377,14 @@ def room_data_btn():
         chart_info = aud_info(audio_path)
         note_to_save = chart_info[2]
 
-        # Store in database
+        # Store in database and get the new ID
+        new_id = None
         try:
-            cur.execute("INSERT INTO room_data (bed_id, audio_path, patient_note) VALUES (%s, %s, %s)", 
-                       (bed_id, audio_path, note_to_save))
+            cur.execute("""
+                INSERT INTO room_data (bed_id, audio_path, patient_note) 
+                VALUES (%s, %s, %s) RETURNING id
+            """, (bed_id, audio_path, note_to_save))
+            new_id = cur.fetchone()[0]
             conn.commit()
         except Exception as e:
             print(f"Database error: {e}")
@@ -410,6 +399,7 @@ def room_data_btn():
         }
 
         data = {
+            "id": new_id,
             "column1": chart_data['room_id'],
             "column2": chart_data['date'],
             "column3": chart_data['time'],
@@ -475,78 +465,12 @@ def get_staff_transcriptions_by_room(room_number):
     if not staff_id:
         return jsonify([])
     
-    try:
-        # Get user_id from staff_id
-        cur.execute("SELECT user_id FROM user_info WHERE staff_id = %s", (staff_id,))
-        user_result = cur.fetchone()
-        
-        if not user_result:
-            return jsonify([])
-        
-        user_id = user_result[0]
-        
-        # Get transcriptions for the specific room and staff member
-        cur.execute("""
-            SELECT rd.id, rd.audio_path, rd.bed_id, rd.patient_note,
-                   bi.bed_letter, ri.room_number, ui.user_id, ui.staff_id
-            FROM room_data rd
-            JOIN bed_info bi ON rd.bed_id = bi.bed_id
-            JOIN room_info ri ON bi.room_id = ri.room_id
-            JOIN user_info ui ON bi.assigned_nurse_id = ui.user_id
-            WHERE ri.room_number = %s AND ui.user_id = %s
-            ORDER BY rd.id ASC
-        """, (room_number, user_id))
-        rows = cur.fetchall()
-        
-        filtered_transcriptions = []
-        for row in rows:
-            audio_path = row[1]
-            patient_note_from_db = row[3]
-
-            if os.path.exists(audio_path):
-                try:
-                    note_to_use = patient_note_from_db
-                    chart_info = aud_info(audio_path) # For date/time
-
-                    if not note_to_use:
-                        note_to_use = chart_info[2]
-                        
-                    transcription_data = {
-                        "column1": f"{row[5]} {row[4]}",  # room_number bed_letter
-                        "column2": chart_info[0],  # date
-                        "column3": chart_info[1],  # time
-                        "column4": note_to_use,  # note
-                        "audioUrl": f"/audio/{os.path.basename(audio_path)}",
-                        "bed_id": row[2],
-                        "user_id": row[6]
-                    }
-                    filtered_transcriptions.append(transcription_data)
-                except Exception as e:
-                    print(f"Error processing transcription for {audio_path}: {e}")
-                    transcription_data = {
-                        "column1": f"{row[5]} {row[4]}",  # room_number bed_letter
-                        "column2": "Unknown Date",
-                        "column3": "Unknown Time",
-                        "column4": patient_note_from_db or "Audio file exists but transcription failed",
-                        "audioUrl": f"/audio/{os.path.basename(audio_path)}",
-                        "bed_id": row[2],
-                        "user_id": row[6]
-                    }
-                    filtered_transcriptions.append(transcription_data)
-            else:
-                print(f"Audio file not found: {audio_path}")
-                # Remove from database if file doesn't exist
-                try:
-                    cur.execute("DELETE FROM room_data WHERE id = %s", (row[0],))
-                    conn.commit()
-                    print(f"Removed missing audio file record from database: {row[0]}")
-                except Exception as db_error:
-                    print(f"Error removing missing audio record: {db_error}")
-        
-        return jsonify(filtered_transcriptions)
-    except Exception as e:
-        print(f"Error getting transcriptions by room: {e}")
+    # Get user_id from staff_id and return filtered transcriptions
+    user_id = get_user_id_from_staff_id(staff_id)
+    if not user_id:
         return jsonify([])
+    
+    return jsonify(get_fresh_staff_transcriptions(user_id, room_number))
     
 if __name__ == '__main__':
     print("Running server...")
@@ -563,9 +487,6 @@ if __name__ == '__main__':
     os.makedirs('uploads/room_aud', exist_ok=True)
     os.makedirs('uploads/Unassigned', exist_ok=True)
     
-    # Load existing transcriptions from database
-    print("Loading transcriptions from database...")
-    transcriptions.extend(load_transcriptions_from_database())
-    print(f"Loaded {len(transcriptions)} transcriptions from database")
+    # No longer loading transcriptions into global list - using fresh database queries
     
     socketio.run(app, host='0.0.0.0', port=5000)
