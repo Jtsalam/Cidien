@@ -74,6 +74,7 @@ model room_data {
   bed_id Int
   audio_path String @db.VarChar(400)
   patient_note String @db.VarChar(400)
+  is_approved Int @default(0)
   bed_info           bed_info     @relation(fields: [bed_id], references: [bed_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
