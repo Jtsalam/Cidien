@@ -1,5 +1,4 @@
 import speech_recognition as sr
-import whisper
 from pydub import AudioSegment
 from datetime import datetime
 import os
