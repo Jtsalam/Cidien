@@ -96,7 +96,7 @@ def get_fresh_staff_transcriptions(user_id, room_filter=None):
             JOIN bed_info bi ON rd.bed_id = bi.bed_id
             JOIN room_info ri ON bi.room_id = ri.room_id
             JOIN user_info ui ON bi.assigned_nurse_id = ui.user_id
-            WHERE ui.user_id = %s
+            WHERE ui.user_id = %s AND rd.is_approved = 0
         """
         
         if room_filter:
@@ -471,6 +471,54 @@ def get_staff_transcriptions_by_room(room_number):
         return jsonify([])
     
     return jsonify(get_fresh_staff_transcriptions(user_id, room_number))
+
+@app.route('/staff/approve-notes', methods=['POST'])
+def approve_notes():
+    """Approve notes for all, a specific room, or a specific bed for the staff member."""
+    data = request.get_json() or {}
+    staff_id = data.get('staff_id')
+    room = data.get('room')
+    bed = data.get('bed')
+
+    if not staff_id:
+        return jsonify({'error': 'Staff ID is required'}), 400
+
+    try:
+        # Get user_id from staff_id
+        cur.execute("SELECT user_id FROM user_info WHERE staff_id = %s", (staff_id,))
+        user_result = cur.fetchone()
+        if not user_result:
+            return jsonify({'error': 'Staff member not found'}), 404
+        user_id = user_result[0]
+
+        # Build the update query
+        base_query = """
+            UPDATE room_data SET is_approved = 1
+            FROM bed_info bi
+            JOIN room_info ri ON bi.room_id = ri.room_id
+            WHERE room_data.bed_id = bi.bed_id
+              AND bi.assigned_nurse_id = %s
+              AND room_data.is_approved = 0
+        """
+        params = [user_id]
+        if room:
+            base_query += " AND ri.room_number = %s"
+            params.append(room)
+        if bed:
+            base_query += " AND bi.bed_letter = %s"
+            params.append(bed)
+
+        cur.execute(base_query, tuple(params))
+        print(base_query)
+        print("\n")
+        print(bed)
+        updated_count = cur.rowcount
+        conn.commit()
+        return jsonify({'success': True, 'updated': updated_count})
+    except Exception as e:
+        print(f"Error approving notes: {e}")
+        conn.rollback()
+        return jsonify({'error': 'Database error'}), 500
     
 if __name__ == '__main__':
     print("Running server...")
