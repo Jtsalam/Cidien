@@ -5,9 +5,11 @@ import io from "socket.io-client"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Play, Pause, Loader2, Database, Mic, Wifi, WifiOff, Bed } from "lucide-react"
+import { Play, Pause, Loader2, Database, Mic, Wifi, WifiOff, Bed, Edit, Trash2, Save, XCircle, MoreVertical } from "lucide-react"
 import * as Tooltip from "@radix-ui/react-tooltip"
 import { getCookie } from "@/utils/getCookie"
+import { Button } from "./ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 // Socket will be initialized inside the component
 
@@ -22,12 +24,18 @@ interface RowData {
   isNew?: boolean
 }
 
-interface DataTableProps {
-  selectedRoom?: string | null;
-  initialData?: RowData[];
+interface CachedData extends Array<RowData> {
+  lastUpdated?: number
 }
 
-export default function DataTable({ selectedRoom, initialData }: DataTableProps) {
+interface DataTableProps {
+  selectedRoom?: string | null
+  initialData?: RowData[]
+  onBedChange?: (bed: string) => void   // new
+}
+
+
+export default function DataTable({ selectedRoom, initialData, onBedChange, }: DataTableProps) {
   const [data, setData] = useState<RowData[]>([])
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const [playingIndex, setPlayingIndex] = useState<number | null>(null)
@@ -36,10 +44,12 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
   const [isReceiving, setIsReceiving] = useState(false)
   const [isConnected, setIsConnected] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [editingRowId, setEditingRowId] = useState<string | number | null>(null);
+  const [editedNote, setEditedNote] = useState<string>('');
   const tableEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<any>(null);
   const [staffId, setStaffId] = useState<string>("");
-  const cacheRef = useRef<Record<string, RowData[]>>({})
+  const cacheRef = useRef<Record<string, CachedData>>({})
   const fetchControllerRef = useRef<AbortController | null>(null)
   const selectedRoomRef = useRef<string | null | undefined>(selectedRoom)
   const preloadedAudioRef = useRef<Map<string, HTMLAudioElement>>(new Map())
@@ -57,7 +67,9 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
         index: idx + 1,
         isNew: false,
       }))
-      cacheRef.current[key] = normalized
+      const dataWithTimestamp = normalized as CachedData
+      dataWithTimestamp.lastUpdated = Date.now()
+      cacheRef.current[key] = dataWithTimestamp
       setData(normalized)
       setLoading(false)
       preloadForDataset(normalized)
@@ -183,27 +195,76 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
     handlePlay(audioUrl, index)
   }, [handlePlay])
 
+  const handleSaveEdit = async (rowId: string | number) => {
+    try {
+      const response = await fetch(`/api/staff/transcriptions/${rowId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ patient_note: editedNote }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save changes.');
+      }
+
+      // Update local state with the saved note
+      setData(data.map(row => row.id === rowId ? { ...row, column4: editedNote } : row));
+    } catch (error) {
+      console.error("Error saving edit:", error);
+      // Optionally, show an error message to the user
+    } finally {
+      setEditingRowId(null);
+    }
+  };
+
+  const handleDeleteRow = async (rowId: string | number) => {
+    // Optional: Add a confirmation dialog here
+    if (!confirm('Are you sure you want to delete this entry? This action cannot be undone.')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/staff/transcriptions/${rowId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete the entry.');
+      }
+
+      // Update local state by removing the row and re-indexing
+      setData(prevData => 
+        prevData
+          .filter(row => row.id !== rowId)
+          .map((row, index) => ({ ...row, index: index + 1 }))
+      );
+    } catch (error) {
+      console.error("Error deleting row:", error);
+      // Optionally, show an error message to the user
+    }
+  };
+
   const loadTranscriptions = async (roomFilter?: string) => {
     try {
       const cacheKey = roomFilter ? `room:${roomFilter}` : 'all'
+      const previousCacheKey = data.length > 0 ? (selectedRoomRef.current ? `room:${selectedRoomRef.current}` : 'all') : null
 
-      // Show cached data immediately if available
+      // Only clear data if switching between different rooms/views to prevent flickering
+      if (previousCacheKey && previousCacheKey !== cacheKey) {
+        setData([])
+      }
+      setLoading(true)
+
+      // Check for fresh cached data (within last 30 seconds for better UX)
       const cached = cacheRef.current[cacheKey]
-      if (cached && cached.length > 0) {
+      const now = Date.now()
+      const cacheAge = cached?.lastUpdated ? now - cached.lastUpdated : Infinity
+      
+      if (cached && cached.length > 0 && cacheAge < 30000) {
         setData(cached)
         setLoading(false)
         preloadForDataset(cached)
-      } else {
-        // If filtering to a room and we already have 'all' cached, derive immediately
-        if (roomFilter && cacheRef.current['all'] && cacheRef.current['all'].length > 0) {
-          const derived = cacheRef.current['all'].filter((row) => row.column1?.split(' ')[0] === roomFilter)
-          cacheRef.current[cacheKey] = derived
-          setData(derived)
-          setLoading(false)
-          preloadForDataset(derived)
-        } else {
-          setLoading(true)
-        }
+        return // Use cache and skip API call
       }
 
       // Abort any in-flight request
@@ -232,11 +293,12 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
 
       if (!response.ok) {
         const errorText = await response.text().catch(() => 'Unknown error')
+        console.error(`API Error - ${response.status}: ${errorText}`)
         throw new Error(`HTTP ${response.status}: ${errorText}`)
       }
 
       const json = await response.json()
-      console.log(`Loaded ${json.length} transcriptions`)
+      console.log(`Successfully loaded ${json.length} transcriptions for ${roomFilter ? `room ${roomFilter}` : 'all rooms'}`)
 
       // Create a Set to track unique IDs and prevent duplicates
       const existingIds = new Set((cacheRef.current[cacheKey] || []).map(item => String(item.id)))
@@ -250,7 +312,10 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
           index: index + 1,
         }))
 
-      cacheRef.current[cacheKey] = processedData
+      // Store data with timestamp for cache freshness
+      const dataWithTimestamp = processedData as CachedData
+      dataWithTimestamp.lastUpdated = Date.now()
+      cacheRef.current[cacheKey] = dataWithTimestamp
       setData(processedData)
       preloadForDataset(processedData)
       setIsConnected(true)
@@ -343,7 +408,6 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
 
       // Simulate processing delay for better UX
       setTimeout(() => {
-        const uniqueId = `new_transcription_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const newRow: RowData = {
           index: 0, // Will be calculated in setData
           audioUrl: payload.audioUrl || "—",
@@ -351,18 +415,13 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
           column2: payload.column2 || "—",
           column3: payload.column3 || "—",
           column4: payload.column4 || "—",
-          id: uniqueId,
+          id: payload.id || `fallback_${Date.now()}`, // Use the ID from the server
           isNew: true,
         }
 
         setData((prevData) => {
-          // Check for duplicates before adding
-          const isDuplicate = prevData.some(item => 
-            item.audioUrl === newRow.audioUrl && 
-            item.column1 === newRow.column1 && 
-            item.column2 === newRow.column2 && 
-            item.column3 === newRow.column3
-          );
+          // Check for duplicates before adding, now using the reliable ID from the server
+          const isDuplicate = prevData.some(item => item.id === newRow.id);
           
           if (isDuplicate) {
             console.log('Duplicate transcription detected, skipping');
@@ -381,7 +440,7 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
 
         // Remove "new" status after 3 seconds
         setTimeout(() => {
-          setData((prevData) => prevData.map((item) => (String(item.id) === String(uniqueId) ? { ...item, isNew: false } : item)))
+          setData((prevData) => prevData.map((item) => (item.id === newRow.id ? { ...item, isNew: false } : item)))
         }, 3000)
       }, 800)
     })
@@ -409,10 +468,14 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
   }, [selectedRoom])
 
   
-
   // Memoize filtered and processed data
   const [bedFilter, setBedFilter] = useState<string>('ALL')
-
+  useEffect(() => {
+    if (onBedChange) {
+      onBedChange(bedFilter)
+    }
+  }, [bedFilter, onBedChange])
+  
   const processedData = useMemo(() => {
     const base = data
     const filtered = selectedRoom && bedFilter !== 'ALL'
@@ -427,6 +490,9 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
       index: index + 1,
     }))
   }, [data, bedFilter, selectedRoom])
+
+
+  
 
   // Beds dropdown options
   const [bedOptions, setBedOptions] = useState<string[]>([])
@@ -563,6 +629,7 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
                     <TableHead className="font-semibold text-gray-700">Date</TableHead>
                     <TableHead className="font-semibold text-gray-700">Timestamp</TableHead>
                     <TableHead className="font-semibold text-gray-700">Patient Note</TableHead>
+                    <TableHead className="w-24"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -593,7 +660,7 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
                       <TableRow
                         key={row.id || `fallback_${i}_${row.column2}_${row.column3}_${Date.now()}`}
                         className={`
-                          hover:bg-gray-50 hover:shadow-md transition-all duration-300 cursor-pointer relative
+                          group hover:bg-gray-50 hover:shadow-md transition-all duration-300 cursor-pointer relative
                           ${row.isNew ? "animate-in slide-in-from-bottom-2 duration-500 bg-emerald-50 border-l-4 border-l-emerald-400" : ""}
                         `}
                         onDoubleClick={() => handleRowDoubleClick(row.audioUrl, i)}
@@ -637,11 +704,65 @@ export default function DataTable({ selectedRoom, initialData }: DataTableProps)
                         <TableCell className={row.isNew ? "font-medium" : ""}>{row.column2}</TableCell>
                         <TableCell className={row.isNew ? "font-medium" : ""}>{row.column3}</TableCell>
                         <TableCell className={row.isNew ? "font-medium" : ""}>
-                          {row.column4}
-                          {row.isNew && (
-                            <Badge variant="secondary" className="ml-2 text-xs bg-emerald-100 text-emerald-800">
-                              New
-                            </Badge>
+                          {editingRowId === row.id ? (
+                            <textarea
+                              value={editedNote}
+                              onChange={(e) => setEditedNote(e.target.value)}
+                              className="w-full p-2 border rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                              rows={3}
+                              autoFocus
+                            />
+                          ) : (
+                            <>
+                              {row.column4}
+                              {row.isNew && (
+                                <Badge variant="secondary" className="ml-2 text-xs bg-emerald-100 text-emerald-800">
+                                  New
+                                </Badge>
+                              )}
+                            </>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {editingRowId === row.id ? (
+                            <div className="flex items-center justify-end space-x-2">
+                              <Tooltip.Root>
+                                <Tooltip.Trigger asChild>
+                                  <Button size="icon" variant="ghost" onClick={() => handleSaveEdit(row.id!)}>
+                                    <Save className="w-4 h-4 text-emerald-600" />
+                                  </Button>
+                                </Tooltip.Trigger>
+                                <Tooltip.Content className="bg-gray-800 text-white px-2 py-1 text-xs rounded shadow-md z-50">Save</Tooltip.Content>
+                              </Tooltip.Root>
+                              <Tooltip.Root>
+                                <Tooltip.Trigger asChild>
+                                  <Button size="icon" variant="ghost" onClick={() => setEditingRowId(null)}>
+                                    <XCircle className="w-4 h-4 text-gray-500" />
+                                  </Button>
+                                </Tooltip.Trigger>
+                                <Tooltip.Content className="bg-gray-800 text-white px-2 py-1 text-xs rounded shadow-md z-50">Cancel</Tooltip.Content>
+                              </Tooltip.Root>
+                            </div>
+                          ) : (
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity flex justify-end">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon">
+                                    <MoreVertical className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem onClick={() => { setEditingRowId(row.id!); setEditedNote(row.column4); }}>
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    <span>Edit</span>
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleDeleteRow(row.id!)} className="text-red-600">
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    <span>Delete</span>
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
                           )}
                         </TableCell>
                       </TableRow>

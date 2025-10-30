@@ -82,9 +82,25 @@ const AssignedRoomsList: React.FC<AssignedRoomsListProps> = ({ nurseId, selected
                   <ul className="space-y-2">
                     {room.beds.map((bed) => (
                       <li key={bed.bed_letter} className="flex items-center space-x-4">
-                        <span className="font-medium">Bed {bed.bed_letter}</span>
+                        <button
+                          className="font-medium text-left text-emerald-700 hover:underline focus:outline-none"
+                          onClick={() => {
+                            // TODO: Implement bed click action (e.g., show bed details or filter)
+                            console.log(`Clicked bed ${bed.bed_letter} in room ${room.room_number}`)
+                          }}
+                        >
+                          Bed {bed.bed_letter}
+                        </button>
                         <span className="text-gray-600">→</span>
-                        <span className="text-emerald-700 font-semibold">{bed.patient_name || 'Unassigned'}</span>
+                        <button
+                          className="text-emerald-700 font-semibold hover:underline focus:outline-none"
+                          onClick={() => {
+                            // TODO: Implement patient name click action
+                            console.log(`Clicked patient ${bed.patient_name || 'Unassigned'} for bed ${bed.bed_letter} in room ${room.room_number}`)
+                          }}
+                        >
+                          {bed.patient_name || 'Unassigned'}
+                        </button>
                       </li>
                     ))}
                   </ul>

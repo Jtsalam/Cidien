@@ -11,6 +11,7 @@ import LogoutConfirmationModal from "@/components/LogoutConfirmationModal"
 import ApproveNotesModal from "@/components/ApproveNotesConfirmation"
 import DataTable from "@/components/DataTable"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
+import AssignedRoomsList from "./AssignedRoomsList"
 
 export default function MainPanel() {
   const [displayName, setDisplayName] = useState("")
@@ -26,6 +27,8 @@ export default function MainPanel() {
   const dropdownRef = useRef<HTMLDivElement>(null)
   const transcriptionCacheRef = useRef<Record<string, any[]>>({})
   const prefetchControllerRef = useRef<AbortController | null>(null)
+  const [selectedBed, setSelectedBed] = useState<string>("ALL")
+
 
   const cacheKeyForRoom = useCallback((room?: string | null) => (room ? `room:${room}` : 'all'), [])
 
@@ -114,6 +117,25 @@ export default function MainPanel() {
     await fetch("/api/staff/logout", { method: "POST" })
     window.location.href = "/sign-in"
   }, [])
+
+  const handleNoteApproval = useCallback(async () => {
+    // Approve notes for current room/bed or all
+    try {
+      const staffId = nurseId;
+      const room = selectedRoom;
+      const bed = selectedBed;
+      const res = await fetch('/api/staff/approve-notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ staff_id: staffId, room, bed }),
+      });
+      if (!res.ok) throw new Error('Failed to approve notes');
+      // Optionally, show a toast or feedback
+    } catch (e) {
+      console.error('Error approving notes:', e);
+    }
+    setActiveTab("archive");
+  }, [nurseId, selectedRoom, selectedBed]);
 
   const handleRoomSelect = useCallback((room: string) => {
     console.log(`Switching to room: ${room}`);
@@ -346,7 +368,13 @@ export default function MainPanel() {
         <DataTable
           selectedRoom={selectedRoom}
           initialData={transcriptionCacheRef.current[cacheKeyForRoom(selectedRoom)] || []}
+          onBedChange={setSelectedBed}  // capture bed from DataTable
         />
+      )}
+
+      {/* Assigned Rooms List for Archive Tab */}
+      {activeTab === "archive" && (
+        <AssignedRoomsList nurseId={nurseId} selectedRoom={selectedRoom} />
       )}
       
       <LogoutConfirmationModal
@@ -358,9 +386,12 @@ export default function MainPanel() {
       <ApproveNotesModal
       open={showApproveNotesModal}
       onCancel={() => setShowApproveNotesModal(false)}
-      onConfirm={handleLogout}
+      onConfirm={handleNoteApproval}
+      room={getRoomDisplayText}
+      bed={selectedBed}
       />
       
+      {activeTab === "data" && (
       <div className="flex justify-end pr-8">   {/* or pr-6, pr-8 */}
         <Button 
           variant="ghost"
@@ -370,7 +401,7 @@ export default function MainPanel() {
         >
         <span>Approve Notes</span>
         </Button>
-      </div>
+      </div>)}
 
 
 
