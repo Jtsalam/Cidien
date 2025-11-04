@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import BedDetailsView from './BedDetailsView';
 
 interface BedInfo {
   bed_letter: string;
@@ -20,6 +21,7 @@ const AssignedRoomsList: React.FC<AssignedRoomsListProps> = ({ nurseId, selected
   const [expandedRooms, setExpandedRooms] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedBed, setSelectedBed] = useState<{ room: string; bed: string } | null>(null);
 
   useEffect(() => {
     if (!nurseId) return;
@@ -50,6 +52,25 @@ const AssignedRoomsList: React.FC<AssignedRoomsListProps> = ({ nurseId, selected
       return newSet;
     });
   };
+
+  const handleBedClick = (roomNumber: string, bedLetter: string) => {
+    setSelectedBed({ room: roomNumber, bed: bedLetter });
+  };
+
+  const handleBackToList = () => {
+    setSelectedBed(null);
+  };
+
+  // If a bed is selected, show the BedDetailsView
+  if (selectedBed) {
+    return (
+      <BedDetailsView
+        roomNumber={selectedBed.room}
+        bedLetter={selectedBed.bed}
+        onBack={handleBackToList}
+      />
+    );
+  }
 
   if (loading) {
     return <div className="p-6 text-gray-500">Loading assigned rooms...</div>;
@@ -83,24 +104,15 @@ const AssignedRoomsList: React.FC<AssignedRoomsListProps> = ({ nurseId, selected
                     {room.beds.map((bed) => (
                       <li key={bed.bed_letter} className="flex items-center space-x-4">
                         <button
-                          className="font-medium text-left text-emerald-700 hover:underline focus:outline-none"
-                          onClick={() => {
-                            // TODO: Implement bed click action (e.g., show bed details or filter)
-                            console.log(`Clicked bed ${bed.bed_letter} in room ${room.room_number}`)
-                          }}
+                          className="font-medium text-left text-emerald-700 hover:underline focus:outline-none transition-colors hover:text-emerald-900"
+                          onClick={() => handleBedClick(room.room_number, bed.bed_letter)}
                         >
                           Bed {bed.bed_letter}
                         </button>
                         <span className="text-gray-600">→</span>
-                        <button
-                          className="text-emerald-700 font-semibold hover:underline focus:outline-none"
-                          onClick={() => {
-                            // TODO: Implement patient name click action
-                            console.log(`Clicked patient ${bed.patient_name || 'Unassigned'} for bed ${bed.bed_letter} in room ${room.room_number}`)
-                          }}
-                        >
+                        <span className="text-gray-700">
                           {bed.patient_name || 'Unassigned'}
-                        </button>
+                        </span>
                       </li>
                     ))}
                   </ul>
