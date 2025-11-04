@@ -6,6 +6,11 @@ from flask_cors import CORS
 from functions import no_of_files, recognize_speech_from_audio, aud_info, extract_room_bed
 import uuid
 from datetime import datetime
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib import colors
 
 # Setup Flask app
 app = Flask(__name__)
@@ -472,6 +477,190 @@ def get_staff_transcriptions_by_room(room_number):
     
     return jsonify(get_fresh_staff_transcriptions(user_id, room_number))
 
+def generate_chart_pdf(staff_id, room=None, bed=None):
+    """Generate a PDF chart for approved notes with the given filters"""
+    try:
+        # Get user info
+        cur.execute("""
+            SELECT ui.user_id, ui.user_name, ui.staff_id, mc.center_name
+            FROM user_info ui
+            JOIN medicalcenter_info mc ON ui.center_id = mc.center_id
+            WHERE ui.staff_id = %s
+        """, (staff_id,))
+        user_result = cur.fetchone()
+        if not user_result:
+            return None
+        user_id, user_name, staff_id_db, center_name = user_result
+
+        # Get the notes that are being approved (including patient name for the first note to use in header)
+        base_query = """
+            SELECT rd.id, rd.patient_note, rd.audio_path,
+                   bi.bed_letter, ri.room_number, pi.patient_name
+            FROM room_data rd
+            JOIN bed_info bi ON rd.bed_id = bi.bed_id
+            JOIN room_info ri ON bi.room_id = ri.room_id
+            LEFT JOIN patient_info pi ON bi.assigned_patient_id = pi.patient_id
+            WHERE bi.assigned_nurse_id = %s AND rd.is_approved = 0
+        """
+        params = [user_id]
+        if room:
+            base_query += " AND ri.room_number = %s"
+            params.append(room)
+        if bed:
+            base_query += " AND bi.bed_letter = %s"
+            params.append(bed)
+        base_query += " ORDER BY ri.room_number, bi.bed_letter, rd.id"
+
+        cur.execute(base_query, tuple(params))
+        notes_data = cur.fetchall()
+
+        if not notes_data:
+            return None
+
+        # Extract patient name from the first note (all notes should be for the same bed/patient)
+        patient_name = notes_data[0][5] if notes_data[0][5] else "No patient assigned"
+
+        # Create organization folder for PDFs if it doesn't exist
+        org_folder = ORG_MAPPING.get(center_name, 'Unassigned')
+        pdf_dir = os.path.join(BASE_DIR, 'uploads', 'PDFs', org_folder)
+        os.makedirs(pdf_dir, exist_ok=True)
+
+        # Generate unique PDF filename
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        room_suffix = f"_Room{room}" if room else "_AllRooms"
+        bed_suffix = f"_Bed{bed}" if bed else ""
+        pdf_filename = f'chart_{staff_id}_{timestamp}{room_suffix}{bed_suffix}.pdf'
+        pdf_path = os.path.join(pdf_dir, pdf_filename)
+
+        # Create the PDF
+        doc = SimpleDocTemplate(pdf_path, pagesize=letter,
+                              rightMargin=36, leftMargin=36,
+                              topMargin=72, bottomMargin=36)
+
+        # Container for the 'Flowable' objects
+        elements = []
+
+        # Define styles
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=20,
+            textColor=colors.HexColor('#047857'),  # emerald-700
+            spaceAfter=20,
+            alignment=1  # CENTER
+        )
+
+        # Style for table cells with text wrapping
+        cell_style = ParagraphStyle(
+            'CellStyle',
+            parent=styles['Normal'],
+            fontSize=9,
+            leading=11,
+            wordWrap='CJK',
+        )
+
+        # Add title
+        title = Paragraph("Nursing Progress Report", title_style)
+        elements.append(title)
+        elements.append(Spacer(1, 8))
+
+        # Add header information in a compact format with patient name
+        header_info = f"<b>Organization:</b> {center_name} | <b>Staff:</b> {user_name} ({staff_id}) | <b>Patient:</b> {patient_name} | <b>Generated:</b> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        if room:
+            header_info += f" | <b>Room:</b> {room}"
+        if bed:
+            header_info += f" | <b>Bed:</b> {bed}"
+        
+        header_para = Paragraph(header_info, ParagraphStyle(
+            'HeaderInfo',
+            parent=styles['Normal'],
+            fontSize=9,
+            textColor=colors.HexColor('#047857'),
+            alignment=1  # CENTER
+        ))
+        elements.append(header_para)
+        elements.append(Spacer(1, 16))
+
+        # Prepare table data in DataTable format: Index | Date | Timestamp | Patient Note
+        table_data = [['Index', 'Date', 'Timestamp', 'Patient Note']]  # Header row
+        
+        for index, note in enumerate(notes_data, start=1):
+            note_id, patient_note, audio_path, bed_letter, room_number, patient_name = note
+            
+            # Get date and time from audio file metadata
+            date_str = "—"
+            time_str = "—"
+            if audio_path and os.path.exists(audio_path):
+                try:
+                    aud_time = os.path.getmtime(audio_path)
+                    dt = datetime.fromtimestamp(aud_time)
+                    date_str = dt.strftime('%Y-%m-%d')
+                    time_str = dt.strftime('%H:%M:%S')
+                except Exception as e:
+                    print(f"Error getting file time: {e}")
+            
+            # Wrap patient note in Paragraph for proper text wrapping
+            note_text = patient_note if patient_note else "No note available"
+            note_paragraph = Paragraph(note_text, cell_style)
+            
+            table_data.append([
+                str(index),
+                date_str,
+                time_str,
+                note_paragraph
+            ])
+
+        # Create the table with appropriate column widths
+        # Total width = 540 points (7.5 inches for letter size with margins)
+        col_widths = [0.6*inch, 1.2*inch, 1.2*inch, 4.5*inch]
+        
+        data_table = Table(table_data, colWidths=col_widths, repeatRows=1)
+        
+        # Style the table to match DataTable appearance
+        table_style = TableStyle([
+            # Header row styling
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#f9fafb')),  # gray-50
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor('#374151')),  # gray-700
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('ALIGN', (0, 0), (-1, 0), 'LEFT'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+            ('TOPPADDING', (0, 0), (-1, 0), 8),
+            
+            # Data rows styling
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 9),
+            ('ALIGN', (0, 1), (2, -1), 'LEFT'),  # Index, Date, Timestamp left-aligned
+            ('ALIGN', (3, 1), (3, -1), 'LEFT'),  # Patient Note left-aligned
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),  # All cells top-aligned
+            ('TOPPADDING', (0, 1), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 6),
+            ('LEFTPADDING', (0, 0), (-1, -1), 6),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+            
+            # Grid styling
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#e5e7eb')),  # gray-200
+            ('LINEBELOW', (0, 0), (-1, 0), 1, colors.HexColor('#d1d5db')),  # gray-300 for header bottom
+            
+            # Alternating row colors for better readability
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#f9fafb')]),
+        ])
+        
+        data_table.setStyle(table_style)
+        elements.append(data_table)
+
+        # Build PDF
+        doc.build(elements)
+        
+        return pdf_path
+
+    except Exception as e:
+        print(f"Error generating PDF: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
+
 @app.route('/staff/approve-notes', methods=['POST'])
 def approve_notes():
     """Approve notes for all, a specific room, or a specific bed for the staff member."""
@@ -491,35 +680,139 @@ def approve_notes():
             return jsonify({'error': 'Staff member not found'}), 404
         user_id = user_result[0]
 
-        # Build the update query
-        base_query = """
-            UPDATE room_data SET is_approved = 1
-            FROM bed_info bi
+        # Determine if we need to generate multiple PDFs
+        pdf_paths = []
+        
+        # Case 1: All rooms, all beds - Generate separate PDFs for each bed in each room
+        if not room and (not bed or bed == 'ALL'):
+            # Get all room-bed combinations with unapproved notes for this staff member
+            cur.execute("""
+                SELECT DISTINCT ri.room_number, bi.bed_letter
+                FROM room_data rd
+                JOIN bed_info bi ON rd.bed_id = bi.bed_id
+                JOIN room_info ri ON bi.room_id = ri.room_id
+                WHERE bi.assigned_nurse_id = %s AND rd.is_approved = 0
+                ORDER BY ri.room_number, bi.bed_letter
+            """, (user_id,))
+            room_beds = cur.fetchall()
+            
+            print(f"Generating PDFs for {len(room_beds)} beds across all rooms")
+            for room_num, bed_letter in room_beds:
+                pdf_path = generate_chart_pdf(staff_id, str(room_num), bed_letter)
+                if pdf_path:
+                    pdf_paths.append((pdf_path, str(room_num), bed_letter))
+        
+        # Case 2: Specific room, all beds - Generate separate PDFs for each bed
+        elif room and (not bed or bed == 'ALL'):
+            # Get all beds with unapproved notes in this room for this staff member
+            cur.execute("""
+                SELECT DISTINCT bi.bed_letter
+                FROM room_data rd
+                JOIN bed_info bi ON rd.bed_id = bi.bed_id
+                JOIN room_info ri ON bi.room_id = ri.room_id
+                WHERE bi.assigned_nurse_id = %s 
+                  AND ri.room_number = %s 
+                  AND rd.is_approved = 0
+                ORDER BY bi.bed_letter
+            """, (user_id, room))
+            beds = [row[0] for row in cur.fetchall()]
+            
+            print(f"Generating PDFs for {len(beds)} beds in room {room}")
+            for bed_letter in beds:
+                pdf_path = generate_chart_pdf(staff_id, room, bed_letter)
+                if pdf_path:
+                    pdf_paths.append((pdf_path, room, bed_letter))
+        
+        # Case 3: Specific room and specific bed - Generate one PDF (original behavior)
+        else:
+            pdf_path = generate_chart_pdf(staff_id, room, bed)
+            if pdf_path:
+                pdf_paths.append((pdf_path, room, bed))
+        
+        if not pdf_paths:
+            print("Warning: No PDFs generated or no notes to approve")
+        
+        # Build the query to get the notes that will be approved and update them
+        select_query = """
+            SELECT rd.id, ri.room_number, bi.bed_letter
+            FROM room_data rd
+            JOIN bed_info bi ON rd.bed_id = bi.bed_id
             JOIN room_info ri ON bi.room_id = ri.room_id
-            WHERE room_data.bed_id = bi.bed_id
-              AND bi.assigned_nurse_id = %s
-              AND room_data.is_approved = 0
+            WHERE bi.assigned_nurse_id = %s
+              AND rd.is_approved = 0
         """
         params = [user_id]
         if room:
-            base_query += " AND ri.room_number = %s"
+            select_query += " AND ri.room_number = %s"
             params.append(room)
-        if bed:
-            base_query += " AND bi.bed_letter = %s"
+        if bed and bed != 'ALL':
+            select_query += " AND bi.bed_letter = %s"
             params.append(bed)
 
-        cur.execute(base_query, tuple(params))
-        print(base_query)
-        print("\n")
-        print(bed)
-        updated_count = cur.rowcount
+        cur.execute(select_query, tuple(params))
+        notes_to_update = cur.fetchall()
+
+        if not notes_to_update:
+            return jsonify({'success': True, 'updated': 0, 'message': 'No notes to approve', 'pdfs_generated': 0})
+
+        # Update each note with its corresponding PDF path
+        updated_count = 0
+        for note_id, note_room, note_bed in notes_to_update:
+            # Find the matching PDF path for this note's room/bed
+            matching_pdf = None
+            for pdf_path, pdf_room, pdf_bed in pdf_paths:
+                if pdf_bed:  # Bed-specific PDF
+                    if str(note_room) == str(pdf_room) and note_bed == pdf_bed:
+                        matching_pdf = pdf_path
+                        break
+                elif pdf_room:  # Room-specific PDF (all beds in room)
+                    if str(note_room) == str(pdf_room):
+                        matching_pdf = pdf_path
+                        break
+            
+            # Update the note
+            if matching_pdf:
+                cur.execute("""
+                    UPDATE room_data 
+                    SET is_approved = 1, pdf_path = %s
+                    WHERE id = %s
+                """, (matching_pdf, note_id))
+            else:
+                cur.execute("""
+                    UPDATE room_data 
+                    SET is_approved = 1
+                    WHERE id = %s
+                """, (note_id,))
+            updated_count += 1
+        
         conn.commit()
-        return jsonify({'success': True, 'updated': updated_count})
+        
+        return jsonify({
+            'success': True, 
+            'updated': updated_count,
+            'pdfs_generated': len(pdf_paths),
+            'pdf_paths': [p[0] for p in pdf_paths]
+        })
     except Exception as e:
         print(f"Error approving notes: {e}")
+        import traceback
+        traceback.print_exc()
         conn.rollback()
         return jsonify({'error': 'Database error'}), 500
     
+@app.route('/uploads/PDFs/<path:filepath>')
+def serve_pdf(filepath):
+    """Serve PDF files from the uploads/PDFs directory"""
+    try:
+        pdf_path = os.path.join(BASE_DIR, 'uploads', 'PDFs', filepath)
+        if os.path.exists(pdf_path):
+            return send_file(pdf_path, mimetype='application/pdf')
+        else:
+            return "PDF not found", 404
+    except Exception as e:
+        print(f"Error serving PDF: {e}")
+        return "Error serving PDF", 500
+
 if __name__ == '__main__':
     print("Running server...")
     
@@ -532,6 +825,13 @@ if __name__ == '__main__':
     os.makedirs('uploads/Audio/KMC', exist_ok=True)
     os.makedirs('uploads/Audio/PVM', exist_ok=True)
     os.makedirs('uploads/Audio/Unassigned', exist_ok=True)
+    os.makedirs('uploads/PDFs', exist_ok=True)
+    os.makedirs('uploads/PDFs/EHC', exist_ok=True)
+    os.makedirs('uploads/PDFs/EMC', exist_ok=True)
+    os.makedirs('uploads/PDFs/JPCH', exist_ok=True)
+    os.makedirs('uploads/PDFs/KMC', exist_ok=True)
+    os.makedirs('uploads/PDFs/PVM', exist_ok=True)
+    os.makedirs('uploads/PDFs/Unassigned', exist_ok=True)
     os.makedirs('uploads/room_aud', exist_ok=True)
     os.makedirs('uploads/Unassigned', exist_ok=True)
     

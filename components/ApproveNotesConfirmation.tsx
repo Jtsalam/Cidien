@@ -25,16 +25,33 @@ export default function ApproveNotesModal({
   room,
   bed,
 }: ApproveNotesModalProps) {
+  // Determine the description based on filter
+  let description = "Are you sure you want to approve these notes? This action cannot be undone.";
+  let pdfInfo = "";
+  
+  // if (room === "All rooms") {
+  //   pdfInfo = " A separate PDF chart will be generated for each bed across all rooms with notes.";
+  // } else if (bed === "ALL" || !bed) {
+  //   pdfInfo = " A separate PDF chart will be generated for each bed with notes in this room.";
+  // } else {
+  //   pdfInfo = " A PDF chart will be generated for this bed.";
+  // }
+
   return (
     <AlertDialog open={open} onOpenChange={(isOpen) => !isOpen && onCancel()}>
       <AlertDialogContent>
         <AlertDialogHeaderComponent>
           <AlertDialogTitleComponent>
             Approve Notes for {room}
-            {bed && bed !== "ALL" ? `, bed ${bed}` : ""} 
+            {bed && bed !== "ALL" ? `, Bed ${bed}` : ""} 
           </AlertDialogTitleComponent>
           <AlertDialogDescriptionComponent>
-            Are you sure you want to approve these notes? This action cannot be undone.
+            {description}
+            {pdfInfo && (
+              <span className="block mt-2 text-sm text-emerald-600 font-medium">
+                {pdfInfo}
+              </span>
+            )}
           </AlertDialogDescriptionComponent>
         </AlertDialogHeaderComponent>
         <AlertDialogFooterComponent>
