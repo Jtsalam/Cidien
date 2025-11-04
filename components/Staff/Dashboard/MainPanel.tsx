@@ -12,6 +12,8 @@ import ApproveNotesModal from "@/components/ApproveNotesConfirmation"
 import DataTable from "@/components/DataTable"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
 import AssignedRoomsList from "./AssignedRoomsList"
+import NothingToSee from "@/components/NothingTosee"
+import { toast } from "sonner"
 
 export default function MainPanel() {
   const [displayName, setDisplayName] = useState("")
@@ -130,9 +132,34 @@ export default function MainPanel() {
         body: JSON.stringify({ staff_id: staffId, room, bed }),
       });
       if (!res.ok) throw new Error('Failed to approve notes');
-      // Optionally, show a toast or feedback
+      
+      const result = await res.json();
+      console.log('Notes approved successfully:', result);
+      
+      // Show toast notifications for PDF generation
+      if (result.pdfs_generated && result.pdfs_generated > 0 && result.pdf_paths) {
+        // Extract room and bed info from each PDF path and show individual toasts
+        result.pdf_paths.forEach((pdfPath: string) => {
+          // Extract room and bed from filename pattern: chart_S001_20251104_143025_Room3127_BedA.pdf
+          const match = pdfPath.match(/Room(\d+)_Bed([A-Z])/);
+          if (match) {
+            const roomNum = match[1];
+            const bedLetter = match[2];
+            toast.success(`Medical Data Approved for Room ${roomNum}, Bed ${bedLetter}`, {
+              duration: 3000,
+            });
+          }
+        });
+      } else if (result.updated > 0) {
+        console.log('Notes approved but no PDFs generated');
+        toast.warning('Notes approved, but PDF generation failed.');
+      } else {
+        console.log('No notes to approve');
+        toast.info('No notes found to approve.');
+      }
     } catch (e) {
       console.error('Error approving notes:', e);
+      toast.error('Failed to approve notes. Please try again.');
     }
     setActiveTab("archive");
   }, [nurseId, selectedRoom, selectedBed]);
@@ -402,6 +429,7 @@ export default function MainPanel() {
         <span>Approve Notes</span>
         </Button>
       </div>)}
+      {activeTab === "unassigned" && <NothingToSee />}
 
 
 
