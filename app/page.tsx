@@ -1,7 +1,5 @@
-"use client";
-
-import { redirect } from 'next/navigation';
+import LandingPage from "@/components/LandingPage/LandingPage"
 
 export default function Home() {
-  redirect('/sign-in'); // Send users directly to unified sign-in
-} 
+  return <LandingPage />
+}

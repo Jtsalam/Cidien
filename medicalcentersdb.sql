@@ -427,11 +427,11 @@ COPY public.bed_info (bed_id, room_id, bed_letter, is_available, is_assigned, as
 --
 
 COPY public.medicalcenter_info (center_id, center_name, address, email) FROM stdin;
-1	Parkville Manor	null	null
-2	Erindale Health Center	null	null
-3	Kenderdine Medical Clinic	null	null
-5	Evergreen Medical Clinic	null	null
-4	Jim Pattison Children's Hospital	null	null
+1	Northcrest Medical Center	null	null
+2	Starlane General Hospital	null	null
+3	Evergreen Health Institute	null	null
+5	Havenridge General Hospital	null	null
+4	NovaCare Institute	null	null
 \.
 
 

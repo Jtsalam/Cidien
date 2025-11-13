@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 type Props = {
   onSubmit: (orgCode: string, staffId: string, password: string) => Promise<void>;
@@ -65,16 +67,21 @@ export default function SelectOrganizationForm({ onSubmit }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex justify-center items-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-white flex justify-center items-center p-4">
       <div className="bg-white p-8 rounded-xl shadow-xl border border-gray-200 text-center max-w-md w-full">
         <div className="mb-8">
-          <div className="w-20 h-20 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-full mx-auto mb-4 flex items-center justify-center">
-            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </div>
+          {/* Cidien Logo */}
+          <Link href="/" className="inline-block mb-6">
+            <Image
+              src="/Cidien.png"
+              alt="Cidien Logo"
+              width={200}
+              height={72}
+              className="mx-auto hover:scale-105 transition-transform"
+            />
+          </Link>
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
-          <p className="text-gray-600 text-sm">Please sign in to your account</p>
+          <p className="text-gray-600 text-sm">Sign in to access your dashboard</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -89,11 +96,11 @@ export default function SelectOrganizationForm({ onSubmit }: Props) {
               className="w-full p-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors bg-white"
             >
               <option value="" disabled>Select your Organization</option>
-              <option value="EHC">Erindale Health center</option>
-              <option value="PVM">Parkville Manor</option>
-              <option value="KMC">Kenderdine Medical Clinic</option>
-              <option value="JPCH">Jim Pattison Children's Hospital</option>
-              <option value="EMC">Evergreen Medical Clinic</option>
+              <option value="SGH">Starlane General Hospital</option>
+              <option value="NMC">Northcrest Medical Center</option>
+              <option value="EHI">Evergreen Health Institute</option>
+              <option value="NCI">NovaCare Institute</option>
+              <option value="HGH">Havenridge General Hospital</option>
             </select>
           </div>
 

@@ -1,42 +1,46 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const orgSubmitted = request.cookies.get("orgSubmitted")?.value;
-  const staffSubmitted = request.cookies.get("staffSubmitted")?.value;
-  const userRole = request.cookies.get("user_role")?.value;
-  const pathname = request.nextUrl.pathname;
-
-  // If user has already signed in and tries to access sign in page, redirect to dashboard
-  if (pathname === "/sign-in" && staffSubmitted) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+  const { pathname } = request.nextUrl
+  
+  // Check if user has authentication cookies
+  const staffId = request.cookies.get('staff_Id')?.value
+  const organization = request.cookies.get('organization')?.value
+  
+  const isAuthenticated = staffId && organization
+  
+  // Protected routes that require authentication
+  const protectedRoutes = ['/dashboard', '/staff']
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
+  
+  // Auth routes (sign-in, sign-up)
+  const authRoutes = ['/sign-in', '/sign-up']
+  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route))
+  
+  // If user is authenticated and tries to access auth pages, redirect to dashboard
+  if (isAuthenticated && isAuthRoute) {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
   }
-
-  // If user hasn't signed in and tries to access dashboard, redirect to sign-in page
-  if (pathname === "/dashboard" && !staffSubmitted) {
-    return NextResponse.redirect(new URL("/sign-in", request.url));
+  
+  // If user is not authenticated and tries to access protected routes, redirect to sign-in
+  if (!isAuthenticated && isProtectedRoute) {
+    return NextResponse.redirect(new URL('/sign-in', request.url))
   }
-
-  // Block access to old role-specific dashboard routes
-  if ((pathname === "/Admin/dashboard" || pathname === "/Staff/dashboard") && staffSubmitted) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
-  // Block access to old role-specific dashboard routes if not signed in
-  if ((pathname === "/Admin/dashboard" || pathname === "/Staff/dashboard") && !staffSubmitted) {
-    return NextResponse.redirect(new URL("/sign-in", request.url));
-  }
-
-  // Allow access to the page requested
-  return NextResponse.next();
+  
+  return NextResponse.next()
 }
 
-// Apply the middleware to the following pages
 export const config = {
   matcher: [
-    "/sign-in",
-    "/dashboard",
-    "/Staff/dashboard",
-    "/Admin/dashboard"
-  ]
-};
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - lib (public assets like logo)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico|lib|centerImages).*)',
+  ],
+}

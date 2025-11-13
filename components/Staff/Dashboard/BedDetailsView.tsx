@@ -25,7 +25,7 @@ const PDFChip: React.FC<{ pdfPath: string; index: number }> = ({ pdfPath, index 
   const filename = pdfPath.split(/[/\\]/).pop() || 'document.pdf';
   
   // Convert Windows path to URL path
-  // Example: C:\...\Charting-Device\uploads\PDFs\JPCH\file.pdf -> /uploads/PDFs/JPCH/file.pdf
+  // Example: C:\...\Charting-Device\uploads\PDFs\NCI\file.pdf -> /uploads/PDFs/NCI/file.pdf
   const pathParts = pdfPath.replace(/\\/g, '/').split('/');
   const uploadsIndex = pathParts.findIndex(part => part === 'uploads');
   const relativePath = uploadsIndex >= 0 ? pathParts.slice(uploadsIndex).join('/') : pdfPath;

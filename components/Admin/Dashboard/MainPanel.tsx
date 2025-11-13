@@ -107,9 +107,9 @@ export default function MainPanel() {
             <div className="flex items-center space-x-4">
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2">
                 <Image
-                  src={`/centerImages/${orgImage}.png`}
+                  src={`/centerImages/Cidien.png`}
                   alt="Organization logo"
-                  width={60}
+                  width={100}
                   height={60}
                   className="rounded-md"
                 />

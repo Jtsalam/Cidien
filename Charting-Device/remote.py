@@ -20,18 +20,23 @@ socketio = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=
 
 # Organization name mapping
 ORG_MAPPING = {
-    'EHC': 'EHC',
-    'EMC': 'EMC',
-    'JPCH': 'JPCH',
-    'KMC': 'KMC',
-    'PVM': 'PVM',
+    'SGH': 'SGH',
+    'HGH': 'HGH',
+    'NCI': 'NCI',
+    'EHI': 'EHI',
+    'NMC': 'NMC',
     # Add full names that might be in the database
-    "Erindale Health Center": "EHC",
-    "Parkville Manor": "PVM",
-    "Kenderdine Medical Clinic": "KMC",
-    "Jim Pattison Children's Hospital": "JPCH",
-    "Evergreen Medical Clinic": "EMC"
+    "Starlane General Hospital": "SGH",
+    "Northcrest Medical Center": "NMC",
+    "Evergreen Health Institute": "EHI",
+    "NovaCare Institute": "NCI",
+    "Havenridge General Hospital": "HGH"
 }
+#    EHC: "Erindale Health Center",
+#     PVM: "Parkville Manor",
+#     KMC: "Kenderdine Medical Clinic",
+#     JPCH: "Jim Pattison Children's Hospital",
+#     EMC: "Evergreen Medical Clinic"
 
 # Replace these values with your actual DB credentials
 conn = psycopg2.connect(
@@ -39,8 +44,10 @@ conn = psycopg2.connect(
     user="postgres",
     password="PostSQL@2025",
     host="localhost",  # or your DB server
-    port="5432"         # default port
+    port="5432"
 )
+    #      Make Nigeria Great
+        # default port
 cur = conn.cursor()
 
 
@@ -249,7 +256,7 @@ def room_btn_fn():
 @app.route('/audio/<filename>')
 def serve_audio(filename):
     # Check organization folders first (new structure)
-    org_folders = ['EHC', 'EMC', 'JPCH', 'KMC', 'PVM', 'Unassigned']
+    org_folders = ['SGH', 'HGH', 'NCI', 'EHI', 'NMC', 'Unassigned']
     
     for org_folder in org_folders:
         full_path = os.path.join(BASE_DIR, 'uploads', 'Audio', org_folder, filename)
@@ -819,18 +826,18 @@ if __name__ == '__main__':
     # Ensure all necessary directories exist
     os.makedirs('uploads', exist_ok=True)
     os.makedirs('uploads/Audio', exist_ok=True)
-    os.makedirs('uploads/Audio/EHC', exist_ok=True)
-    os.makedirs('uploads/Audio/EMC', exist_ok=True)
-    os.makedirs('uploads/Audio/JPCH', exist_ok=True)
-    os.makedirs('uploads/Audio/KMC', exist_ok=True)
-    os.makedirs('uploads/Audio/PVM', exist_ok=True)
+    os.makedirs('uploads/Audio/SGH', exist_ok=True)
+    os.makedirs('uploads/Audio/HGH', exist_ok=True)
+    os.makedirs('uploads/Audio/NCI', exist_ok=True)
+    os.makedirs('uploads/Audio/EHI', exist_ok=True)
+    os.makedirs('uploads/Audio/NMC', exist_ok=True)
     os.makedirs('uploads/Audio/Unassigned', exist_ok=True)
     os.makedirs('uploads/PDFs', exist_ok=True)
-    os.makedirs('uploads/PDFs/EHC', exist_ok=True)
-    os.makedirs('uploads/PDFs/EMC', exist_ok=True)
-    os.makedirs('uploads/PDFs/JPCH', exist_ok=True)
-    os.makedirs('uploads/PDFs/KMC', exist_ok=True)
-    os.makedirs('uploads/PDFs/PVM', exist_ok=True)
+    os.makedirs('uploads/PDFs/SGH', exist_ok=True)
+    os.makedirs('uploads/PDFs/HGH', exist_ok=True)
+    os.makedirs('uploads/PDFs/NCI', exist_ok=True)
+    os.makedirs('uploads/PDFs/EHI', exist_ok=True)
+    os.makedirs('uploads/PDFs/NMC', exist_ok=True)
     os.makedirs('uploads/PDFs/Unassigned', exist_ok=True)
     os.makedirs('uploads/room_aud', exist_ok=True)
     os.makedirs('uploads/Unassigned', exist_ok=True)

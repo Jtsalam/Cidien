@@ -63,10 +63,10 @@ model bed_info {
   is_assigned         Boolean       @default(false)
   assigned_patient_id Int?
   assigned_nurse_id   Int?
-  room_data           room_data[]
   user_info           user_info?    @relation(fields: [assigned_nurse_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
   patient_info        patient_info? @relation(fields: [assigned_patient_id], references: [patient_id], onDelete: NoAction, onUpdate: NoAction)
   room_info           room_info     @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction)
+  room_data           room_data[]
 }
 
 model room_data {
@@ -75,6 +75,7 @@ model room_data {
   audio_path   String   @db.VarChar(400)
   patient_note String   @db.VarChar(400)
   is_approved  Int      @default(0)
+  pdf_path     String?  @db.VarChar(400)
   bed_info     bed_info @relation(fields: [bed_id], references: [bed_id], onDelete: NoAction, onUpdate: NoAction)
 }
 

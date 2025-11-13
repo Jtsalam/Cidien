@@ -5,11 +5,11 @@ This directory stores generated PDF chart reports for approved patient notes.
 ## Structure
 
 PDFs are organized by organization:
-- `EHC/` - Erindale Health Center
-- `EMC/` - Evergreen Medical Clinic
-- `JPCH/` - Jim Pattison Children's Hospital
-- `KMC/` - Kenderdine Medical Clinic
-- `PVM/` - Parkville Manor
+- `SGH/` - Starlane General Hospital
+- `HGH/` - Havenridge General Hospital
+- `NCI/` - NovaCare Institute
+- `EHI/` - Evergreen Health Institute
+- `NMC/` - Northcrest Medical Center
 - `Unassigned/` - For any unassigned organization
 
 ## File Naming Convention

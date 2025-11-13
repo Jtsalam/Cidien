@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { getCookie } from "@/utils/getCookie"
 import { orgMap } from "@/lib/constants"
 import { useEffect, useState, useRef, useCallback, useMemo } from "react"
@@ -221,15 +222,15 @@ export default function MainPanel() {
           <div className="flex items-center justify-between">
             {/* Logo Section */}
             <div className="flex items-center space-x-4">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2">
+              <Link href="/" className="bg-white/10 backdrop-blur-sm rounded-lg p-2 hover:bg-white/20 transition-colors cursor-pointer">
                 <Image
-                  src={`/centerImages/${orgImage}.png`}
+                  src={`/centerImages/Cidien.png`}
                   alt="Organization logo"
-                  width={60}
+                  width={100}
                   height={60}
                   className="rounded-md"
                 />
-              </div>
+              </Link>
               <div className="hidden sm:block">
                 <h1 className="text-lg font-semibold">Staff Dashboard</h1>
                 <p className="text-emerald-100 text-sm">Welcome back to your workspace</p>
