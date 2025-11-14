@@ -16,11 +16,13 @@ import AssignedRoomsList from "./AssignedRoomsList"
 import NothingToSee from "@/components/NothingTosee"
 import { toast } from "sonner"
 
+interface TranscriptionData {
+  [key: string]: unknown;
+}
+
 export default function MainPanel() {
   const [displayName, setDisplayName] = useState("")
   const [nurseId, setNurseId] = useState("")
-  const [roomId, setRoomId] = useState("")
-  const [orgImage, setOrgImage] = useState("")
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const [showApproveNotesModal, setShowApproveNotesModal] = useState(false)
   const [assignedRooms, setAssignedRooms] = useState<string[]>([])
@@ -28,7 +30,7 @@ export default function MainPanel() {
   const [showRoomDropdown, setShowRoomDropdown] = useState(false)
   const [isLoadingRooms, setIsLoadingRooms] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const transcriptionCacheRef = useRef<Record<string, any[]>>({})
+  const transcriptionCacheRef = useRef<Record<string, TranscriptionData[]>>({})
   const prefetchControllerRef = useRef<AbortController | null>(null)
   const [selectedBed, setSelectedBed] = useState<string>("ALL")
 
@@ -50,8 +52,8 @@ export default function MainPanel() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const json = await res.json()
       transcriptionCacheRef.current[cacheKeyForRoom(room)] = Array.isArray(json) ? json : []
-    } catch (e: any) {
-      if (e?.name === 'AbortError') return
+    } catch (e) {
+      if (e instanceof Error && e.name === 'AbortError') return
       // Silent failure; DataTable will still fetch on mount
       console.warn('Prefetch failed', e)
     }
@@ -67,12 +69,6 @@ export default function MainPanel() {
     const staffCookie = getCookie("staff_Id") ?? ""
     console.log("Staff Id from cookie:", staffCookie)
     setNurseId(staffCookie.trim())
-
-    const roomCookie = getCookie("room_Id") ?? ""
-    console.log("Room Id from cookie:", roomCookie)
-    setRoomId(roomCookie.trim())
-
-    setOrgImage(`${cookieOrg.trim()}`)
   }, [])
 
   // Fetch assigned rooms for the staff member
@@ -172,7 +168,7 @@ export default function MainPanel() {
     // Warm cache for selected room and also keep 'all' warm
     prefetchTranscriptions(room)
     prefetchTranscriptions(null)
-  }, []);
+  }, [prefetchTranscriptions]);
 
   const handleShowAllRooms = useCallback(() => {
     console.log('Switching to all rooms');
@@ -180,7 +176,7 @@ export default function MainPanel() {
     setShowRoomDropdown(false);
     // Warm 'all' cache
     prefetchTranscriptions(null)
-  }, []);
+  }, [prefetchTranscriptions]);
 
   // Map paths to tab values for active state
   const tabRoutes = [

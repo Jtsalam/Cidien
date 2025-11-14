@@ -48,7 +48,6 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
   const [editedNote, setEditedNote] = useState<string>('');
   const tableEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
-  const [staffId, setStaffId] = useState<string>("");
   const cacheRef = useRef<Record<string, CachedData>>({})
   const fetchControllerRef = useRef<AbortController | null>(null)
   const selectedRoomRef = useRef<string | null | undefined>(selectedRoom)
@@ -332,7 +331,6 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
   // Initialize socket once
   useEffect(() => {
     const staffIdFromCookie = getCookie("staff_Id") || "";
-    setStaffId(staffIdFromCookie);
 
     socketRef.current = io("http://localhost:5000", {
       transports: ['polling'],
@@ -453,14 +451,15 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
 
   // Load data on mount and whenever room filter changes
   useEffect(() => {
+    // Copy refs to local variables at effect start for cleanup
+    const audioMap = preloadedAudioRef.current
+    const urlMap = preloadedObjectUrlRef.current
+    
     loadTranscriptions(selectedRoom || undefined)
     return () => {
       if (fetchControllerRef.current) {
         fetchControllerRef.current.abort()
       }
-      // Copy refs to local variables for cleanup
-      const audioMap = preloadedAudioRef.current
-      const urlMap = preloadedObjectUrlRef.current
       
       audioMap.forEach((a) => { try { a.pause() } catch {} })
       audioMap.clear()
