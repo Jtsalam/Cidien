@@ -18,7 +18,7 @@ interface BedDetailsViewProps {
   onBack: () => void;
 }
 
-const PDFChip: React.FC<{ pdfPath: string; index: number }> = ({ pdfPath, index }) => {
+const PDFChip: React.FC<{ pdfPath: string }> = ({ pdfPath }) => {
   const [showViewer, setShowViewer] = useState(false);
   
   // Extract filename from path
@@ -228,7 +228,7 @@ const BedDetailsView: React.FC<BedDetailsViewProps> = ({ roomNumber, bedLetter, 
                         {note.approved_time}
                       </td>
                       <td className="px-6 py-4">
-                        <PDFChip pdfPath={note.pdf_path} index={index} />
+                        <PDFChip pdfPath={note.pdf_path} />
                       </td>
                     </tr>
                   ))}
@@ -243,4 +243,3 @@ const BedDetailsView: React.FC<BedDetailsViewProps> = ({ roomNumber, bedLetter, 
 };
 
 export default BedDetailsView;
-

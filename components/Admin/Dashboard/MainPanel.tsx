@@ -14,7 +14,6 @@ import RoomList from '@/components/Admin/Dashboard/Home/RoomList';
 export default function MainPanel() {
   const [displayName, setDisplayName] = useState("")
   const [nurseId, setNurseId] = useState("")
-  const [orgImage, setOrgImage] = useState("")
   const [centerId, setCenterId] = useState<number | null>(null)
   const [loadingCenterId, setLoadingCenterId] = useState(true)
   const [centerError, setCenterError] = useState<string | null>(null)
@@ -58,7 +57,6 @@ export default function MainPanel() {
     const cookieId = getCookie("staff_Id") ?? ""
     console.log("Staff Id from cookie:", cookieId)
     setNurseId(cookieId.trim())
-    setOrgImage(`${cookieOrg.trim()}`)
   }, [])
 
   const handleLogout = async () => {

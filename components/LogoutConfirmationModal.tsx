@@ -1,5 +1,4 @@
 "use client"
-
 import {
   Dialog,
   DialogContent,
@@ -28,16 +27,14 @@ export default function LogoutConfirmationModal({ open, onCancel, onConfirm }: L
           <div className="space-y-2">
             <DialogTitle className="text-xl font-semibold text-gray-900">Confirm Logout</DialogTitle>
             <DialogDescription className="text-gray-600 leading-relaxed">
-              Are you sure you want to log out of your account? You'll need to sign in again to access your dashboard.
+              Are you sure you want to log out of your account? You&apos;ll need to sign in again to access your dashboard.
             </DialogDescription>
           </div>
         </DialogHeader>
-
         <div className="flex items-center justify-center space-x-2 py-4">
           <AlertCircle className="w-4 h-4 text-amber-500" />
           <p className="text-sm text-amber-700 bg-amber-50 px-3 py-2 rounded-md">Any unsaved changes will be lost</p>
         </div>
-
         <DialogFooter className="flex-col sm:flex-row gap-3 sm:gap-2">
           <Button variant="outline" onClick={onCancel} className="w-full sm:w-auto order-2 sm:order-1 hover:bg-gray-50">
             Cancel

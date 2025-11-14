@@ -1,7 +1,7 @@
 "use client"
 
 import MainPanel from "@/components/Staff/Dashboard/MainPanel";
-import InactivityTracker from "@/components/InactivityTracker";
+// import InactivityTracker from "@/components/InactivityTracker";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 export default function Dashboard() {

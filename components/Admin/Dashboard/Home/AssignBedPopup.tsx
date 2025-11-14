@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { AlertCircle, User, Bed, X, Stethoscope } from 'lucide-react';
+import { AlertCircle, User, Bed, Stethoscope } from 'lucide-react';
 
 interface Bed {
   bed_id: number;
@@ -43,7 +43,6 @@ const AssignBedPopup: React.FC<AssignBedPopupProps> = ({
   onSave,
   onDischarge,
   centerId,
-  roomId,
   bed,
 }) => {
   const [patientName, setPatientName] = useState('');

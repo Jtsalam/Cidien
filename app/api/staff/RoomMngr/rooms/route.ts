@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST() {
     const cookieStore = await cookies();
     const org = cookieStore.get("organization")?.value;
     

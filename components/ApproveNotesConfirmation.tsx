@@ -26,8 +26,8 @@ export default function ApproveNotesModal({
   bed,
 }: ApproveNotesModalProps) {
   // Determine the description based on filter
-  let description = "Are you sure you want to approve these notes? This action cannot be undone.";
-  let pdfInfo = "";
+  const description = "Are you sure you want to approve these notes? This action cannot be undone.";
+  const pdfInfo = "";
   
   // if (room === "All rooms") {
   //   pdfInfo = " A separate PDF chart will be generated for each bed across all rooms with notes.";

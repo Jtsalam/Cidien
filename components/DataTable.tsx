@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef, useMemo, useCallback } from "react"
-import io from "socket.io-client"
+import io, { Socket } from "socket.io-client"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -47,7 +47,7 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
   const [editingRowId, setEditingRowId] = useState<string | number | null>(null);
   const [editedNote, setEditedNote] = useState<string>('');
   const tableEndRef = useRef<HTMLDivElement>(null);
-  const socketRef = useRef<any>(null);
+  const socketRef = useRef<Socket | null>(null);
   const [staffId, setStaffId] = useState<string>("");
   const cacheRef = useRef<Record<string, CachedData>>({})
   const fetchControllerRef = useRef<AbortController | null>(null)
@@ -55,7 +55,6 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
   const preloadedAudioRef = useRef<Map<string, HTMLAudioElement>>(new Map())
   const preloadedObjectUrlRef = useRef<Map<string, string>>(new Map())
   const prefetchPromisesRef = useRef<Map<string, Promise<void>>>(new Map())
-  const currentAudioRef = useRef<HTMLAudioElement | null>(null)
 
   // Seed initial cache for instant first render if provided
   useEffect(() => {
@@ -135,7 +134,7 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
     // Store the new audio element in state.
     setAudio(newAudioEl);
 
-  }, [audio, activeUrl, playingIndex]);
+  }, [audio, activeUrl]);
 
   const preloadForDataset = useCallback((rows: RowData[]) => {
     const PREFETCH_COUNT = 3
@@ -244,7 +243,7 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
     }
   };
 
-  const loadTranscriptions = async (roomFilter?: string) => {
+  const loadTranscriptions = useCallback(async (roomFilter?: string) => {
     try {
       const cacheKey = roomFilter ? `room:${roomFilter}` : 'all'
       const previousCacheKey = data.length > 0 ? (selectedRoomRef.current ? `room:${selectedRoomRef.current}` : 'all') : null
@@ -304,8 +303,8 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
       const existingIds = new Set((cacheRef.current[cacheKey] || []).map(item => String(item.id)))
 
       const processedData = json
-        .filter((item: any) => !existingIds.has(String(item.id || item.audioUrl)))
-        .map((item: any, index: number) => ({
+        .filter((item: RowData) => !existingIds.has(String(item.id || item.audioUrl)))
+        .map((item: RowData, index: number) => ({
           ...item,
           id: item.id || `transcription_${Date.now()}_${Math.random().toString(36).substr(2, 9)}_${index}`,
           isNew: false,
@@ -320,15 +319,15 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
       preloadForDataset(processedData)
       setIsConnected(true)
       setLoading(false)
-    } catch (err: any) {
-      if (err?.name === 'AbortError') {
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') {
         return
       }
       console.error('Failed to load data:', err)
       setIsConnected(false)
       setLoading(false)
     }
-  }
+  }, [data.length, preloadForDataset])
 
   // Initialize socket once
   useEffect(() => {
@@ -348,8 +347,8 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
       setIsConnected(true)
       
       // Join staff-specific room if staff ID is available
-      if (staffId) {
-        socket.emit('join_staff_room', { user_id: staffId });
+      if (staffIdFromCookie) {
+        socket.emit('join_staff_room', { user_id: staffIdFromCookie });
       }
     })
 
@@ -358,7 +357,7 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
       setIsConnected(false)
     })
 
-    socket.on("connect_error", (error: any) => {
+    socket.on("connect_error", (error: Error) => {
       console.error("WebSocket connection error:", error)
       setIsConnected(false)
       // Attempt to reconnect after a delay
@@ -370,7 +369,7 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
       }, 5000);
     })
 
-    socket.on("error", (error: any) => {
+    socket.on("error", (error: Error) => {
       console.error("WebSocket error:", error)
       setIsConnected(false)
     })
@@ -383,7 +382,7 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
       }
     })
 
-    socket.on("new_transcription", (payload: any) => {
+    socket.on("new_transcription", (payload: Partial<RowData> & { id?: string | number }) => {
       console.log('Received new transcription:', payload);
       setIsReceiving(true)
 
@@ -459,13 +458,17 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
       if (fetchControllerRef.current) {
         fetchControllerRef.current.abort()
       }
-      preloadedAudioRef.current.forEach((a) => { try { a.pause() } catch {} })
-      preloadedAudioRef.current.clear()
+      // Copy refs to local variables for cleanup
+      const audioMap = preloadedAudioRef.current
+      const urlMap = preloadedObjectUrlRef.current
+      
+      audioMap.forEach((a) => { try { a.pause() } catch {} })
+      audioMap.clear()
       // Revoke blob URLs
-      preloadedObjectUrlRef.current.forEach((u) => { try { URL.revokeObjectURL(u) } catch {} })
-      preloadedObjectUrlRef.current.clear()
+      urlMap.forEach((u) => { try { URL.revokeObjectURL(u) } catch {} })
+      urlMap.clear()
     }
-  }, [selectedRoom])
+  }, [selectedRoom, loadTranscriptions])
 
   
   // Memoize filtered and processed data
@@ -519,8 +522,8 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
         // Keep selection if still valid; otherwise reset to ALL
         setBedFilter((prev) => (prev === 'ALL' || beds.includes(prev) ? prev : 'ALL'))
       })
-      .catch((e) => {
-        if ((e as any)?.name !== 'AbortError') {
+      .catch((e: Error) => {
+        if (e.name !== 'AbortError') {
           console.warn('Failed to load beds', e)
         }
         setBedOptions([])
@@ -635,7 +638,7 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
                 <TableBody>
                   {loading && data.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                      <TableCell colSpan={5} className="text-center py-8 text-gray-500">
                         <div className="flex flex-col items-center space-y-3 py-8">
                           <div className="relative">
                             <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
@@ -737,7 +740,7 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
                               <Tooltip.Root>
                                 <Tooltip.Trigger asChild>
                                   <Button size="icon" variant="ghost" onClick={() => setEditingRowId(null)}>
-                                    <XCircle className="w-4 h-4 text-gray-500" />
+                                  <XCircle className="w-4 h-4 text-gray-500" />
                                   </Button>
                                 </Tooltip.Trigger>
                                 <Tooltip.Content className="bg-gray-800 text-white px-2 py-1 text-xs rounded shadow-md z-50">Cancel</Tooltip.Content>
@@ -769,7 +772,7 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                      <TableCell colSpan={5} className="text-center py-8 text-gray-500">
                         <div className="flex flex-col items-center space-y-3 py-12">
                           <div className="flex items-center justify-center w-16 h-16 bg-emerald-50 rounded-full">
                             <Database className="w-8 h-8 text-emerald-600" />

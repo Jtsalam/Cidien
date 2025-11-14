@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { AlertTriangle, Clock, User } from "lucide-react"
@@ -16,7 +16,7 @@ export default function InactivityTracker() {
     window.location.href = "/sign-in"
   }
 
-  const resetInactivityTimer = () => {
+  const resetInactivityTimer = useCallback(() => {
     // Don't reset inactivity timer if the popup is already shown
     if (showPopup) return
 
@@ -25,7 +25,7 @@ export default function InactivityTracker() {
       setShowPopup(true)
       setCountdown(300) // reset countdown
     }, 10 * 60 * 1000) // 5 seconds for testing, 10 minutes realistically
-  }
+  }, [showPopup])
 
   const handleStay = () => {
     setShowPopup(false)
@@ -65,7 +65,7 @@ export default function InactivityTracker() {
       activityEvents.forEach((event) => window.removeEventListener(event, resetInactivityTimer))
       clearTimeout(inactivityTimerRef.current!)
     }
-  }, [])
+  }, [resetInactivityTimer])
 
   return (
     <Dialog open={showPopup} onOpenChange={setShowPopup}>
@@ -79,7 +79,7 @@ export default function InactivityTracker() {
 
         <div className="text-center space-y-6 py-4">
           <p className="text-gray-600 leading-relaxed">
-            You've been inactive for a while. For your security, we'll automatically log you out soon.
+            You&apos;ve been inactive for a while. For your security, we&apos;ll automatically log you out soon.
           </p>
 
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -91,7 +91,7 @@ export default function InactivityTracker() {
             <div className="text-sm text-red-600 mt-1">{countdown === 1 ? "second" : "seconds"}</div>
           </div>
 
-          <p className="text-sm text-gray-500">Click "Stay Logged In" to continue your session.</p>
+          <p className="text-sm text-gray-500">Click &quot;Stay Logged In&quot; to continue your session.</p>
         </div>
 
         <DialogFooter className="flex-col sm:flex-row gap-3 sm:gap-2">
