@@ -2,14 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 type RouteContext = {
-  params: {
+  params: Promise<{
     bedId: string;
-  };
+  }>;
 };
 
 // GET handler
 export async function GET(req: NextRequest, context: RouteContext) {
-  const bedId = parseInt(context.params.bedId);
+  const { bedId: bedIdStr } = await context.params;
+  const bedId = parseInt(bedIdStr);
+  
   if (isNaN(bedId)) {
     return NextResponse.json({ error: "Invalid bed ID" }, { status: 400 });
   }
@@ -39,8 +41,9 @@ export async function GET(req: NextRequest, context: RouteContext) {
 
 // PATCH handler
 export async function PATCH(req: NextRequest, context: RouteContext) {
-  const bedId = parseInt(context.params.bedId);
-
+  const { bedId: bedIdStr } = await context.params;
+  const bedId = parseInt(bedIdStr);
+  
   if (isNaN(bedId)) {
     return NextResponse.json({ error: "Invalid bed ID" }, { status: 400 });
   }
