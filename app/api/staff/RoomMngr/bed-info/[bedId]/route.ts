@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// GET handler
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { bedId: string } }
-) {
-  const bedId = parseInt(params.bedId);
+type RouteContext = {
+  params: {
+    bedId: string;
+  };
+};
 
+// GET handler
+export async function GET(req: NextRequest, context: RouteContext) {
+  const bedId = parseInt(context.params.bedId);
   if (isNaN(bedId)) {
     return NextResponse.json({ error: "Invalid bed ID" }, { status: 400 });
   }
@@ -30,17 +32,14 @@ export async function GET(
     console.error(error);
     return NextResponse.json(
       { error: "Failed to fetch bed data" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 // PATCH handler
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { bedId: string } }
-) {
-  const bedId = parseInt(params.bedId);
+export async function PATCH(req: NextRequest, context: RouteContext) {
+  const bedId = parseInt(context.params.bedId);
 
   if (isNaN(bedId)) {
     return NextResponse.json({ error: "Invalid bed ID" }, { status: 400 });
@@ -74,7 +73,7 @@ export async function PATCH(
     console.error(error);
     return NextResponse.json(
       { error: "Failed to update bed assignment" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
