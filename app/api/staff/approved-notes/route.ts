@@ -38,7 +38,11 @@ export async function GET(req: NextRequest) {
     
     notes.forEach((note) => {
       if (note.pdf_path && !pdfMap.has(note.pdf_path)) {
-        pdfMap.set(note.pdf_path, note);
+        pdfMap.set(note.pdf_path, {
+          id: note.id,
+          pdf_path: note.pdf_path,
+          patient_note: note.patient_note
+        });
       }
     });
 
@@ -85,4 +89,3 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to fetch approved notes' }, { status: 500 });
   }
 }
-
