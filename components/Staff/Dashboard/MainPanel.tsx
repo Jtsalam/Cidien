@@ -16,8 +16,15 @@ import AssignedRoomsList from "./AssignedRoomsList"
 import NothingToSee from "@/components/NothingTosee"
 import { toast } from "sonner"
 
-interface TranscriptionData {
-  [key: string]: unknown;
+interface RowData {
+  index: number
+  audioUrl: string
+  column1: string
+  column2: string
+  column3: string
+  column4: string
+  id?: string | number
+  isNew?: boolean
 }
 
 export default function MainPanel() {
@@ -30,7 +37,7 @@ export default function MainPanel() {
   const [showRoomDropdown, setShowRoomDropdown] = useState(false)
   const [isLoadingRooms, setIsLoadingRooms] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const transcriptionCacheRef = useRef<Record<string, TranscriptionData[]>>({})
+  const transcriptionCacheRef = useRef<Record<string, RowData[]>>({})
   const prefetchControllerRef = useRef<AbortController | null>(null)
   const [selectedBed, setSelectedBed] = useState<string>("ALL")
 
@@ -52,7 +59,7 @@ export default function MainPanel() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const json = await res.json()
       transcriptionCacheRef.current[cacheKeyForRoom(room)] = Array.isArray(json) ? json : []
-    } catch (e) {
+    } catch (e: unknown) {
       if (e instanceof Error && e.name === 'AbortError') return
       // Silent failure; DataTable will still fetch on mount
       console.warn('Prefetch failed', e)
