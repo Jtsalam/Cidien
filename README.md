@@ -18,7 +18,7 @@ Step 4:<br/>
 View "Issues" tab on repository to see assigned tasks.
 
 And Lastly:<br/>
-ASK QUESTIONS WHEN STUCK!!; can't stress the value of this enough, it helps us grow as developers and also makes us complete tasks as fast as possible.
+ASK QUESTIONS WHEN STUCK!! I can't stress the value of this enough, it helps us grow as developers and also makes us complete tasks as fast as possible.
 
 
 Happy coding! 🚀
