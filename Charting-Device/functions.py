@@ -38,7 +38,7 @@ def recognize_speech_from_audio(file_path):
         except Exception as e:
             # Log the detailed error for debugging, but return a generic message.
             print(f"CONVERSION ERROR: {e}")
-            return {"success": False, "error": "[Audio Processing Error]"}
+            return {"success": False, "error": "Audio Processing Error, Please try again"}
 
     # Step 2: Denoise audio
     try:

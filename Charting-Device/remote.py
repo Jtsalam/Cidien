@@ -226,12 +226,27 @@ def room_btn_fn():
     audio_path = os.path.join(BASE_DIR, 'uploads', 'room_aud', f'room.recording_{recording_counters["room_aud"]}.webm')
     audio_file.save(audio_path)
 
-    room_number = recognize_speech_from_audio(audio_path)
-    try:
-        room_number = room_number['transcription']
-        room_number = extract_room_bed(room_number)
-    except:
-        Exception
+    # Get transcription result
+    transcription_result = recognize_speech_from_audio(audio_path)
+    print(transcription_result)
+    
+    # Check if transcription was successful
+    # if not isinstance(transcription_result, dict) or not transcription_result.get('success'):
+    #     room_exists = False
+    #     error_msg = transcription_result.get('error', 'Room not heard properly, please try again.')
+    #     return jsonify({'message': error_msg})
+    
+    # Extract transcription text
+    transcription_text = transcription_result.get('transcription', '')
+    if not transcription_text:
+        room_exists = False
+        return jsonify({'message': "Room not heard properly, please try again."})
+    
+    # Extract room and bed from transcription
+    room_number = extract_room_bed(transcription_text)
+    
+    # Check if room/bed extraction was successful
+    if room_number is None:
         room_exists = False
         return jsonify({'message': "Room not heard properly, please try again."})
     
@@ -243,9 +258,6 @@ def room_btn_fn():
     # Check if room is in staff's assigned list
     if room_number in assigned_rooms:
         room_exists = True
-    elif room_number == "Audio not properly heard":
-        room_exists = False
-        return jsonify({'message': "Room not heard properly, please try again."})
     else:
         room_exists = False
         return jsonify({'message': "Room Access Denied! Please try again."})
