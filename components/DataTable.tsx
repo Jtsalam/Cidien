@@ -257,8 +257,13 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
       const cached = cacheRef.current[cacheKey]
       const now = Date.now()
       const cacheAge = cached?.lastUpdated ? now - cached.lastUpdated : Infinity
+
+      // Skip cache if live state has more rows than the cache (WebSocket appended new rows)
+      // This prevents newly-recorded transcriptions from disappearing when the cache is served
+      const liveDataLength = data.length
+      const cacheIsAheadOfLive = cached ? liveDataLength <= cached.length : false
       
-      if (cached && cached.length > 0 && cacheAge < 30000) {
+      if (cached && cached.length > 0 && cacheAge < 30000 && cacheIsAheadOfLive) {
         setData(cached)
         setLoading(false)
         preloadForDataset(cached)
@@ -310,12 +315,20 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
           index: index + 1,
         }))
 
+      // Merge any rows that were live in state (via WebSocket) but not yet in the API response
+      // This handles the race where a socket row arrives just before a re-fetch
+      const existingStateIds = new Set(processedData.map((item: RowData) => String(item.id)))
+      const socketOnlyRows = data.filter(item => item.id && !existingStateIds.has(String(item.id)))
+      const mergedData = socketOnlyRows.length > 0
+        ? [...processedData, ...socketOnlyRows].map((row: RowData, idx: number) => ({ ...row, index: idx + 1 }))
+        : processedData
+
       // Store data with timestamp for cache freshness
-      const dataWithTimestamp = processedData as CachedData
+      const dataWithTimestamp = mergedData as CachedData
       dataWithTimestamp.lastUpdated = Date.now()
       cacheRef.current[cacheKey] = dataWithTimestamp
-      setData(processedData)
-      preloadForDataset(processedData)
+      setData(mergedData)
+      preloadForDataset(mergedData)
       setIsConnected(true)
       setLoading(false)
     } catch (err) {
