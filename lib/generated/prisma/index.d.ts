@@ -9957,30 +9957,24 @@ export namespace Prisma {
     user_id: number | null
     user_name: string | null
     staff_id: string | null
-    password: string | null
     user_role: string | null
     center_id: number | null
-    charter_id: string | null
   }
 
   export type User_infoMaxAggregateOutputType = {
     user_id: number | null
     user_name: string | null
     staff_id: string | null
-    password: string | null
     user_role: string | null
     center_id: number | null
-    charter_id: string | null
   }
 
   export type User_infoCountAggregateOutputType = {
     user_id: number
     user_name: number
     staff_id: number
-    password: number
     user_role: number
     center_id: number
-    charter_id: number
     _all: number
   }
 
@@ -9999,30 +9993,24 @@ export namespace Prisma {
     user_id?: true
     user_name?: true
     staff_id?: true
-    password?: true
     user_role?: true
     center_id?: true
-    charter_id?: true
   }
 
   export type User_infoMaxAggregateInputType = {
     user_id?: true
     user_name?: true
     staff_id?: true
-    password?: true
     user_role?: true
     center_id?: true
-    charter_id?: true
   }
 
   export type User_infoCountAggregateInputType = {
     user_id?: true
     user_name?: true
     staff_id?: true
-    password?: true
     user_role?: true
     center_id?: true
-    charter_id?: true
     _all?: true
   }
 
@@ -10116,10 +10104,8 @@ export namespace Prisma {
     user_id: number
     user_name: string
     staff_id: string
-    password: string
     user_role: string
     center_id: number
-    charter_id: string
     _count: User_infoCountAggregateOutputType | null
     _avg: User_infoAvgAggregateOutputType | null
     _sum: User_infoSumAggregateOutputType | null
@@ -10145,10 +10131,8 @@ export namespace Prisma {
     user_id?: boolean
     user_name?: boolean
     staff_id?: boolean
-    password?: boolean
     user_role?: boolean
     center_id?: boolean
-    charter_id?: boolean
     bed_info?: boolean | user_info$bed_infoArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
     user_uploads?: boolean | user_info$user_uploadsArgs<ExtArgs>
@@ -10159,10 +10143,8 @@ export namespace Prisma {
     user_id?: boolean
     user_name?: boolean
     staff_id?: boolean
-    password?: boolean
     user_role?: boolean
     center_id?: boolean
-    charter_id?: boolean
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user_info"]>
 
@@ -10170,10 +10152,8 @@ export namespace Prisma {
     user_id?: boolean
     user_name?: boolean
     staff_id?: boolean
-    password?: boolean
     user_role?: boolean
     center_id?: boolean
-    charter_id?: boolean
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user_info"]>
 
@@ -10181,13 +10161,11 @@ export namespace Prisma {
     user_id?: boolean
     user_name?: boolean
     staff_id?: boolean
-    password?: boolean
     user_role?: boolean
     center_id?: boolean
-    charter_id?: boolean
   }
 
-  export type user_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"user_id" | "user_name" | "staff_id" | "password" | "user_role" | "center_id" | "charter_id", ExtArgs["result"]["user_info"]>
+  export type user_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"user_id" | "user_name" | "staff_id" | "user_role" | "center_id", ExtArgs["result"]["user_info"]>
   export type user_infoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     bed_info?: boolean | user_info$bed_infoArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
@@ -10212,10 +10190,8 @@ export namespace Prisma {
       user_id: number
       user_name: string
       staff_id: string
-      password: string
       user_role: string
       center_id: number
-      charter_id: string
     }, ExtArgs["result"]["user_info"]>
     composites: {}
   }
@@ -10645,10 +10621,8 @@ export namespace Prisma {
     readonly user_id: FieldRef<"user_info", 'Int'>
     readonly user_name: FieldRef<"user_info", 'String'>
     readonly staff_id: FieldRef<"user_info", 'String'>
-    readonly password: FieldRef<"user_info", 'String'>
     readonly user_role: FieldRef<"user_info", 'String'>
     readonly center_id: FieldRef<"user_info", 'Int'>
-    readonly charter_id: FieldRef<"user_info", 'String'>
   }
     
 
@@ -12327,10 +12301,8 @@ export namespace Prisma {
     user_id: 'user_id',
     user_name: 'user_name',
     staff_id: 'staff_id',
-    password: 'password',
     user_role: 'user_role',
-    center_id: 'center_id',
-    charter_id: 'charter_id'
+    center_id: 'center_id'
   };
 
   export type User_infoScalarFieldEnum = (typeof User_infoScalarFieldEnum)[keyof typeof User_infoScalarFieldEnum]
@@ -12913,10 +12885,8 @@ export namespace Prisma {
     user_id?: IntFilter<"user_info"> | number
     user_name?: StringFilter<"user_info"> | string
     staff_id?: StringFilter<"user_info"> | string
-    password?: StringFilter<"user_info"> | string
     user_role?: StringFilter<"user_info"> | string
     center_id?: IntFilter<"user_info"> | number
-    charter_id?: StringFilter<"user_info"> | string
     bed_info?: Bed_infoListRelationFilter
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
     user_uploads?: User_uploadsListRelationFilter
@@ -12926,10 +12896,8 @@ export namespace Prisma {
     user_id?: SortOrder
     user_name?: SortOrder
     staff_id?: SortOrder
-    password?: SortOrder
     user_role?: SortOrder
     center_id?: SortOrder
-    charter_id?: SortOrder
     bed_info?: bed_infoOrderByRelationAggregateInput
     medicalcenter_info?: medicalcenter_infoOrderByWithRelationInput
     user_uploads?: user_uploadsOrderByRelationAggregateInput
@@ -12942,10 +12910,8 @@ export namespace Prisma {
     NOT?: user_infoWhereInput | user_infoWhereInput[]
     user_name?: StringFilter<"user_info"> | string
     staff_id?: StringFilter<"user_info"> | string
-    password?: StringFilter<"user_info"> | string
     user_role?: StringFilter<"user_info"> | string
     center_id?: IntFilter<"user_info"> | number
-    charter_id?: StringFilter<"user_info"> | string
     bed_info?: Bed_infoListRelationFilter
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
     user_uploads?: User_uploadsListRelationFilter
@@ -12955,10 +12921,8 @@ export namespace Prisma {
     user_id?: SortOrder
     user_name?: SortOrder
     staff_id?: SortOrder
-    password?: SortOrder
     user_role?: SortOrder
     center_id?: SortOrder
-    charter_id?: SortOrder
     _count?: user_infoCountOrderByAggregateInput
     _avg?: user_infoAvgOrderByAggregateInput
     _max?: user_infoMaxOrderByAggregateInput
@@ -12973,10 +12937,8 @@ export namespace Prisma {
     user_id?: IntWithAggregatesFilter<"user_info"> | number
     user_name?: StringWithAggregatesFilter<"user_info"> | string
     staff_id?: StringWithAggregatesFilter<"user_info"> | string
-    password?: StringWithAggregatesFilter<"user_info"> | string
     user_role?: StringWithAggregatesFilter<"user_info"> | string
     center_id?: IntWithAggregatesFilter<"user_info"> | number
-    charter_id?: StringWithAggregatesFilter<"user_info"> | string
   }
 
   export type user_uploadsWhereInput = {
@@ -13487,9 +13449,7 @@ export namespace Prisma {
   export type user_infoCreateInput = {
     user_name: string
     staff_id: string
-    password: string
     user_role: string
-    charter_id: string
     bed_info?: bed_infoCreateNestedManyWithoutUser_infoInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutUser_infoInput
     user_uploads?: user_uploadsCreateNestedManyWithoutUser_infoInput
@@ -13499,10 +13459,8 @@ export namespace Prisma {
     user_id?: number
     user_name: string
     staff_id: string
-    password: string
     user_role: string
     center_id: number
-    charter_id: string
     bed_info?: bed_infoUncheckedCreateNestedManyWithoutUser_infoInput
     user_uploads?: user_uploadsUncheckedCreateNestedManyWithoutUser_infoInput
   }
@@ -13510,9 +13468,7 @@ export namespace Prisma {
   export type user_infoUpdateInput = {
     user_name?: StringFieldUpdateOperationsInput | string
     staff_id?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
     user_role?: StringFieldUpdateOperationsInput | string
-    charter_id?: StringFieldUpdateOperationsInput | string
     bed_info?: bed_infoUpdateManyWithoutUser_infoNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutUser_infoNestedInput
     user_uploads?: user_uploadsUpdateManyWithoutUser_infoNestedInput
@@ -13522,10 +13478,8 @@ export namespace Prisma {
     user_id?: IntFieldUpdateOperationsInput | number
     user_name?: StringFieldUpdateOperationsInput | string
     staff_id?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
     user_role?: StringFieldUpdateOperationsInput | string
     center_id?: IntFieldUpdateOperationsInput | number
-    charter_id?: StringFieldUpdateOperationsInput | string
     bed_info?: bed_infoUncheckedUpdateManyWithoutUser_infoNestedInput
     user_uploads?: user_uploadsUncheckedUpdateManyWithoutUser_infoNestedInput
   }
@@ -13534,28 +13488,22 @@ export namespace Prisma {
     user_id?: number
     user_name: string
     staff_id: string
-    password: string
     user_role: string
     center_id: number
-    charter_id: string
   }
 
   export type user_infoUpdateManyMutationInput = {
     user_name?: StringFieldUpdateOperationsInput | string
     staff_id?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
     user_role?: StringFieldUpdateOperationsInput | string
-    charter_id?: StringFieldUpdateOperationsInput | string
   }
 
   export type user_infoUncheckedUpdateManyInput = {
     user_id?: IntFieldUpdateOperationsInput | number
     user_name?: StringFieldUpdateOperationsInput | string
     staff_id?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
     user_role?: StringFieldUpdateOperationsInput | string
     center_id?: IntFieldUpdateOperationsInput | number
-    charter_id?: StringFieldUpdateOperationsInput | string
   }
 
   export type user_uploadsCreateInput = {
@@ -14194,10 +14142,8 @@ export namespace Prisma {
     user_id?: SortOrder
     user_name?: SortOrder
     staff_id?: SortOrder
-    password?: SortOrder
     user_role?: SortOrder
     center_id?: SortOrder
-    charter_id?: SortOrder
   }
 
   export type user_infoAvgOrderByAggregateInput = {
@@ -14209,20 +14155,16 @@ export namespace Prisma {
     user_id?: SortOrder
     user_name?: SortOrder
     staff_id?: SortOrder
-    password?: SortOrder
     user_role?: SortOrder
     center_id?: SortOrder
-    charter_id?: SortOrder
   }
 
   export type user_infoMinOrderByAggregateInput = {
     user_id?: SortOrder
     user_name?: SortOrder
     staff_id?: SortOrder
-    password?: SortOrder
     user_role?: SortOrder
     center_id?: SortOrder
-    charter_id?: SortOrder
   }
 
   export type user_infoSumOrderByAggregateInput = {
@@ -15333,9 +15275,7 @@ export namespace Prisma {
   export type user_infoCreateWithoutMedicalcenter_infoInput = {
     user_name: string
     staff_id: string
-    password: string
     user_role: string
-    charter_id: string
     bed_info?: bed_infoCreateNestedManyWithoutUser_infoInput
     user_uploads?: user_uploadsCreateNestedManyWithoutUser_infoInput
   }
@@ -15344,9 +15284,7 @@ export namespace Prisma {
     user_id?: number
     user_name: string
     staff_id: string
-    password: string
     user_role: string
-    charter_id: string
     bed_info?: bed_infoUncheckedCreateNestedManyWithoutUser_infoInput
     user_uploads?: user_uploadsUncheckedCreateNestedManyWithoutUser_infoInput
   }
@@ -15493,10 +15431,8 @@ export namespace Prisma {
     user_id?: IntFilter<"user_info"> | number
     user_name?: StringFilter<"user_info"> | string
     staff_id?: StringFilter<"user_info"> | string
-    password?: StringFilter<"user_info"> | string
     user_role?: StringFilter<"user_info"> | string
     center_id?: IntFilter<"user_info"> | number
-    charter_id?: StringFilter<"user_info"> | string
   }
 
   export type user_uploadsUpsertWithWhereUniqueWithoutMedicalcenter_infoInput = {
@@ -15942,9 +15878,7 @@ export namespace Prisma {
   export type user_infoCreateWithoutBed_infoInput = {
     user_name: string
     staff_id: string
-    password: string
     user_role: string
-    charter_id: string
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutUser_infoInput
     user_uploads?: user_uploadsCreateNestedManyWithoutUser_infoInput
   }
@@ -15953,10 +15887,8 @@ export namespace Prisma {
     user_id?: number
     user_name: string
     staff_id: string
-    password: string
     user_role: string
     center_id: number
-    charter_id: string
     user_uploads?: user_uploadsUncheckedCreateNestedManyWithoutUser_infoInput
   }
 
@@ -16052,9 +15984,7 @@ export namespace Prisma {
   export type user_infoUpdateWithoutBed_infoInput = {
     user_name?: StringFieldUpdateOperationsInput | string
     staff_id?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
     user_role?: StringFieldUpdateOperationsInput | string
-    charter_id?: StringFieldUpdateOperationsInput | string
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutUser_infoNestedInput
     user_uploads?: user_uploadsUpdateManyWithoutUser_infoNestedInput
   }
@@ -16063,10 +15993,8 @@ export namespace Prisma {
     user_id?: IntFieldUpdateOperationsInput | number
     user_name?: StringFieldUpdateOperationsInput | string
     staff_id?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
     user_role?: StringFieldUpdateOperationsInput | string
     center_id?: IntFieldUpdateOperationsInput | number
-    charter_id?: StringFieldUpdateOperationsInput | string
     user_uploads?: user_uploadsUncheckedUpdateManyWithoutUser_infoNestedInput
   }
 
@@ -16552,9 +16480,7 @@ export namespace Prisma {
   export type user_infoCreateWithoutUser_uploadsInput = {
     user_name: string
     staff_id: string
-    password: string
     user_role: string
-    charter_id: string
     bed_info?: bed_infoCreateNestedManyWithoutUser_infoInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutUser_infoInput
   }
@@ -16563,10 +16489,8 @@ export namespace Prisma {
     user_id?: number
     user_name: string
     staff_id: string
-    password: string
     user_role: string
     center_id: number
-    charter_id: string
     bed_info?: bed_infoUncheckedCreateNestedManyWithoutUser_infoInput
   }
 
@@ -16621,9 +16545,7 @@ export namespace Prisma {
   export type user_infoUpdateWithoutUser_uploadsInput = {
     user_name?: StringFieldUpdateOperationsInput | string
     staff_id?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
     user_role?: StringFieldUpdateOperationsInput | string
-    charter_id?: StringFieldUpdateOperationsInput | string
     bed_info?: bed_infoUpdateManyWithoutUser_infoNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutUser_infoNestedInput
   }
@@ -16632,10 +16554,8 @@ export namespace Prisma {
     user_id?: IntFieldUpdateOperationsInput | number
     user_name?: StringFieldUpdateOperationsInput | string
     staff_id?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
     user_role?: StringFieldUpdateOperationsInput | string
     center_id?: IntFieldUpdateOperationsInput | number
-    charter_id?: StringFieldUpdateOperationsInput | string
     bed_info?: bed_infoUncheckedUpdateManyWithoutUser_infoNestedInput
   }
 
@@ -16666,9 +16586,7 @@ export namespace Prisma {
     user_id?: number
     user_name: string
     staff_id: string
-    password: string
     user_role: string
-    charter_id: string
   }
 
   export type user_uploadsCreateManyMedicalcenter_infoInput = {
@@ -16759,9 +16677,7 @@ export namespace Prisma {
   export type user_infoUpdateWithoutMedicalcenter_infoInput = {
     user_name?: StringFieldUpdateOperationsInput | string
     staff_id?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
     user_role?: StringFieldUpdateOperationsInput | string
-    charter_id?: StringFieldUpdateOperationsInput | string
     bed_info?: bed_infoUpdateManyWithoutUser_infoNestedInput
     user_uploads?: user_uploadsUpdateManyWithoutUser_infoNestedInput
   }
@@ -16770,9 +16686,7 @@ export namespace Prisma {
     user_id?: IntFieldUpdateOperationsInput | number
     user_name?: StringFieldUpdateOperationsInput | string
     staff_id?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
     user_role?: StringFieldUpdateOperationsInput | string
-    charter_id?: StringFieldUpdateOperationsInput | string
     bed_info?: bed_infoUncheckedUpdateManyWithoutUser_infoNestedInput
     user_uploads?: user_uploadsUncheckedUpdateManyWithoutUser_infoNestedInput
   }
@@ -16781,9 +16695,7 @@ export namespace Prisma {
     user_id?: IntFieldUpdateOperationsInput | number
     user_name?: StringFieldUpdateOperationsInput | string
     staff_id?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
     user_role?: StringFieldUpdateOperationsInput | string
-    charter_id?: StringFieldUpdateOperationsInput | string
   }
 
   export type user_uploadsUpdateWithoutMedicalcenter_infoInput = {

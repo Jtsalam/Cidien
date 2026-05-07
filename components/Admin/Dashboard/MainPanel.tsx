@@ -51,8 +51,9 @@ export default function MainPanel() {
   useEffect(() => {
     // fetch session info here
     const cookieOrg = getCookie("organization") ?? ""
+    const demoOrgName = getCookie("demo_org_name") ?? ""
     console.log("Organization from cookie:", cookieOrg)
-    setDisplayName(orgMap[cookieOrg.trim()])
+    setDisplayName(demoOrgName ? decodeURIComponent(demoOrgName) : (orgMap[cookieOrg.trim()] ?? cookieOrg.trim()))
 
     const cookieId = getCookie("staff_Id") ?? ""
     console.log("Staff Id from cookie:", cookieId)

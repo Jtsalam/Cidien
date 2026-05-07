@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { cookies } from 'next/headers';
+import { getCurrentCenterId } from '@/lib/demo';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -11,6 +13,9 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    const cookieStore = await cookies();
+    const centerId = await getCurrentCenterId(cookieStore);
+
     // Fetch approved notes for the specific room and bed
     const notes = await prisma.room_data.findMany({
       where: {
@@ -20,6 +25,7 @@ export async function GET(req: NextRequest) {
           bed_letter: bed,
           room_info: {
             room_number: parseInt(room, 10),
+            ...(centerId ? { center_id: centerId } : {}),
           },
         },
       },

@@ -47,11 +47,34 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
-    // Verify password
-    const isPasswordCorrect = await bcrypt.compare(staff_password, user.password);
+    const passwordColumn = await prisma.$queryRawUnsafe<Array<{ column_name: string }>>(
+      `SELECT column_name
+       FROM information_schema.columns
+       WHERE table_schema = 'public'
+         AND table_name = 'user_info'
+         AND column_name = 'password'
+       LIMIT 1`
+    );
 
-    if (!isPasswordCorrect) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    if (passwordColumn.length > 0) {
+      const [passwordRecord] = await prisma.$queryRawUnsafe<Array<{ password: string | null }>>(
+        `SELECT "password"
+         FROM "user_info"
+         WHERE "user_id" = $1
+         LIMIT 1`,
+        user.user_id
+      );
+
+      if (!passwordRecord?.password) {
+        return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+      }
+
+      // Verify password when the deployed schema still has password storage.
+      const isPasswordCorrect = await bcrypt.compare(staff_password, passwordRecord.password);
+
+      if (!isPasswordCorrect) {
+        return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+      }
     }
 
     // Create response with cookies

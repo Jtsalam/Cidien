@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from "next/headers";
+import { getCurrentCenterId } from '@/lib/demo';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
@@ -12,18 +14,46 @@ export async function GET() {
         { status: 401 }
       );
     }
-    // Call Flask backend to get assigned rooms
-    const response = await fetch(`http://localhost:5000/staff/assigned-rooms?staff_id=${staffId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+
+    const centerId = await getCurrentCenterId(cookieStore);
+    const nurse = await prisma.user_info.findFirst({
+      where: {
+        staff_id: staffId,
+        ...(centerId ? { center_id: centerId } : {}),
+      },
+      select: { user_id: true },
+    });
+
+    if (!nurse) {
+      return NextResponse.json({ rooms: [] });
+    }
+
+    const beds = await prisma.bed_info.findMany({
+      where: { assigned_nurse_id: nurse.user_id },
+      select: {
+        room_info: {
+          select: {
+            room_number: true,
+            center_id: true,
+          },
+        },
+      },
+      orderBy: {
+        room_info: {
+          room_number: 'asc',
+        },
       },
     });
-    if (!response.ok) {
-      throw new Error(`Flask API responded with status: ${response.status}`);
-    }
-    const data = await response.json();
-    return NextResponse.json(data);
+
+    const rooms = Array.from(
+      new Set(
+        beds
+          .filter((bed) => !centerId || bed.room_info.center_id === centerId)
+          .map((bed) => String(bed.room_info.room_number)),
+      ),
+    );
+
+    return NextResponse.json({ rooms });
   } catch (error) {
     console.error('Error fetching assigned rooms:', error);
     return NextResponse.json(

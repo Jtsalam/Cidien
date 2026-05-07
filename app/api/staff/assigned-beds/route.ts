@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
+import { getCurrentCenterId } from '@/lib/demo'
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,10 +16,14 @@ export async function GET(request: NextRequest) {
     if (!staffId) {
       return NextResponse.json({ error: 'Staff ID not found' }, { status: 401 })
     }
+    const centerId = await getCurrentCenterId(cookieStore)
 
     // Find the user by staff_id to get user_id and center_id
     const user = await prisma.user_info.findFirst({
-      where: { staff_id: staffId },
+      where: {
+        staff_id: staffId,
+        ...(centerId ? { center_id: centerId } : {}),
+      },
       select: { user_id: true, center_id: true },
     })
 

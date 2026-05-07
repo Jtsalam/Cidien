@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import fs from "fs/promises";
+import { cookies } from "next/headers";
+import { getCurrentDemoContext } from "@/lib/demo";
 
 // PATCH /api/staff/transcriptions/[id] - Update a patient note
 export async function PATCH(
@@ -18,6 +20,28 @@ export async function PATCH(
     if (typeof patient_note !== 'string') {
       return NextResponse.json({ error: "Invalid patient note provided." }, { status: 400 });
     }
+
+    const cookieStore = await cookies();
+    const demoContext = await getCurrentDemoContext(cookieStore);
+
+    if (demoContext.centerId) {
+      const record = await prisma.room_data.findFirst({
+        where: {
+          id,
+          bed_info: {
+            room_info: {
+              center_id: demoContext.centerId,
+            },
+          },
+        },
+        select: { id: true },
+      });
+
+      if (!record) {
+        return NextResponse.json({ error: "Record not found." }, { status: 404 });
+      }
+    }
+
     const updatedRecord = await prisma.room_data.update({
       where: { id },
       data: { patient_note },
@@ -41,9 +65,24 @@ export async function DELETE(
     if (isNaN(id)) {
       return NextResponse.json({ error: "Invalid ID provided." }, { status: 400 });
     }
+
+    const cookieStore = await cookies();
+    const demoContext = await getCurrentDemoContext(cookieStore);
+
     // First, find the record to get the audio file path
-    const recordToDelete = await prisma.room_data.findUnique({
-      where: { id },
+    const recordToDelete = await prisma.room_data.findFirst({
+      where: {
+        id,
+        ...(demoContext.centerId
+          ? {
+              bed_info: {
+                room_info: {
+                  center_id: demoContext.centerId,
+                },
+              },
+            }
+          : {}),
+      },
     });
     if (!recordToDelete) {
       return NextResponse.json({ error: "Record not found." }, { status: 404 });
@@ -53,7 +92,7 @@ export async function DELETE(
       where: { id },
     });
     // Finally, delete the associated audio file from the filesystem
-    if (recordToDelete.audio_path) {
+    if (recordToDelete.audio_path && !demoContext.centerId) {
       try {
         // We need to resolve the absolute path from the project root.
         // The path in the DB is absolute, so we can use it directly.

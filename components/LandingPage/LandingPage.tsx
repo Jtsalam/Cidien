@@ -2,10 +2,35 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, Mic, FileText, Users, Zap, CheckCircle, Clock } from "lucide-react"
+import { useState } from "react"
+import { ArrowRight, Mic, FileText, Users, Zap, CheckCircle, Clock, Loader2, PlayCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export default function LandingPage() {
+  const [isStartingDemo, setIsStartingDemo] = useState(false)
+
+  const handleStartDemo = async () => {
+    try {
+      setIsStartingDemo(true)
+      const response = await fetch("/api/demo/start", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to start demo.")
+      }
+
+      window.location.href = data.redirectUrl || "/dashboard"
+    } catch (error) {
+      console.error("Failed to start demo:", error)
+      setIsStartingDemo(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-emerald-50/30">
       {/* Navigation */}
@@ -25,6 +50,19 @@ export default function LandingPage() {
 
             {/* Auth Buttons */}
             <div className="flex items-center space-x-4">
+              <Button
+                variant="outline"
+                className="hidden sm:inline-flex border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                onClick={handleStartDemo}
+                disabled={isStartingDemo}
+              >
+                {isStartingDemo ? (
+                  <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+                ) : (
+                  <PlayCircle className="mr-2 w-4 h-4" />
+                )}
+                Try Demo Out
+              </Button>
               <Link href="/sign-in">
                 <Button variant="ghost" className="text-gray-700 hover:text-emerald-700">
                   Login
@@ -66,8 +104,21 @@ export default function LandingPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Button
+                  size="lg"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all group"
+                  onClick={handleStartDemo}
+                  disabled={isStartingDemo}
+                >
+                  {isStartingDemo ? (
+                    <Loader2 className="mr-2 w-5 h-5 animate-spin" />
+                  ) : (
+                    <PlayCircle className="mr-2 w-5 h-5" />
+                  )}
+                  Try Demo Out
+                </Button>
                 <Link href="/sign-in">
-                  <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700 text-white text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all group">
+                  <Button size="lg" variant="outline" className="text-gray-700 border-2 text-lg px-8 py-6 group">
                     Start Free Trial
                     <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
@@ -326,8 +377,21 @@ export default function LandingPage() {
             Join healthcare facilities already saving hours of documentation time every day.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              size="lg"
+              className="bg-white text-emerald-600 hover:bg-emerald-50 text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all"
+              onClick={handleStartDemo}
+              disabled={isStartingDemo}
+            >
+              {isStartingDemo ? (
+                <Loader2 className="mr-2 w-5 h-5 animate-spin" />
+              ) : (
+                <PlayCircle className="mr-2 w-5 h-5" />
+              )}
+              Try Demo Out
+            </Button>
             <Link href="/sign-in">
-              <Button size="lg" className="bg-white text-emerald-600 hover:bg-emerald-50 text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all group">
+              <Button size="lg" variant="outline" className="bg-transparent border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-6 group">
                 Start Your Free Trial
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>

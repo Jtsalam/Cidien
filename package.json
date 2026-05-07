@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "db:seed:medical-centers": "node prisma/seed-medical-centers.js",
     "lint": "next lint"
   },
   "dependencies": {

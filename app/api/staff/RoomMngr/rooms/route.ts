@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from "next/headers";
 import { orgMap } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
+import { getCurrentDemoContext } from "@/lib/demo";
 
 // Type definitions for Prisma query results
 type RoomWithBeds = {
@@ -108,6 +109,15 @@ export async function GET(request: NextRequest) {
 
 export async function POST() {
     const cookieStore = await cookies();
+    const demoContext = await getCurrentDemoContext(cookieStore);
+
+    if (demoContext.centerId) {
+        return new Response(
+            JSON.stringify({ success: true, centerId: demoContext.centerId }),
+            { status: 200 }
+        );
+    }
+
     const org = cookieStore.get("organization")?.value;
     
     if (!org) {

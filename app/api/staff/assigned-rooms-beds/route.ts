@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { cookies } from 'next/headers';
+import { getCurrentCenterId } from '@/lib/demo';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -10,9 +12,15 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Missing nurseId' }, { status: 400 });
   }
 
+  const cookieStore = await cookies();
+  const centerId = await getCurrentCenterId(cookieStore);
+
   // Find the nurse's user_id from staff_id (staff_id is not unique, so use findFirst)
   const nurse = await prisma.user_info.findFirst({
-    where: { staff_id: nurseId },
+    where: {
+      staff_id: nurseId,
+      ...(centerId ? { center_id: centerId } : {}),
+    },
     select: { user_id: true },
   });
   if (!nurse) {
@@ -23,7 +31,14 @@ export async function GET(req: NextRequest) {
   const beds = await prisma.bed_info.findMany({
     where: {
       assigned_nurse_id: nurse.user_id,
-      ...(room ? { room_info: { room_number: parseInt(room, 10) } } : {}),
+      ...(room || centerId
+        ? {
+            room_info: {
+              ...(room ? { room_number: parseInt(room, 10) } : {}),
+              ...(centerId ? { center_id: centerId } : {}),
+            },
+          }
+        : {}),
     },
     select: {
       bed_letter: true,
