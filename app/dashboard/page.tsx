@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCookie } from '@/utils/getCookie';
+import HospitalOverviewStep from "@/components/Demo/HospitalOverviewStep";
 
 // Import the dashboard components
 import StaffDashboard from "../Staff/dashboard/StaffDashboard";
@@ -10,12 +11,15 @@ import AdminDashboard from "../Admin/dashboard/AdminDashboard";
 
 export default function DashboardPage() {
   const [role, setRole] = useState<string | null>(null);
+  const [isDemoSession, setIsDemoSession] = useState(false);
+  const [showDemoStep, setShowDemoStep] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     // Get user role from cookie
     const userRole = getCookie('user_role');
+    const demoSessionId = getCookie("demo_session_id");
     // const staffSubmitted = getCookie('staffSubmitted');
 
     // if (!staffSubmitted) {
@@ -25,6 +29,9 @@ export default function DashboardPage() {
     // }
 
     setRole(userRole);
+    const hasDemoSession = Boolean(demoSessionId);
+    setIsDemoSession(hasDemoSession);
+    setShowDemoStep(hasDemoSession);
     setIsLoading(false);
   }, [router]);
 
@@ -34,6 +41,10 @@ export default function DashboardPage() {
         <div className="text-xl">Loading...</div>
       </div>
     );
+  }
+
+  if (isDemoSession && showDemoStep) {
+    return <HospitalOverviewStep onContinue={() => setShowDemoStep(false)} />;
   }
 
   // Route based on role
