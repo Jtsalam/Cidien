@@ -39,6 +39,16 @@ export type room_info = $Result.DefaultSelection<Prisma.$room_infoPayload>
  */
 export type bed_info = $Result.DefaultSelection<Prisma.$bed_infoPayload>
 /**
+ * Model PdfFile
+ * 
+ */
+export type PdfFile = $Result.DefaultSelection<Prisma.$PdfFilePayload>
+/**
+ * Model Recording
+ * 
+ */
+export type Recording = $Result.DefaultSelection<Prisma.$RecordingPayload>
+/**
  * Model room_data
  * 
  */
@@ -58,6 +68,11 @@ export type user_info = $Result.DefaultSelection<Prisma.$user_infoPayload>
  * 
  */
 export type user_uploads = $Result.DefaultSelection<Prisma.$user_uploadsPayload>
+/**
+ * Model demo_session
+ * 
+ */
+export type demo_session = $Result.DefaultSelection<Prisma.$demo_sessionPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -228,6 +243,26 @@ export class PrismaClient<
   get bed_info(): Prisma.bed_infoDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.pdfFile`: Exposes CRUD operations for the **PdfFile** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PdfFiles
+    * const pdfFiles = await prisma.pdfFile.findMany()
+    * ```
+    */
+  get pdfFile(): Prisma.PdfFileDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.recording`: Exposes CRUD operations for the **Recording** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Recordings
+    * const recordings = await prisma.recording.findMany()
+    * ```
+    */
+  get recording(): Prisma.RecordingDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.room_data`: Exposes CRUD operations for the **room_data** model.
     * Example usage:
     * ```ts
@@ -266,6 +301,16 @@ export class PrismaClient<
     * ```
     */
   get user_uploads(): Prisma.user_uploadsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.demo_session`: Exposes CRUD operations for the **demo_session** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Demo_sessions
+    * const demo_sessions = await prisma.demo_session.findMany()
+    * ```
+    */
+  get demo_session(): Prisma.demo_sessionDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -712,10 +757,13 @@ export namespace Prisma {
     patient_uploads: 'patient_uploads',
     room_info: 'room_info',
     bed_info: 'bed_info',
+    PdfFile: 'PdfFile',
+    Recording: 'Recording',
     room_data: 'room_data',
     room_register: 'room_register',
     user_info: 'user_info',
-    user_uploads: 'user_uploads'
+    user_uploads: 'user_uploads',
+    demo_session: 'demo_session'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -734,7 +782,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "medicalcenter_info" | "patient_info" | "patient_uploads" | "room_info" | "bed_info" | "room_data" | "room_register" | "user_info" | "user_uploads"
+      modelProps: "medicalcenter_info" | "patient_info" | "patient_uploads" | "room_info" | "bed_info" | "pdfFile" | "recording" | "room_data" | "room_register" | "user_info" | "user_uploads" | "demo_session"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1108,6 +1156,154 @@ export namespace Prisma {
           }
         }
       }
+      PdfFile: {
+        payload: Prisma.$PdfFilePayload<ExtArgs>
+        fields: Prisma.PdfFileFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PdfFileFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PdfFileFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>
+          }
+          findFirst: {
+            args: Prisma.PdfFileFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PdfFileFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>
+          }
+          findMany: {
+            args: Prisma.PdfFileFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>[]
+          }
+          create: {
+            args: Prisma.PdfFileCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>
+          }
+          createMany: {
+            args: Prisma.PdfFileCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PdfFileCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>[]
+          }
+          delete: {
+            args: Prisma.PdfFileDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>
+          }
+          update: {
+            args: Prisma.PdfFileUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>
+          }
+          deleteMany: {
+            args: Prisma.PdfFileDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PdfFileUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PdfFileUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>[]
+          }
+          upsert: {
+            args: Prisma.PdfFileUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>
+          }
+          aggregate: {
+            args: Prisma.PdfFileAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePdfFile>
+          }
+          groupBy: {
+            args: Prisma.PdfFileGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PdfFileGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PdfFileCountArgs<ExtArgs>
+            result: $Utils.Optional<PdfFileCountAggregateOutputType> | number
+          }
+        }
+      }
+      Recording: {
+        payload: Prisma.$RecordingPayload<ExtArgs>
+        fields: Prisma.RecordingFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RecordingFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RecordingFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>
+          }
+          findFirst: {
+            args: Prisma.RecordingFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RecordingFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>
+          }
+          findMany: {
+            args: Prisma.RecordingFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>[]
+          }
+          create: {
+            args: Prisma.RecordingCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>
+          }
+          createMany: {
+            args: Prisma.RecordingCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RecordingCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>[]
+          }
+          delete: {
+            args: Prisma.RecordingDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>
+          }
+          update: {
+            args: Prisma.RecordingUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>
+          }
+          deleteMany: {
+            args: Prisma.RecordingDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RecordingUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RecordingUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>[]
+          }
+          upsert: {
+            args: Prisma.RecordingUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>
+          }
+          aggregate: {
+            args: Prisma.RecordingAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRecording>
+          }
+          groupBy: {
+            args: Prisma.RecordingGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RecordingGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RecordingCountArgs<ExtArgs>
+            result: $Utils.Optional<RecordingCountAggregateOutputType> | number
+          }
+        }
+      }
       room_data: {
         payload: Prisma.$room_dataPayload<ExtArgs>
         fields: Prisma.room_dataFieldRefs
@@ -1404,6 +1600,80 @@ export namespace Prisma {
           }
         }
       }
+      demo_session: {
+        payload: Prisma.$demo_sessionPayload<ExtArgs>
+        fields: Prisma.demo_sessionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.demo_sessionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demo_sessionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.demo_sessionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demo_sessionPayload>
+          }
+          findFirst: {
+            args: Prisma.demo_sessionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demo_sessionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.demo_sessionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demo_sessionPayload>
+          }
+          findMany: {
+            args: Prisma.demo_sessionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demo_sessionPayload>[]
+          }
+          create: {
+            args: Prisma.demo_sessionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demo_sessionPayload>
+          }
+          createMany: {
+            args: Prisma.demo_sessionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.demo_sessionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demo_sessionPayload>[]
+          }
+          delete: {
+            args: Prisma.demo_sessionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demo_sessionPayload>
+          }
+          update: {
+            args: Prisma.demo_sessionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demo_sessionPayload>
+          }
+          deleteMany: {
+            args: Prisma.demo_sessionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.demo_sessionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.demo_sessionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demo_sessionPayload>[]
+          }
+          upsert: {
+            args: Prisma.demo_sessionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demo_sessionPayload>
+          }
+          aggregate: {
+            args: Prisma.Demo_sessionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDemo_session>
+          }
+          groupBy: {
+            args: Prisma.demo_sessionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Demo_sessionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.demo_sessionCountArgs<ExtArgs>
+            result: $Utils.Optional<Demo_sessionCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1505,10 +1775,13 @@ export namespace Prisma {
     patient_uploads?: patient_uploadsOmit
     room_info?: room_infoOmit
     bed_info?: bed_infoOmit
+    pdfFile?: PdfFileOmit
+    recording?: RecordingOmit
     room_data?: room_dataOmit
     room_register?: room_registerOmit
     user_info?: user_infoOmit
     user_uploads?: user_uploadsOmit
+    demo_session?: demo_sessionOmit
   }
 
   /* Types for Logging */
@@ -1772,6 +2045,68 @@ export namespace Prisma {
 
 
   /**
+   * Count Type PdfFileCountOutputType
+   */
+
+  export type PdfFileCountOutputType = {
+    roomData: number
+  }
+
+  export type PdfFileCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    roomData?: boolean | PdfFileCountOutputTypeCountRoomDataArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * PdfFileCountOutputType without action
+   */
+  export type PdfFileCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PdfFileCountOutputType
+     */
+    select?: PdfFileCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * PdfFileCountOutputType without action
+   */
+  export type PdfFileCountOutputTypeCountRoomDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: room_dataWhereInput
+  }
+
+
+  /**
+   * Count Type RecordingCountOutputType
+   */
+
+  export type RecordingCountOutputType = {
+    roomData: number
+  }
+
+  export type RecordingCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    roomData?: boolean | RecordingCountOutputTypeCountRoomDataArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * RecordingCountOutputType without action
+   */
+  export type RecordingCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecordingCountOutputType
+     */
+    select?: RecordingCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * RecordingCountOutputType without action
+   */
+  export type RecordingCountOutputTypeCountRoomDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: room_dataWhereInput
+  }
+
+
+  /**
    * Count Type User_infoCountOutputType
    */
 
@@ -1840,6 +2175,7 @@ export namespace Prisma {
     center_name: string | null
     address: string | null
     email: string | null
+    is_demo: boolean | null
   }
 
   export type Medicalcenter_infoMaxAggregateOutputType = {
@@ -1847,6 +2183,7 @@ export namespace Prisma {
     center_name: string | null
     address: string | null
     email: string | null
+    is_demo: boolean | null
   }
 
   export type Medicalcenter_infoCountAggregateOutputType = {
@@ -1854,6 +2191,7 @@ export namespace Prisma {
     center_name: number
     address: number
     email: number
+    is_demo: number
     _all: number
   }
 
@@ -1871,6 +2209,7 @@ export namespace Prisma {
     center_name?: true
     address?: true
     email?: true
+    is_demo?: true
   }
 
   export type Medicalcenter_infoMaxAggregateInputType = {
@@ -1878,6 +2217,7 @@ export namespace Prisma {
     center_name?: true
     address?: true
     email?: true
+    is_demo?: true
   }
 
   export type Medicalcenter_infoCountAggregateInputType = {
@@ -1885,6 +2225,7 @@ export namespace Prisma {
     center_name?: true
     address?: true
     email?: true
+    is_demo?: true
     _all?: true
   }
 
@@ -1979,6 +2320,7 @@ export namespace Prisma {
     center_name: string
     address: string | null
     email: string | null
+    is_demo: boolean
     _count: Medicalcenter_infoCountAggregateOutputType | null
     _avg: Medicalcenter_infoAvgAggregateOutputType | null
     _sum: Medicalcenter_infoSumAggregateOutputType | null
@@ -2005,6 +2347,8 @@ export namespace Prisma {
     center_name?: boolean
     address?: boolean
     email?: boolean
+    is_demo?: boolean
+    demo_session?: boolean | medicalcenter_info$demo_sessionArgs<ExtArgs>
     patient_info?: boolean | medicalcenter_info$patient_infoArgs<ExtArgs>
     room_info?: boolean | medicalcenter_info$room_infoArgs<ExtArgs>
     room_register?: boolean | medicalcenter_info$room_registerArgs<ExtArgs>
@@ -2018,6 +2362,7 @@ export namespace Prisma {
     center_name?: boolean
     address?: boolean
     email?: boolean
+    is_demo?: boolean
   }, ExtArgs["result"]["medicalcenter_info"]>
 
   export type medicalcenter_infoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2025,6 +2370,7 @@ export namespace Prisma {
     center_name?: boolean
     address?: boolean
     email?: boolean
+    is_demo?: boolean
   }, ExtArgs["result"]["medicalcenter_info"]>
 
   export type medicalcenter_infoSelectScalar = {
@@ -2032,10 +2378,12 @@ export namespace Prisma {
     center_name?: boolean
     address?: boolean
     email?: boolean
+    is_demo?: boolean
   }
 
-  export type medicalcenter_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"center_id" | "center_name" | "address" | "email", ExtArgs["result"]["medicalcenter_info"]>
+  export type medicalcenter_infoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"center_id" | "center_name" | "address" | "email" | "is_demo", ExtArgs["result"]["medicalcenter_info"]>
   export type medicalcenter_infoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    demo_session?: boolean | medicalcenter_info$demo_sessionArgs<ExtArgs>
     patient_info?: boolean | medicalcenter_info$patient_infoArgs<ExtArgs>
     room_info?: boolean | medicalcenter_info$room_infoArgs<ExtArgs>
     room_register?: boolean | medicalcenter_info$room_registerArgs<ExtArgs>
@@ -2049,6 +2397,7 @@ export namespace Prisma {
   export type $medicalcenter_infoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "medicalcenter_info"
     objects: {
+      demo_session: Prisma.$demo_sessionPayload<ExtArgs> | null
       patient_info: Prisma.$patient_infoPayload<ExtArgs>[]
       room_info: Prisma.$room_infoPayload<ExtArgs>[]
       room_register: Prisma.$room_registerPayload<ExtArgs>[]
@@ -2060,6 +2409,7 @@ export namespace Prisma {
       center_name: string
       address: string | null
       email: string | null
+      is_demo: boolean
     }, ExtArgs["result"]["medicalcenter_info"]>
     composites: {}
   }
@@ -2454,6 +2804,7 @@ export namespace Prisma {
    */
   export interface Prisma__medicalcenter_infoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    demo_session<T extends medicalcenter_info$demo_sessionArgs<ExtArgs> = {}>(args?: Subset<T, medicalcenter_info$demo_sessionArgs<ExtArgs>>): Prisma__demo_sessionClient<$Result.GetResult<Prisma.$demo_sessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     patient_info<T extends medicalcenter_info$patient_infoArgs<ExtArgs> = {}>(args?: Subset<T, medicalcenter_info$patient_infoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$patient_infoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     room_info<T extends medicalcenter_info$room_infoArgs<ExtArgs> = {}>(args?: Subset<T, medicalcenter_info$room_infoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$room_infoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     room_register<T extends medicalcenter_info$room_registerArgs<ExtArgs> = {}>(args?: Subset<T, medicalcenter_info$room_registerArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$room_registerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2492,6 +2843,7 @@ export namespace Prisma {
     readonly center_name: FieldRef<"medicalcenter_info", 'String'>
     readonly address: FieldRef<"medicalcenter_info", 'String'>
     readonly email: FieldRef<"medicalcenter_info", 'String'>
+    readonly is_demo: FieldRef<"medicalcenter_info", 'Boolean'>
   }
     
 
@@ -2877,6 +3229,25 @@ export namespace Prisma {
      * Limit how many medicalcenter_infos to delete.
      */
     limit?: number
+  }
+
+  /**
+   * medicalcenter_info.demo_session
+   */
+  export type medicalcenter_info$demo_sessionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demo_session
+     */
+    select?: demo_sessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demo_session
+     */
+    omit?: demo_sessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demo_sessionInclude<ExtArgs> | null
+    where?: demo_sessionWhereInput
   }
 
   /**
@@ -7686,6 +8057,2120 @@ export namespace Prisma {
 
 
   /**
+   * Model PdfFile
+   */
+
+  export type AggregatePdfFile = {
+    _count: PdfFileCountAggregateOutputType | null
+    _min: PdfFileMinAggregateOutputType | null
+    _max: PdfFileMaxAggregateOutputType | null
+  }
+
+  export type PdfFileMinAggregateOutputType = {
+    id: string | null
+    filePath: string | null
+    fileUrl: string | null
+    createdAt: Date | null
+  }
+
+  export type PdfFileMaxAggregateOutputType = {
+    id: string | null
+    filePath: string | null
+    fileUrl: string | null
+    createdAt: Date | null
+  }
+
+  export type PdfFileCountAggregateOutputType = {
+    id: number
+    filePath: number
+    fileUrl: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type PdfFileMinAggregateInputType = {
+    id?: true
+    filePath?: true
+    fileUrl?: true
+    createdAt?: true
+  }
+
+  export type PdfFileMaxAggregateInputType = {
+    id?: true
+    filePath?: true
+    fileUrl?: true
+    createdAt?: true
+  }
+
+  export type PdfFileCountAggregateInputType = {
+    id?: true
+    filePath?: true
+    fileUrl?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type PdfFileAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PdfFile to aggregate.
+     */
+    where?: PdfFileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PdfFiles to fetch.
+     */
+    orderBy?: PdfFileOrderByWithRelationInput | PdfFileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PdfFileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PdfFiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PdfFiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PdfFiles
+    **/
+    _count?: true | PdfFileCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PdfFileMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PdfFileMaxAggregateInputType
+  }
+
+  export type GetPdfFileAggregateType<T extends PdfFileAggregateArgs> = {
+        [P in keyof T & keyof AggregatePdfFile]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePdfFile[P]>
+      : GetScalarType<T[P], AggregatePdfFile[P]>
+  }
+
+
+
+
+  export type PdfFileGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PdfFileWhereInput
+    orderBy?: PdfFileOrderByWithAggregationInput | PdfFileOrderByWithAggregationInput[]
+    by: PdfFileScalarFieldEnum[] | PdfFileScalarFieldEnum
+    having?: PdfFileScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PdfFileCountAggregateInputType | true
+    _min?: PdfFileMinAggregateInputType
+    _max?: PdfFileMaxAggregateInputType
+  }
+
+  export type PdfFileGroupByOutputType = {
+    id: string
+    filePath: string
+    fileUrl: string | null
+    createdAt: Date
+    _count: PdfFileCountAggregateOutputType | null
+    _min: PdfFileMinAggregateOutputType | null
+    _max: PdfFileMaxAggregateOutputType | null
+  }
+
+  type GetPdfFileGroupByPayload<T extends PdfFileGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PdfFileGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PdfFileGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PdfFileGroupByOutputType[P]>
+            : GetScalarType<T[P], PdfFileGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PdfFileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    filePath?: boolean
+    fileUrl?: boolean
+    createdAt?: boolean
+    roomData?: boolean | PdfFile$roomDataArgs<ExtArgs>
+    _count?: boolean | PdfFileCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pdfFile"]>
+
+  export type PdfFileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    filePath?: boolean
+    fileUrl?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["pdfFile"]>
+
+  export type PdfFileSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    filePath?: boolean
+    fileUrl?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["pdfFile"]>
+
+  export type PdfFileSelectScalar = {
+    id?: boolean
+    filePath?: boolean
+    fileUrl?: boolean
+    createdAt?: boolean
+  }
+
+  export type PdfFileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "filePath" | "fileUrl" | "createdAt", ExtArgs["result"]["pdfFile"]>
+  export type PdfFileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    roomData?: boolean | PdfFile$roomDataArgs<ExtArgs>
+    _count?: boolean | PdfFileCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type PdfFileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type PdfFileIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $PdfFilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PdfFile"
+    objects: {
+      roomData: Prisma.$room_dataPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      filePath: string
+      fileUrl: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["pdfFile"]>
+    composites: {}
+  }
+
+  type PdfFileGetPayload<S extends boolean | null | undefined | PdfFileDefaultArgs> = $Result.GetResult<Prisma.$PdfFilePayload, S>
+
+  type PdfFileCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PdfFileFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PdfFileCountAggregateInputType | true
+    }
+
+  export interface PdfFileDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PdfFile'], meta: { name: 'PdfFile' } }
+    /**
+     * Find zero or one PdfFile that matches the filter.
+     * @param {PdfFileFindUniqueArgs} args - Arguments to find a PdfFile
+     * @example
+     * // Get one PdfFile
+     * const pdfFile = await prisma.pdfFile.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PdfFileFindUniqueArgs>(args: SelectSubset<T, PdfFileFindUniqueArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PdfFile that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PdfFileFindUniqueOrThrowArgs} args - Arguments to find a PdfFile
+     * @example
+     * // Get one PdfFile
+     * const pdfFile = await prisma.pdfFile.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PdfFileFindUniqueOrThrowArgs>(args: SelectSubset<T, PdfFileFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PdfFile that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PdfFileFindFirstArgs} args - Arguments to find a PdfFile
+     * @example
+     * // Get one PdfFile
+     * const pdfFile = await prisma.pdfFile.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PdfFileFindFirstArgs>(args?: SelectSubset<T, PdfFileFindFirstArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PdfFile that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PdfFileFindFirstOrThrowArgs} args - Arguments to find a PdfFile
+     * @example
+     * // Get one PdfFile
+     * const pdfFile = await prisma.pdfFile.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PdfFileFindFirstOrThrowArgs>(args?: SelectSubset<T, PdfFileFindFirstOrThrowArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PdfFiles that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PdfFileFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PdfFiles
+     * const pdfFiles = await prisma.pdfFile.findMany()
+     * 
+     * // Get first 10 PdfFiles
+     * const pdfFiles = await prisma.pdfFile.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const pdfFileWithIdOnly = await prisma.pdfFile.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PdfFileFindManyArgs>(args?: SelectSubset<T, PdfFileFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PdfFile.
+     * @param {PdfFileCreateArgs} args - Arguments to create a PdfFile.
+     * @example
+     * // Create one PdfFile
+     * const PdfFile = await prisma.pdfFile.create({
+     *   data: {
+     *     // ... data to create a PdfFile
+     *   }
+     * })
+     * 
+     */
+    create<T extends PdfFileCreateArgs>(args: SelectSubset<T, PdfFileCreateArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PdfFiles.
+     * @param {PdfFileCreateManyArgs} args - Arguments to create many PdfFiles.
+     * @example
+     * // Create many PdfFiles
+     * const pdfFile = await prisma.pdfFile.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PdfFileCreateManyArgs>(args?: SelectSubset<T, PdfFileCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PdfFiles and returns the data saved in the database.
+     * @param {PdfFileCreateManyAndReturnArgs} args - Arguments to create many PdfFiles.
+     * @example
+     * // Create many PdfFiles
+     * const pdfFile = await prisma.pdfFile.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PdfFiles and only return the `id`
+     * const pdfFileWithIdOnly = await prisma.pdfFile.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PdfFileCreateManyAndReturnArgs>(args?: SelectSubset<T, PdfFileCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PdfFile.
+     * @param {PdfFileDeleteArgs} args - Arguments to delete one PdfFile.
+     * @example
+     * // Delete one PdfFile
+     * const PdfFile = await prisma.pdfFile.delete({
+     *   where: {
+     *     // ... filter to delete one PdfFile
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PdfFileDeleteArgs>(args: SelectSubset<T, PdfFileDeleteArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PdfFile.
+     * @param {PdfFileUpdateArgs} args - Arguments to update one PdfFile.
+     * @example
+     * // Update one PdfFile
+     * const pdfFile = await prisma.pdfFile.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PdfFileUpdateArgs>(args: SelectSubset<T, PdfFileUpdateArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PdfFiles.
+     * @param {PdfFileDeleteManyArgs} args - Arguments to filter PdfFiles to delete.
+     * @example
+     * // Delete a few PdfFiles
+     * const { count } = await prisma.pdfFile.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PdfFileDeleteManyArgs>(args?: SelectSubset<T, PdfFileDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PdfFiles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PdfFileUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PdfFiles
+     * const pdfFile = await prisma.pdfFile.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PdfFileUpdateManyArgs>(args: SelectSubset<T, PdfFileUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PdfFiles and returns the data updated in the database.
+     * @param {PdfFileUpdateManyAndReturnArgs} args - Arguments to update many PdfFiles.
+     * @example
+     * // Update many PdfFiles
+     * const pdfFile = await prisma.pdfFile.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PdfFiles and only return the `id`
+     * const pdfFileWithIdOnly = await prisma.pdfFile.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PdfFileUpdateManyAndReturnArgs>(args: SelectSubset<T, PdfFileUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PdfFile.
+     * @param {PdfFileUpsertArgs} args - Arguments to update or create a PdfFile.
+     * @example
+     * // Update or create a PdfFile
+     * const pdfFile = await prisma.pdfFile.upsert({
+     *   create: {
+     *     // ... data to create a PdfFile
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PdfFile we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PdfFileUpsertArgs>(args: SelectSubset<T, PdfFileUpsertArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PdfFiles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PdfFileCountArgs} args - Arguments to filter PdfFiles to count.
+     * @example
+     * // Count the number of PdfFiles
+     * const count = await prisma.pdfFile.count({
+     *   where: {
+     *     // ... the filter for the PdfFiles we want to count
+     *   }
+     * })
+    **/
+    count<T extends PdfFileCountArgs>(
+      args?: Subset<T, PdfFileCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PdfFileCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PdfFile.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PdfFileAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PdfFileAggregateArgs>(args: Subset<T, PdfFileAggregateArgs>): Prisma.PrismaPromise<GetPdfFileAggregateType<T>>
+
+    /**
+     * Group by PdfFile.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PdfFileGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PdfFileGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PdfFileGroupByArgs['orderBy'] }
+        : { orderBy?: PdfFileGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PdfFileGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPdfFileGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PdfFile model
+   */
+  readonly fields: PdfFileFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PdfFile.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PdfFileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    roomData<T extends PdfFile$roomDataArgs<ExtArgs> = {}>(args?: Subset<T, PdfFile$roomDataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$room_dataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PdfFile model
+   */
+  interface PdfFileFieldRefs {
+    readonly id: FieldRef<"PdfFile", 'String'>
+    readonly filePath: FieldRef<"PdfFile", 'String'>
+    readonly fileUrl: FieldRef<"PdfFile", 'String'>
+    readonly createdAt: FieldRef<"PdfFile", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PdfFile findUnique
+   */
+  export type PdfFileFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PdfFile
+     */
+    select?: PdfFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PdfFile
+     */
+    omit?: PdfFileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PdfFileInclude<ExtArgs> | null
+    /**
+     * Filter, which PdfFile to fetch.
+     */
+    where: PdfFileWhereUniqueInput
+  }
+
+  /**
+   * PdfFile findUniqueOrThrow
+   */
+  export type PdfFileFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PdfFile
+     */
+    select?: PdfFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PdfFile
+     */
+    omit?: PdfFileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PdfFileInclude<ExtArgs> | null
+    /**
+     * Filter, which PdfFile to fetch.
+     */
+    where: PdfFileWhereUniqueInput
+  }
+
+  /**
+   * PdfFile findFirst
+   */
+  export type PdfFileFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PdfFile
+     */
+    select?: PdfFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PdfFile
+     */
+    omit?: PdfFileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PdfFileInclude<ExtArgs> | null
+    /**
+     * Filter, which PdfFile to fetch.
+     */
+    where?: PdfFileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PdfFiles to fetch.
+     */
+    orderBy?: PdfFileOrderByWithRelationInput | PdfFileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PdfFiles.
+     */
+    cursor?: PdfFileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PdfFiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PdfFiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PdfFiles.
+     */
+    distinct?: PdfFileScalarFieldEnum | PdfFileScalarFieldEnum[]
+  }
+
+  /**
+   * PdfFile findFirstOrThrow
+   */
+  export type PdfFileFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PdfFile
+     */
+    select?: PdfFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PdfFile
+     */
+    omit?: PdfFileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PdfFileInclude<ExtArgs> | null
+    /**
+     * Filter, which PdfFile to fetch.
+     */
+    where?: PdfFileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PdfFiles to fetch.
+     */
+    orderBy?: PdfFileOrderByWithRelationInput | PdfFileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PdfFiles.
+     */
+    cursor?: PdfFileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PdfFiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PdfFiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PdfFiles.
+     */
+    distinct?: PdfFileScalarFieldEnum | PdfFileScalarFieldEnum[]
+  }
+
+  /**
+   * PdfFile findMany
+   */
+  export type PdfFileFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PdfFile
+     */
+    select?: PdfFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PdfFile
+     */
+    omit?: PdfFileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PdfFileInclude<ExtArgs> | null
+    /**
+     * Filter, which PdfFiles to fetch.
+     */
+    where?: PdfFileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PdfFiles to fetch.
+     */
+    orderBy?: PdfFileOrderByWithRelationInput | PdfFileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PdfFiles.
+     */
+    cursor?: PdfFileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PdfFiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PdfFiles.
+     */
+    skip?: number
+    distinct?: PdfFileScalarFieldEnum | PdfFileScalarFieldEnum[]
+  }
+
+  /**
+   * PdfFile create
+   */
+  export type PdfFileCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PdfFile
+     */
+    select?: PdfFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PdfFile
+     */
+    omit?: PdfFileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PdfFileInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PdfFile.
+     */
+    data: XOR<PdfFileCreateInput, PdfFileUncheckedCreateInput>
+  }
+
+  /**
+   * PdfFile createMany
+   */
+  export type PdfFileCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PdfFiles.
+     */
+    data: PdfFileCreateManyInput | PdfFileCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PdfFile createManyAndReturn
+   */
+  export type PdfFileCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PdfFile
+     */
+    select?: PdfFileSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PdfFile
+     */
+    omit?: PdfFileOmit<ExtArgs> | null
+    /**
+     * The data used to create many PdfFiles.
+     */
+    data: PdfFileCreateManyInput | PdfFileCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PdfFile update
+   */
+  export type PdfFileUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PdfFile
+     */
+    select?: PdfFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PdfFile
+     */
+    omit?: PdfFileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PdfFileInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PdfFile.
+     */
+    data: XOR<PdfFileUpdateInput, PdfFileUncheckedUpdateInput>
+    /**
+     * Choose, which PdfFile to update.
+     */
+    where: PdfFileWhereUniqueInput
+  }
+
+  /**
+   * PdfFile updateMany
+   */
+  export type PdfFileUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PdfFiles.
+     */
+    data: XOR<PdfFileUpdateManyMutationInput, PdfFileUncheckedUpdateManyInput>
+    /**
+     * Filter which PdfFiles to update
+     */
+    where?: PdfFileWhereInput
+    /**
+     * Limit how many PdfFiles to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PdfFile updateManyAndReturn
+   */
+  export type PdfFileUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PdfFile
+     */
+    select?: PdfFileSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PdfFile
+     */
+    omit?: PdfFileOmit<ExtArgs> | null
+    /**
+     * The data used to update PdfFiles.
+     */
+    data: XOR<PdfFileUpdateManyMutationInput, PdfFileUncheckedUpdateManyInput>
+    /**
+     * Filter which PdfFiles to update
+     */
+    where?: PdfFileWhereInput
+    /**
+     * Limit how many PdfFiles to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PdfFile upsert
+   */
+  export type PdfFileUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PdfFile
+     */
+    select?: PdfFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PdfFile
+     */
+    omit?: PdfFileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PdfFileInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PdfFile to update in case it exists.
+     */
+    where: PdfFileWhereUniqueInput
+    /**
+     * In case the PdfFile found by the `where` argument doesn't exist, create a new PdfFile with this data.
+     */
+    create: XOR<PdfFileCreateInput, PdfFileUncheckedCreateInput>
+    /**
+     * In case the PdfFile was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PdfFileUpdateInput, PdfFileUncheckedUpdateInput>
+  }
+
+  /**
+   * PdfFile delete
+   */
+  export type PdfFileDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PdfFile
+     */
+    select?: PdfFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PdfFile
+     */
+    omit?: PdfFileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PdfFileInclude<ExtArgs> | null
+    /**
+     * Filter which PdfFile to delete.
+     */
+    where: PdfFileWhereUniqueInput
+  }
+
+  /**
+   * PdfFile deleteMany
+   */
+  export type PdfFileDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PdfFiles to delete
+     */
+    where?: PdfFileWhereInput
+    /**
+     * Limit how many PdfFiles to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PdfFile.roomData
+   */
+  export type PdfFile$roomDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the room_data
+     */
+    select?: room_dataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the room_data
+     */
+    omit?: room_dataOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: room_dataInclude<ExtArgs> | null
+    where?: room_dataWhereInput
+    orderBy?: room_dataOrderByWithRelationInput | room_dataOrderByWithRelationInput[]
+    cursor?: room_dataWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Room_dataScalarFieldEnum | Room_dataScalarFieldEnum[]
+  }
+
+  /**
+   * PdfFile without action
+   */
+  export type PdfFileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PdfFile
+     */
+    select?: PdfFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PdfFile
+     */
+    omit?: PdfFileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PdfFileInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Recording
+   */
+
+  export type AggregateRecording = {
+    _count: RecordingCountAggregateOutputType | null
+    _min: RecordingMinAggregateOutputType | null
+    _max: RecordingMaxAggregateOutputType | null
+  }
+
+  export type RecordingMinAggregateOutputType = {
+    id: string | null
+    audioPath: string | null
+    audioUrl: string | null
+    createdAt: Date | null
+  }
+
+  export type RecordingMaxAggregateOutputType = {
+    id: string | null
+    audioPath: string | null
+    audioUrl: string | null
+    createdAt: Date | null
+  }
+
+  export type RecordingCountAggregateOutputType = {
+    id: number
+    audioPath: number
+    audioUrl: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type RecordingMinAggregateInputType = {
+    id?: true
+    audioPath?: true
+    audioUrl?: true
+    createdAt?: true
+  }
+
+  export type RecordingMaxAggregateInputType = {
+    id?: true
+    audioPath?: true
+    audioUrl?: true
+    createdAt?: true
+  }
+
+  export type RecordingCountAggregateInputType = {
+    id?: true
+    audioPath?: true
+    audioUrl?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type RecordingAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Recording to aggregate.
+     */
+    where?: RecordingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Recordings to fetch.
+     */
+    orderBy?: RecordingOrderByWithRelationInput | RecordingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RecordingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Recordings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Recordings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Recordings
+    **/
+    _count?: true | RecordingCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RecordingMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RecordingMaxAggregateInputType
+  }
+
+  export type GetRecordingAggregateType<T extends RecordingAggregateArgs> = {
+        [P in keyof T & keyof AggregateRecording]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRecording[P]>
+      : GetScalarType<T[P], AggregateRecording[P]>
+  }
+
+
+
+
+  export type RecordingGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RecordingWhereInput
+    orderBy?: RecordingOrderByWithAggregationInput | RecordingOrderByWithAggregationInput[]
+    by: RecordingScalarFieldEnum[] | RecordingScalarFieldEnum
+    having?: RecordingScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RecordingCountAggregateInputType | true
+    _min?: RecordingMinAggregateInputType
+    _max?: RecordingMaxAggregateInputType
+  }
+
+  export type RecordingGroupByOutputType = {
+    id: string
+    audioPath: string
+    audioUrl: string
+    createdAt: Date
+    _count: RecordingCountAggregateOutputType | null
+    _min: RecordingMinAggregateOutputType | null
+    _max: RecordingMaxAggregateOutputType | null
+  }
+
+  type GetRecordingGroupByPayload<T extends RecordingGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RecordingGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RecordingGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RecordingGroupByOutputType[P]>
+            : GetScalarType<T[P], RecordingGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RecordingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    audioPath?: boolean
+    audioUrl?: boolean
+    createdAt?: boolean
+    roomData?: boolean | Recording$roomDataArgs<ExtArgs>
+    _count?: boolean | RecordingCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["recording"]>
+
+  export type RecordingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    audioPath?: boolean
+    audioUrl?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["recording"]>
+
+  export type RecordingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    audioPath?: boolean
+    audioUrl?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["recording"]>
+
+  export type RecordingSelectScalar = {
+    id?: boolean
+    audioPath?: boolean
+    audioUrl?: boolean
+    createdAt?: boolean
+  }
+
+  export type RecordingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "audioPath" | "audioUrl" | "createdAt", ExtArgs["result"]["recording"]>
+  export type RecordingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    roomData?: boolean | Recording$roomDataArgs<ExtArgs>
+    _count?: boolean | RecordingCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type RecordingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type RecordingIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $RecordingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Recording"
+    objects: {
+      roomData: Prisma.$room_dataPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      audioPath: string
+      audioUrl: string
+      createdAt: Date
+    }, ExtArgs["result"]["recording"]>
+    composites: {}
+  }
+
+  type RecordingGetPayload<S extends boolean | null | undefined | RecordingDefaultArgs> = $Result.GetResult<Prisma.$RecordingPayload, S>
+
+  type RecordingCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RecordingFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RecordingCountAggregateInputType | true
+    }
+
+  export interface RecordingDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Recording'], meta: { name: 'Recording' } }
+    /**
+     * Find zero or one Recording that matches the filter.
+     * @param {RecordingFindUniqueArgs} args - Arguments to find a Recording
+     * @example
+     * // Get one Recording
+     * const recording = await prisma.recording.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RecordingFindUniqueArgs>(args: SelectSubset<T, RecordingFindUniqueArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Recording that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RecordingFindUniqueOrThrowArgs} args - Arguments to find a Recording
+     * @example
+     * // Get one Recording
+     * const recording = await prisma.recording.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RecordingFindUniqueOrThrowArgs>(args: SelectSubset<T, RecordingFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Recording that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordingFindFirstArgs} args - Arguments to find a Recording
+     * @example
+     * // Get one Recording
+     * const recording = await prisma.recording.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RecordingFindFirstArgs>(args?: SelectSubset<T, RecordingFindFirstArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Recording that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordingFindFirstOrThrowArgs} args - Arguments to find a Recording
+     * @example
+     * // Get one Recording
+     * const recording = await prisma.recording.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RecordingFindFirstOrThrowArgs>(args?: SelectSubset<T, RecordingFindFirstOrThrowArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Recordings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordingFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Recordings
+     * const recordings = await prisma.recording.findMany()
+     * 
+     * // Get first 10 Recordings
+     * const recordings = await prisma.recording.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const recordingWithIdOnly = await prisma.recording.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RecordingFindManyArgs>(args?: SelectSubset<T, RecordingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Recording.
+     * @param {RecordingCreateArgs} args - Arguments to create a Recording.
+     * @example
+     * // Create one Recording
+     * const Recording = await prisma.recording.create({
+     *   data: {
+     *     // ... data to create a Recording
+     *   }
+     * })
+     * 
+     */
+    create<T extends RecordingCreateArgs>(args: SelectSubset<T, RecordingCreateArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Recordings.
+     * @param {RecordingCreateManyArgs} args - Arguments to create many Recordings.
+     * @example
+     * // Create many Recordings
+     * const recording = await prisma.recording.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RecordingCreateManyArgs>(args?: SelectSubset<T, RecordingCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Recordings and returns the data saved in the database.
+     * @param {RecordingCreateManyAndReturnArgs} args - Arguments to create many Recordings.
+     * @example
+     * // Create many Recordings
+     * const recording = await prisma.recording.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Recordings and only return the `id`
+     * const recordingWithIdOnly = await prisma.recording.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RecordingCreateManyAndReturnArgs>(args?: SelectSubset<T, RecordingCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Recording.
+     * @param {RecordingDeleteArgs} args - Arguments to delete one Recording.
+     * @example
+     * // Delete one Recording
+     * const Recording = await prisma.recording.delete({
+     *   where: {
+     *     // ... filter to delete one Recording
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RecordingDeleteArgs>(args: SelectSubset<T, RecordingDeleteArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Recording.
+     * @param {RecordingUpdateArgs} args - Arguments to update one Recording.
+     * @example
+     * // Update one Recording
+     * const recording = await prisma.recording.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RecordingUpdateArgs>(args: SelectSubset<T, RecordingUpdateArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Recordings.
+     * @param {RecordingDeleteManyArgs} args - Arguments to filter Recordings to delete.
+     * @example
+     * // Delete a few Recordings
+     * const { count } = await prisma.recording.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RecordingDeleteManyArgs>(args?: SelectSubset<T, RecordingDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Recordings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordingUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Recordings
+     * const recording = await prisma.recording.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RecordingUpdateManyArgs>(args: SelectSubset<T, RecordingUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Recordings and returns the data updated in the database.
+     * @param {RecordingUpdateManyAndReturnArgs} args - Arguments to update many Recordings.
+     * @example
+     * // Update many Recordings
+     * const recording = await prisma.recording.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Recordings and only return the `id`
+     * const recordingWithIdOnly = await prisma.recording.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RecordingUpdateManyAndReturnArgs>(args: SelectSubset<T, RecordingUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Recording.
+     * @param {RecordingUpsertArgs} args - Arguments to update or create a Recording.
+     * @example
+     * // Update or create a Recording
+     * const recording = await prisma.recording.upsert({
+     *   create: {
+     *     // ... data to create a Recording
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Recording we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RecordingUpsertArgs>(args: SelectSubset<T, RecordingUpsertArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Recordings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordingCountArgs} args - Arguments to filter Recordings to count.
+     * @example
+     * // Count the number of Recordings
+     * const count = await prisma.recording.count({
+     *   where: {
+     *     // ... the filter for the Recordings we want to count
+     *   }
+     * })
+    **/
+    count<T extends RecordingCountArgs>(
+      args?: Subset<T, RecordingCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RecordingCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Recording.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordingAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RecordingAggregateArgs>(args: Subset<T, RecordingAggregateArgs>): Prisma.PrismaPromise<GetRecordingAggregateType<T>>
+
+    /**
+     * Group by Recording.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordingGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RecordingGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RecordingGroupByArgs['orderBy'] }
+        : { orderBy?: RecordingGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RecordingGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRecordingGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Recording model
+   */
+  readonly fields: RecordingFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Recording.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RecordingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    roomData<T extends Recording$roomDataArgs<ExtArgs> = {}>(args?: Subset<T, Recording$roomDataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$room_dataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Recording model
+   */
+  interface RecordingFieldRefs {
+    readonly id: FieldRef<"Recording", 'String'>
+    readonly audioPath: FieldRef<"Recording", 'String'>
+    readonly audioUrl: FieldRef<"Recording", 'String'>
+    readonly createdAt: FieldRef<"Recording", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Recording findUnique
+   */
+  export type RecordingFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * Filter, which Recording to fetch.
+     */
+    where: RecordingWhereUniqueInput
+  }
+
+  /**
+   * Recording findUniqueOrThrow
+   */
+  export type RecordingFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * Filter, which Recording to fetch.
+     */
+    where: RecordingWhereUniqueInput
+  }
+
+  /**
+   * Recording findFirst
+   */
+  export type RecordingFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * Filter, which Recording to fetch.
+     */
+    where?: RecordingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Recordings to fetch.
+     */
+    orderBy?: RecordingOrderByWithRelationInput | RecordingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Recordings.
+     */
+    cursor?: RecordingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Recordings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Recordings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Recordings.
+     */
+    distinct?: RecordingScalarFieldEnum | RecordingScalarFieldEnum[]
+  }
+
+  /**
+   * Recording findFirstOrThrow
+   */
+  export type RecordingFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * Filter, which Recording to fetch.
+     */
+    where?: RecordingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Recordings to fetch.
+     */
+    orderBy?: RecordingOrderByWithRelationInput | RecordingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Recordings.
+     */
+    cursor?: RecordingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Recordings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Recordings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Recordings.
+     */
+    distinct?: RecordingScalarFieldEnum | RecordingScalarFieldEnum[]
+  }
+
+  /**
+   * Recording findMany
+   */
+  export type RecordingFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * Filter, which Recordings to fetch.
+     */
+    where?: RecordingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Recordings to fetch.
+     */
+    orderBy?: RecordingOrderByWithRelationInput | RecordingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Recordings.
+     */
+    cursor?: RecordingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Recordings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Recordings.
+     */
+    skip?: number
+    distinct?: RecordingScalarFieldEnum | RecordingScalarFieldEnum[]
+  }
+
+  /**
+   * Recording create
+   */
+  export type RecordingCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Recording.
+     */
+    data: XOR<RecordingCreateInput, RecordingUncheckedCreateInput>
+  }
+
+  /**
+   * Recording createMany
+   */
+  export type RecordingCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Recordings.
+     */
+    data: RecordingCreateManyInput | RecordingCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Recording createManyAndReturn
+   */
+  export type RecordingCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * The data used to create many Recordings.
+     */
+    data: RecordingCreateManyInput | RecordingCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Recording update
+   */
+  export type RecordingUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Recording.
+     */
+    data: XOR<RecordingUpdateInput, RecordingUncheckedUpdateInput>
+    /**
+     * Choose, which Recording to update.
+     */
+    where: RecordingWhereUniqueInput
+  }
+
+  /**
+   * Recording updateMany
+   */
+  export type RecordingUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Recordings.
+     */
+    data: XOR<RecordingUpdateManyMutationInput, RecordingUncheckedUpdateManyInput>
+    /**
+     * Filter which Recordings to update
+     */
+    where?: RecordingWhereInput
+    /**
+     * Limit how many Recordings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Recording updateManyAndReturn
+   */
+  export type RecordingUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * The data used to update Recordings.
+     */
+    data: XOR<RecordingUpdateManyMutationInput, RecordingUncheckedUpdateManyInput>
+    /**
+     * Filter which Recordings to update
+     */
+    where?: RecordingWhereInput
+    /**
+     * Limit how many Recordings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Recording upsert
+   */
+  export type RecordingUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Recording to update in case it exists.
+     */
+    where: RecordingWhereUniqueInput
+    /**
+     * In case the Recording found by the `where` argument doesn't exist, create a new Recording with this data.
+     */
+    create: XOR<RecordingCreateInput, RecordingUncheckedCreateInput>
+    /**
+     * In case the Recording was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RecordingUpdateInput, RecordingUncheckedUpdateInput>
+  }
+
+  /**
+   * Recording delete
+   */
+  export type RecordingDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * Filter which Recording to delete.
+     */
+    where: RecordingWhereUniqueInput
+  }
+
+  /**
+   * Recording deleteMany
+   */
+  export type RecordingDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Recordings to delete
+     */
+    where?: RecordingWhereInput
+    /**
+     * Limit how many Recordings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Recording.roomData
+   */
+  export type Recording$roomDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the room_data
+     */
+    select?: room_dataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the room_data
+     */
+    omit?: room_dataOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: room_dataInclude<ExtArgs> | null
+    where?: room_dataWhereInput
+    orderBy?: room_dataOrderByWithRelationInput | room_dataOrderByWithRelationInput[]
+    cursor?: room_dataWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Room_dataScalarFieldEnum | Room_dataScalarFieldEnum[]
+  }
+
+  /**
+   * Recording without action
+   */
+  export type RecordingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model room_data
    */
 
@@ -7712,28 +10197,28 @@ export namespace Prisma {
   export type Room_dataMinAggregateOutputType = {
     id: number | null
     bed_id: number | null
-    audio_path: string | null
     patient_note: string | null
     is_approved: number | null
-    pdf_path: string | null
+    recording_id: string | null
+    pdf_id: string | null
   }
 
   export type Room_dataMaxAggregateOutputType = {
     id: number | null
     bed_id: number | null
-    audio_path: string | null
     patient_note: string | null
     is_approved: number | null
-    pdf_path: string | null
+    recording_id: string | null
+    pdf_id: string | null
   }
 
   export type Room_dataCountAggregateOutputType = {
     id: number
     bed_id: number
-    audio_path: number
     patient_note: number
     is_approved: number
-    pdf_path: number
+    recording_id: number
+    pdf_id: number
     _all: number
   }
 
@@ -7753,28 +10238,28 @@ export namespace Prisma {
   export type Room_dataMinAggregateInputType = {
     id?: true
     bed_id?: true
-    audio_path?: true
     patient_note?: true
     is_approved?: true
-    pdf_path?: true
+    recording_id?: true
+    pdf_id?: true
   }
 
   export type Room_dataMaxAggregateInputType = {
     id?: true
     bed_id?: true
-    audio_path?: true
     patient_note?: true
     is_approved?: true
-    pdf_path?: true
+    recording_id?: true
+    pdf_id?: true
   }
 
   export type Room_dataCountAggregateInputType = {
     id?: true
     bed_id?: true
-    audio_path?: true
     patient_note?: true
     is_approved?: true
-    pdf_path?: true
+    recording_id?: true
+    pdf_id?: true
     _all?: true
   }
 
@@ -7867,10 +10352,10 @@ export namespace Prisma {
   export type Room_dataGroupByOutputType = {
     id: number
     bed_id: number
-    audio_path: string
     patient_note: string
     is_approved: number
-    pdf_path: string | null
+    recording_id: string | null
+    pdf_id: string | null
     _count: Room_dataCountAggregateOutputType | null
     _avg: Room_dataAvgAggregateOutputType | null
     _sum: Room_dataSumAggregateOutputType | null
@@ -7895,65 +10380,79 @@ export namespace Prisma {
   export type room_dataSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     bed_id?: boolean
-    audio_path?: boolean
     patient_note?: boolean
     is_approved?: boolean
-    pdf_path?: boolean
+    recording_id?: boolean
+    pdf_id?: boolean
+    recording?: boolean | room_data$recordingArgs<ExtArgs>
+    pdf?: boolean | room_data$pdfArgs<ExtArgs>
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["room_data"]>
 
   export type room_dataSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     bed_id?: boolean
-    audio_path?: boolean
     patient_note?: boolean
     is_approved?: boolean
-    pdf_path?: boolean
+    recording_id?: boolean
+    pdf_id?: boolean
+    recording?: boolean | room_data$recordingArgs<ExtArgs>
+    pdf?: boolean | room_data$pdfArgs<ExtArgs>
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["room_data"]>
 
   export type room_dataSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     bed_id?: boolean
-    audio_path?: boolean
     patient_note?: boolean
     is_approved?: boolean
-    pdf_path?: boolean
+    recording_id?: boolean
+    pdf_id?: boolean
+    recording?: boolean | room_data$recordingArgs<ExtArgs>
+    pdf?: boolean | room_data$pdfArgs<ExtArgs>
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["room_data"]>
 
   export type room_dataSelectScalar = {
     id?: boolean
     bed_id?: boolean
-    audio_path?: boolean
     patient_note?: boolean
     is_approved?: boolean
-    pdf_path?: boolean
+    recording_id?: boolean
+    pdf_id?: boolean
   }
 
-  export type room_dataOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bed_id" | "audio_path" | "patient_note" | "is_approved" | "pdf_path", ExtArgs["result"]["room_data"]>
+  export type room_dataOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bed_id" | "patient_note" | "is_approved" | "recording_id" | "pdf_id", ExtArgs["result"]["room_data"]>
   export type room_dataInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    recording?: boolean | room_data$recordingArgs<ExtArgs>
+    pdf?: boolean | room_data$pdfArgs<ExtArgs>
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }
   export type room_dataIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    recording?: boolean | room_data$recordingArgs<ExtArgs>
+    pdf?: boolean | room_data$pdfArgs<ExtArgs>
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }
   export type room_dataIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    recording?: boolean | room_data$recordingArgs<ExtArgs>
+    pdf?: boolean | room_data$pdfArgs<ExtArgs>
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }
 
   export type $room_dataPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "room_data"
     objects: {
+      recording: Prisma.$RecordingPayload<ExtArgs> | null
+      pdf: Prisma.$PdfFilePayload<ExtArgs> | null
       bed_info: Prisma.$bed_infoPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       bed_id: number
-      audio_path: string
       patient_note: string
       is_approved: number
-      pdf_path: string | null
+      recording_id: string | null
+      pdf_id: string | null
     }, ExtArgs["result"]["room_data"]>
     composites: {}
   }
@@ -8348,6 +10847,8 @@ export namespace Prisma {
    */
   export interface Prisma__room_dataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    recording<T extends room_data$recordingArgs<ExtArgs> = {}>(args?: Subset<T, room_data$recordingArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    pdf<T extends room_data$pdfArgs<ExtArgs> = {}>(args?: Subset<T, room_data$pdfArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     bed_info<T extends bed_infoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, bed_infoDefaultArgs<ExtArgs>>): Prisma__bed_infoClient<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -8380,10 +10881,10 @@ export namespace Prisma {
   interface room_dataFieldRefs {
     readonly id: FieldRef<"room_data", 'Int'>
     readonly bed_id: FieldRef<"room_data", 'Int'>
-    readonly audio_path: FieldRef<"room_data", 'String'>
     readonly patient_note: FieldRef<"room_data", 'String'>
     readonly is_approved: FieldRef<"room_data", 'Int'>
-    readonly pdf_path: FieldRef<"room_data", 'String'>
+    readonly recording_id: FieldRef<"room_data", 'String'>
+    readonly pdf_id: FieldRef<"room_data", 'String'>
   }
     
 
@@ -8777,6 +11278,44 @@ export namespace Prisma {
      * Limit how many room_data to delete.
      */
     limit?: number
+  }
+
+  /**
+   * room_data.recording
+   */
+  export type room_data$recordingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    where?: RecordingWhereInput
+  }
+
+  /**
+   * room_data.pdf
+   */
+  export type room_data$pdfArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PdfFile
+     */
+    select?: PdfFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PdfFile
+     */
+    omit?: PdfFileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PdfFileInclude<ExtArgs> | null
+    where?: PdfFileWhereInput
   }
 
   /**
@@ -12203,6 +14742,1085 @@ export namespace Prisma {
 
 
   /**
+   * Model demo_session
+   */
+
+  export type AggregateDemo_session = {
+    _count: Demo_sessionCountAggregateOutputType | null
+    _avg: Demo_sessionAvgAggregateOutputType | null
+    _sum: Demo_sessionSumAggregateOutputType | null
+    _min: Demo_sessionMinAggregateOutputType | null
+    _max: Demo_sessionMaxAggregateOutputType | null
+  }
+
+  export type Demo_sessionAvgAggregateOutputType = {
+    center_id: number | null
+  }
+
+  export type Demo_sessionSumAggregateOutputType = {
+    center_id: number | null
+  }
+
+  export type Demo_sessionMinAggregateOutputType = {
+    session_id: string | null
+    created_at: Date | null
+    expires_at: Date | null
+    center_id: number | null
+  }
+
+  export type Demo_sessionMaxAggregateOutputType = {
+    session_id: string | null
+    created_at: Date | null
+    expires_at: Date | null
+    center_id: number | null
+  }
+
+  export type Demo_sessionCountAggregateOutputType = {
+    session_id: number
+    created_at: number
+    expires_at: number
+    center_id: number
+    _all: number
+  }
+
+
+  export type Demo_sessionAvgAggregateInputType = {
+    center_id?: true
+  }
+
+  export type Demo_sessionSumAggregateInputType = {
+    center_id?: true
+  }
+
+  export type Demo_sessionMinAggregateInputType = {
+    session_id?: true
+    created_at?: true
+    expires_at?: true
+    center_id?: true
+  }
+
+  export type Demo_sessionMaxAggregateInputType = {
+    session_id?: true
+    created_at?: true
+    expires_at?: true
+    center_id?: true
+  }
+
+  export type Demo_sessionCountAggregateInputType = {
+    session_id?: true
+    created_at?: true
+    expires_at?: true
+    center_id?: true
+    _all?: true
+  }
+
+  export type Demo_sessionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which demo_session to aggregate.
+     */
+    where?: demo_sessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of demo_sessions to fetch.
+     */
+    orderBy?: demo_sessionOrderByWithRelationInput | demo_sessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: demo_sessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` demo_sessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` demo_sessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned demo_sessions
+    **/
+    _count?: true | Demo_sessionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Demo_sessionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Demo_sessionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Demo_sessionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Demo_sessionMaxAggregateInputType
+  }
+
+  export type GetDemo_sessionAggregateType<T extends Demo_sessionAggregateArgs> = {
+        [P in keyof T & keyof AggregateDemo_session]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDemo_session[P]>
+      : GetScalarType<T[P], AggregateDemo_session[P]>
+  }
+
+
+
+
+  export type demo_sessionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: demo_sessionWhereInput
+    orderBy?: demo_sessionOrderByWithAggregationInput | demo_sessionOrderByWithAggregationInput[]
+    by: Demo_sessionScalarFieldEnum[] | Demo_sessionScalarFieldEnum
+    having?: demo_sessionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Demo_sessionCountAggregateInputType | true
+    _avg?: Demo_sessionAvgAggregateInputType
+    _sum?: Demo_sessionSumAggregateInputType
+    _min?: Demo_sessionMinAggregateInputType
+    _max?: Demo_sessionMaxAggregateInputType
+  }
+
+  export type Demo_sessionGroupByOutputType = {
+    session_id: string
+    created_at: Date
+    expires_at: Date
+    center_id: number
+    _count: Demo_sessionCountAggregateOutputType | null
+    _avg: Demo_sessionAvgAggregateOutputType | null
+    _sum: Demo_sessionSumAggregateOutputType | null
+    _min: Demo_sessionMinAggregateOutputType | null
+    _max: Demo_sessionMaxAggregateOutputType | null
+  }
+
+  type GetDemo_sessionGroupByPayload<T extends demo_sessionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Demo_sessionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Demo_sessionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Demo_sessionGroupByOutputType[P]>
+            : GetScalarType<T[P], Demo_sessionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type demo_sessionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    session_id?: boolean
+    created_at?: boolean
+    expires_at?: boolean
+    center_id?: boolean
+    medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["demo_session"]>
+
+  export type demo_sessionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    session_id?: boolean
+    created_at?: boolean
+    expires_at?: boolean
+    center_id?: boolean
+    medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["demo_session"]>
+
+  export type demo_sessionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    session_id?: boolean
+    created_at?: boolean
+    expires_at?: boolean
+    center_id?: boolean
+    medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["demo_session"]>
+
+  export type demo_sessionSelectScalar = {
+    session_id?: boolean
+    created_at?: boolean
+    expires_at?: boolean
+    center_id?: boolean
+  }
+
+  export type demo_sessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"session_id" | "created_at" | "expires_at" | "center_id", ExtArgs["result"]["demo_session"]>
+  export type demo_sessionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
+  }
+  export type demo_sessionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
+  }
+  export type demo_sessionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
+  }
+
+  export type $demo_sessionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "demo_session"
+    objects: {
+      medicalcenter_info: Prisma.$medicalcenter_infoPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      session_id: string
+      created_at: Date
+      expires_at: Date
+      center_id: number
+    }, ExtArgs["result"]["demo_session"]>
+    composites: {}
+  }
+
+  type demo_sessionGetPayload<S extends boolean | null | undefined | demo_sessionDefaultArgs> = $Result.GetResult<Prisma.$demo_sessionPayload, S>
+
+  type demo_sessionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<demo_sessionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Demo_sessionCountAggregateInputType | true
+    }
+
+  export interface demo_sessionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['demo_session'], meta: { name: 'demo_session' } }
+    /**
+     * Find zero or one Demo_session that matches the filter.
+     * @param {demo_sessionFindUniqueArgs} args - Arguments to find a Demo_session
+     * @example
+     * // Get one Demo_session
+     * const demo_session = await prisma.demo_session.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends demo_sessionFindUniqueArgs>(args: SelectSubset<T, demo_sessionFindUniqueArgs<ExtArgs>>): Prisma__demo_sessionClient<$Result.GetResult<Prisma.$demo_sessionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Demo_session that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {demo_sessionFindUniqueOrThrowArgs} args - Arguments to find a Demo_session
+     * @example
+     * // Get one Demo_session
+     * const demo_session = await prisma.demo_session.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends demo_sessionFindUniqueOrThrowArgs>(args: SelectSubset<T, demo_sessionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__demo_sessionClient<$Result.GetResult<Prisma.$demo_sessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Demo_session that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {demo_sessionFindFirstArgs} args - Arguments to find a Demo_session
+     * @example
+     * // Get one Demo_session
+     * const demo_session = await prisma.demo_session.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends demo_sessionFindFirstArgs>(args?: SelectSubset<T, demo_sessionFindFirstArgs<ExtArgs>>): Prisma__demo_sessionClient<$Result.GetResult<Prisma.$demo_sessionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Demo_session that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {demo_sessionFindFirstOrThrowArgs} args - Arguments to find a Demo_session
+     * @example
+     * // Get one Demo_session
+     * const demo_session = await prisma.demo_session.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends demo_sessionFindFirstOrThrowArgs>(args?: SelectSubset<T, demo_sessionFindFirstOrThrowArgs<ExtArgs>>): Prisma__demo_sessionClient<$Result.GetResult<Prisma.$demo_sessionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Demo_sessions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {demo_sessionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Demo_sessions
+     * const demo_sessions = await prisma.demo_session.findMany()
+     * 
+     * // Get first 10 Demo_sessions
+     * const demo_sessions = await prisma.demo_session.findMany({ take: 10 })
+     * 
+     * // Only select the `session_id`
+     * const demo_sessionWithSession_idOnly = await prisma.demo_session.findMany({ select: { session_id: true } })
+     * 
+     */
+    findMany<T extends demo_sessionFindManyArgs>(args?: SelectSubset<T, demo_sessionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$demo_sessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Demo_session.
+     * @param {demo_sessionCreateArgs} args - Arguments to create a Demo_session.
+     * @example
+     * // Create one Demo_session
+     * const Demo_session = await prisma.demo_session.create({
+     *   data: {
+     *     // ... data to create a Demo_session
+     *   }
+     * })
+     * 
+     */
+    create<T extends demo_sessionCreateArgs>(args: SelectSubset<T, demo_sessionCreateArgs<ExtArgs>>): Prisma__demo_sessionClient<$Result.GetResult<Prisma.$demo_sessionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Demo_sessions.
+     * @param {demo_sessionCreateManyArgs} args - Arguments to create many Demo_sessions.
+     * @example
+     * // Create many Demo_sessions
+     * const demo_session = await prisma.demo_session.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends demo_sessionCreateManyArgs>(args?: SelectSubset<T, demo_sessionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Demo_sessions and returns the data saved in the database.
+     * @param {demo_sessionCreateManyAndReturnArgs} args - Arguments to create many Demo_sessions.
+     * @example
+     * // Create many Demo_sessions
+     * const demo_session = await prisma.demo_session.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Demo_sessions and only return the `session_id`
+     * const demo_sessionWithSession_idOnly = await prisma.demo_session.createManyAndReturn({
+     *   select: { session_id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends demo_sessionCreateManyAndReturnArgs>(args?: SelectSubset<T, demo_sessionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$demo_sessionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Demo_session.
+     * @param {demo_sessionDeleteArgs} args - Arguments to delete one Demo_session.
+     * @example
+     * // Delete one Demo_session
+     * const Demo_session = await prisma.demo_session.delete({
+     *   where: {
+     *     // ... filter to delete one Demo_session
+     *   }
+     * })
+     * 
+     */
+    delete<T extends demo_sessionDeleteArgs>(args: SelectSubset<T, demo_sessionDeleteArgs<ExtArgs>>): Prisma__demo_sessionClient<$Result.GetResult<Prisma.$demo_sessionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Demo_session.
+     * @param {demo_sessionUpdateArgs} args - Arguments to update one Demo_session.
+     * @example
+     * // Update one Demo_session
+     * const demo_session = await prisma.demo_session.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends demo_sessionUpdateArgs>(args: SelectSubset<T, demo_sessionUpdateArgs<ExtArgs>>): Prisma__demo_sessionClient<$Result.GetResult<Prisma.$demo_sessionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Demo_sessions.
+     * @param {demo_sessionDeleteManyArgs} args - Arguments to filter Demo_sessions to delete.
+     * @example
+     * // Delete a few Demo_sessions
+     * const { count } = await prisma.demo_session.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends demo_sessionDeleteManyArgs>(args?: SelectSubset<T, demo_sessionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Demo_sessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {demo_sessionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Demo_sessions
+     * const demo_session = await prisma.demo_session.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends demo_sessionUpdateManyArgs>(args: SelectSubset<T, demo_sessionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Demo_sessions and returns the data updated in the database.
+     * @param {demo_sessionUpdateManyAndReturnArgs} args - Arguments to update many Demo_sessions.
+     * @example
+     * // Update many Demo_sessions
+     * const demo_session = await prisma.demo_session.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Demo_sessions and only return the `session_id`
+     * const demo_sessionWithSession_idOnly = await prisma.demo_session.updateManyAndReturn({
+     *   select: { session_id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends demo_sessionUpdateManyAndReturnArgs>(args: SelectSubset<T, demo_sessionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$demo_sessionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Demo_session.
+     * @param {demo_sessionUpsertArgs} args - Arguments to update or create a Demo_session.
+     * @example
+     * // Update or create a Demo_session
+     * const demo_session = await prisma.demo_session.upsert({
+     *   create: {
+     *     // ... data to create a Demo_session
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Demo_session we want to update
+     *   }
+     * })
+     */
+    upsert<T extends demo_sessionUpsertArgs>(args: SelectSubset<T, demo_sessionUpsertArgs<ExtArgs>>): Prisma__demo_sessionClient<$Result.GetResult<Prisma.$demo_sessionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Demo_sessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {demo_sessionCountArgs} args - Arguments to filter Demo_sessions to count.
+     * @example
+     * // Count the number of Demo_sessions
+     * const count = await prisma.demo_session.count({
+     *   where: {
+     *     // ... the filter for the Demo_sessions we want to count
+     *   }
+     * })
+    **/
+    count<T extends demo_sessionCountArgs>(
+      args?: Subset<T, demo_sessionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Demo_sessionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Demo_session.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Demo_sessionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Demo_sessionAggregateArgs>(args: Subset<T, Demo_sessionAggregateArgs>): Prisma.PrismaPromise<GetDemo_sessionAggregateType<T>>
+
+    /**
+     * Group by Demo_session.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {demo_sessionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends demo_sessionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: demo_sessionGroupByArgs['orderBy'] }
+        : { orderBy?: demo_sessionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, demo_sessionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDemo_sessionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the demo_session model
+   */
+  readonly fields: demo_sessionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for demo_session.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__demo_sessionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    medicalcenter_info<T extends medicalcenter_infoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, medicalcenter_infoDefaultArgs<ExtArgs>>): Prisma__medicalcenter_infoClient<$Result.GetResult<Prisma.$medicalcenter_infoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the demo_session model
+   */
+  interface demo_sessionFieldRefs {
+    readonly session_id: FieldRef<"demo_session", 'String'>
+    readonly created_at: FieldRef<"demo_session", 'DateTime'>
+    readonly expires_at: FieldRef<"demo_session", 'DateTime'>
+    readonly center_id: FieldRef<"demo_session", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * demo_session findUnique
+   */
+  export type demo_sessionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demo_session
+     */
+    select?: demo_sessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demo_session
+     */
+    omit?: demo_sessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demo_sessionInclude<ExtArgs> | null
+    /**
+     * Filter, which demo_session to fetch.
+     */
+    where: demo_sessionWhereUniqueInput
+  }
+
+  /**
+   * demo_session findUniqueOrThrow
+   */
+  export type demo_sessionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demo_session
+     */
+    select?: demo_sessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demo_session
+     */
+    omit?: demo_sessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demo_sessionInclude<ExtArgs> | null
+    /**
+     * Filter, which demo_session to fetch.
+     */
+    where: demo_sessionWhereUniqueInput
+  }
+
+  /**
+   * demo_session findFirst
+   */
+  export type demo_sessionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demo_session
+     */
+    select?: demo_sessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demo_session
+     */
+    omit?: demo_sessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demo_sessionInclude<ExtArgs> | null
+    /**
+     * Filter, which demo_session to fetch.
+     */
+    where?: demo_sessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of demo_sessions to fetch.
+     */
+    orderBy?: demo_sessionOrderByWithRelationInput | demo_sessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for demo_sessions.
+     */
+    cursor?: demo_sessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` demo_sessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` demo_sessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of demo_sessions.
+     */
+    distinct?: Demo_sessionScalarFieldEnum | Demo_sessionScalarFieldEnum[]
+  }
+
+  /**
+   * demo_session findFirstOrThrow
+   */
+  export type demo_sessionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demo_session
+     */
+    select?: demo_sessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demo_session
+     */
+    omit?: demo_sessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demo_sessionInclude<ExtArgs> | null
+    /**
+     * Filter, which demo_session to fetch.
+     */
+    where?: demo_sessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of demo_sessions to fetch.
+     */
+    orderBy?: demo_sessionOrderByWithRelationInput | demo_sessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for demo_sessions.
+     */
+    cursor?: demo_sessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` demo_sessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` demo_sessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of demo_sessions.
+     */
+    distinct?: Demo_sessionScalarFieldEnum | Demo_sessionScalarFieldEnum[]
+  }
+
+  /**
+   * demo_session findMany
+   */
+  export type demo_sessionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demo_session
+     */
+    select?: demo_sessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demo_session
+     */
+    omit?: demo_sessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demo_sessionInclude<ExtArgs> | null
+    /**
+     * Filter, which demo_sessions to fetch.
+     */
+    where?: demo_sessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of demo_sessions to fetch.
+     */
+    orderBy?: demo_sessionOrderByWithRelationInput | demo_sessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing demo_sessions.
+     */
+    cursor?: demo_sessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` demo_sessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` demo_sessions.
+     */
+    skip?: number
+    distinct?: Demo_sessionScalarFieldEnum | Demo_sessionScalarFieldEnum[]
+  }
+
+  /**
+   * demo_session create
+   */
+  export type demo_sessionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demo_session
+     */
+    select?: demo_sessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demo_session
+     */
+    omit?: demo_sessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demo_sessionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a demo_session.
+     */
+    data: XOR<demo_sessionCreateInput, demo_sessionUncheckedCreateInput>
+  }
+
+  /**
+   * demo_session createMany
+   */
+  export type demo_sessionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many demo_sessions.
+     */
+    data: demo_sessionCreateManyInput | demo_sessionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * demo_session createManyAndReturn
+   */
+  export type demo_sessionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demo_session
+     */
+    select?: demo_sessionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the demo_session
+     */
+    omit?: demo_sessionOmit<ExtArgs> | null
+    /**
+     * The data used to create many demo_sessions.
+     */
+    data: demo_sessionCreateManyInput | demo_sessionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demo_sessionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * demo_session update
+   */
+  export type demo_sessionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demo_session
+     */
+    select?: demo_sessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demo_session
+     */
+    omit?: demo_sessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demo_sessionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a demo_session.
+     */
+    data: XOR<demo_sessionUpdateInput, demo_sessionUncheckedUpdateInput>
+    /**
+     * Choose, which demo_session to update.
+     */
+    where: demo_sessionWhereUniqueInput
+  }
+
+  /**
+   * demo_session updateMany
+   */
+  export type demo_sessionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update demo_sessions.
+     */
+    data: XOR<demo_sessionUpdateManyMutationInput, demo_sessionUncheckedUpdateManyInput>
+    /**
+     * Filter which demo_sessions to update
+     */
+    where?: demo_sessionWhereInput
+    /**
+     * Limit how many demo_sessions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * demo_session updateManyAndReturn
+   */
+  export type demo_sessionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demo_session
+     */
+    select?: demo_sessionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the demo_session
+     */
+    omit?: demo_sessionOmit<ExtArgs> | null
+    /**
+     * The data used to update demo_sessions.
+     */
+    data: XOR<demo_sessionUpdateManyMutationInput, demo_sessionUncheckedUpdateManyInput>
+    /**
+     * Filter which demo_sessions to update
+     */
+    where?: demo_sessionWhereInput
+    /**
+     * Limit how many demo_sessions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demo_sessionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * demo_session upsert
+   */
+  export type demo_sessionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demo_session
+     */
+    select?: demo_sessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demo_session
+     */
+    omit?: demo_sessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demo_sessionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the demo_session to update in case it exists.
+     */
+    where: demo_sessionWhereUniqueInput
+    /**
+     * In case the demo_session found by the `where` argument doesn't exist, create a new demo_session with this data.
+     */
+    create: XOR<demo_sessionCreateInput, demo_sessionUncheckedCreateInput>
+    /**
+     * In case the demo_session was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<demo_sessionUpdateInput, demo_sessionUncheckedUpdateInput>
+  }
+
+  /**
+   * demo_session delete
+   */
+  export type demo_sessionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demo_session
+     */
+    select?: demo_sessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demo_session
+     */
+    omit?: demo_sessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demo_sessionInclude<ExtArgs> | null
+    /**
+     * Filter which demo_session to delete.
+     */
+    where: demo_sessionWhereUniqueInput
+  }
+
+  /**
+   * demo_session deleteMany
+   */
+  export type demo_sessionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which demo_sessions to delete
+     */
+    where?: demo_sessionWhereInput
+    /**
+     * Limit how many demo_sessions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * demo_session without action
+   */
+  export type demo_sessionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demo_session
+     */
+    select?: demo_sessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demo_session
+     */
+    omit?: demo_sessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demo_sessionInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -12220,7 +15838,8 @@ export namespace Prisma {
     center_id: 'center_id',
     center_name: 'center_name',
     address: 'address',
-    email: 'email'
+    email: 'email',
+    is_demo: 'is_demo'
   };
 
   export type Medicalcenter_infoScalarFieldEnum = (typeof Medicalcenter_infoScalarFieldEnum)[keyof typeof Medicalcenter_infoScalarFieldEnum]
@@ -12273,13 +15892,33 @@ export namespace Prisma {
   export type Bed_infoScalarFieldEnum = (typeof Bed_infoScalarFieldEnum)[keyof typeof Bed_infoScalarFieldEnum]
 
 
+  export const PdfFileScalarFieldEnum: {
+    id: 'id',
+    filePath: 'filePath',
+    fileUrl: 'fileUrl',
+    createdAt: 'createdAt'
+  };
+
+  export type PdfFileScalarFieldEnum = (typeof PdfFileScalarFieldEnum)[keyof typeof PdfFileScalarFieldEnum]
+
+
+  export const RecordingScalarFieldEnum: {
+    id: 'id',
+    audioPath: 'audioPath',
+    audioUrl: 'audioUrl',
+    createdAt: 'createdAt'
+  };
+
+  export type RecordingScalarFieldEnum = (typeof RecordingScalarFieldEnum)[keyof typeof RecordingScalarFieldEnum]
+
+
   export const Room_dataScalarFieldEnum: {
     id: 'id',
     bed_id: 'bed_id',
-    audio_path: 'audio_path',
     patient_note: 'patient_note',
     is_approved: 'is_approved',
-    pdf_path: 'pdf_path'
+    recording_id: 'recording_id',
+    pdf_id: 'pdf_id'
   };
 
   export type Room_dataScalarFieldEnum = (typeof Room_dataScalarFieldEnum)[keyof typeof Room_dataScalarFieldEnum]
@@ -12318,6 +15957,16 @@ export namespace Prisma {
   };
 
   export type User_uploadsScalarFieldEnum = (typeof User_uploadsScalarFieldEnum)[keyof typeof User_uploadsScalarFieldEnum]
+
+
+  export const Demo_sessionScalarFieldEnum: {
+    session_id: 'session_id',
+    created_at: 'created_at',
+    expires_at: 'expires_at',
+    center_id: 'center_id'
+  };
+
+  export type Demo_sessionScalarFieldEnum = (typeof Demo_sessionScalarFieldEnum)[keyof typeof Demo_sessionScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -12378,6 +16027,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -12388,13 +16044,6 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Boolean'
-   */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -12423,6 +16072,8 @@ export namespace Prisma {
     center_name?: StringFilter<"medicalcenter_info"> | string
     address?: StringNullableFilter<"medicalcenter_info"> | string | null
     email?: StringNullableFilter<"medicalcenter_info"> | string | null
+    is_demo?: BoolFilter<"medicalcenter_info"> | boolean
+    demo_session?: XOR<Demo_sessionNullableScalarRelationFilter, demo_sessionWhereInput> | null
     patient_info?: Patient_infoListRelationFilter
     room_info?: Room_infoListRelationFilter
     room_register?: Room_registerListRelationFilter
@@ -12435,6 +16086,8 @@ export namespace Prisma {
     center_name?: SortOrder
     address?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
+    is_demo?: SortOrder
+    demo_session?: demo_sessionOrderByWithRelationInput
     patient_info?: patient_infoOrderByRelationAggregateInput
     room_info?: room_infoOrderByRelationAggregateInput
     room_register?: room_registerOrderByRelationAggregateInput
@@ -12450,6 +16103,8 @@ export namespace Prisma {
     center_name?: StringFilter<"medicalcenter_info"> | string
     address?: StringNullableFilter<"medicalcenter_info"> | string | null
     email?: StringNullableFilter<"medicalcenter_info"> | string | null
+    is_demo?: BoolFilter<"medicalcenter_info"> | boolean
+    demo_session?: XOR<Demo_sessionNullableScalarRelationFilter, demo_sessionWhereInput> | null
     patient_info?: Patient_infoListRelationFilter
     room_info?: Room_infoListRelationFilter
     room_register?: Room_registerListRelationFilter
@@ -12462,6 +16117,7 @@ export namespace Prisma {
     center_name?: SortOrder
     address?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
+    is_demo?: SortOrder
     _count?: medicalcenter_infoCountOrderByAggregateInput
     _avg?: medicalcenter_infoAvgOrderByAggregateInput
     _max?: medicalcenter_infoMaxOrderByAggregateInput
@@ -12477,6 +16133,7 @@ export namespace Prisma {
     center_name?: StringWithAggregatesFilter<"medicalcenter_info"> | string
     address?: StringNullableWithAggregatesFilter<"medicalcenter_info"> | string | null
     email?: StringNullableWithAggregatesFilter<"medicalcenter_info"> | string | null
+    is_demo?: BoolWithAggregatesFilter<"medicalcenter_info"> | boolean
   }
 
   export type patient_infoWhereInput = {
@@ -12747,26 +16404,130 @@ export namespace Prisma {
     assigned_nurse_id?: IntNullableWithAggregatesFilter<"bed_info"> | number | null
   }
 
+  export type PdfFileWhereInput = {
+    AND?: PdfFileWhereInput | PdfFileWhereInput[]
+    OR?: PdfFileWhereInput[]
+    NOT?: PdfFileWhereInput | PdfFileWhereInput[]
+    id?: StringFilter<"PdfFile"> | string
+    filePath?: StringFilter<"PdfFile"> | string
+    fileUrl?: StringNullableFilter<"PdfFile"> | string | null
+    createdAt?: DateTimeFilter<"PdfFile"> | Date | string
+    roomData?: Room_dataListRelationFilter
+  }
+
+  export type PdfFileOrderByWithRelationInput = {
+    id?: SortOrder
+    filePath?: SortOrder
+    fileUrl?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    roomData?: room_dataOrderByRelationAggregateInput
+  }
+
+  export type PdfFileWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: PdfFileWhereInput | PdfFileWhereInput[]
+    OR?: PdfFileWhereInput[]
+    NOT?: PdfFileWhereInput | PdfFileWhereInput[]
+    filePath?: StringFilter<"PdfFile"> | string
+    fileUrl?: StringNullableFilter<"PdfFile"> | string | null
+    createdAt?: DateTimeFilter<"PdfFile"> | Date | string
+    roomData?: Room_dataListRelationFilter
+  }, "id">
+
+  export type PdfFileOrderByWithAggregationInput = {
+    id?: SortOrder
+    filePath?: SortOrder
+    fileUrl?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: PdfFileCountOrderByAggregateInput
+    _max?: PdfFileMaxOrderByAggregateInput
+    _min?: PdfFileMinOrderByAggregateInput
+  }
+
+  export type PdfFileScalarWhereWithAggregatesInput = {
+    AND?: PdfFileScalarWhereWithAggregatesInput | PdfFileScalarWhereWithAggregatesInput[]
+    OR?: PdfFileScalarWhereWithAggregatesInput[]
+    NOT?: PdfFileScalarWhereWithAggregatesInput | PdfFileScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PdfFile"> | string
+    filePath?: StringWithAggregatesFilter<"PdfFile"> | string
+    fileUrl?: StringNullableWithAggregatesFilter<"PdfFile"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"PdfFile"> | Date | string
+  }
+
+  export type RecordingWhereInput = {
+    AND?: RecordingWhereInput | RecordingWhereInput[]
+    OR?: RecordingWhereInput[]
+    NOT?: RecordingWhereInput | RecordingWhereInput[]
+    id?: StringFilter<"Recording"> | string
+    audioPath?: StringFilter<"Recording"> | string
+    audioUrl?: StringFilter<"Recording"> | string
+    createdAt?: DateTimeFilter<"Recording"> | Date | string
+    roomData?: Room_dataListRelationFilter
+  }
+
+  export type RecordingOrderByWithRelationInput = {
+    id?: SortOrder
+    audioPath?: SortOrder
+    audioUrl?: SortOrder
+    createdAt?: SortOrder
+    roomData?: room_dataOrderByRelationAggregateInput
+  }
+
+  export type RecordingWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: RecordingWhereInput | RecordingWhereInput[]
+    OR?: RecordingWhereInput[]
+    NOT?: RecordingWhereInput | RecordingWhereInput[]
+    audioPath?: StringFilter<"Recording"> | string
+    audioUrl?: StringFilter<"Recording"> | string
+    createdAt?: DateTimeFilter<"Recording"> | Date | string
+    roomData?: Room_dataListRelationFilter
+  }, "id">
+
+  export type RecordingOrderByWithAggregationInput = {
+    id?: SortOrder
+    audioPath?: SortOrder
+    audioUrl?: SortOrder
+    createdAt?: SortOrder
+    _count?: RecordingCountOrderByAggregateInput
+    _max?: RecordingMaxOrderByAggregateInput
+    _min?: RecordingMinOrderByAggregateInput
+  }
+
+  export type RecordingScalarWhereWithAggregatesInput = {
+    AND?: RecordingScalarWhereWithAggregatesInput | RecordingScalarWhereWithAggregatesInput[]
+    OR?: RecordingScalarWhereWithAggregatesInput[]
+    NOT?: RecordingScalarWhereWithAggregatesInput | RecordingScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Recording"> | string
+    audioPath?: StringWithAggregatesFilter<"Recording"> | string
+    audioUrl?: StringWithAggregatesFilter<"Recording"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Recording"> | Date | string
+  }
+
   export type room_dataWhereInput = {
     AND?: room_dataWhereInput | room_dataWhereInput[]
     OR?: room_dataWhereInput[]
     NOT?: room_dataWhereInput | room_dataWhereInput[]
     id?: IntFilter<"room_data"> | number
     bed_id?: IntFilter<"room_data"> | number
-    audio_path?: StringFilter<"room_data"> | string
     patient_note?: StringFilter<"room_data"> | string
     is_approved?: IntFilter<"room_data"> | number
-    pdf_path?: StringNullableFilter<"room_data"> | string | null
+    recording_id?: StringNullableFilter<"room_data"> | string | null
+    pdf_id?: StringNullableFilter<"room_data"> | string | null
+    recording?: XOR<RecordingNullableScalarRelationFilter, RecordingWhereInput> | null
+    pdf?: XOR<PdfFileNullableScalarRelationFilter, PdfFileWhereInput> | null
     bed_info?: XOR<Bed_infoScalarRelationFilter, bed_infoWhereInput>
   }
 
   export type room_dataOrderByWithRelationInput = {
     id?: SortOrder
     bed_id?: SortOrder
-    audio_path?: SortOrder
     patient_note?: SortOrder
     is_approved?: SortOrder
-    pdf_path?: SortOrderInput | SortOrder
+    recording_id?: SortOrderInput | SortOrder
+    pdf_id?: SortOrderInput | SortOrder
+    recording?: RecordingOrderByWithRelationInput
+    pdf?: PdfFileOrderByWithRelationInput
     bed_info?: bed_infoOrderByWithRelationInput
   }
 
@@ -12776,20 +16537,22 @@ export namespace Prisma {
     OR?: room_dataWhereInput[]
     NOT?: room_dataWhereInput | room_dataWhereInput[]
     bed_id?: IntFilter<"room_data"> | number
-    audio_path?: StringFilter<"room_data"> | string
     patient_note?: StringFilter<"room_data"> | string
     is_approved?: IntFilter<"room_data"> | number
-    pdf_path?: StringNullableFilter<"room_data"> | string | null
+    recording_id?: StringNullableFilter<"room_data"> | string | null
+    pdf_id?: StringNullableFilter<"room_data"> | string | null
+    recording?: XOR<RecordingNullableScalarRelationFilter, RecordingWhereInput> | null
+    pdf?: XOR<PdfFileNullableScalarRelationFilter, PdfFileWhereInput> | null
     bed_info?: XOR<Bed_infoScalarRelationFilter, bed_infoWhereInput>
   }, "id">
 
   export type room_dataOrderByWithAggregationInput = {
     id?: SortOrder
     bed_id?: SortOrder
-    audio_path?: SortOrder
     patient_note?: SortOrder
     is_approved?: SortOrder
-    pdf_path?: SortOrderInput | SortOrder
+    recording_id?: SortOrderInput | SortOrder
+    pdf_id?: SortOrderInput | SortOrder
     _count?: room_dataCountOrderByAggregateInput
     _avg?: room_dataAvgOrderByAggregateInput
     _max?: room_dataMaxOrderByAggregateInput
@@ -12803,10 +16566,10 @@ export namespace Prisma {
     NOT?: room_dataScalarWhereWithAggregatesInput | room_dataScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"room_data"> | number
     bed_id?: IntWithAggregatesFilter<"room_data"> | number
-    audio_path?: StringWithAggregatesFilter<"room_data"> | string
     patient_note?: StringWithAggregatesFilter<"room_data"> | string
     is_approved?: IntWithAggregatesFilter<"room_data"> | number
-    pdf_path?: StringNullableWithAggregatesFilter<"room_data"> | string | null
+    recording_id?: StringNullableWithAggregatesFilter<"room_data"> | string | null
+    pdf_id?: StringNullableWithAggregatesFilter<"room_data"> | string | null
   }
 
   export type room_registerWhereInput = {
@@ -13007,10 +16770,64 @@ export namespace Prisma {
     upload_time?: DateTimeWithAggregatesFilter<"user_uploads"> | Date | string
   }
 
+  export type demo_sessionWhereInput = {
+    AND?: demo_sessionWhereInput | demo_sessionWhereInput[]
+    OR?: demo_sessionWhereInput[]
+    NOT?: demo_sessionWhereInput | demo_sessionWhereInput[]
+    session_id?: StringFilter<"demo_session"> | string
+    created_at?: DateTimeFilter<"demo_session"> | Date | string
+    expires_at?: DateTimeFilter<"demo_session"> | Date | string
+    center_id?: IntFilter<"demo_session"> | number
+    medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
+  }
+
+  export type demo_sessionOrderByWithRelationInput = {
+    session_id?: SortOrder
+    created_at?: SortOrder
+    expires_at?: SortOrder
+    center_id?: SortOrder
+    medicalcenter_info?: medicalcenter_infoOrderByWithRelationInput
+  }
+
+  export type demo_sessionWhereUniqueInput = Prisma.AtLeast<{
+    session_id?: string
+    center_id?: number
+    AND?: demo_sessionWhereInput | demo_sessionWhereInput[]
+    OR?: demo_sessionWhereInput[]
+    NOT?: demo_sessionWhereInput | demo_sessionWhereInput[]
+    created_at?: DateTimeFilter<"demo_session"> | Date | string
+    expires_at?: DateTimeFilter<"demo_session"> | Date | string
+    medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
+  }, "session_id" | "center_id">
+
+  export type demo_sessionOrderByWithAggregationInput = {
+    session_id?: SortOrder
+    created_at?: SortOrder
+    expires_at?: SortOrder
+    center_id?: SortOrder
+    _count?: demo_sessionCountOrderByAggregateInput
+    _avg?: demo_sessionAvgOrderByAggregateInput
+    _max?: demo_sessionMaxOrderByAggregateInput
+    _min?: demo_sessionMinOrderByAggregateInput
+    _sum?: demo_sessionSumOrderByAggregateInput
+  }
+
+  export type demo_sessionScalarWhereWithAggregatesInput = {
+    AND?: demo_sessionScalarWhereWithAggregatesInput | demo_sessionScalarWhereWithAggregatesInput[]
+    OR?: demo_sessionScalarWhereWithAggregatesInput[]
+    NOT?: demo_sessionScalarWhereWithAggregatesInput | demo_sessionScalarWhereWithAggregatesInput[]
+    session_id?: StringWithAggregatesFilter<"demo_session"> | string
+    created_at?: DateTimeWithAggregatesFilter<"demo_session"> | Date | string
+    expires_at?: DateTimeWithAggregatesFilter<"demo_session"> | Date | string
+    center_id?: IntWithAggregatesFilter<"demo_session"> | number
+  }
+
   export type medicalcenter_infoCreateInput = {
     center_name: string
     address?: string | null
     email?: string | null
+    is_demo?: boolean
+    demo_session?: demo_sessionCreateNestedOneWithoutMedicalcenter_infoInput
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
@@ -13023,6 +16840,8 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
+    is_demo?: boolean
+    demo_session?: demo_sessionUncheckedCreateNestedOneWithoutMedicalcenter_infoInput
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -13034,6 +16853,8 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
+    demo_session?: demo_sessionUpdateOneWithoutMedicalcenter_infoNestedInput
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -13046,6 +16867,8 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
+    demo_session?: demo_sessionUncheckedUpdateOneWithoutMedicalcenter_infoNestedInput
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -13058,12 +16881,14 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
+    is_demo?: boolean
   }
 
   export type medicalcenter_infoUpdateManyMutationInput = {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type medicalcenter_infoUncheckedUpdateManyInput = {
@@ -13071,6 +16896,7 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type patient_infoCreateInput = {
@@ -13327,63 +17153,167 @@ export namespace Prisma {
     assigned_nurse_id?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
+  export type PdfFileCreateInput = {
+    id?: string
+    filePath: string
+    fileUrl?: string | null
+    createdAt?: Date | string
+    roomData?: room_dataCreateNestedManyWithoutPdfInput
+  }
+
+  export type PdfFileUncheckedCreateInput = {
+    id?: string
+    filePath: string
+    fileUrl?: string | null
+    createdAt?: Date | string
+    roomData?: room_dataUncheckedCreateNestedManyWithoutPdfInput
+  }
+
+  export type PdfFileUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomData?: room_dataUpdateManyWithoutPdfNestedInput
+  }
+
+  export type PdfFileUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomData?: room_dataUncheckedUpdateManyWithoutPdfNestedInput
+  }
+
+  export type PdfFileCreateManyInput = {
+    id?: string
+    filePath: string
+    fileUrl?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PdfFileUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PdfFileUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecordingCreateInput = {
+    id?: string
+    audioPath: string
+    audioUrl: string
+    createdAt?: Date | string
+    roomData?: room_dataCreateNestedManyWithoutRecordingInput
+  }
+
+  export type RecordingUncheckedCreateInput = {
+    id?: string
+    audioPath: string
+    audioUrl: string
+    createdAt?: Date | string
+    roomData?: room_dataUncheckedCreateNestedManyWithoutRecordingInput
+  }
+
+  export type RecordingUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    audioPath?: StringFieldUpdateOperationsInput | string
+    audioUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomData?: room_dataUpdateManyWithoutRecordingNestedInput
+  }
+
+  export type RecordingUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    audioPath?: StringFieldUpdateOperationsInput | string
+    audioUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomData?: room_dataUncheckedUpdateManyWithoutRecordingNestedInput
+  }
+
+  export type RecordingCreateManyInput = {
+    id?: string
+    audioPath: string
+    audioUrl: string
+    createdAt?: Date | string
+  }
+
+  export type RecordingUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    audioPath?: StringFieldUpdateOperationsInput | string
+    audioUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecordingUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    audioPath?: StringFieldUpdateOperationsInput | string
+    audioUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type room_dataCreateInput = {
-    audio_path: string
     patient_note: string
     is_approved?: number
-    pdf_path?: string | null
+    recording?: RecordingCreateNestedOneWithoutRoomDataInput
+    pdf?: PdfFileCreateNestedOneWithoutRoomDataInput
     bed_info: bed_infoCreateNestedOneWithoutRoom_dataInput
   }
 
   export type room_dataUncheckedCreateInput = {
     id?: number
     bed_id: number
-    audio_path: string
     patient_note: string
     is_approved?: number
-    pdf_path?: string | null
+    recording_id?: string | null
+    pdf_id?: string | null
   }
 
   export type room_dataUpdateInput = {
-    audio_path?: StringFieldUpdateOperationsInput | string
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    pdf_path?: NullableStringFieldUpdateOperationsInput | string | null
+    recording?: RecordingUpdateOneWithoutRoomDataNestedInput
+    pdf?: PdfFileUpdateOneWithoutRoomDataNestedInput
     bed_info?: bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput
   }
 
   export type room_dataUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     bed_id?: IntFieldUpdateOperationsInput | number
-    audio_path?: StringFieldUpdateOperationsInput | string
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    pdf_path?: NullableStringFieldUpdateOperationsInput | string | null
+    recording_id?: NullableStringFieldUpdateOperationsInput | string | null
+    pdf_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type room_dataCreateManyInput = {
     id?: number
     bed_id: number
-    audio_path: string
     patient_note: string
     is_approved?: number
-    pdf_path?: string | null
+    recording_id?: string | null
+    pdf_id?: string | null
   }
 
   export type room_dataUpdateManyMutationInput = {
-    audio_path?: StringFieldUpdateOperationsInput | string
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    pdf_path?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type room_dataUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     bed_id?: IntFieldUpdateOperationsInput | number
-    audio_path?: StringFieldUpdateOperationsInput | string
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    pdf_path?: NullableStringFieldUpdateOperationsInput | string | null
+    recording_id?: NullableStringFieldUpdateOperationsInput | string | null
+    pdf_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type room_registerCreateInput = {
@@ -13567,6 +17497,54 @@ export namespace Prisma {
     upload_time?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type demo_sessionCreateInput = {
+    session_id?: string
+    created_at?: Date | string
+    expires_at: Date | string
+    medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutDemo_sessionInput
+  }
+
+  export type demo_sessionUncheckedCreateInput = {
+    session_id?: string
+    created_at?: Date | string
+    expires_at: Date | string
+    center_id: number
+  }
+
+  export type demo_sessionUpdateInput = {
+    session_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutDemo_sessionNestedInput
+  }
+
+  export type demo_sessionUncheckedUpdateInput = {
+    session_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    center_id?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type demo_sessionCreateManyInput = {
+    session_id?: string
+    created_at?: Date | string
+    expires_at: Date | string
+    center_id: number
+  }
+
+  export type demo_sessionUpdateManyMutationInput = {
+    session_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type demo_sessionUncheckedUpdateManyInput = {
+    session_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    center_id?: IntFieldUpdateOperationsInput | number
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -13606,6 +17584,16 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type Demo_sessionNullableScalarRelationFilter = {
+    is?: demo_sessionWhereInput | null
+    isNot?: demo_sessionWhereInput | null
   }
 
   export type Patient_infoListRelationFilter = {
@@ -13668,6 +17656,7 @@ export namespace Prisma {
     center_name?: SortOrder
     address?: SortOrder
     email?: SortOrder
+    is_demo?: SortOrder
   }
 
   export type medicalcenter_infoAvgOrderByAggregateInput = {
@@ -13679,6 +17668,7 @@ export namespace Prisma {
     center_name?: SortOrder
     address?: SortOrder
     email?: SortOrder
+    is_demo?: SortOrder
   }
 
   export type medicalcenter_infoMinOrderByAggregateInput = {
@@ -13686,6 +17676,7 @@ export namespace Prisma {
     center_name?: SortOrder
     address?: SortOrder
     email?: SortOrder
+    is_demo?: SortOrder
   }
 
   export type medicalcenter_infoSumOrderByAggregateInput = {
@@ -13744,6 +17735,14 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -13764,11 +17763,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type Bed_infoListRelationFilter = {
@@ -13859,14 +17853,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type Patient_infoScalarRelationFilter = {
@@ -14047,6 +18033,58 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
+  export type PdfFileCountOrderByAggregateInput = {
+    id?: SortOrder
+    filePath?: SortOrder
+    fileUrl?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PdfFileMaxOrderByAggregateInput = {
+    id?: SortOrder
+    filePath?: SortOrder
+    fileUrl?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PdfFileMinOrderByAggregateInput = {
+    id?: SortOrder
+    filePath?: SortOrder
+    fileUrl?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RecordingCountOrderByAggregateInput = {
+    id?: SortOrder
+    audioPath?: SortOrder
+    audioUrl?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RecordingMaxOrderByAggregateInput = {
+    id?: SortOrder
+    audioPath?: SortOrder
+    audioUrl?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RecordingMinOrderByAggregateInput = {
+    id?: SortOrder
+    audioPath?: SortOrder
+    audioUrl?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RecordingNullableScalarRelationFilter = {
+    is?: RecordingWhereInput | null
+    isNot?: RecordingWhereInput | null
+  }
+
+  export type PdfFileNullableScalarRelationFilter = {
+    is?: PdfFileWhereInput | null
+    isNot?: PdfFileWhereInput | null
+  }
+
   export type Bed_infoScalarRelationFilter = {
     is?: bed_infoWhereInput
     isNot?: bed_infoWhereInput
@@ -14055,10 +18093,10 @@ export namespace Prisma {
   export type room_dataCountOrderByAggregateInput = {
     id?: SortOrder
     bed_id?: SortOrder
-    audio_path?: SortOrder
     patient_note?: SortOrder
     is_approved?: SortOrder
-    pdf_path?: SortOrder
+    recording_id?: SortOrder
+    pdf_id?: SortOrder
   }
 
   export type room_dataAvgOrderByAggregateInput = {
@@ -14070,19 +18108,19 @@ export namespace Prisma {
   export type room_dataMaxOrderByAggregateInput = {
     id?: SortOrder
     bed_id?: SortOrder
-    audio_path?: SortOrder
     patient_note?: SortOrder
     is_approved?: SortOrder
-    pdf_path?: SortOrder
+    recording_id?: SortOrder
+    pdf_id?: SortOrder
   }
 
   export type room_dataMinOrderByAggregateInput = {
     id?: SortOrder
     bed_id?: SortOrder
-    audio_path?: SortOrder
     patient_note?: SortOrder
     is_approved?: SortOrder
-    pdf_path?: SortOrder
+    recording_id?: SortOrder
+    pdf_id?: SortOrder
   }
 
   export type room_dataSumOrderByAggregateInput = {
@@ -14219,6 +18257,41 @@ export namespace Prisma {
     center_id?: SortOrder
   }
 
+  export type demo_sessionCountOrderByAggregateInput = {
+    session_id?: SortOrder
+    created_at?: SortOrder
+    expires_at?: SortOrder
+    center_id?: SortOrder
+  }
+
+  export type demo_sessionAvgOrderByAggregateInput = {
+    center_id?: SortOrder
+  }
+
+  export type demo_sessionMaxOrderByAggregateInput = {
+    session_id?: SortOrder
+    created_at?: SortOrder
+    expires_at?: SortOrder
+    center_id?: SortOrder
+  }
+
+  export type demo_sessionMinOrderByAggregateInput = {
+    session_id?: SortOrder
+    created_at?: SortOrder
+    expires_at?: SortOrder
+    center_id?: SortOrder
+  }
+
+  export type demo_sessionSumOrderByAggregateInput = {
+    center_id?: SortOrder
+  }
+
+  export type demo_sessionCreateNestedOneWithoutMedicalcenter_infoInput = {
+    create?: XOR<demo_sessionCreateWithoutMedicalcenter_infoInput, demo_sessionUncheckedCreateWithoutMedicalcenter_infoInput>
+    connectOrCreate?: demo_sessionCreateOrConnectWithoutMedicalcenter_infoInput
+    connect?: demo_sessionWhereUniqueInput
+  }
+
   export type patient_infoCreateNestedManyWithoutMedicalcenter_infoInput = {
     create?: XOR<patient_infoCreateWithoutMedicalcenter_infoInput, patient_infoUncheckedCreateWithoutMedicalcenter_infoInput> | patient_infoCreateWithoutMedicalcenter_infoInput[] | patient_infoUncheckedCreateWithoutMedicalcenter_infoInput[]
     connectOrCreate?: patient_infoCreateOrConnectWithoutMedicalcenter_infoInput | patient_infoCreateOrConnectWithoutMedicalcenter_infoInput[]
@@ -14252,6 +18325,12 @@ export namespace Prisma {
     connectOrCreate?: user_uploadsCreateOrConnectWithoutMedicalcenter_infoInput | user_uploadsCreateOrConnectWithoutMedicalcenter_infoInput[]
     createMany?: user_uploadsCreateManyMedicalcenter_infoInputEnvelope
     connect?: user_uploadsWhereUniqueInput | user_uploadsWhereUniqueInput[]
+  }
+
+  export type demo_sessionUncheckedCreateNestedOneWithoutMedicalcenter_infoInput = {
+    create?: XOR<demo_sessionCreateWithoutMedicalcenter_infoInput, demo_sessionUncheckedCreateWithoutMedicalcenter_infoInput>
+    connectOrCreate?: demo_sessionCreateOrConnectWithoutMedicalcenter_infoInput
+    connect?: demo_sessionWhereUniqueInput
   }
 
   export type patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput = {
@@ -14295,6 +18374,20 @@ export namespace Prisma {
 
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type demo_sessionUpdateOneWithoutMedicalcenter_infoNestedInput = {
+    create?: XOR<demo_sessionCreateWithoutMedicalcenter_infoInput, demo_sessionUncheckedCreateWithoutMedicalcenter_infoInput>
+    connectOrCreate?: demo_sessionCreateOrConnectWithoutMedicalcenter_infoInput
+    upsert?: demo_sessionUpsertWithoutMedicalcenter_infoInput
+    disconnect?: demo_sessionWhereInput | boolean
+    delete?: demo_sessionWhereInput | boolean
+    connect?: demo_sessionWhereUniqueInput
+    update?: XOR<XOR<demo_sessionUpdateToOneWithWhereWithoutMedicalcenter_infoInput, demo_sessionUpdateWithoutMedicalcenter_infoInput>, demo_sessionUncheckedUpdateWithoutMedicalcenter_infoInput>
   }
 
   export type patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput = {
@@ -14373,6 +18466,16 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type demo_sessionUncheckedUpdateOneWithoutMedicalcenter_infoNestedInput = {
+    create?: XOR<demo_sessionCreateWithoutMedicalcenter_infoInput, demo_sessionUncheckedCreateWithoutMedicalcenter_infoInput>
+    connectOrCreate?: demo_sessionCreateOrConnectWithoutMedicalcenter_infoInput
+    upsert?: demo_sessionUpsertWithoutMedicalcenter_infoInput
+    disconnect?: demo_sessionWhereInput | boolean
+    delete?: demo_sessionWhereInput | boolean
+    connect?: demo_sessionWhereUniqueInput
+    update?: XOR<XOR<demo_sessionUpdateToOneWithWhereWithoutMedicalcenter_infoInput, demo_sessionUpdateWithoutMedicalcenter_infoInput>, demo_sessionUncheckedUpdateWithoutMedicalcenter_infoInput>
   }
 
   export type patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput = {
@@ -14499,10 +18602,6 @@ export namespace Prisma {
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type bed_infoUpdateManyWithoutPatient_infoNestedInput = {
@@ -14805,10 +18904,126 @@ export namespace Prisma {
     deleteMany?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
   }
 
+  export type room_dataCreateNestedManyWithoutPdfInput = {
+    create?: XOR<room_dataCreateWithoutPdfInput, room_dataUncheckedCreateWithoutPdfInput> | room_dataCreateWithoutPdfInput[] | room_dataUncheckedCreateWithoutPdfInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutPdfInput | room_dataCreateOrConnectWithoutPdfInput[]
+    createMany?: room_dataCreateManyPdfInputEnvelope
+    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+  }
+
+  export type room_dataUncheckedCreateNestedManyWithoutPdfInput = {
+    create?: XOR<room_dataCreateWithoutPdfInput, room_dataUncheckedCreateWithoutPdfInput> | room_dataCreateWithoutPdfInput[] | room_dataUncheckedCreateWithoutPdfInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutPdfInput | room_dataCreateOrConnectWithoutPdfInput[]
+    createMany?: room_dataCreateManyPdfInputEnvelope
+    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+  }
+
+  export type room_dataUpdateManyWithoutPdfNestedInput = {
+    create?: XOR<room_dataCreateWithoutPdfInput, room_dataUncheckedCreateWithoutPdfInput> | room_dataCreateWithoutPdfInput[] | room_dataUncheckedCreateWithoutPdfInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutPdfInput | room_dataCreateOrConnectWithoutPdfInput[]
+    upsert?: room_dataUpsertWithWhereUniqueWithoutPdfInput | room_dataUpsertWithWhereUniqueWithoutPdfInput[]
+    createMany?: room_dataCreateManyPdfInputEnvelope
+    set?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    disconnect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    delete?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    update?: room_dataUpdateWithWhereUniqueWithoutPdfInput | room_dataUpdateWithWhereUniqueWithoutPdfInput[]
+    updateMany?: room_dataUpdateManyWithWhereWithoutPdfInput | room_dataUpdateManyWithWhereWithoutPdfInput[]
+    deleteMany?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
+  }
+
+  export type room_dataUncheckedUpdateManyWithoutPdfNestedInput = {
+    create?: XOR<room_dataCreateWithoutPdfInput, room_dataUncheckedCreateWithoutPdfInput> | room_dataCreateWithoutPdfInput[] | room_dataUncheckedCreateWithoutPdfInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutPdfInput | room_dataCreateOrConnectWithoutPdfInput[]
+    upsert?: room_dataUpsertWithWhereUniqueWithoutPdfInput | room_dataUpsertWithWhereUniqueWithoutPdfInput[]
+    createMany?: room_dataCreateManyPdfInputEnvelope
+    set?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    disconnect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    delete?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    update?: room_dataUpdateWithWhereUniqueWithoutPdfInput | room_dataUpdateWithWhereUniqueWithoutPdfInput[]
+    updateMany?: room_dataUpdateManyWithWhereWithoutPdfInput | room_dataUpdateManyWithWhereWithoutPdfInput[]
+    deleteMany?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
+  }
+
+  export type room_dataCreateNestedManyWithoutRecordingInput = {
+    create?: XOR<room_dataCreateWithoutRecordingInput, room_dataUncheckedCreateWithoutRecordingInput> | room_dataCreateWithoutRecordingInput[] | room_dataUncheckedCreateWithoutRecordingInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutRecordingInput | room_dataCreateOrConnectWithoutRecordingInput[]
+    createMany?: room_dataCreateManyRecordingInputEnvelope
+    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+  }
+
+  export type room_dataUncheckedCreateNestedManyWithoutRecordingInput = {
+    create?: XOR<room_dataCreateWithoutRecordingInput, room_dataUncheckedCreateWithoutRecordingInput> | room_dataCreateWithoutRecordingInput[] | room_dataUncheckedCreateWithoutRecordingInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutRecordingInput | room_dataCreateOrConnectWithoutRecordingInput[]
+    createMany?: room_dataCreateManyRecordingInputEnvelope
+    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+  }
+
+  export type room_dataUpdateManyWithoutRecordingNestedInput = {
+    create?: XOR<room_dataCreateWithoutRecordingInput, room_dataUncheckedCreateWithoutRecordingInput> | room_dataCreateWithoutRecordingInput[] | room_dataUncheckedCreateWithoutRecordingInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutRecordingInput | room_dataCreateOrConnectWithoutRecordingInput[]
+    upsert?: room_dataUpsertWithWhereUniqueWithoutRecordingInput | room_dataUpsertWithWhereUniqueWithoutRecordingInput[]
+    createMany?: room_dataCreateManyRecordingInputEnvelope
+    set?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    disconnect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    delete?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    update?: room_dataUpdateWithWhereUniqueWithoutRecordingInput | room_dataUpdateWithWhereUniqueWithoutRecordingInput[]
+    updateMany?: room_dataUpdateManyWithWhereWithoutRecordingInput | room_dataUpdateManyWithWhereWithoutRecordingInput[]
+    deleteMany?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
+  }
+
+  export type room_dataUncheckedUpdateManyWithoutRecordingNestedInput = {
+    create?: XOR<room_dataCreateWithoutRecordingInput, room_dataUncheckedCreateWithoutRecordingInput> | room_dataCreateWithoutRecordingInput[] | room_dataUncheckedCreateWithoutRecordingInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutRecordingInput | room_dataCreateOrConnectWithoutRecordingInput[]
+    upsert?: room_dataUpsertWithWhereUniqueWithoutRecordingInput | room_dataUpsertWithWhereUniqueWithoutRecordingInput[]
+    createMany?: room_dataCreateManyRecordingInputEnvelope
+    set?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    disconnect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    delete?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    update?: room_dataUpdateWithWhereUniqueWithoutRecordingInput | room_dataUpdateWithWhereUniqueWithoutRecordingInput[]
+    updateMany?: room_dataUpdateManyWithWhereWithoutRecordingInput | room_dataUpdateManyWithWhereWithoutRecordingInput[]
+    deleteMany?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
+  }
+
+  export type RecordingCreateNestedOneWithoutRoomDataInput = {
+    create?: XOR<RecordingCreateWithoutRoomDataInput, RecordingUncheckedCreateWithoutRoomDataInput>
+    connectOrCreate?: RecordingCreateOrConnectWithoutRoomDataInput
+    connect?: RecordingWhereUniqueInput
+  }
+
+  export type PdfFileCreateNestedOneWithoutRoomDataInput = {
+    create?: XOR<PdfFileCreateWithoutRoomDataInput, PdfFileUncheckedCreateWithoutRoomDataInput>
+    connectOrCreate?: PdfFileCreateOrConnectWithoutRoomDataInput
+    connect?: PdfFileWhereUniqueInput
+  }
+
   export type bed_infoCreateNestedOneWithoutRoom_dataInput = {
     create?: XOR<bed_infoCreateWithoutRoom_dataInput, bed_infoUncheckedCreateWithoutRoom_dataInput>
     connectOrCreate?: bed_infoCreateOrConnectWithoutRoom_dataInput
     connect?: bed_infoWhereUniqueInput
+  }
+
+  export type RecordingUpdateOneWithoutRoomDataNestedInput = {
+    create?: XOR<RecordingCreateWithoutRoomDataInput, RecordingUncheckedCreateWithoutRoomDataInput>
+    connectOrCreate?: RecordingCreateOrConnectWithoutRoomDataInput
+    upsert?: RecordingUpsertWithoutRoomDataInput
+    disconnect?: RecordingWhereInput | boolean
+    delete?: RecordingWhereInput | boolean
+    connect?: RecordingWhereUniqueInput
+    update?: XOR<XOR<RecordingUpdateToOneWithWhereWithoutRoomDataInput, RecordingUpdateWithoutRoomDataInput>, RecordingUncheckedUpdateWithoutRoomDataInput>
+  }
+
+  export type PdfFileUpdateOneWithoutRoomDataNestedInput = {
+    create?: XOR<PdfFileCreateWithoutRoomDataInput, PdfFileUncheckedCreateWithoutRoomDataInput>
+    connectOrCreate?: PdfFileCreateOrConnectWithoutRoomDataInput
+    upsert?: PdfFileUpsertWithoutRoomDataInput
+    disconnect?: PdfFileWhereInput | boolean
+    delete?: PdfFileWhereInput | boolean
+    connect?: PdfFileWhereUniqueInput
+    update?: XOR<XOR<PdfFileUpdateToOneWithWhereWithoutRoomDataInput, PdfFileUpdateWithoutRoomDataInput>, PdfFileUncheckedUpdateWithoutRoomDataInput>
   }
 
   export type bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput = {
@@ -14987,6 +19202,20 @@ export namespace Prisma {
     update?: XOR<XOR<user_infoUpdateToOneWithWhereWithoutUser_uploadsInput, user_infoUpdateWithoutUser_uploadsInput>, user_infoUncheckedUpdateWithoutUser_uploadsInput>
   }
 
+  export type medicalcenter_infoCreateNestedOneWithoutDemo_sessionInput = {
+    create?: XOR<medicalcenter_infoCreateWithoutDemo_sessionInput, medicalcenter_infoUncheckedCreateWithoutDemo_sessionInput>
+    connectOrCreate?: medicalcenter_infoCreateOrConnectWithoutDemo_sessionInput
+    connect?: medicalcenter_infoWhereUniqueInput
+  }
+
+  export type medicalcenter_infoUpdateOneRequiredWithoutDemo_sessionNestedInput = {
+    create?: XOR<medicalcenter_infoCreateWithoutDemo_sessionInput, medicalcenter_infoUncheckedCreateWithoutDemo_sessionInput>
+    connectOrCreate?: medicalcenter_infoCreateOrConnectWithoutDemo_sessionInput
+    upsert?: medicalcenter_infoUpsertWithoutDemo_sessionInput
+    connect?: medicalcenter_infoWhereUniqueInput
+    update?: XOR<XOR<medicalcenter_infoUpdateToOneWithWhereWithoutDemo_sessionInput, medicalcenter_infoUpdateWithoutDemo_sessionInput>, medicalcenter_infoUncheckedUpdateWithoutDemo_sessionInput>
+  }
+
   export type NestedIntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -15024,6 +19253,11 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -15098,6 +19332,14 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -15118,11 +19360,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -15153,14 +19390,6 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -15186,6 +19415,23 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type demo_sessionCreateWithoutMedicalcenter_infoInput = {
+    session_id?: string
+    created_at?: Date | string
+    expires_at: Date | string
+  }
+
+  export type demo_sessionUncheckedCreateWithoutMedicalcenter_infoInput = {
+    session_id?: string
+    created_at?: Date | string
+    expires_at: Date | string
+  }
+
+  export type demo_sessionCreateOrConnectWithoutMedicalcenter_infoInput = {
+    where: demo_sessionWhereUniqueInput
+    create: XOR<demo_sessionCreateWithoutMedicalcenter_infoInput, demo_sessionUncheckedCreateWithoutMedicalcenter_infoInput>
   }
 
   export type patient_infoCreateWithoutMedicalcenter_infoInput = {
@@ -15323,6 +19569,29 @@ export namespace Prisma {
   export type user_uploadsCreateManyMedicalcenter_infoInputEnvelope = {
     data: user_uploadsCreateManyMedicalcenter_infoInput | user_uploadsCreateManyMedicalcenter_infoInput[]
     skipDuplicates?: boolean
+  }
+
+  export type demo_sessionUpsertWithoutMedicalcenter_infoInput = {
+    update: XOR<demo_sessionUpdateWithoutMedicalcenter_infoInput, demo_sessionUncheckedUpdateWithoutMedicalcenter_infoInput>
+    create: XOR<demo_sessionCreateWithoutMedicalcenter_infoInput, demo_sessionUncheckedCreateWithoutMedicalcenter_infoInput>
+    where?: demo_sessionWhereInput
+  }
+
+  export type demo_sessionUpdateToOneWithWhereWithoutMedicalcenter_infoInput = {
+    where?: demo_sessionWhereInput
+    data: XOR<demo_sessionUpdateWithoutMedicalcenter_infoInput, demo_sessionUncheckedUpdateWithoutMedicalcenter_infoInput>
+  }
+
+  export type demo_sessionUpdateWithoutMedicalcenter_infoInput = {
+    session_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type demo_sessionUncheckedUpdateWithoutMedicalcenter_infoInput = {
+    session_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type patient_infoUpsertWithWhereUniqueWithoutMedicalcenter_infoInput = {
@@ -15496,6 +19765,8 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
+    is_demo?: boolean
+    demo_session?: demo_sessionCreateNestedOneWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoCreateNestedManyWithoutMedicalcenter_infoInput
@@ -15507,6 +19778,8 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
+    is_demo?: boolean
+    demo_session?: demo_sessionUncheckedCreateNestedOneWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -15612,6 +19885,8 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
+    demo_session?: demo_sessionUpdateOneWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -15623,6 +19898,8 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
+    demo_session?: demo_sessionUncheckedUpdateOneWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -15763,6 +20040,8 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
+    is_demo?: boolean
+    demo_session?: demo_sessionCreateNestedOneWithoutMedicalcenter_infoInput
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoCreateNestedManyWithoutMedicalcenter_infoInput
@@ -15774,6 +20053,8 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
+    is_demo?: boolean
+    demo_session?: demo_sessionUncheckedCreateNestedOneWithoutMedicalcenter_infoInput
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -15842,6 +20123,8 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
+    demo_session?: demo_sessionUpdateOneWithoutMedicalcenter_infoNestedInput
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -15853,6 +20136,8 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
+    demo_session?: demo_sessionUncheckedUpdateOneWithoutMedicalcenter_infoNestedInput
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -15946,18 +20231,18 @@ export namespace Prisma {
   }
 
   export type room_dataCreateWithoutBed_infoInput = {
-    audio_path: string
     patient_note: string
     is_approved?: number
-    pdf_path?: string | null
+    recording?: RecordingCreateNestedOneWithoutRoomDataInput
+    pdf?: PdfFileCreateNestedOneWithoutRoomDataInput
   }
 
   export type room_dataUncheckedCreateWithoutBed_infoInput = {
     id?: number
-    audio_path: string
     patient_note: string
     is_approved?: number
-    pdf_path?: string | null
+    recording_id?: string | null
+    pdf_id?: string | null
   }
 
   export type room_dataCreateOrConnectWithoutBed_infoInput = {
@@ -16080,10 +20365,130 @@ export namespace Prisma {
     NOT?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
     id?: IntFilter<"room_data"> | number
     bed_id?: IntFilter<"room_data"> | number
-    audio_path?: StringFilter<"room_data"> | string
     patient_note?: StringFilter<"room_data"> | string
     is_approved?: IntFilter<"room_data"> | number
-    pdf_path?: StringNullableFilter<"room_data"> | string | null
+    recording_id?: StringNullableFilter<"room_data"> | string | null
+    pdf_id?: StringNullableFilter<"room_data"> | string | null
+  }
+
+  export type room_dataCreateWithoutPdfInput = {
+    patient_note: string
+    is_approved?: number
+    recording?: RecordingCreateNestedOneWithoutRoomDataInput
+    bed_info: bed_infoCreateNestedOneWithoutRoom_dataInput
+  }
+
+  export type room_dataUncheckedCreateWithoutPdfInput = {
+    id?: number
+    bed_id: number
+    patient_note: string
+    is_approved?: number
+    recording_id?: string | null
+  }
+
+  export type room_dataCreateOrConnectWithoutPdfInput = {
+    where: room_dataWhereUniqueInput
+    create: XOR<room_dataCreateWithoutPdfInput, room_dataUncheckedCreateWithoutPdfInput>
+  }
+
+  export type room_dataCreateManyPdfInputEnvelope = {
+    data: room_dataCreateManyPdfInput | room_dataCreateManyPdfInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type room_dataUpsertWithWhereUniqueWithoutPdfInput = {
+    where: room_dataWhereUniqueInput
+    update: XOR<room_dataUpdateWithoutPdfInput, room_dataUncheckedUpdateWithoutPdfInput>
+    create: XOR<room_dataCreateWithoutPdfInput, room_dataUncheckedCreateWithoutPdfInput>
+  }
+
+  export type room_dataUpdateWithWhereUniqueWithoutPdfInput = {
+    where: room_dataWhereUniqueInput
+    data: XOR<room_dataUpdateWithoutPdfInput, room_dataUncheckedUpdateWithoutPdfInput>
+  }
+
+  export type room_dataUpdateManyWithWhereWithoutPdfInput = {
+    where: room_dataScalarWhereInput
+    data: XOR<room_dataUpdateManyMutationInput, room_dataUncheckedUpdateManyWithoutPdfInput>
+  }
+
+  export type room_dataCreateWithoutRecordingInput = {
+    patient_note: string
+    is_approved?: number
+    pdf?: PdfFileCreateNestedOneWithoutRoomDataInput
+    bed_info: bed_infoCreateNestedOneWithoutRoom_dataInput
+  }
+
+  export type room_dataUncheckedCreateWithoutRecordingInput = {
+    id?: number
+    bed_id: number
+    patient_note: string
+    is_approved?: number
+    pdf_id?: string | null
+  }
+
+  export type room_dataCreateOrConnectWithoutRecordingInput = {
+    where: room_dataWhereUniqueInput
+    create: XOR<room_dataCreateWithoutRecordingInput, room_dataUncheckedCreateWithoutRecordingInput>
+  }
+
+  export type room_dataCreateManyRecordingInputEnvelope = {
+    data: room_dataCreateManyRecordingInput | room_dataCreateManyRecordingInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type room_dataUpsertWithWhereUniqueWithoutRecordingInput = {
+    where: room_dataWhereUniqueInput
+    update: XOR<room_dataUpdateWithoutRecordingInput, room_dataUncheckedUpdateWithoutRecordingInput>
+    create: XOR<room_dataCreateWithoutRecordingInput, room_dataUncheckedCreateWithoutRecordingInput>
+  }
+
+  export type room_dataUpdateWithWhereUniqueWithoutRecordingInput = {
+    where: room_dataWhereUniqueInput
+    data: XOR<room_dataUpdateWithoutRecordingInput, room_dataUncheckedUpdateWithoutRecordingInput>
+  }
+
+  export type room_dataUpdateManyWithWhereWithoutRecordingInput = {
+    where: room_dataScalarWhereInput
+    data: XOR<room_dataUpdateManyMutationInput, room_dataUncheckedUpdateManyWithoutRecordingInput>
+  }
+
+  export type RecordingCreateWithoutRoomDataInput = {
+    id?: string
+    audioPath: string
+    audioUrl: string
+    createdAt?: Date | string
+  }
+
+  export type RecordingUncheckedCreateWithoutRoomDataInput = {
+    id?: string
+    audioPath: string
+    audioUrl: string
+    createdAt?: Date | string
+  }
+
+  export type RecordingCreateOrConnectWithoutRoomDataInput = {
+    where: RecordingWhereUniqueInput
+    create: XOR<RecordingCreateWithoutRoomDataInput, RecordingUncheckedCreateWithoutRoomDataInput>
+  }
+
+  export type PdfFileCreateWithoutRoomDataInput = {
+    id?: string
+    filePath: string
+    fileUrl?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PdfFileUncheckedCreateWithoutRoomDataInput = {
+    id?: string
+    filePath: string
+    fileUrl?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PdfFileCreateOrConnectWithoutRoomDataInput = {
+    where: PdfFileWhereUniqueInput
+    create: XOR<PdfFileCreateWithoutRoomDataInput, PdfFileUncheckedCreateWithoutRoomDataInput>
   }
 
   export type bed_infoCreateWithoutRoom_dataInput = {
@@ -16108,6 +20513,56 @@ export namespace Prisma {
   export type bed_infoCreateOrConnectWithoutRoom_dataInput = {
     where: bed_infoWhereUniqueInput
     create: XOR<bed_infoCreateWithoutRoom_dataInput, bed_infoUncheckedCreateWithoutRoom_dataInput>
+  }
+
+  export type RecordingUpsertWithoutRoomDataInput = {
+    update: XOR<RecordingUpdateWithoutRoomDataInput, RecordingUncheckedUpdateWithoutRoomDataInput>
+    create: XOR<RecordingCreateWithoutRoomDataInput, RecordingUncheckedCreateWithoutRoomDataInput>
+    where?: RecordingWhereInput
+  }
+
+  export type RecordingUpdateToOneWithWhereWithoutRoomDataInput = {
+    where?: RecordingWhereInput
+    data: XOR<RecordingUpdateWithoutRoomDataInput, RecordingUncheckedUpdateWithoutRoomDataInput>
+  }
+
+  export type RecordingUpdateWithoutRoomDataInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    audioPath?: StringFieldUpdateOperationsInput | string
+    audioUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecordingUncheckedUpdateWithoutRoomDataInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    audioPath?: StringFieldUpdateOperationsInput | string
+    audioUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PdfFileUpsertWithoutRoomDataInput = {
+    update: XOR<PdfFileUpdateWithoutRoomDataInput, PdfFileUncheckedUpdateWithoutRoomDataInput>
+    create: XOR<PdfFileCreateWithoutRoomDataInput, PdfFileUncheckedCreateWithoutRoomDataInput>
+    where?: PdfFileWhereInput
+  }
+
+  export type PdfFileUpdateToOneWithWhereWithoutRoomDataInput = {
+    where?: PdfFileWhereInput
+    data: XOR<PdfFileUpdateWithoutRoomDataInput, PdfFileUncheckedUpdateWithoutRoomDataInput>
+  }
+
+  export type PdfFileUpdateWithoutRoomDataInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PdfFileUncheckedUpdateWithoutRoomDataInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type bed_infoUpsertWithoutRoom_dataInput = {
@@ -16144,6 +20599,8 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
+    is_demo?: boolean
+    demo_session?: demo_sessionCreateNestedOneWithoutMedicalcenter_infoInput
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoCreateNestedManyWithoutMedicalcenter_infoInput
@@ -16155,6 +20612,8 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
+    is_demo?: boolean
+    demo_session?: demo_sessionUncheckedCreateNestedOneWithoutMedicalcenter_infoInput
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     user_info?: user_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -16229,6 +20688,8 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
+    demo_session?: demo_sessionUpdateOneWithoutMedicalcenter_infoNestedInput
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -16240,6 +20701,8 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
+    demo_session?: demo_sessionUncheckedUpdateOneWithoutMedicalcenter_infoNestedInput
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     user_info?: user_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -16339,6 +20802,8 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
+    is_demo?: boolean
+    demo_session?: demo_sessionCreateNestedOneWithoutMedicalcenter_infoInput
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
@@ -16350,6 +20815,8 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
+    is_demo?: boolean
+    demo_session?: demo_sessionUncheckedCreateNestedOneWithoutMedicalcenter_infoInput
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -16418,6 +20885,8 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
+    demo_session?: demo_sessionUpdateOneWithoutMedicalcenter_infoNestedInput
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -16429,6 +20898,8 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
+    demo_session?: demo_sessionUncheckedUpdateOneWithoutMedicalcenter_infoNestedInput
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -16455,6 +20926,8 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
+    is_demo?: boolean
+    demo_session?: demo_sessionCreateNestedOneWithoutMedicalcenter_infoInput
     patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
@@ -16466,6 +20939,8 @@ export namespace Prisma {
     center_name: string
     address?: string | null
     email?: string | null
+    is_demo?: boolean
+    demo_session?: demo_sessionUncheckedCreateNestedOneWithoutMedicalcenter_infoInput
     patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
     room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
@@ -16514,6 +20989,8 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
+    demo_session?: demo_sessionUpdateOneWithoutMedicalcenter_infoNestedInput
     patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -16525,6 +21002,8 @@ export namespace Prisma {
     center_name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
+    demo_session?: demo_sessionUncheckedUpdateOneWithoutMedicalcenter_infoNestedInput
     patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
     room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
@@ -16557,6 +21036,72 @@ export namespace Prisma {
     user_role?: StringFieldUpdateOperationsInput | string
     center_id?: IntFieldUpdateOperationsInput | number
     bed_info?: bed_infoUncheckedUpdateManyWithoutUser_infoNestedInput
+  }
+
+  export type medicalcenter_infoCreateWithoutDemo_sessionInput = {
+    center_name: string
+    address?: string | null
+    email?: string | null
+    is_demo?: boolean
+    patient_info?: patient_infoCreateNestedManyWithoutMedicalcenter_infoInput
+    room_info?: room_infoCreateNestedManyWithoutMedicalcenter_infoInput
+    room_register?: room_registerCreateNestedManyWithoutMedicalcenter_infoInput
+    user_info?: user_infoCreateNestedManyWithoutMedicalcenter_infoInput
+    user_uploads?: user_uploadsCreateNestedManyWithoutMedicalcenter_infoInput
+  }
+
+  export type medicalcenter_infoUncheckedCreateWithoutDemo_sessionInput = {
+    center_id?: number
+    center_name: string
+    address?: string | null
+    email?: string | null
+    is_demo?: boolean
+    patient_info?: patient_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
+    room_info?: room_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
+    room_register?: room_registerUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
+    user_info?: user_infoUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
+    user_uploads?: user_uploadsUncheckedCreateNestedManyWithoutMedicalcenter_infoInput
+  }
+
+  export type medicalcenter_infoCreateOrConnectWithoutDemo_sessionInput = {
+    where: medicalcenter_infoWhereUniqueInput
+    create: XOR<medicalcenter_infoCreateWithoutDemo_sessionInput, medicalcenter_infoUncheckedCreateWithoutDemo_sessionInput>
+  }
+
+  export type medicalcenter_infoUpsertWithoutDemo_sessionInput = {
+    update: XOR<medicalcenter_infoUpdateWithoutDemo_sessionInput, medicalcenter_infoUncheckedUpdateWithoutDemo_sessionInput>
+    create: XOR<medicalcenter_infoCreateWithoutDemo_sessionInput, medicalcenter_infoUncheckedCreateWithoutDemo_sessionInput>
+    where?: medicalcenter_infoWhereInput
+  }
+
+  export type medicalcenter_infoUpdateToOneWithWhereWithoutDemo_sessionInput = {
+    where?: medicalcenter_infoWhereInput
+    data: XOR<medicalcenter_infoUpdateWithoutDemo_sessionInput, medicalcenter_infoUncheckedUpdateWithoutDemo_sessionInput>
+  }
+
+  export type medicalcenter_infoUpdateWithoutDemo_sessionInput = {
+    center_name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
+    patient_info?: patient_infoUpdateManyWithoutMedicalcenter_infoNestedInput
+    room_info?: room_infoUpdateManyWithoutMedicalcenter_infoNestedInput
+    room_register?: room_registerUpdateManyWithoutMedicalcenter_infoNestedInput
+    user_info?: user_infoUpdateManyWithoutMedicalcenter_infoNestedInput
+    user_uploads?: user_uploadsUpdateManyWithoutMedicalcenter_infoNestedInput
+  }
+
+  export type medicalcenter_infoUncheckedUpdateWithoutDemo_sessionInput = {
+    center_id?: IntFieldUpdateOperationsInput | number
+    center_name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    is_demo?: BoolFieldUpdateOperationsInput | boolean
+    patient_info?: patient_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
+    room_info?: room_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
+    room_register?: room_registerUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
+    user_info?: user_infoUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
+    user_uploads?: user_uploadsUncheckedUpdateManyWithoutMedicalcenter_infoNestedInput
   }
 
   export type patient_infoCreateManyMedicalcenter_infoInput = {
@@ -16890,33 +21435,95 @@ export namespace Prisma {
 
   export type room_dataCreateManyBed_infoInput = {
     id?: number
-    audio_path: string
     patient_note: string
     is_approved?: number
-    pdf_path?: string | null
+    recording_id?: string | null
+    pdf_id?: string | null
   }
 
   export type room_dataUpdateWithoutBed_infoInput = {
-    audio_path?: StringFieldUpdateOperationsInput | string
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    pdf_path?: NullableStringFieldUpdateOperationsInput | string | null
+    recording?: RecordingUpdateOneWithoutRoomDataNestedInput
+    pdf?: PdfFileUpdateOneWithoutRoomDataNestedInput
   }
 
   export type room_dataUncheckedUpdateWithoutBed_infoInput = {
     id?: IntFieldUpdateOperationsInput | number
-    audio_path?: StringFieldUpdateOperationsInput | string
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    pdf_path?: NullableStringFieldUpdateOperationsInput | string | null
+    recording_id?: NullableStringFieldUpdateOperationsInput | string | null
+    pdf_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type room_dataUncheckedUpdateManyWithoutBed_infoInput = {
     id?: IntFieldUpdateOperationsInput | number
-    audio_path?: StringFieldUpdateOperationsInput | string
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    pdf_path?: NullableStringFieldUpdateOperationsInput | string | null
+    recording_id?: NullableStringFieldUpdateOperationsInput | string | null
+    pdf_id?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type room_dataCreateManyPdfInput = {
+    id?: number
+    bed_id: number
+    patient_note: string
+    is_approved?: number
+    recording_id?: string | null
+  }
+
+  export type room_dataUpdateWithoutPdfInput = {
+    patient_note?: StringFieldUpdateOperationsInput | string
+    is_approved?: IntFieldUpdateOperationsInput | number
+    recording?: RecordingUpdateOneWithoutRoomDataNestedInput
+    bed_info?: bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput
+  }
+
+  export type room_dataUncheckedUpdateWithoutPdfInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    bed_id?: IntFieldUpdateOperationsInput | number
+    patient_note?: StringFieldUpdateOperationsInput | string
+    is_approved?: IntFieldUpdateOperationsInput | number
+    recording_id?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type room_dataUncheckedUpdateManyWithoutPdfInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    bed_id?: IntFieldUpdateOperationsInput | number
+    patient_note?: StringFieldUpdateOperationsInput | string
+    is_approved?: IntFieldUpdateOperationsInput | number
+    recording_id?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type room_dataCreateManyRecordingInput = {
+    id?: number
+    bed_id: number
+    patient_note: string
+    is_approved?: number
+    pdf_id?: string | null
+  }
+
+  export type room_dataUpdateWithoutRecordingInput = {
+    patient_note?: StringFieldUpdateOperationsInput | string
+    is_approved?: IntFieldUpdateOperationsInput | number
+    pdf?: PdfFileUpdateOneWithoutRoomDataNestedInput
+    bed_info?: bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput
+  }
+
+  export type room_dataUncheckedUpdateWithoutRecordingInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    bed_id?: IntFieldUpdateOperationsInput | number
+    patient_note?: StringFieldUpdateOperationsInput | string
+    is_approved?: IntFieldUpdateOperationsInput | number
+    pdf_id?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type room_dataUncheckedUpdateManyWithoutRecordingInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    bed_id?: IntFieldUpdateOperationsInput | number
+    patient_note?: StringFieldUpdateOperationsInput | string
+    is_approved?: IntFieldUpdateOperationsInput | number
+    pdf_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type bed_infoCreateManyUser_infoInput = {

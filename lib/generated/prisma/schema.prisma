@@ -5,8 +5,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model medicalcenter_info {
@@ -14,6 +15,8 @@ model medicalcenter_info {
   center_name   String
   address       String?         @db.VarChar(400)
   email         String?         @db.VarChar(400)
+  is_demo       Boolean         @default(false)
+  demo_session  demo_session?
   patient_info  patient_info[]
   room_info     room_info[]
   room_register room_register[]
@@ -70,14 +73,37 @@ model bed_info {
   room_data           room_data[]
 }
 
+model PdfFile {
+  id        String   @id @default(uuid())
+  filePath  String // path/key inside Supabase bucket
+  fileUrl   String? // optional if using public bucket
+  createdAt DateTime @default(now())
+
+  roomData room_data[]
+}
+
+model Recording {
+  id        String   @id @default(uuid())
+  audioPath String
+  audioUrl  String
+  createdAt DateTime @default(now())
+
+  roomData room_data[]
+}
+
 model room_data {
-  id           Int      @id @default(autoincrement())
+  id           Int    @id @default(autoincrement())
   bed_id       Int
-  audio_path   String   @db.VarChar(400)
-  patient_note String   @db.VarChar(400)
-  is_approved  Int      @default(0)
-  pdf_path     String?  @db.VarChar(400)
-  bed_info     bed_info @relation(fields: [bed_id], references: [bed_id], onDelete: NoAction, onUpdate: NoAction)
+  patient_note String @db.VarChar(400)
+  is_approved  Int    @default(0)
+
+  recording_id String?
+  recording    Recording? @relation(fields: [recording_id], references: [id])
+
+  pdf_id String?
+  pdf    PdfFile? @relation(fields: [pdf_id], references: [id])
+
+  bed_info bed_info @relation(fields: [bed_id], references: [bed_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model room_register {
@@ -98,10 +124,8 @@ model user_info {
   user_id            Int                @id @default(autoincrement())
   user_name          String
   staff_id           String
-  password           String             @db.VarChar(255)
   user_role          String
   center_id          Int
-  charter_id         String
   bed_info           bed_info[]
   medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
   user_uploads       user_uploads[]
@@ -118,4 +142,15 @@ model user_uploads {
   user_info          user_info          @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([user_id, center_id])
+}
+
+model demo_session {
+  session_id String   @id @default(uuid())
+  created_at DateTime @default(now())
+  expires_at DateTime
+  center_id  Int      @unique
+
+  medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: Cascade)
+
+  @@map("demo_session")
 }

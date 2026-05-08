@@ -1,30 +1,34 @@
 import { NextResponse } from "next/server";
 import { orgMap } from "@/lib/constants";
-import bcrypt from 'bcryptjs';
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
-    const { organization, staffId, password } = await req.json();
+    const { organization, staffId } = await req.json();
 
-    if (!organization || !orgMap[organization]) {
+    const orgInput = String(organization ?? "").trim();
+    const staffInput = String(staffId ?? "").trim();
+    const organizationNameFromCode = orgMap[orgInput];
+    const organizationNameFromLabel = Object.values(orgMap).find(
+      (name) => name.toLowerCase() === orgInput.toLowerCase()
+    );
+    const resolvedOrganizationName =
+      organizationNameFromCode ?? organizationNameFromLabel ?? null;
+
+    if (!resolvedOrganizationName) {
       return NextResponse.json({ error: "Invalid organization selected" }, { status: 400 });
     }
 
-    if (!staffId) {
+    if (!staffInput) {
       return NextResponse.json({ error: "Staff ID is required" }, { status: 400 });
     }
 
-    if (!password) {
-      return NextResponse.json({ error: "Password is required" }, { status: 400 });
-    }
-
-    console.log("Received Organization:", organization);
-    console.log("Received Staff ID:", staffId);
+    console.log("Received Organization:", orgInput);
+    console.log("Received Staff ID:", staffInput);
     
     // Find the organization in the database
     const organizationData = await prisma.medicalcenter_info.findFirst({
-      where: { center_name: orgMap[organization] }
+      where: { center_name: resolvedOrganizationName }
     });
 
     if (!organizationData) {
@@ -32,9 +36,7 @@ export async function POST(req: Request) {
     }
     
     // Convert both to strings
-    const staff_Id = staffId.toString();
-    const staff_password = password.toString();
-    
+    const staff_Id = staffInput;
     // Find user that matches ID in selected organization
     const user = await prisma.user_info.findFirst({
       where: {
@@ -45,36 +47,6 @@ export async function POST(req: Request) {
 
     if (!user) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-    }
-
-    const passwordColumn = await prisma.$queryRawUnsafe<Array<{ column_name: string }>>(
-      `SELECT column_name
-       FROM information_schema.columns
-       WHERE table_schema = 'public'
-         AND table_name = 'user_info'
-         AND column_name = 'password'
-       LIMIT 1`
-    );
-
-    if (passwordColumn.length > 0) {
-      const [passwordRecord] = await prisma.$queryRawUnsafe<Array<{ password: string | null }>>(
-        `SELECT "password"
-         FROM "user_info"
-         WHERE "user_id" = $1
-         LIMIT 1`,
-        user.user_id
-      );
-
-      if (!passwordRecord?.password) {
-        return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-      }
-
-      // Verify password when the deployed schema still has password storage.
-      const isPasswordCorrect = await bcrypt.compare(staff_password, passwordRecord.password);
-
-      if (!isPasswordCorrect) {
-        return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-      }
     }
 
     // Create response with cookies

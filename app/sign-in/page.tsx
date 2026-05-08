@@ -3,13 +3,13 @@
 import SelectOrganizationForm from "@/components/Center/SelectOrganizationForm";
 
 export default function SignIn() {
-  const handleOrgSubmit = async (organization: string, staffId: string, password: string) => {
+  const handleOrgSubmit = async (organization: string, staffId: string) => {
     const res = await fetch("/api/center/signIn", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ organization, staffId, password }),
+      body: JSON.stringify({ organization, staffId }),
     });
 
     const data = await res.json();
