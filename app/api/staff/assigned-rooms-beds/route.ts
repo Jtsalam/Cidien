@@ -41,6 +41,7 @@ export async function GET(req: NextRequest) {
         : {}),
     },
     select: {
+      bed_id: true,
       bed_letter: true,
       room_info: {
         select: { room_number: true },
@@ -52,13 +53,17 @@ export async function GET(req: NextRequest) {
   });
 
   // Group by room_number
-  const roomMap: Record<string, { room_number: string; beds: { bed_letter: string; patient_name?: string }[] }> = {};
+  const roomMap: Record<
+    string,
+    { room_number: string; beds: { bed_id: number; bed_letter: string; patient_name?: string }[] }
+  > = {};
   for (const bed of beds) {
     const roomNum = String(bed.room_info.room_number);
     if (!roomMap[roomNum]) {
       roomMap[roomNum] = { room_number: roomNum, beds: [] };
     }
     roomMap[roomNum].beds.push({
+      bed_id: bed.bed_id,
       bed_letter: bed.bed_letter,
       patient_name: bed.patient_info?.patient_name || 'Unassigned',
     });

@@ -1,25 +1,27 @@
 "use client"
 
 import { useEffect, useState, useRef, useMemo, useCallback } from "react"
-import io, { Socket } from "socket.io-client"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Play, Pause, Loader2, Database, Mic, Wifi, WifiOff, Bed, Edit, Trash2, Save, XCircle, MoreVertical } from "lucide-react"
 import * as Tooltip from "@radix-ui/react-tooltip"
-import { getCookie } from "@/utils/getCookie"
 import { Button } from "./ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import type { RealtimeChannel } from "@supabase/supabase-js"
+import { supabaseClient } from "@/lib/supabaseClient"
 
 // Socket will be initialized inside the component
 
 interface RowData {
   index: number
-  audioUrl: string
+  audioUrl: string | null
   column1: string
   column2: string
   column3: string
   column4: string
+  noteRecordingId?: string | null
+  roomRecordingId?: string | null
   id?: string | number
   isNew?: boolean
 }
@@ -37,6 +39,7 @@ interface DataTableProps {
 
 export default function DataTable({ selectedRoom, initialData, onBedChange, }: DataTableProps) {
   const [data, setData] = useState<RowData[]>([])
+  const [realtimeSessionId, setRealtimeSessionId] = useState<string | null>(null)
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const [playingIndex, setPlayingIndex] = useState<number | null>(null)
   const [activeUrl, setActiveUrl] = useState<string | null>(null)
@@ -47,7 +50,7 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
   const [editingRowId, setEditingRowId] = useState<string | number | null>(null);
   const [editedNote, setEditedNote] = useState<string>('');
   const tableEndRef = useRef<HTMLDivElement>(null);
-  const socketRef = useRef<Socket | null>(null);
+  const realtimeChannelsRef = useRef<RealtimeChannel[]>([]);
   const cacheRef = useRef<Record<string, CachedData>>({})
   const fetchControllerRef = useRef<AbortController | null>(null)
   const selectedRoomRef = useRef<string | null | undefined>(selectedRoom)
@@ -79,8 +82,25 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
     selectedRoomRef.current = selectedRoom
   }, [selectedRoom])
 
+  // Role: Resolve demo session id for Supabase Realtime filters (same logic as room_data creation).
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const res = await fetch("/api/staff/session-id")
+        const body = (await res.json()) as { sessionId?: string | null }
+        if (!cancelled) setRealtimeSessionId(body.sessionId ?? null)
+      } catch {
+        if (!cancelled) setRealtimeSessionId(null)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const handlePlay = useCallback((url: string, index: number) => {
-    const fullUrl = `http://localhost:5000${url}`;
+    const fullUrl = url;
 
     // Case 1: Interacting with the currently active audio track
     if (activeUrl === fullUrl && audio) {
@@ -141,7 +161,8 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
     const map = preloadedAudioRef.current
     const targets = rows.slice(0, PREFETCH_COUNT)
     for (const row of targets) {
-      const fullUrl = `http://localhost:5000${row.audioUrl}`
+      if (!row.audioUrl) continue
+      const fullUrl = row.audioUrl
       // Start a high-priority fetch to blob for instant play when clicked
       const existingUrl = preloadedObjectUrlRef.current.get(fullUrl)
       if (!existingUrl) {
@@ -329,138 +350,98 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
       cacheRef.current[cacheKey] = dataWithTimestamp
       setData(mergedData)
       preloadForDataset(mergedData)
-      setIsConnected(true)
       setLoading(false)
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') {
         return
       }
       console.error('Failed to load data:', err)
-      setIsConnected(false)
       setLoading(false)
     }
   }, [data.length, preloadForDataset])
 
-  // Initialize socket once
+  // Role: Subscribe to Supabase realtime events for room_data and Recording updates.
   useEffect(() => {
-    const staffIdFromCookie = getCookie("staff_Id") || "";
+    const channels = realtimeChannelsRef.current;
+    channels.forEach((channel) => supabaseClient.removeChannel(channel));
+    realtimeChannelsRef.current = [];
 
-    socketRef.current = io("http://localhost:5000", {
-      transports: ['polling'],
-      timeout: 60000,
-    });
+    const nextChannels: RealtimeChannel[] = [];
 
-    const socket = socketRef.current;
-
-    socket.on("connect", () => {
-      console.log("Connected to Flask WebSocket")
-      console.log("Socket ID:", socket.id)
-      setIsConnected(true)
-      
-      // Join staff-specific room if staff ID is available
-      if (staffIdFromCookie) {
-        socket.emit('join_staff_room', { user_id: staffIdFromCookie });
+    const setLiveIfSubscribed = (status: string) => {
+      if (status === "SUBSCRIBED") setIsConnected(true);
+      if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
+        setIsConnected(false);
       }
-    })
+    };
 
-    socket.on("disconnect", () => {
-      console.log("Disconnected from Flask WebSocket")
-      setIsConnected(false)
-    })
+    if (realtimeSessionId) {
+      const roomDataChannel = supabaseClient
+        .channel(`room-data-session-${realtimeSessionId}-${selectedRoom ?? "all"}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "room_data",
+            filter: `sessionId=eq.${realtimeSessionId}`,
+          },
+          async () => {
+            setIsReceiving(true);
+            await loadTranscriptions(selectedRoom || undefined);
+            tableEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            setIsReceiving(false);
+          },
+        )
+        .subscribe(setLiveIfSubscribed);
 
-    socket.on("connect_error", (error: Error) => {
-      console.error("WebSocket connection error:", error)
-      setIsConnected(false)
-      // Attempt to reconnect after a delay
-      setTimeout(() => {
-        if (socketRef.current && !socketRef.current.connected) {
-          console.log('Attempting to reconnect...');
-          socketRef.current.connect();
-        }
-      }, 5000);
-    })
+      nextChannels.push(roomDataChannel);
+    } else {
+      setIsConnected(false);
+    }
 
-    socket.on("error", (error: Error) => {
-      console.error("WebSocket error:", error)
-      setIsConnected(false)
-    })
+    const recordingChannel = supabaseClient
+      .channel(`recordings-${selectedRoom ?? "all"}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "Recording" },
+        (payload) => {
+          const transcript = payload.new?.transcript;
+          const recordingId = payload.new?.id;
+          if (typeof transcript !== "string" || transcript.trim().length === 0) return;
 
-    socket.on("reconnect", (attemptNumber: number) => {
-      console.log(`Reconnected after ${attemptNumber} attempts`);
-      setIsConnected(true);
-      if (staffIdFromCookie) {
-        socket.emit('join_staff_room', { user_id: staffIdFromCookie });
-      }
-    })
+          setData((prev) => {
+            const updated = prev.map((row) => {
+              if (row.noteRecordingId && row.noteRecordingId === recordingId) {
+                return { ...row, column4: transcript, isNew: true };
+              }
+              return row;
+            });
+            return updated;
+          });
 
-    socket.on("new_transcription", (payload: Partial<RowData> & { id?: string | number }) => {
-      console.log('Received new transcription:', payload);
-      setIsReceiving(true)
+          setTimeout(() => {
+            setData((prev) =>
+              prev.map((row) =>
+                row.noteRecordingId === recordingId ? { ...row, isNew: false } : row,
+              ),
+            );
+          }, 3000);
+        },
+      )
+      .subscribe((status) => {
+        if (!realtimeSessionId) setLiveIfSubscribed(status);
+      });
 
-      // Validate payload
-      if (!payload || typeof payload !== 'object') {
-        console.warn('Invalid transcription payload received:', payload);
-        setIsReceiving(false);
-        return;
-      }
+    nextChannels.push(recordingChannel);
 
-      // Check if the new transcription belongs to the currently selected room
-      const currentSelected = selectedRoomRef.current
-      if (currentSelected) {
-        // Extract room number from column1 (format: "room_number bed_letter")
-        const roomFromTranscription = payload.column1?.split(' ')[0];
-        if (roomFromTranscription !== currentSelected) {
-          console.log(`Ignoring transcription for room ${roomFromTranscription}, current filter: ${currentSelected}`);
-          setIsReceiving(false);
-          return;
-        }
-      }
-
-      // Simulate processing delay for better UX
-      setTimeout(() => {
-        const newRow: RowData = {
-          index: 0, // Will be calculated in setData
-          audioUrl: payload.audioUrl || "—",
-          column1: payload.column1 || "—",
-          column2: payload.column2 || "—",
-          column3: payload.column3 || "—",
-          column4: payload.column4 || "—",
-          id: payload.id || `fallback_${Date.now()}`, // Use the ID from the server
-          isNew: true,
-        }
-
-        setData((prevData) => {
-          // Check for duplicates before adding, now using the reliable ID from the server
-          const isDuplicate = prevData.some(item => item.id === newRow.id);
-          
-          if (isDuplicate) {
-            console.log('Duplicate transcription detected, skipping');
-            return prevData;
-          }
-          
-          const updatedData = [...prevData, { ...newRow, index: prevData.length + 1 }]
-          return updatedData
-        })
-        setIsReceiving(false)
-
-        // Auto-scroll to new entry
-        setTimeout(() => {
-          tableEndRef.current?.scrollIntoView({ behavior: "smooth" })
-        }, 100)
-
-        // Remove "new" status after 3 seconds
-        setTimeout(() => {
-          setData((prevData) => prevData.map((item) => (item.id === newRow.id ? { ...item, isNew: false } : item)))
-        }, 3000)
-      }, 800)
-    })
+    realtimeChannelsRef.current = nextChannels;
 
     return () => {
-      if (socket) {
-        socket.disconnect()
-      }
-    }
-  }, [])
+      realtimeChannelsRef.current.forEach((channel) => supabaseClient.removeChannel(channel));
+      realtimeChannelsRef.current = [];
+    };
+  }, [loadTranscriptions, selectedRoom, realtimeSessionId])
 
   // Load data on mount and whenever room filter changes
   useEffect(() => {
@@ -678,7 +659,7 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
                           group hover:bg-gray-50 hover:shadow-md transition-all duration-300 cursor-pointer relative
                           ${row.isNew ? "animate-in slide-in-from-bottom-2 duration-500 bg-emerald-50 border-l-4 border-l-emerald-400" : ""}
                         `}
-                        onDoubleClick={() => handleRowDoubleClick(row.audioUrl, i)}
+                        onDoubleClick={() => row.audioUrl && handleRowDoubleClick(row.audioUrl, i)}
                         title="Double-click to play audio"
                       >
                         <TableCell className="relative font-medium w-16 text-center group">
@@ -695,8 +676,9 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation()
-                                  handlePlay(row.audioUrl, i)
+                                  if (row.audioUrl) handlePlay(row.audioUrl, i)
                                 }}
+                                disabled={!row.audioUrl}
                                 className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-emerald-600 hover:text-emerald-800"
                               >
                                 {loadingIndex === i ? (

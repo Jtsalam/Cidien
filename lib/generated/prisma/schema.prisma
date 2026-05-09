@@ -75,20 +75,27 @@ model bed_info {
 
 model PdfFile {
   id        String   @id @default(uuid())
-  filePath  String // path/key inside Supabase bucket
-  fileUrl   String? // optional if using public bucket
+  filePath  String
   createdAt DateTime @default(now())
 
-  roomData room_data[]
+  sessionId String       @unique
+  session   demo_session @relation(fields: [sessionId], references: [session_id])
 }
 
 model Recording {
-  id        String   @id @default(uuid())
-  audioPath String
-  audioUrl  String
-  createdAt DateTime @default(now())
+  id         String        @id @default(uuid())
+  audioPath  String
+  transcript String?
+  type       RecordingType
+  createdAt  DateTime      @default(now())
 
-  roomData room_data[]
+  roomDataAsRoom room_data[] @relation("RoomRecording")
+  roomDataAsNote room_data[] @relation("NoteRecording")
+}
+
+enum RecordingType {
+  ROOM
+  NOTE
 }
 
 model room_data {
@@ -97,13 +104,16 @@ model room_data {
   patient_note String @db.VarChar(400)
   is_approved  Int    @default(0)
 
-  recording_id String?
-  recording    Recording? @relation(fields: [recording_id], references: [id])
+  sessionId String
+  session   demo_session @relation(fields: [sessionId], references: [session_id])
 
-  pdf_id String?
-  pdf    PdfFile? @relation(fields: [pdf_id], references: [id])
+  roomRecordingId String?
+  noteRecordingId String?
 
-  bed_info bed_info @relation(fields: [bed_id], references: [bed_id], onDelete: NoAction, onUpdate: NoAction)
+  roomRecording Recording? @relation("RoomRecording", fields: [roomRecordingId], references: [id])
+  noteRecording Recording? @relation("NoteRecording", fields: [noteRecordingId], references: [id])
+
+  bed_info bed_info @relation(fields: [bed_id], references: [bed_id])
 }
 
 model room_register {
@@ -150,6 +160,8 @@ model demo_session {
   expires_at DateTime
   center_id  Int      @unique
 
+  roomData           room_data[]
+  exportPdf          PdfFile?
   medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: Cascade)
 
   @@map("demo_session")

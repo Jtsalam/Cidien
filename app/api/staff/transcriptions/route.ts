@@ -4,13 +4,8 @@ import { getCurrentCenterId } from '@/lib/demo'
 import { prisma } from '@/lib/prisma'
 
 function audioPathToUrl(audioPath: string) {
-  const normalized = audioPath.replace(/\\/g, '/')
-  const uploadsIndex = normalized.indexOf('/uploads/')
-
-  if (uploadsIndex >= 0) return normalized.slice(uploadsIndex)
-  if (normalized.startsWith('/')) return normalized
-
-  return `/${normalized}`
+  // Role: Build a storage proxy URL from Supabase object path.
+  return `/api/recordings/audio?path=${encodeURIComponent(audioPath)}`;
 }
 
 export async function GET() {
@@ -48,8 +43,20 @@ export async function GET() {
       },
       select: {
         id: true,
-        audio_path: true,
         patient_note: true,
+        noteRecordingId: true,
+        roomRecordingId: true,
+        noteRecording: {
+          select: {
+            audioPath: true,
+            transcript: true,
+          },
+        },
+        roomRecording: {
+          select: {
+            transcript: true,
+          },
+        },
         bed_info: {
           select: {
             bed_letter: true,
@@ -67,11 +74,15 @@ export async function GET() {
     const data = transcriptions.map((item, index) => ({
       index: index + 1,
       id: item.id,
-      audioUrl: audioPathToUrl(item.audio_path),
-      column1: `${item.bed_info.room_info.room_number} ${item.bed_info.bed_letter}`,
+      noteRecordingId: item.noteRecordingId,
+      roomRecordingId: item.roomRecordingId,
+      audioUrl: item.noteRecording?.audioPath ? audioPathToUrl(item.noteRecording.audioPath) : null,
+      column1:
+        item.roomRecording?.transcript?.trim() ||
+        `${item.bed_info.room_info.room_number} ${item.bed_info.bed_letter}`,
       column2: 'Demo data',
       column3: '-',
-      column4: item.patient_note,
+      column4: item.noteRecording?.transcript || item.patient_note,
     }))
 
     return NextResponse.json(data)

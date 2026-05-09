@@ -75,6 +75,23 @@ export type user_uploads = $Result.DefaultSelection<Prisma.$user_uploadsPayload>
 export type demo_session = $Result.DefaultSelection<Prisma.$demo_sessionPayload>
 
 /**
+ * Enums
+ */
+export namespace $Enums {
+  export const RecordingType: {
+  ROOM: 'ROOM',
+  NOTE: 'NOTE'
+};
+
+export type RecordingType = (typeof RecordingType)[keyof typeof RecordingType]
+
+}
+
+export type RecordingType = $Enums.RecordingType
+
+export const RecordingType: typeof $Enums.RecordingType
+
+/**
  * ##  Prisma Client ʲˢ
  *
  * Type-safe database client for TypeScript & Node.js
@@ -2045,46 +2062,17 @@ export namespace Prisma {
 
 
   /**
-   * Count Type PdfFileCountOutputType
-   */
-
-  export type PdfFileCountOutputType = {
-    roomData: number
-  }
-
-  export type PdfFileCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    roomData?: boolean | PdfFileCountOutputTypeCountRoomDataArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * PdfFileCountOutputType without action
-   */
-  export type PdfFileCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PdfFileCountOutputType
-     */
-    select?: PdfFileCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * PdfFileCountOutputType without action
-   */
-  export type PdfFileCountOutputTypeCountRoomDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: room_dataWhereInput
-  }
-
-
-  /**
    * Count Type RecordingCountOutputType
    */
 
   export type RecordingCountOutputType = {
-    roomData: number
+    roomDataAsRoom: number
+    roomDataAsNote: number
   }
 
   export type RecordingCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    roomData?: boolean | RecordingCountOutputTypeCountRoomDataArgs
+    roomDataAsRoom?: boolean | RecordingCountOutputTypeCountRoomDataAsRoomArgs
+    roomDataAsNote?: boolean | RecordingCountOutputTypeCountRoomDataAsNoteArgs
   }
 
   // Custom InputTypes
@@ -2101,7 +2089,14 @@ export namespace Prisma {
   /**
    * RecordingCountOutputType without action
    */
-  export type RecordingCountOutputTypeCountRoomDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type RecordingCountOutputTypeCountRoomDataAsRoomArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: room_dataWhereInput
+  }
+
+  /**
+   * RecordingCountOutputType without action
+   */
+  export type RecordingCountOutputTypeCountRoomDataAsNoteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: room_dataWhereInput
   }
 
@@ -2143,6 +2138,37 @@ export namespace Prisma {
    */
   export type User_infoCountOutputTypeCountUser_uploadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: user_uploadsWhereInput
+  }
+
+
+  /**
+   * Count Type Demo_sessionCountOutputType
+   */
+
+  export type Demo_sessionCountOutputType = {
+    roomData: number
+  }
+
+  export type Demo_sessionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    roomData?: boolean | Demo_sessionCountOutputTypeCountRoomDataArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * Demo_sessionCountOutputType without action
+   */
+  export type Demo_sessionCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Demo_sessionCountOutputType
+     */
+    select?: Demo_sessionCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * Demo_sessionCountOutputType without action
+   */
+  export type Demo_sessionCountOutputTypeCountRoomDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: room_dataWhereInput
   }
 
 
@@ -8069,22 +8095,22 @@ export namespace Prisma {
   export type PdfFileMinAggregateOutputType = {
     id: string | null
     filePath: string | null
-    fileUrl: string | null
     createdAt: Date | null
+    sessionId: string | null
   }
 
   export type PdfFileMaxAggregateOutputType = {
     id: string | null
     filePath: string | null
-    fileUrl: string | null
     createdAt: Date | null
+    sessionId: string | null
   }
 
   export type PdfFileCountAggregateOutputType = {
     id: number
     filePath: number
-    fileUrl: number
     createdAt: number
+    sessionId: number
     _all: number
   }
 
@@ -8092,22 +8118,22 @@ export namespace Prisma {
   export type PdfFileMinAggregateInputType = {
     id?: true
     filePath?: true
-    fileUrl?: true
     createdAt?: true
+    sessionId?: true
   }
 
   export type PdfFileMaxAggregateInputType = {
     id?: true
     filePath?: true
-    fileUrl?: true
     createdAt?: true
+    sessionId?: true
   }
 
   export type PdfFileCountAggregateInputType = {
     id?: true
     filePath?: true
-    fileUrl?: true
     createdAt?: true
+    sessionId?: true
     _all?: true
   }
 
@@ -8186,8 +8212,8 @@ export namespace Prisma {
   export type PdfFileGroupByOutputType = {
     id: string
     filePath: string
-    fileUrl: string | null
     createdAt: Date
+    sessionId: string
     _count: PdfFileCountAggregateOutputType | null
     _min: PdfFileMinAggregateOutputType | null
     _max: PdfFileMaxAggregateOutputType | null
@@ -8210,51 +8236,55 @@ export namespace Prisma {
   export type PdfFileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     filePath?: boolean
-    fileUrl?: boolean
     createdAt?: boolean
-    roomData?: boolean | PdfFile$roomDataArgs<ExtArgs>
-    _count?: boolean | PdfFileCountOutputTypeDefaultArgs<ExtArgs>
+    sessionId?: boolean
+    session?: boolean | demo_sessionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["pdfFile"]>
 
   export type PdfFileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     filePath?: boolean
-    fileUrl?: boolean
     createdAt?: boolean
+    sessionId?: boolean
+    session?: boolean | demo_sessionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["pdfFile"]>
 
   export type PdfFileSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     filePath?: boolean
-    fileUrl?: boolean
     createdAt?: boolean
+    sessionId?: boolean
+    session?: boolean | demo_sessionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["pdfFile"]>
 
   export type PdfFileSelectScalar = {
     id?: boolean
     filePath?: boolean
-    fileUrl?: boolean
     createdAt?: boolean
+    sessionId?: boolean
   }
 
-  export type PdfFileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "filePath" | "fileUrl" | "createdAt", ExtArgs["result"]["pdfFile"]>
+  export type PdfFileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "filePath" | "createdAt" | "sessionId", ExtArgs["result"]["pdfFile"]>
   export type PdfFileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    roomData?: boolean | PdfFile$roomDataArgs<ExtArgs>
-    _count?: boolean | PdfFileCountOutputTypeDefaultArgs<ExtArgs>
+    session?: boolean | demo_sessionDefaultArgs<ExtArgs>
   }
-  export type PdfFileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type PdfFileIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type PdfFileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    session?: boolean | demo_sessionDefaultArgs<ExtArgs>
+  }
+  export type PdfFileIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    session?: boolean | demo_sessionDefaultArgs<ExtArgs>
+  }
 
   export type $PdfFilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "PdfFile"
     objects: {
-      roomData: Prisma.$room_dataPayload<ExtArgs>[]
+      session: Prisma.$demo_sessionPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       filePath: string
-      fileUrl: string | null
       createdAt: Date
+      sessionId: string
     }, ExtArgs["result"]["pdfFile"]>
     composites: {}
   }
@@ -8649,7 +8679,7 @@ export namespace Prisma {
    */
   export interface Prisma__PdfFileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    roomData<T extends PdfFile$roomDataArgs<ExtArgs> = {}>(args?: Subset<T, PdfFile$roomDataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$room_dataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    session<T extends demo_sessionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, demo_sessionDefaultArgs<ExtArgs>>): Prisma__demo_sessionClient<$Result.GetResult<Prisma.$demo_sessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8681,8 +8711,8 @@ export namespace Prisma {
   interface PdfFileFieldRefs {
     readonly id: FieldRef<"PdfFile", 'String'>
     readonly filePath: FieldRef<"PdfFile", 'String'>
-    readonly fileUrl: FieldRef<"PdfFile", 'String'>
     readonly createdAt: FieldRef<"PdfFile", 'DateTime'>
+    readonly sessionId: FieldRef<"PdfFile", 'String'>
   }
     
 
@@ -8932,6 +8962,10 @@ export namespace Prisma {
      */
     data: PdfFileCreateManyInput | PdfFileCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PdfFileIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -9002,6 +9036,10 @@ export namespace Prisma {
      * Limit how many PdfFiles to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PdfFileIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -9071,30 +9109,6 @@ export namespace Prisma {
   }
 
   /**
-   * PdfFile.roomData
-   */
-  export type PdfFile$roomDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the room_data
-     */
-    select?: room_dataSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the room_data
-     */
-    omit?: room_dataOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: room_dataInclude<ExtArgs> | null
-    where?: room_dataWhereInput
-    orderBy?: room_dataOrderByWithRelationInput | room_dataOrderByWithRelationInput[]
-    cursor?: room_dataWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: Room_dataScalarFieldEnum | Room_dataScalarFieldEnum[]
-  }
-
-  /**
    * PdfFile without action
    */
   export type PdfFileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9126,21 +9140,24 @@ export namespace Prisma {
   export type RecordingMinAggregateOutputType = {
     id: string | null
     audioPath: string | null
-    audioUrl: string | null
+    transcript: string | null
+    type: $Enums.RecordingType | null
     createdAt: Date | null
   }
 
   export type RecordingMaxAggregateOutputType = {
     id: string | null
     audioPath: string | null
-    audioUrl: string | null
+    transcript: string | null
+    type: $Enums.RecordingType | null
     createdAt: Date | null
   }
 
   export type RecordingCountAggregateOutputType = {
     id: number
     audioPath: number
-    audioUrl: number
+    transcript: number
+    type: number
     createdAt: number
     _all: number
   }
@@ -9149,21 +9166,24 @@ export namespace Prisma {
   export type RecordingMinAggregateInputType = {
     id?: true
     audioPath?: true
-    audioUrl?: true
+    transcript?: true
+    type?: true
     createdAt?: true
   }
 
   export type RecordingMaxAggregateInputType = {
     id?: true
     audioPath?: true
-    audioUrl?: true
+    transcript?: true
+    type?: true
     createdAt?: true
   }
 
   export type RecordingCountAggregateInputType = {
     id?: true
     audioPath?: true
-    audioUrl?: true
+    transcript?: true
+    type?: true
     createdAt?: true
     _all?: true
   }
@@ -9243,7 +9263,8 @@ export namespace Prisma {
   export type RecordingGroupByOutputType = {
     id: string
     audioPath: string
-    audioUrl: string
+    transcript: string | null
+    type: $Enums.RecordingType
     createdAt: Date
     _count: RecordingCountAggregateOutputType | null
     _min: RecordingMinAggregateOutputType | null
@@ -9267,36 +9288,42 @@ export namespace Prisma {
   export type RecordingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     audioPath?: boolean
-    audioUrl?: boolean
+    transcript?: boolean
+    type?: boolean
     createdAt?: boolean
-    roomData?: boolean | Recording$roomDataArgs<ExtArgs>
+    roomDataAsRoom?: boolean | Recording$roomDataAsRoomArgs<ExtArgs>
+    roomDataAsNote?: boolean | Recording$roomDataAsNoteArgs<ExtArgs>
     _count?: boolean | RecordingCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["recording"]>
 
   export type RecordingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     audioPath?: boolean
-    audioUrl?: boolean
+    transcript?: boolean
+    type?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["recording"]>
 
   export type RecordingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     audioPath?: boolean
-    audioUrl?: boolean
+    transcript?: boolean
+    type?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["recording"]>
 
   export type RecordingSelectScalar = {
     id?: boolean
     audioPath?: boolean
-    audioUrl?: boolean
+    transcript?: boolean
+    type?: boolean
     createdAt?: boolean
   }
 
-  export type RecordingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "audioPath" | "audioUrl" | "createdAt", ExtArgs["result"]["recording"]>
+  export type RecordingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "audioPath" | "transcript" | "type" | "createdAt", ExtArgs["result"]["recording"]>
   export type RecordingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    roomData?: boolean | Recording$roomDataArgs<ExtArgs>
+    roomDataAsRoom?: boolean | Recording$roomDataAsRoomArgs<ExtArgs>
+    roomDataAsNote?: boolean | Recording$roomDataAsNoteArgs<ExtArgs>
     _count?: boolean | RecordingCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type RecordingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -9305,12 +9332,14 @@ export namespace Prisma {
   export type $RecordingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Recording"
     objects: {
-      roomData: Prisma.$room_dataPayload<ExtArgs>[]
+      roomDataAsRoom: Prisma.$room_dataPayload<ExtArgs>[]
+      roomDataAsNote: Prisma.$room_dataPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       audioPath: string
-      audioUrl: string
+      transcript: string | null
+      type: $Enums.RecordingType
       createdAt: Date
     }, ExtArgs["result"]["recording"]>
     composites: {}
@@ -9706,7 +9735,8 @@ export namespace Prisma {
    */
   export interface Prisma__RecordingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    roomData<T extends Recording$roomDataArgs<ExtArgs> = {}>(args?: Subset<T, Recording$roomDataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$room_dataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    roomDataAsRoom<T extends Recording$roomDataAsRoomArgs<ExtArgs> = {}>(args?: Subset<T, Recording$roomDataAsRoomArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$room_dataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    roomDataAsNote<T extends Recording$roomDataAsNoteArgs<ExtArgs> = {}>(args?: Subset<T, Recording$roomDataAsNoteArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$room_dataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9738,7 +9768,8 @@ export namespace Prisma {
   interface RecordingFieldRefs {
     readonly id: FieldRef<"Recording", 'String'>
     readonly audioPath: FieldRef<"Recording", 'String'>
-    readonly audioUrl: FieldRef<"Recording", 'String'>
+    readonly transcript: FieldRef<"Recording", 'String'>
+    readonly type: FieldRef<"Recording", 'RecordingType'>
     readonly createdAt: FieldRef<"Recording", 'DateTime'>
   }
     
@@ -10128,9 +10159,33 @@ export namespace Prisma {
   }
 
   /**
-   * Recording.roomData
+   * Recording.roomDataAsRoom
    */
-  export type Recording$roomDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Recording$roomDataAsRoomArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the room_data
+     */
+    select?: room_dataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the room_data
+     */
+    omit?: room_dataOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: room_dataInclude<ExtArgs> | null
+    where?: room_dataWhereInput
+    orderBy?: room_dataOrderByWithRelationInput | room_dataOrderByWithRelationInput[]
+    cursor?: room_dataWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Room_dataScalarFieldEnum | Room_dataScalarFieldEnum[]
+  }
+
+  /**
+   * Recording.roomDataAsNote
+   */
+  export type Recording$roomDataAsNoteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the room_data
      */
@@ -10199,8 +10254,9 @@ export namespace Prisma {
     bed_id: number | null
     patient_note: string | null
     is_approved: number | null
-    recording_id: string | null
-    pdf_id: string | null
+    sessionId: string | null
+    roomRecordingId: string | null
+    noteRecordingId: string | null
   }
 
   export type Room_dataMaxAggregateOutputType = {
@@ -10208,8 +10264,9 @@ export namespace Prisma {
     bed_id: number | null
     patient_note: string | null
     is_approved: number | null
-    recording_id: string | null
-    pdf_id: string | null
+    sessionId: string | null
+    roomRecordingId: string | null
+    noteRecordingId: string | null
   }
 
   export type Room_dataCountAggregateOutputType = {
@@ -10217,8 +10274,9 @@ export namespace Prisma {
     bed_id: number
     patient_note: number
     is_approved: number
-    recording_id: number
-    pdf_id: number
+    sessionId: number
+    roomRecordingId: number
+    noteRecordingId: number
     _all: number
   }
 
@@ -10240,8 +10298,9 @@ export namespace Prisma {
     bed_id?: true
     patient_note?: true
     is_approved?: true
-    recording_id?: true
-    pdf_id?: true
+    sessionId?: true
+    roomRecordingId?: true
+    noteRecordingId?: true
   }
 
   export type Room_dataMaxAggregateInputType = {
@@ -10249,8 +10308,9 @@ export namespace Prisma {
     bed_id?: true
     patient_note?: true
     is_approved?: true
-    recording_id?: true
-    pdf_id?: true
+    sessionId?: true
+    roomRecordingId?: true
+    noteRecordingId?: true
   }
 
   export type Room_dataCountAggregateInputType = {
@@ -10258,8 +10318,9 @@ export namespace Prisma {
     bed_id?: true
     patient_note?: true
     is_approved?: true
-    recording_id?: true
-    pdf_id?: true
+    sessionId?: true
+    roomRecordingId?: true
+    noteRecordingId?: true
     _all?: true
   }
 
@@ -10354,8 +10415,9 @@ export namespace Prisma {
     bed_id: number
     patient_note: string
     is_approved: number
-    recording_id: string | null
-    pdf_id: string | null
+    sessionId: string
+    roomRecordingId: string | null
+    noteRecordingId: string | null
     _count: Room_dataCountAggregateOutputType | null
     _avg: Room_dataAvgAggregateOutputType | null
     _sum: Room_dataSumAggregateOutputType | null
@@ -10382,10 +10444,12 @@ export namespace Prisma {
     bed_id?: boolean
     patient_note?: boolean
     is_approved?: boolean
-    recording_id?: boolean
-    pdf_id?: boolean
-    recording?: boolean | room_data$recordingArgs<ExtArgs>
-    pdf?: boolean | room_data$pdfArgs<ExtArgs>
+    sessionId?: boolean
+    roomRecordingId?: boolean
+    noteRecordingId?: boolean
+    session?: boolean | demo_sessionDefaultArgs<ExtArgs>
+    roomRecording?: boolean | room_data$roomRecordingArgs<ExtArgs>
+    noteRecording?: boolean | room_data$noteRecordingArgs<ExtArgs>
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["room_data"]>
 
@@ -10394,10 +10458,12 @@ export namespace Prisma {
     bed_id?: boolean
     patient_note?: boolean
     is_approved?: boolean
-    recording_id?: boolean
-    pdf_id?: boolean
-    recording?: boolean | room_data$recordingArgs<ExtArgs>
-    pdf?: boolean | room_data$pdfArgs<ExtArgs>
+    sessionId?: boolean
+    roomRecordingId?: boolean
+    noteRecordingId?: boolean
+    session?: boolean | demo_sessionDefaultArgs<ExtArgs>
+    roomRecording?: boolean | room_data$roomRecordingArgs<ExtArgs>
+    noteRecording?: boolean | room_data$noteRecordingArgs<ExtArgs>
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["room_data"]>
 
@@ -10406,10 +10472,12 @@ export namespace Prisma {
     bed_id?: boolean
     patient_note?: boolean
     is_approved?: boolean
-    recording_id?: boolean
-    pdf_id?: boolean
-    recording?: boolean | room_data$recordingArgs<ExtArgs>
-    pdf?: boolean | room_data$pdfArgs<ExtArgs>
+    sessionId?: boolean
+    roomRecordingId?: boolean
+    noteRecordingId?: boolean
+    session?: boolean | demo_sessionDefaultArgs<ExtArgs>
+    roomRecording?: boolean | room_data$roomRecordingArgs<ExtArgs>
+    noteRecording?: boolean | room_data$noteRecordingArgs<ExtArgs>
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["room_data"]>
 
@@ -10418,32 +10486,37 @@ export namespace Prisma {
     bed_id?: boolean
     patient_note?: boolean
     is_approved?: boolean
-    recording_id?: boolean
-    pdf_id?: boolean
+    sessionId?: boolean
+    roomRecordingId?: boolean
+    noteRecordingId?: boolean
   }
 
-  export type room_dataOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bed_id" | "patient_note" | "is_approved" | "recording_id" | "pdf_id", ExtArgs["result"]["room_data"]>
+  export type room_dataOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bed_id" | "patient_note" | "is_approved" | "sessionId" | "roomRecordingId" | "noteRecordingId", ExtArgs["result"]["room_data"]>
   export type room_dataInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    recording?: boolean | room_data$recordingArgs<ExtArgs>
-    pdf?: boolean | room_data$pdfArgs<ExtArgs>
+    session?: boolean | demo_sessionDefaultArgs<ExtArgs>
+    roomRecording?: boolean | room_data$roomRecordingArgs<ExtArgs>
+    noteRecording?: boolean | room_data$noteRecordingArgs<ExtArgs>
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }
   export type room_dataIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    recording?: boolean | room_data$recordingArgs<ExtArgs>
-    pdf?: boolean | room_data$pdfArgs<ExtArgs>
+    session?: boolean | demo_sessionDefaultArgs<ExtArgs>
+    roomRecording?: boolean | room_data$roomRecordingArgs<ExtArgs>
+    noteRecording?: boolean | room_data$noteRecordingArgs<ExtArgs>
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }
   export type room_dataIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    recording?: boolean | room_data$recordingArgs<ExtArgs>
-    pdf?: boolean | room_data$pdfArgs<ExtArgs>
+    session?: boolean | demo_sessionDefaultArgs<ExtArgs>
+    roomRecording?: boolean | room_data$roomRecordingArgs<ExtArgs>
+    noteRecording?: boolean | room_data$noteRecordingArgs<ExtArgs>
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
   }
 
   export type $room_dataPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "room_data"
     objects: {
-      recording: Prisma.$RecordingPayload<ExtArgs> | null
-      pdf: Prisma.$PdfFilePayload<ExtArgs> | null
+      session: Prisma.$demo_sessionPayload<ExtArgs>
+      roomRecording: Prisma.$RecordingPayload<ExtArgs> | null
+      noteRecording: Prisma.$RecordingPayload<ExtArgs> | null
       bed_info: Prisma.$bed_infoPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -10451,8 +10524,9 @@ export namespace Prisma {
       bed_id: number
       patient_note: string
       is_approved: number
-      recording_id: string | null
-      pdf_id: string | null
+      sessionId: string
+      roomRecordingId: string | null
+      noteRecordingId: string | null
     }, ExtArgs["result"]["room_data"]>
     composites: {}
   }
@@ -10847,8 +10921,9 @@ export namespace Prisma {
    */
   export interface Prisma__room_dataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    recording<T extends room_data$recordingArgs<ExtArgs> = {}>(args?: Subset<T, room_data$recordingArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    pdf<T extends room_data$pdfArgs<ExtArgs> = {}>(args?: Subset<T, room_data$pdfArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    session<T extends demo_sessionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, demo_sessionDefaultArgs<ExtArgs>>): Prisma__demo_sessionClient<$Result.GetResult<Prisma.$demo_sessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    roomRecording<T extends room_data$roomRecordingArgs<ExtArgs> = {}>(args?: Subset<T, room_data$roomRecordingArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    noteRecording<T extends room_data$noteRecordingArgs<ExtArgs> = {}>(args?: Subset<T, room_data$noteRecordingArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     bed_info<T extends bed_infoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, bed_infoDefaultArgs<ExtArgs>>): Prisma__bed_infoClient<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -10883,8 +10958,9 @@ export namespace Prisma {
     readonly bed_id: FieldRef<"room_data", 'Int'>
     readonly patient_note: FieldRef<"room_data", 'String'>
     readonly is_approved: FieldRef<"room_data", 'Int'>
-    readonly recording_id: FieldRef<"room_data", 'String'>
-    readonly pdf_id: FieldRef<"room_data", 'String'>
+    readonly sessionId: FieldRef<"room_data", 'String'>
+    readonly roomRecordingId: FieldRef<"room_data", 'String'>
+    readonly noteRecordingId: FieldRef<"room_data", 'String'>
   }
     
 
@@ -11281,9 +11357,9 @@ export namespace Prisma {
   }
 
   /**
-   * room_data.recording
+   * room_data.roomRecording
    */
-  export type room_data$recordingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type room_data$roomRecordingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Recording
      */
@@ -11300,22 +11376,22 @@ export namespace Prisma {
   }
 
   /**
-   * room_data.pdf
+   * room_data.noteRecording
    */
-  export type room_data$pdfArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type room_data$noteRecordingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PdfFile
+     * Select specific fields to fetch from the Recording
      */
-    select?: PdfFileSelect<ExtArgs> | null
+    select?: RecordingSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the PdfFile
+     * Omit specific fields from the Recording
      */
-    omit?: PdfFileOmit<ExtArgs> | null
+    omit?: RecordingOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: PdfFileInclude<ExtArgs> | null
-    where?: PdfFileWhereInput
+    include?: RecordingInclude<ExtArgs> | null
+    where?: RecordingWhereInput
   }
 
   /**
@@ -14931,7 +15007,10 @@ export namespace Prisma {
     created_at?: boolean
     expires_at?: boolean
     center_id?: boolean
+    roomData?: boolean | demo_session$roomDataArgs<ExtArgs>
+    exportPdf?: boolean | demo_session$exportPdfArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
+    _count?: boolean | Demo_sessionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["demo_session"]>
 
   export type demo_sessionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14959,7 +15038,10 @@ export namespace Prisma {
 
   export type demo_sessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"session_id" | "created_at" | "expires_at" | "center_id", ExtArgs["result"]["demo_session"]>
   export type demo_sessionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    roomData?: boolean | demo_session$roomDataArgs<ExtArgs>
+    exportPdf?: boolean | demo_session$exportPdfArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
+    _count?: boolean | Demo_sessionCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type demo_sessionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
@@ -14971,6 +15053,8 @@ export namespace Prisma {
   export type $demo_sessionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "demo_session"
     objects: {
+      roomData: Prisma.$room_dataPayload<ExtArgs>[]
+      exportPdf: Prisma.$PdfFilePayload<ExtArgs> | null
       medicalcenter_info: Prisma.$medicalcenter_infoPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -15372,6 +15456,8 @@ export namespace Prisma {
    */
   export interface Prisma__demo_sessionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    roomData<T extends demo_session$roomDataArgs<ExtArgs> = {}>(args?: Subset<T, demo_session$roomDataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$room_dataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    exportPdf<T extends demo_session$exportPdfArgs<ExtArgs> = {}>(args?: Subset<T, demo_session$exportPdfArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     medicalcenter_info<T extends medicalcenter_infoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, medicalcenter_infoDefaultArgs<ExtArgs>>): Prisma__medicalcenter_infoClient<$Result.GetResult<Prisma.$medicalcenter_infoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -15802,6 +15888,49 @@ export namespace Prisma {
   }
 
   /**
+   * demo_session.roomData
+   */
+  export type demo_session$roomDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the room_data
+     */
+    select?: room_dataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the room_data
+     */
+    omit?: room_dataOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: room_dataInclude<ExtArgs> | null
+    where?: room_dataWhereInput
+    orderBy?: room_dataOrderByWithRelationInput | room_dataOrderByWithRelationInput[]
+    cursor?: room_dataWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Room_dataScalarFieldEnum | Room_dataScalarFieldEnum[]
+  }
+
+  /**
+   * demo_session.exportPdf
+   */
+  export type demo_session$exportPdfArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PdfFile
+     */
+    select?: PdfFileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PdfFile
+     */
+    omit?: PdfFileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PdfFileInclude<ExtArgs> | null
+    where?: PdfFileWhereInput
+  }
+
+  /**
    * demo_session without action
    */
   export type demo_sessionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15895,8 +16024,8 @@ export namespace Prisma {
   export const PdfFileScalarFieldEnum: {
     id: 'id',
     filePath: 'filePath',
-    fileUrl: 'fileUrl',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    sessionId: 'sessionId'
   };
 
   export type PdfFileScalarFieldEnum = (typeof PdfFileScalarFieldEnum)[keyof typeof PdfFileScalarFieldEnum]
@@ -15905,7 +16034,8 @@ export namespace Prisma {
   export const RecordingScalarFieldEnum: {
     id: 'id',
     audioPath: 'audioPath',
-    audioUrl: 'audioUrl',
+    transcript: 'transcript',
+    type: 'type',
     createdAt: 'createdAt'
   };
 
@@ -15917,8 +16047,9 @@ export namespace Prisma {
     bed_id: 'bed_id',
     patient_note: 'patient_note',
     is_approved: 'is_approved',
-    recording_id: 'recording_id',
-    pdf_id: 'pdf_id'
+    sessionId: 'sessionId',
+    roomRecordingId: 'roomRecordingId',
+    noteRecordingId: 'noteRecordingId'
   };
 
   export type Room_dataScalarFieldEnum = (typeof Room_dataScalarFieldEnum)[keyof typeof Room_dataScalarFieldEnum]
@@ -16044,6 +16175,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'RecordingType'
+   */
+  export type EnumRecordingTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecordingType'>
+    
+
+
+  /**
+   * Reference to a field of type 'RecordingType[]'
+   */
+  export type ListEnumRecordingTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecordingType[]'>
     
 
 
@@ -16410,35 +16555,35 @@ export namespace Prisma {
     NOT?: PdfFileWhereInput | PdfFileWhereInput[]
     id?: StringFilter<"PdfFile"> | string
     filePath?: StringFilter<"PdfFile"> | string
-    fileUrl?: StringNullableFilter<"PdfFile"> | string | null
     createdAt?: DateTimeFilter<"PdfFile"> | Date | string
-    roomData?: Room_dataListRelationFilter
+    sessionId?: StringFilter<"PdfFile"> | string
+    session?: XOR<Demo_sessionScalarRelationFilter, demo_sessionWhereInput>
   }
 
   export type PdfFileOrderByWithRelationInput = {
     id?: SortOrder
     filePath?: SortOrder
-    fileUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
-    roomData?: room_dataOrderByRelationAggregateInput
+    sessionId?: SortOrder
+    session?: demo_sessionOrderByWithRelationInput
   }
 
   export type PdfFileWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    sessionId?: string
     AND?: PdfFileWhereInput | PdfFileWhereInput[]
     OR?: PdfFileWhereInput[]
     NOT?: PdfFileWhereInput | PdfFileWhereInput[]
     filePath?: StringFilter<"PdfFile"> | string
-    fileUrl?: StringNullableFilter<"PdfFile"> | string | null
     createdAt?: DateTimeFilter<"PdfFile"> | Date | string
-    roomData?: Room_dataListRelationFilter
-  }, "id">
+    session?: XOR<Demo_sessionScalarRelationFilter, demo_sessionWhereInput>
+  }, "id" | "sessionId">
 
   export type PdfFileOrderByWithAggregationInput = {
     id?: SortOrder
     filePath?: SortOrder
-    fileUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    sessionId?: SortOrder
     _count?: PdfFileCountOrderByAggregateInput
     _max?: PdfFileMaxOrderByAggregateInput
     _min?: PdfFileMinOrderByAggregateInput
@@ -16450,8 +16595,8 @@ export namespace Prisma {
     NOT?: PdfFileScalarWhereWithAggregatesInput | PdfFileScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"PdfFile"> | string
     filePath?: StringWithAggregatesFilter<"PdfFile"> | string
-    fileUrl?: StringNullableWithAggregatesFilter<"PdfFile"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"PdfFile"> | Date | string
+    sessionId?: StringWithAggregatesFilter<"PdfFile"> | string
   }
 
   export type RecordingWhereInput = {
@@ -16460,17 +16605,21 @@ export namespace Prisma {
     NOT?: RecordingWhereInput | RecordingWhereInput[]
     id?: StringFilter<"Recording"> | string
     audioPath?: StringFilter<"Recording"> | string
-    audioUrl?: StringFilter<"Recording"> | string
+    transcript?: StringNullableFilter<"Recording"> | string | null
+    type?: EnumRecordingTypeFilter<"Recording"> | $Enums.RecordingType
     createdAt?: DateTimeFilter<"Recording"> | Date | string
-    roomData?: Room_dataListRelationFilter
+    roomDataAsRoom?: Room_dataListRelationFilter
+    roomDataAsNote?: Room_dataListRelationFilter
   }
 
   export type RecordingOrderByWithRelationInput = {
     id?: SortOrder
     audioPath?: SortOrder
-    audioUrl?: SortOrder
+    transcript?: SortOrderInput | SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
-    roomData?: room_dataOrderByRelationAggregateInput
+    roomDataAsRoom?: room_dataOrderByRelationAggregateInput
+    roomDataAsNote?: room_dataOrderByRelationAggregateInput
   }
 
   export type RecordingWhereUniqueInput = Prisma.AtLeast<{
@@ -16479,15 +16628,18 @@ export namespace Prisma {
     OR?: RecordingWhereInput[]
     NOT?: RecordingWhereInput | RecordingWhereInput[]
     audioPath?: StringFilter<"Recording"> | string
-    audioUrl?: StringFilter<"Recording"> | string
+    transcript?: StringNullableFilter<"Recording"> | string | null
+    type?: EnumRecordingTypeFilter<"Recording"> | $Enums.RecordingType
     createdAt?: DateTimeFilter<"Recording"> | Date | string
-    roomData?: Room_dataListRelationFilter
+    roomDataAsRoom?: Room_dataListRelationFilter
+    roomDataAsNote?: Room_dataListRelationFilter
   }, "id">
 
   export type RecordingOrderByWithAggregationInput = {
     id?: SortOrder
     audioPath?: SortOrder
-    audioUrl?: SortOrder
+    transcript?: SortOrderInput | SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     _count?: RecordingCountOrderByAggregateInput
     _max?: RecordingMaxOrderByAggregateInput
@@ -16500,7 +16652,8 @@ export namespace Prisma {
     NOT?: RecordingScalarWhereWithAggregatesInput | RecordingScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Recording"> | string
     audioPath?: StringWithAggregatesFilter<"Recording"> | string
-    audioUrl?: StringWithAggregatesFilter<"Recording"> | string
+    transcript?: StringNullableWithAggregatesFilter<"Recording"> | string | null
+    type?: EnumRecordingTypeWithAggregatesFilter<"Recording"> | $Enums.RecordingType
     createdAt?: DateTimeWithAggregatesFilter<"Recording"> | Date | string
   }
 
@@ -16512,10 +16665,12 @@ export namespace Prisma {
     bed_id?: IntFilter<"room_data"> | number
     patient_note?: StringFilter<"room_data"> | string
     is_approved?: IntFilter<"room_data"> | number
-    recording_id?: StringNullableFilter<"room_data"> | string | null
-    pdf_id?: StringNullableFilter<"room_data"> | string | null
-    recording?: XOR<RecordingNullableScalarRelationFilter, RecordingWhereInput> | null
-    pdf?: XOR<PdfFileNullableScalarRelationFilter, PdfFileWhereInput> | null
+    sessionId?: StringFilter<"room_data"> | string
+    roomRecordingId?: StringNullableFilter<"room_data"> | string | null
+    noteRecordingId?: StringNullableFilter<"room_data"> | string | null
+    session?: XOR<Demo_sessionScalarRelationFilter, demo_sessionWhereInput>
+    roomRecording?: XOR<RecordingNullableScalarRelationFilter, RecordingWhereInput> | null
+    noteRecording?: XOR<RecordingNullableScalarRelationFilter, RecordingWhereInput> | null
     bed_info?: XOR<Bed_infoScalarRelationFilter, bed_infoWhereInput>
   }
 
@@ -16524,10 +16679,12 @@ export namespace Prisma {
     bed_id?: SortOrder
     patient_note?: SortOrder
     is_approved?: SortOrder
-    recording_id?: SortOrderInput | SortOrder
-    pdf_id?: SortOrderInput | SortOrder
-    recording?: RecordingOrderByWithRelationInput
-    pdf?: PdfFileOrderByWithRelationInput
+    sessionId?: SortOrder
+    roomRecordingId?: SortOrderInput | SortOrder
+    noteRecordingId?: SortOrderInput | SortOrder
+    session?: demo_sessionOrderByWithRelationInput
+    roomRecording?: RecordingOrderByWithRelationInput
+    noteRecording?: RecordingOrderByWithRelationInput
     bed_info?: bed_infoOrderByWithRelationInput
   }
 
@@ -16539,10 +16696,12 @@ export namespace Prisma {
     bed_id?: IntFilter<"room_data"> | number
     patient_note?: StringFilter<"room_data"> | string
     is_approved?: IntFilter<"room_data"> | number
-    recording_id?: StringNullableFilter<"room_data"> | string | null
-    pdf_id?: StringNullableFilter<"room_data"> | string | null
-    recording?: XOR<RecordingNullableScalarRelationFilter, RecordingWhereInput> | null
-    pdf?: XOR<PdfFileNullableScalarRelationFilter, PdfFileWhereInput> | null
+    sessionId?: StringFilter<"room_data"> | string
+    roomRecordingId?: StringNullableFilter<"room_data"> | string | null
+    noteRecordingId?: StringNullableFilter<"room_data"> | string | null
+    session?: XOR<Demo_sessionScalarRelationFilter, demo_sessionWhereInput>
+    roomRecording?: XOR<RecordingNullableScalarRelationFilter, RecordingWhereInput> | null
+    noteRecording?: XOR<RecordingNullableScalarRelationFilter, RecordingWhereInput> | null
     bed_info?: XOR<Bed_infoScalarRelationFilter, bed_infoWhereInput>
   }, "id">
 
@@ -16551,8 +16710,9 @@ export namespace Prisma {
     bed_id?: SortOrder
     patient_note?: SortOrder
     is_approved?: SortOrder
-    recording_id?: SortOrderInput | SortOrder
-    pdf_id?: SortOrderInput | SortOrder
+    sessionId?: SortOrder
+    roomRecordingId?: SortOrderInput | SortOrder
+    noteRecordingId?: SortOrderInput | SortOrder
     _count?: room_dataCountOrderByAggregateInput
     _avg?: room_dataAvgOrderByAggregateInput
     _max?: room_dataMaxOrderByAggregateInput
@@ -16568,8 +16728,9 @@ export namespace Prisma {
     bed_id?: IntWithAggregatesFilter<"room_data"> | number
     patient_note?: StringWithAggregatesFilter<"room_data"> | string
     is_approved?: IntWithAggregatesFilter<"room_data"> | number
-    recording_id?: StringNullableWithAggregatesFilter<"room_data"> | string | null
-    pdf_id?: StringNullableWithAggregatesFilter<"room_data"> | string | null
+    sessionId?: StringWithAggregatesFilter<"room_data"> | string
+    roomRecordingId?: StringNullableWithAggregatesFilter<"room_data"> | string | null
+    noteRecordingId?: StringNullableWithAggregatesFilter<"room_data"> | string | null
   }
 
   export type room_registerWhereInput = {
@@ -16778,6 +16939,8 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"demo_session"> | Date | string
     expires_at?: DateTimeFilter<"demo_session"> | Date | string
     center_id?: IntFilter<"demo_session"> | number
+    roomData?: Room_dataListRelationFilter
+    exportPdf?: XOR<PdfFileNullableScalarRelationFilter, PdfFileWhereInput> | null
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
   }
 
@@ -16786,6 +16949,8 @@ export namespace Prisma {
     created_at?: SortOrder
     expires_at?: SortOrder
     center_id?: SortOrder
+    roomData?: room_dataOrderByRelationAggregateInput
+    exportPdf?: PdfFileOrderByWithRelationInput
     medicalcenter_info?: medicalcenter_infoOrderByWithRelationInput
   }
 
@@ -16797,6 +16962,8 @@ export namespace Prisma {
     NOT?: demo_sessionWhereInput | demo_sessionWhereInput[]
     created_at?: DateTimeFilter<"demo_session"> | Date | string
     expires_at?: DateTimeFilter<"demo_session"> | Date | string
+    roomData?: Room_dataListRelationFilter
+    exportPdf?: XOR<PdfFileNullableScalarRelationFilter, PdfFileWhereInput> | null
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
   }, "session_id" | "center_id">
 
@@ -17156,114 +17323,121 @@ export namespace Prisma {
   export type PdfFileCreateInput = {
     id?: string
     filePath: string
-    fileUrl?: string | null
     createdAt?: Date | string
-    roomData?: room_dataCreateNestedManyWithoutPdfInput
+    session: demo_sessionCreateNestedOneWithoutExportPdfInput
   }
 
   export type PdfFileUncheckedCreateInput = {
     id?: string
     filePath: string
-    fileUrl?: string | null
     createdAt?: Date | string
-    roomData?: room_dataUncheckedCreateNestedManyWithoutPdfInput
+    sessionId: string
   }
 
   export type PdfFileUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     filePath?: StringFieldUpdateOperationsInput | string
-    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    roomData?: room_dataUpdateManyWithoutPdfNestedInput
+    session?: demo_sessionUpdateOneRequiredWithoutExportPdfNestedInput
   }
 
   export type PdfFileUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     filePath?: StringFieldUpdateOperationsInput | string
-    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    roomData?: room_dataUncheckedUpdateManyWithoutPdfNestedInput
+    sessionId?: StringFieldUpdateOperationsInput | string
   }
 
   export type PdfFileCreateManyInput = {
     id?: string
     filePath: string
-    fileUrl?: string | null
     createdAt?: Date | string
+    sessionId: string
   }
 
   export type PdfFileUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     filePath?: StringFieldUpdateOperationsInput | string
-    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PdfFileUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     filePath?: StringFieldUpdateOperationsInput | string
-    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessionId?: StringFieldUpdateOperationsInput | string
   }
 
   export type RecordingCreateInput = {
     id?: string
     audioPath: string
-    audioUrl: string
+    transcript?: string | null
+    type: $Enums.RecordingType
     createdAt?: Date | string
-    roomData?: room_dataCreateNestedManyWithoutRecordingInput
+    roomDataAsRoom?: room_dataCreateNestedManyWithoutRoomRecordingInput
+    roomDataAsNote?: room_dataCreateNestedManyWithoutNoteRecordingInput
   }
 
   export type RecordingUncheckedCreateInput = {
     id?: string
     audioPath: string
-    audioUrl: string
+    transcript?: string | null
+    type: $Enums.RecordingType
     createdAt?: Date | string
-    roomData?: room_dataUncheckedCreateNestedManyWithoutRecordingInput
+    roomDataAsRoom?: room_dataUncheckedCreateNestedManyWithoutRoomRecordingInput
+    roomDataAsNote?: room_dataUncheckedCreateNestedManyWithoutNoteRecordingInput
   }
 
   export type RecordingUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     audioPath?: StringFieldUpdateOperationsInput | string
-    audioUrl?: StringFieldUpdateOperationsInput | string
+    transcript?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumRecordingTypeFieldUpdateOperationsInput | $Enums.RecordingType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    roomData?: room_dataUpdateManyWithoutRecordingNestedInput
+    roomDataAsRoom?: room_dataUpdateManyWithoutRoomRecordingNestedInput
+    roomDataAsNote?: room_dataUpdateManyWithoutNoteRecordingNestedInput
   }
 
   export type RecordingUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     audioPath?: StringFieldUpdateOperationsInput | string
-    audioUrl?: StringFieldUpdateOperationsInput | string
+    transcript?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumRecordingTypeFieldUpdateOperationsInput | $Enums.RecordingType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    roomData?: room_dataUncheckedUpdateManyWithoutRecordingNestedInput
+    roomDataAsRoom?: room_dataUncheckedUpdateManyWithoutRoomRecordingNestedInput
+    roomDataAsNote?: room_dataUncheckedUpdateManyWithoutNoteRecordingNestedInput
   }
 
   export type RecordingCreateManyInput = {
     id?: string
     audioPath: string
-    audioUrl: string
+    transcript?: string | null
+    type: $Enums.RecordingType
     createdAt?: Date | string
   }
 
   export type RecordingUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     audioPath?: StringFieldUpdateOperationsInput | string
-    audioUrl?: StringFieldUpdateOperationsInput | string
+    transcript?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumRecordingTypeFieldUpdateOperationsInput | $Enums.RecordingType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RecordingUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     audioPath?: StringFieldUpdateOperationsInput | string
-    audioUrl?: StringFieldUpdateOperationsInput | string
+    transcript?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumRecordingTypeFieldUpdateOperationsInput | $Enums.RecordingType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type room_dataCreateInput = {
     patient_note: string
     is_approved?: number
-    recording?: RecordingCreateNestedOneWithoutRoomDataInput
-    pdf?: PdfFileCreateNestedOneWithoutRoomDataInput
+    session: demo_sessionCreateNestedOneWithoutRoomDataInput
+    roomRecording?: RecordingCreateNestedOneWithoutRoomDataAsRoomInput
+    noteRecording?: RecordingCreateNestedOneWithoutRoomDataAsNoteInput
     bed_info: bed_infoCreateNestedOneWithoutRoom_dataInput
   }
 
@@ -17272,15 +17446,17 @@ export namespace Prisma {
     bed_id: number
     patient_note: string
     is_approved?: number
-    recording_id?: string | null
-    pdf_id?: string | null
+    sessionId: string
+    roomRecordingId?: string | null
+    noteRecordingId?: string | null
   }
 
   export type room_dataUpdateInput = {
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    recording?: RecordingUpdateOneWithoutRoomDataNestedInput
-    pdf?: PdfFileUpdateOneWithoutRoomDataNestedInput
+    session?: demo_sessionUpdateOneRequiredWithoutRoomDataNestedInput
+    roomRecording?: RecordingUpdateOneWithoutRoomDataAsRoomNestedInput
+    noteRecording?: RecordingUpdateOneWithoutRoomDataAsNoteNestedInput
     bed_info?: bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput
   }
 
@@ -17289,8 +17465,9 @@ export namespace Prisma {
     bed_id?: IntFieldUpdateOperationsInput | number
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    recording_id?: NullableStringFieldUpdateOperationsInput | string | null
-    pdf_id?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: StringFieldUpdateOperationsInput | string
+    roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+    noteRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type room_dataCreateManyInput = {
@@ -17298,8 +17475,9 @@ export namespace Prisma {
     bed_id: number
     patient_note: string
     is_approved?: number
-    recording_id?: string | null
-    pdf_id?: string | null
+    sessionId: string
+    roomRecordingId?: string | null
+    noteRecordingId?: string | null
   }
 
   export type room_dataUpdateManyMutationInput = {
@@ -17312,8 +17490,9 @@ export namespace Prisma {
     bed_id?: IntFieldUpdateOperationsInput | number
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    recording_id?: NullableStringFieldUpdateOperationsInput | string | null
-    pdf_id?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: StringFieldUpdateOperationsInput | string
+    roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+    noteRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type room_registerCreateInput = {
@@ -17501,6 +17680,8 @@ export namespace Prisma {
     session_id?: string
     created_at?: Date | string
     expires_at: Date | string
+    roomData?: room_dataCreateNestedManyWithoutSessionInput
+    exportPdf?: PdfFileCreateNestedOneWithoutSessionInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutDemo_sessionInput
   }
 
@@ -17509,12 +17690,16 @@ export namespace Prisma {
     created_at?: Date | string
     expires_at: Date | string
     center_id: number
+    roomData?: room_dataUncheckedCreateNestedManyWithoutSessionInput
+    exportPdf?: PdfFileUncheckedCreateNestedOneWithoutSessionInput
   }
 
   export type demo_sessionUpdateInput = {
     session_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomData?: room_dataUpdateManyWithoutSessionNestedInput
+    exportPdf?: PdfFileUpdateOneWithoutSessionNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutDemo_sessionNestedInput
   }
 
@@ -17523,6 +17708,8 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
     center_id?: IntFieldUpdateOperationsInput | number
+    roomData?: room_dataUncheckedUpdateManyWithoutSessionNestedInput
+    exportPdf?: PdfFileUncheckedUpdateOneWithoutSessionNestedInput
   }
 
   export type demo_sessionCreateManyInput = {
@@ -18033,56 +18220,76 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
+  export type Demo_sessionScalarRelationFilter = {
+    is?: demo_sessionWhereInput
+    isNot?: demo_sessionWhereInput
+  }
+
   export type PdfFileCountOrderByAggregateInput = {
     id?: SortOrder
     filePath?: SortOrder
-    fileUrl?: SortOrder
     createdAt?: SortOrder
+    sessionId?: SortOrder
   }
 
   export type PdfFileMaxOrderByAggregateInput = {
     id?: SortOrder
     filePath?: SortOrder
-    fileUrl?: SortOrder
     createdAt?: SortOrder
+    sessionId?: SortOrder
   }
 
   export type PdfFileMinOrderByAggregateInput = {
     id?: SortOrder
     filePath?: SortOrder
-    fileUrl?: SortOrder
     createdAt?: SortOrder
+    sessionId?: SortOrder
+  }
+
+  export type EnumRecordingTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.RecordingType | EnumRecordingTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.RecordingType[] | ListEnumRecordingTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RecordingType[] | ListEnumRecordingTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumRecordingTypeFilter<$PrismaModel> | $Enums.RecordingType
   }
 
   export type RecordingCountOrderByAggregateInput = {
     id?: SortOrder
     audioPath?: SortOrder
-    audioUrl?: SortOrder
+    transcript?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
   }
 
   export type RecordingMaxOrderByAggregateInput = {
     id?: SortOrder
     audioPath?: SortOrder
-    audioUrl?: SortOrder
+    transcript?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
   }
 
   export type RecordingMinOrderByAggregateInput = {
     id?: SortOrder
     audioPath?: SortOrder
-    audioUrl?: SortOrder
+    transcript?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type EnumRecordingTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RecordingType | EnumRecordingTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.RecordingType[] | ListEnumRecordingTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RecordingType[] | ListEnumRecordingTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumRecordingTypeWithAggregatesFilter<$PrismaModel> | $Enums.RecordingType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRecordingTypeFilter<$PrismaModel>
+    _max?: NestedEnumRecordingTypeFilter<$PrismaModel>
   }
 
   export type RecordingNullableScalarRelationFilter = {
     is?: RecordingWhereInput | null
     isNot?: RecordingWhereInput | null
-  }
-
-  export type PdfFileNullableScalarRelationFilter = {
-    is?: PdfFileWhereInput | null
-    isNot?: PdfFileWhereInput | null
   }
 
   export type Bed_infoScalarRelationFilter = {
@@ -18095,8 +18302,9 @@ export namespace Prisma {
     bed_id?: SortOrder
     patient_note?: SortOrder
     is_approved?: SortOrder
-    recording_id?: SortOrder
-    pdf_id?: SortOrder
+    sessionId?: SortOrder
+    roomRecordingId?: SortOrder
+    noteRecordingId?: SortOrder
   }
 
   export type room_dataAvgOrderByAggregateInput = {
@@ -18110,8 +18318,9 @@ export namespace Prisma {
     bed_id?: SortOrder
     patient_note?: SortOrder
     is_approved?: SortOrder
-    recording_id?: SortOrder
-    pdf_id?: SortOrder
+    sessionId?: SortOrder
+    roomRecordingId?: SortOrder
+    noteRecordingId?: SortOrder
   }
 
   export type room_dataMinOrderByAggregateInput = {
@@ -18119,8 +18328,9 @@ export namespace Prisma {
     bed_id?: SortOrder
     patient_note?: SortOrder
     is_approved?: SortOrder
-    recording_id?: SortOrder
-    pdf_id?: SortOrder
+    sessionId?: SortOrder
+    roomRecordingId?: SortOrder
+    noteRecordingId?: SortOrder
   }
 
   export type room_dataSumOrderByAggregateInput = {
@@ -18255,6 +18465,11 @@ export namespace Prisma {
   export type user_uploadsSumOrderByAggregateInput = {
     user_id?: SortOrder
     center_id?: SortOrder
+  }
+
+  export type PdfFileNullableScalarRelationFilter = {
+    is?: PdfFileWhereInput | null
+    isNot?: PdfFileWhereInput | null
   }
 
   export type demo_sessionCountOrderByAggregateInput = {
@@ -18904,100 +19119,124 @@ export namespace Prisma {
     deleteMany?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
   }
 
-  export type room_dataCreateNestedManyWithoutPdfInput = {
-    create?: XOR<room_dataCreateWithoutPdfInput, room_dataUncheckedCreateWithoutPdfInput> | room_dataCreateWithoutPdfInput[] | room_dataUncheckedCreateWithoutPdfInput[]
-    connectOrCreate?: room_dataCreateOrConnectWithoutPdfInput | room_dataCreateOrConnectWithoutPdfInput[]
-    createMany?: room_dataCreateManyPdfInputEnvelope
+  export type demo_sessionCreateNestedOneWithoutExportPdfInput = {
+    create?: XOR<demo_sessionCreateWithoutExportPdfInput, demo_sessionUncheckedCreateWithoutExportPdfInput>
+    connectOrCreate?: demo_sessionCreateOrConnectWithoutExportPdfInput
+    connect?: demo_sessionWhereUniqueInput
+  }
+
+  export type demo_sessionUpdateOneRequiredWithoutExportPdfNestedInput = {
+    create?: XOR<demo_sessionCreateWithoutExportPdfInput, demo_sessionUncheckedCreateWithoutExportPdfInput>
+    connectOrCreate?: demo_sessionCreateOrConnectWithoutExportPdfInput
+    upsert?: demo_sessionUpsertWithoutExportPdfInput
+    connect?: demo_sessionWhereUniqueInput
+    update?: XOR<XOR<demo_sessionUpdateToOneWithWhereWithoutExportPdfInput, demo_sessionUpdateWithoutExportPdfInput>, demo_sessionUncheckedUpdateWithoutExportPdfInput>
+  }
+
+  export type room_dataCreateNestedManyWithoutRoomRecordingInput = {
+    create?: XOR<room_dataCreateWithoutRoomRecordingInput, room_dataUncheckedCreateWithoutRoomRecordingInput> | room_dataCreateWithoutRoomRecordingInput[] | room_dataUncheckedCreateWithoutRoomRecordingInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutRoomRecordingInput | room_dataCreateOrConnectWithoutRoomRecordingInput[]
+    createMany?: room_dataCreateManyRoomRecordingInputEnvelope
     connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
   }
 
-  export type room_dataUncheckedCreateNestedManyWithoutPdfInput = {
-    create?: XOR<room_dataCreateWithoutPdfInput, room_dataUncheckedCreateWithoutPdfInput> | room_dataCreateWithoutPdfInput[] | room_dataUncheckedCreateWithoutPdfInput[]
-    connectOrCreate?: room_dataCreateOrConnectWithoutPdfInput | room_dataCreateOrConnectWithoutPdfInput[]
-    createMany?: room_dataCreateManyPdfInputEnvelope
+  export type room_dataCreateNestedManyWithoutNoteRecordingInput = {
+    create?: XOR<room_dataCreateWithoutNoteRecordingInput, room_dataUncheckedCreateWithoutNoteRecordingInput> | room_dataCreateWithoutNoteRecordingInput[] | room_dataUncheckedCreateWithoutNoteRecordingInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutNoteRecordingInput | room_dataCreateOrConnectWithoutNoteRecordingInput[]
+    createMany?: room_dataCreateManyNoteRecordingInputEnvelope
     connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
   }
 
-  export type room_dataUpdateManyWithoutPdfNestedInput = {
-    create?: XOR<room_dataCreateWithoutPdfInput, room_dataUncheckedCreateWithoutPdfInput> | room_dataCreateWithoutPdfInput[] | room_dataUncheckedCreateWithoutPdfInput[]
-    connectOrCreate?: room_dataCreateOrConnectWithoutPdfInput | room_dataCreateOrConnectWithoutPdfInput[]
-    upsert?: room_dataUpsertWithWhereUniqueWithoutPdfInput | room_dataUpsertWithWhereUniqueWithoutPdfInput[]
-    createMany?: room_dataCreateManyPdfInputEnvelope
+  export type room_dataUncheckedCreateNestedManyWithoutRoomRecordingInput = {
+    create?: XOR<room_dataCreateWithoutRoomRecordingInput, room_dataUncheckedCreateWithoutRoomRecordingInput> | room_dataCreateWithoutRoomRecordingInput[] | room_dataUncheckedCreateWithoutRoomRecordingInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutRoomRecordingInput | room_dataCreateOrConnectWithoutRoomRecordingInput[]
+    createMany?: room_dataCreateManyRoomRecordingInputEnvelope
+    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+  }
+
+  export type room_dataUncheckedCreateNestedManyWithoutNoteRecordingInput = {
+    create?: XOR<room_dataCreateWithoutNoteRecordingInput, room_dataUncheckedCreateWithoutNoteRecordingInput> | room_dataCreateWithoutNoteRecordingInput[] | room_dataUncheckedCreateWithoutNoteRecordingInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutNoteRecordingInput | room_dataCreateOrConnectWithoutNoteRecordingInput[]
+    createMany?: room_dataCreateManyNoteRecordingInputEnvelope
+    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+  }
+
+  export type EnumRecordingTypeFieldUpdateOperationsInput = {
+    set?: $Enums.RecordingType
+  }
+
+  export type room_dataUpdateManyWithoutRoomRecordingNestedInput = {
+    create?: XOR<room_dataCreateWithoutRoomRecordingInput, room_dataUncheckedCreateWithoutRoomRecordingInput> | room_dataCreateWithoutRoomRecordingInput[] | room_dataUncheckedCreateWithoutRoomRecordingInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutRoomRecordingInput | room_dataCreateOrConnectWithoutRoomRecordingInput[]
+    upsert?: room_dataUpsertWithWhereUniqueWithoutRoomRecordingInput | room_dataUpsertWithWhereUniqueWithoutRoomRecordingInput[]
+    createMany?: room_dataCreateManyRoomRecordingInputEnvelope
     set?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
     disconnect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
     delete?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
     connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
-    update?: room_dataUpdateWithWhereUniqueWithoutPdfInput | room_dataUpdateWithWhereUniqueWithoutPdfInput[]
-    updateMany?: room_dataUpdateManyWithWhereWithoutPdfInput | room_dataUpdateManyWithWhereWithoutPdfInput[]
+    update?: room_dataUpdateWithWhereUniqueWithoutRoomRecordingInput | room_dataUpdateWithWhereUniqueWithoutRoomRecordingInput[]
+    updateMany?: room_dataUpdateManyWithWhereWithoutRoomRecordingInput | room_dataUpdateManyWithWhereWithoutRoomRecordingInput[]
     deleteMany?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
   }
 
-  export type room_dataUncheckedUpdateManyWithoutPdfNestedInput = {
-    create?: XOR<room_dataCreateWithoutPdfInput, room_dataUncheckedCreateWithoutPdfInput> | room_dataCreateWithoutPdfInput[] | room_dataUncheckedCreateWithoutPdfInput[]
-    connectOrCreate?: room_dataCreateOrConnectWithoutPdfInput | room_dataCreateOrConnectWithoutPdfInput[]
-    upsert?: room_dataUpsertWithWhereUniqueWithoutPdfInput | room_dataUpsertWithWhereUniqueWithoutPdfInput[]
-    createMany?: room_dataCreateManyPdfInputEnvelope
+  export type room_dataUpdateManyWithoutNoteRecordingNestedInput = {
+    create?: XOR<room_dataCreateWithoutNoteRecordingInput, room_dataUncheckedCreateWithoutNoteRecordingInput> | room_dataCreateWithoutNoteRecordingInput[] | room_dataUncheckedCreateWithoutNoteRecordingInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutNoteRecordingInput | room_dataCreateOrConnectWithoutNoteRecordingInput[]
+    upsert?: room_dataUpsertWithWhereUniqueWithoutNoteRecordingInput | room_dataUpsertWithWhereUniqueWithoutNoteRecordingInput[]
+    createMany?: room_dataCreateManyNoteRecordingInputEnvelope
     set?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
     disconnect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
     delete?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
     connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
-    update?: room_dataUpdateWithWhereUniqueWithoutPdfInput | room_dataUpdateWithWhereUniqueWithoutPdfInput[]
-    updateMany?: room_dataUpdateManyWithWhereWithoutPdfInput | room_dataUpdateManyWithWhereWithoutPdfInput[]
+    update?: room_dataUpdateWithWhereUniqueWithoutNoteRecordingInput | room_dataUpdateWithWhereUniqueWithoutNoteRecordingInput[]
+    updateMany?: room_dataUpdateManyWithWhereWithoutNoteRecordingInput | room_dataUpdateManyWithWhereWithoutNoteRecordingInput[]
     deleteMany?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
   }
 
-  export type room_dataCreateNestedManyWithoutRecordingInput = {
-    create?: XOR<room_dataCreateWithoutRecordingInput, room_dataUncheckedCreateWithoutRecordingInput> | room_dataCreateWithoutRecordingInput[] | room_dataUncheckedCreateWithoutRecordingInput[]
-    connectOrCreate?: room_dataCreateOrConnectWithoutRecordingInput | room_dataCreateOrConnectWithoutRecordingInput[]
-    createMany?: room_dataCreateManyRecordingInputEnvelope
-    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
-  }
-
-  export type room_dataUncheckedCreateNestedManyWithoutRecordingInput = {
-    create?: XOR<room_dataCreateWithoutRecordingInput, room_dataUncheckedCreateWithoutRecordingInput> | room_dataCreateWithoutRecordingInput[] | room_dataUncheckedCreateWithoutRecordingInput[]
-    connectOrCreate?: room_dataCreateOrConnectWithoutRecordingInput | room_dataCreateOrConnectWithoutRecordingInput[]
-    createMany?: room_dataCreateManyRecordingInputEnvelope
-    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
-  }
-
-  export type room_dataUpdateManyWithoutRecordingNestedInput = {
-    create?: XOR<room_dataCreateWithoutRecordingInput, room_dataUncheckedCreateWithoutRecordingInput> | room_dataCreateWithoutRecordingInput[] | room_dataUncheckedCreateWithoutRecordingInput[]
-    connectOrCreate?: room_dataCreateOrConnectWithoutRecordingInput | room_dataCreateOrConnectWithoutRecordingInput[]
-    upsert?: room_dataUpsertWithWhereUniqueWithoutRecordingInput | room_dataUpsertWithWhereUniqueWithoutRecordingInput[]
-    createMany?: room_dataCreateManyRecordingInputEnvelope
+  export type room_dataUncheckedUpdateManyWithoutRoomRecordingNestedInput = {
+    create?: XOR<room_dataCreateWithoutRoomRecordingInput, room_dataUncheckedCreateWithoutRoomRecordingInput> | room_dataCreateWithoutRoomRecordingInput[] | room_dataUncheckedCreateWithoutRoomRecordingInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutRoomRecordingInput | room_dataCreateOrConnectWithoutRoomRecordingInput[]
+    upsert?: room_dataUpsertWithWhereUniqueWithoutRoomRecordingInput | room_dataUpsertWithWhereUniqueWithoutRoomRecordingInput[]
+    createMany?: room_dataCreateManyRoomRecordingInputEnvelope
     set?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
     disconnect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
     delete?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
     connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
-    update?: room_dataUpdateWithWhereUniqueWithoutRecordingInput | room_dataUpdateWithWhereUniqueWithoutRecordingInput[]
-    updateMany?: room_dataUpdateManyWithWhereWithoutRecordingInput | room_dataUpdateManyWithWhereWithoutRecordingInput[]
+    update?: room_dataUpdateWithWhereUniqueWithoutRoomRecordingInput | room_dataUpdateWithWhereUniqueWithoutRoomRecordingInput[]
+    updateMany?: room_dataUpdateManyWithWhereWithoutRoomRecordingInput | room_dataUpdateManyWithWhereWithoutRoomRecordingInput[]
     deleteMany?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
   }
 
-  export type room_dataUncheckedUpdateManyWithoutRecordingNestedInput = {
-    create?: XOR<room_dataCreateWithoutRecordingInput, room_dataUncheckedCreateWithoutRecordingInput> | room_dataCreateWithoutRecordingInput[] | room_dataUncheckedCreateWithoutRecordingInput[]
-    connectOrCreate?: room_dataCreateOrConnectWithoutRecordingInput | room_dataCreateOrConnectWithoutRecordingInput[]
-    upsert?: room_dataUpsertWithWhereUniqueWithoutRecordingInput | room_dataUpsertWithWhereUniqueWithoutRecordingInput[]
-    createMany?: room_dataCreateManyRecordingInputEnvelope
+  export type room_dataUncheckedUpdateManyWithoutNoteRecordingNestedInput = {
+    create?: XOR<room_dataCreateWithoutNoteRecordingInput, room_dataUncheckedCreateWithoutNoteRecordingInput> | room_dataCreateWithoutNoteRecordingInput[] | room_dataUncheckedCreateWithoutNoteRecordingInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutNoteRecordingInput | room_dataCreateOrConnectWithoutNoteRecordingInput[]
+    upsert?: room_dataUpsertWithWhereUniqueWithoutNoteRecordingInput | room_dataUpsertWithWhereUniqueWithoutNoteRecordingInput[]
+    createMany?: room_dataCreateManyNoteRecordingInputEnvelope
     set?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
     disconnect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
     delete?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
     connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
-    update?: room_dataUpdateWithWhereUniqueWithoutRecordingInput | room_dataUpdateWithWhereUniqueWithoutRecordingInput[]
-    updateMany?: room_dataUpdateManyWithWhereWithoutRecordingInput | room_dataUpdateManyWithWhereWithoutRecordingInput[]
+    update?: room_dataUpdateWithWhereUniqueWithoutNoteRecordingInput | room_dataUpdateWithWhereUniqueWithoutNoteRecordingInput[]
+    updateMany?: room_dataUpdateManyWithWhereWithoutNoteRecordingInput | room_dataUpdateManyWithWhereWithoutNoteRecordingInput[]
     deleteMany?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
   }
 
-  export type RecordingCreateNestedOneWithoutRoomDataInput = {
-    create?: XOR<RecordingCreateWithoutRoomDataInput, RecordingUncheckedCreateWithoutRoomDataInput>
-    connectOrCreate?: RecordingCreateOrConnectWithoutRoomDataInput
+  export type demo_sessionCreateNestedOneWithoutRoomDataInput = {
+    create?: XOR<demo_sessionCreateWithoutRoomDataInput, demo_sessionUncheckedCreateWithoutRoomDataInput>
+    connectOrCreate?: demo_sessionCreateOrConnectWithoutRoomDataInput
+    connect?: demo_sessionWhereUniqueInput
+  }
+
+  export type RecordingCreateNestedOneWithoutRoomDataAsRoomInput = {
+    create?: XOR<RecordingCreateWithoutRoomDataAsRoomInput, RecordingUncheckedCreateWithoutRoomDataAsRoomInput>
+    connectOrCreate?: RecordingCreateOrConnectWithoutRoomDataAsRoomInput
     connect?: RecordingWhereUniqueInput
   }
 
-  export type PdfFileCreateNestedOneWithoutRoomDataInput = {
-    create?: XOR<PdfFileCreateWithoutRoomDataInput, PdfFileUncheckedCreateWithoutRoomDataInput>
-    connectOrCreate?: PdfFileCreateOrConnectWithoutRoomDataInput
-    connect?: PdfFileWhereUniqueInput
+  export type RecordingCreateNestedOneWithoutRoomDataAsNoteInput = {
+    create?: XOR<RecordingCreateWithoutRoomDataAsNoteInput, RecordingUncheckedCreateWithoutRoomDataAsNoteInput>
+    connectOrCreate?: RecordingCreateOrConnectWithoutRoomDataAsNoteInput
+    connect?: RecordingWhereUniqueInput
   }
 
   export type bed_infoCreateNestedOneWithoutRoom_dataInput = {
@@ -19006,24 +19245,32 @@ export namespace Prisma {
     connect?: bed_infoWhereUniqueInput
   }
 
-  export type RecordingUpdateOneWithoutRoomDataNestedInput = {
-    create?: XOR<RecordingCreateWithoutRoomDataInput, RecordingUncheckedCreateWithoutRoomDataInput>
-    connectOrCreate?: RecordingCreateOrConnectWithoutRoomDataInput
-    upsert?: RecordingUpsertWithoutRoomDataInput
+  export type demo_sessionUpdateOneRequiredWithoutRoomDataNestedInput = {
+    create?: XOR<demo_sessionCreateWithoutRoomDataInput, demo_sessionUncheckedCreateWithoutRoomDataInput>
+    connectOrCreate?: demo_sessionCreateOrConnectWithoutRoomDataInput
+    upsert?: demo_sessionUpsertWithoutRoomDataInput
+    connect?: demo_sessionWhereUniqueInput
+    update?: XOR<XOR<demo_sessionUpdateToOneWithWhereWithoutRoomDataInput, demo_sessionUpdateWithoutRoomDataInput>, demo_sessionUncheckedUpdateWithoutRoomDataInput>
+  }
+
+  export type RecordingUpdateOneWithoutRoomDataAsRoomNestedInput = {
+    create?: XOR<RecordingCreateWithoutRoomDataAsRoomInput, RecordingUncheckedCreateWithoutRoomDataAsRoomInput>
+    connectOrCreate?: RecordingCreateOrConnectWithoutRoomDataAsRoomInput
+    upsert?: RecordingUpsertWithoutRoomDataAsRoomInput
     disconnect?: RecordingWhereInput | boolean
     delete?: RecordingWhereInput | boolean
     connect?: RecordingWhereUniqueInput
-    update?: XOR<XOR<RecordingUpdateToOneWithWhereWithoutRoomDataInput, RecordingUpdateWithoutRoomDataInput>, RecordingUncheckedUpdateWithoutRoomDataInput>
+    update?: XOR<XOR<RecordingUpdateToOneWithWhereWithoutRoomDataAsRoomInput, RecordingUpdateWithoutRoomDataAsRoomInput>, RecordingUncheckedUpdateWithoutRoomDataAsRoomInput>
   }
 
-  export type PdfFileUpdateOneWithoutRoomDataNestedInput = {
-    create?: XOR<PdfFileCreateWithoutRoomDataInput, PdfFileUncheckedCreateWithoutRoomDataInput>
-    connectOrCreate?: PdfFileCreateOrConnectWithoutRoomDataInput
-    upsert?: PdfFileUpsertWithoutRoomDataInput
-    disconnect?: PdfFileWhereInput | boolean
-    delete?: PdfFileWhereInput | boolean
-    connect?: PdfFileWhereUniqueInput
-    update?: XOR<XOR<PdfFileUpdateToOneWithWhereWithoutRoomDataInput, PdfFileUpdateWithoutRoomDataInput>, PdfFileUncheckedUpdateWithoutRoomDataInput>
+  export type RecordingUpdateOneWithoutRoomDataAsNoteNestedInput = {
+    create?: XOR<RecordingCreateWithoutRoomDataAsNoteInput, RecordingUncheckedCreateWithoutRoomDataAsNoteInput>
+    connectOrCreate?: RecordingCreateOrConnectWithoutRoomDataAsNoteInput
+    upsert?: RecordingUpsertWithoutRoomDataAsNoteInput
+    disconnect?: RecordingWhereInput | boolean
+    delete?: RecordingWhereInput | boolean
+    connect?: RecordingWhereUniqueInput
+    update?: XOR<XOR<RecordingUpdateToOneWithWhereWithoutRoomDataAsNoteInput, RecordingUpdateWithoutRoomDataAsNoteInput>, RecordingUncheckedUpdateWithoutRoomDataAsNoteInput>
   }
 
   export type bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput = {
@@ -19202,10 +19449,60 @@ export namespace Prisma {
     update?: XOR<XOR<user_infoUpdateToOneWithWhereWithoutUser_uploadsInput, user_infoUpdateWithoutUser_uploadsInput>, user_infoUncheckedUpdateWithoutUser_uploadsInput>
   }
 
+  export type room_dataCreateNestedManyWithoutSessionInput = {
+    create?: XOR<room_dataCreateWithoutSessionInput, room_dataUncheckedCreateWithoutSessionInput> | room_dataCreateWithoutSessionInput[] | room_dataUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutSessionInput | room_dataCreateOrConnectWithoutSessionInput[]
+    createMany?: room_dataCreateManySessionInputEnvelope
+    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+  }
+
+  export type PdfFileCreateNestedOneWithoutSessionInput = {
+    create?: XOR<PdfFileCreateWithoutSessionInput, PdfFileUncheckedCreateWithoutSessionInput>
+    connectOrCreate?: PdfFileCreateOrConnectWithoutSessionInput
+    connect?: PdfFileWhereUniqueInput
+  }
+
   export type medicalcenter_infoCreateNestedOneWithoutDemo_sessionInput = {
     create?: XOR<medicalcenter_infoCreateWithoutDemo_sessionInput, medicalcenter_infoUncheckedCreateWithoutDemo_sessionInput>
     connectOrCreate?: medicalcenter_infoCreateOrConnectWithoutDemo_sessionInput
     connect?: medicalcenter_infoWhereUniqueInput
+  }
+
+  export type room_dataUncheckedCreateNestedManyWithoutSessionInput = {
+    create?: XOR<room_dataCreateWithoutSessionInput, room_dataUncheckedCreateWithoutSessionInput> | room_dataCreateWithoutSessionInput[] | room_dataUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutSessionInput | room_dataCreateOrConnectWithoutSessionInput[]
+    createMany?: room_dataCreateManySessionInputEnvelope
+    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+  }
+
+  export type PdfFileUncheckedCreateNestedOneWithoutSessionInput = {
+    create?: XOR<PdfFileCreateWithoutSessionInput, PdfFileUncheckedCreateWithoutSessionInput>
+    connectOrCreate?: PdfFileCreateOrConnectWithoutSessionInput
+    connect?: PdfFileWhereUniqueInput
+  }
+
+  export type room_dataUpdateManyWithoutSessionNestedInput = {
+    create?: XOR<room_dataCreateWithoutSessionInput, room_dataUncheckedCreateWithoutSessionInput> | room_dataCreateWithoutSessionInput[] | room_dataUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutSessionInput | room_dataCreateOrConnectWithoutSessionInput[]
+    upsert?: room_dataUpsertWithWhereUniqueWithoutSessionInput | room_dataUpsertWithWhereUniqueWithoutSessionInput[]
+    createMany?: room_dataCreateManySessionInputEnvelope
+    set?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    disconnect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    delete?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    update?: room_dataUpdateWithWhereUniqueWithoutSessionInput | room_dataUpdateWithWhereUniqueWithoutSessionInput[]
+    updateMany?: room_dataUpdateManyWithWhereWithoutSessionInput | room_dataUpdateManyWithWhereWithoutSessionInput[]
+    deleteMany?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
+  }
+
+  export type PdfFileUpdateOneWithoutSessionNestedInput = {
+    create?: XOR<PdfFileCreateWithoutSessionInput, PdfFileUncheckedCreateWithoutSessionInput>
+    connectOrCreate?: PdfFileCreateOrConnectWithoutSessionInput
+    upsert?: PdfFileUpsertWithoutSessionInput
+    disconnect?: PdfFileWhereInput | boolean
+    delete?: PdfFileWhereInput | boolean
+    connect?: PdfFileWhereUniqueInput
+    update?: XOR<XOR<PdfFileUpdateToOneWithWhereWithoutSessionInput, PdfFileUpdateWithoutSessionInput>, PdfFileUncheckedUpdateWithoutSessionInput>
   }
 
   export type medicalcenter_infoUpdateOneRequiredWithoutDemo_sessionNestedInput = {
@@ -19214,6 +19511,30 @@ export namespace Prisma {
     upsert?: medicalcenter_infoUpsertWithoutDemo_sessionInput
     connect?: medicalcenter_infoWhereUniqueInput
     update?: XOR<XOR<medicalcenter_infoUpdateToOneWithWhereWithoutDemo_sessionInput, medicalcenter_infoUpdateWithoutDemo_sessionInput>, medicalcenter_infoUncheckedUpdateWithoutDemo_sessionInput>
+  }
+
+  export type room_dataUncheckedUpdateManyWithoutSessionNestedInput = {
+    create?: XOR<room_dataCreateWithoutSessionInput, room_dataUncheckedCreateWithoutSessionInput> | room_dataCreateWithoutSessionInput[] | room_dataUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: room_dataCreateOrConnectWithoutSessionInput | room_dataCreateOrConnectWithoutSessionInput[]
+    upsert?: room_dataUpsertWithWhereUniqueWithoutSessionInput | room_dataUpsertWithWhereUniqueWithoutSessionInput[]
+    createMany?: room_dataCreateManySessionInputEnvelope
+    set?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    disconnect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    delete?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
+    update?: room_dataUpdateWithWhereUniqueWithoutSessionInput | room_dataUpdateWithWhereUniqueWithoutSessionInput[]
+    updateMany?: room_dataUpdateManyWithWhereWithoutSessionInput | room_dataUpdateManyWithWhereWithoutSessionInput[]
+    deleteMany?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
+  }
+
+  export type PdfFileUncheckedUpdateOneWithoutSessionNestedInput = {
+    create?: XOR<PdfFileCreateWithoutSessionInput, PdfFileUncheckedCreateWithoutSessionInput>
+    connectOrCreate?: PdfFileCreateOrConnectWithoutSessionInput
+    upsert?: PdfFileUpsertWithoutSessionInput
+    disconnect?: PdfFileWhereInput | boolean
+    delete?: PdfFileWhereInput | boolean
+    connect?: PdfFileWhereUniqueInput
+    update?: XOR<XOR<PdfFileUpdateToOneWithWhereWithoutSessionInput, PdfFileUpdateWithoutSessionInput>, PdfFileUncheckedUpdateWithoutSessionInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -19417,16 +19738,37 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumRecordingTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.RecordingType | EnumRecordingTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.RecordingType[] | ListEnumRecordingTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RecordingType[] | ListEnumRecordingTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumRecordingTypeFilter<$PrismaModel> | $Enums.RecordingType
+  }
+
+  export type NestedEnumRecordingTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RecordingType | EnumRecordingTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.RecordingType[] | ListEnumRecordingTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RecordingType[] | ListEnumRecordingTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumRecordingTypeWithAggregatesFilter<$PrismaModel> | $Enums.RecordingType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRecordingTypeFilter<$PrismaModel>
+    _max?: NestedEnumRecordingTypeFilter<$PrismaModel>
+  }
+
   export type demo_sessionCreateWithoutMedicalcenter_infoInput = {
     session_id?: string
     created_at?: Date | string
     expires_at: Date | string
+    roomData?: room_dataCreateNestedManyWithoutSessionInput
+    exportPdf?: PdfFileCreateNestedOneWithoutSessionInput
   }
 
   export type demo_sessionUncheckedCreateWithoutMedicalcenter_infoInput = {
     session_id?: string
     created_at?: Date | string
     expires_at: Date | string
+    roomData?: room_dataUncheckedCreateNestedManyWithoutSessionInput
+    exportPdf?: PdfFileUncheckedCreateNestedOneWithoutSessionInput
   }
 
   export type demo_sessionCreateOrConnectWithoutMedicalcenter_infoInput = {
@@ -19586,12 +19928,16 @@ export namespace Prisma {
     session_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomData?: room_dataUpdateManyWithoutSessionNestedInput
+    exportPdf?: PdfFileUpdateOneWithoutSessionNestedInput
   }
 
   export type demo_sessionUncheckedUpdateWithoutMedicalcenter_infoInput = {
     session_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomData?: room_dataUncheckedUpdateManyWithoutSessionNestedInput
+    exportPdf?: PdfFileUncheckedUpdateOneWithoutSessionNestedInput
   }
 
   export type patient_infoUpsertWithWhereUniqueWithoutMedicalcenter_infoInput = {
@@ -20233,16 +20579,18 @@ export namespace Prisma {
   export type room_dataCreateWithoutBed_infoInput = {
     patient_note: string
     is_approved?: number
-    recording?: RecordingCreateNestedOneWithoutRoomDataInput
-    pdf?: PdfFileCreateNestedOneWithoutRoomDataInput
+    session: demo_sessionCreateNestedOneWithoutRoomDataInput
+    roomRecording?: RecordingCreateNestedOneWithoutRoomDataAsRoomInput
+    noteRecording?: RecordingCreateNestedOneWithoutRoomDataAsNoteInput
   }
 
   export type room_dataUncheckedCreateWithoutBed_infoInput = {
     id?: number
     patient_note: string
     is_approved?: number
-    recording_id?: string | null
-    pdf_id?: string | null
+    sessionId: string
+    roomRecordingId?: string | null
+    noteRecordingId?: string | null
   }
 
   export type room_dataCreateOrConnectWithoutBed_infoInput = {
@@ -20367,128 +20715,210 @@ export namespace Prisma {
     bed_id?: IntFilter<"room_data"> | number
     patient_note?: StringFilter<"room_data"> | string
     is_approved?: IntFilter<"room_data"> | number
-    recording_id?: StringNullableFilter<"room_data"> | string | null
-    pdf_id?: StringNullableFilter<"room_data"> | string | null
+    sessionId?: StringFilter<"room_data"> | string
+    roomRecordingId?: StringNullableFilter<"room_data"> | string | null
+    noteRecordingId?: StringNullableFilter<"room_data"> | string | null
   }
 
-  export type room_dataCreateWithoutPdfInput = {
+  export type demo_sessionCreateWithoutExportPdfInput = {
+    session_id?: string
+    created_at?: Date | string
+    expires_at: Date | string
+    roomData?: room_dataCreateNestedManyWithoutSessionInput
+    medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutDemo_sessionInput
+  }
+
+  export type demo_sessionUncheckedCreateWithoutExportPdfInput = {
+    session_id?: string
+    created_at?: Date | string
+    expires_at: Date | string
+    center_id: number
+    roomData?: room_dataUncheckedCreateNestedManyWithoutSessionInput
+  }
+
+  export type demo_sessionCreateOrConnectWithoutExportPdfInput = {
+    where: demo_sessionWhereUniqueInput
+    create: XOR<demo_sessionCreateWithoutExportPdfInput, demo_sessionUncheckedCreateWithoutExportPdfInput>
+  }
+
+  export type demo_sessionUpsertWithoutExportPdfInput = {
+    update: XOR<demo_sessionUpdateWithoutExportPdfInput, demo_sessionUncheckedUpdateWithoutExportPdfInput>
+    create: XOR<demo_sessionCreateWithoutExportPdfInput, demo_sessionUncheckedCreateWithoutExportPdfInput>
+    where?: demo_sessionWhereInput
+  }
+
+  export type demo_sessionUpdateToOneWithWhereWithoutExportPdfInput = {
+    where?: demo_sessionWhereInput
+    data: XOR<demo_sessionUpdateWithoutExportPdfInput, demo_sessionUncheckedUpdateWithoutExportPdfInput>
+  }
+
+  export type demo_sessionUpdateWithoutExportPdfInput = {
+    session_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomData?: room_dataUpdateManyWithoutSessionNestedInput
+    medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutDemo_sessionNestedInput
+  }
+
+  export type demo_sessionUncheckedUpdateWithoutExportPdfInput = {
+    session_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    center_id?: IntFieldUpdateOperationsInput | number
+    roomData?: room_dataUncheckedUpdateManyWithoutSessionNestedInput
+  }
+
+  export type room_dataCreateWithoutRoomRecordingInput = {
     patient_note: string
     is_approved?: number
-    recording?: RecordingCreateNestedOneWithoutRoomDataInput
+    session: demo_sessionCreateNestedOneWithoutRoomDataInput
+    noteRecording?: RecordingCreateNestedOneWithoutRoomDataAsNoteInput
     bed_info: bed_infoCreateNestedOneWithoutRoom_dataInput
   }
 
-  export type room_dataUncheckedCreateWithoutPdfInput = {
+  export type room_dataUncheckedCreateWithoutRoomRecordingInput = {
     id?: number
     bed_id: number
     patient_note: string
     is_approved?: number
-    recording_id?: string | null
+    sessionId: string
+    noteRecordingId?: string | null
   }
 
-  export type room_dataCreateOrConnectWithoutPdfInput = {
+  export type room_dataCreateOrConnectWithoutRoomRecordingInput = {
     where: room_dataWhereUniqueInput
-    create: XOR<room_dataCreateWithoutPdfInput, room_dataUncheckedCreateWithoutPdfInput>
+    create: XOR<room_dataCreateWithoutRoomRecordingInput, room_dataUncheckedCreateWithoutRoomRecordingInput>
   }
 
-  export type room_dataCreateManyPdfInputEnvelope = {
-    data: room_dataCreateManyPdfInput | room_dataCreateManyPdfInput[]
+  export type room_dataCreateManyRoomRecordingInputEnvelope = {
+    data: room_dataCreateManyRoomRecordingInput | room_dataCreateManyRoomRecordingInput[]
     skipDuplicates?: boolean
   }
 
-  export type room_dataUpsertWithWhereUniqueWithoutPdfInput = {
-    where: room_dataWhereUniqueInput
-    update: XOR<room_dataUpdateWithoutPdfInput, room_dataUncheckedUpdateWithoutPdfInput>
-    create: XOR<room_dataCreateWithoutPdfInput, room_dataUncheckedCreateWithoutPdfInput>
-  }
-
-  export type room_dataUpdateWithWhereUniqueWithoutPdfInput = {
-    where: room_dataWhereUniqueInput
-    data: XOR<room_dataUpdateWithoutPdfInput, room_dataUncheckedUpdateWithoutPdfInput>
-  }
-
-  export type room_dataUpdateManyWithWhereWithoutPdfInput = {
-    where: room_dataScalarWhereInput
-    data: XOR<room_dataUpdateManyMutationInput, room_dataUncheckedUpdateManyWithoutPdfInput>
-  }
-
-  export type room_dataCreateWithoutRecordingInput = {
+  export type room_dataCreateWithoutNoteRecordingInput = {
     patient_note: string
     is_approved?: number
-    pdf?: PdfFileCreateNestedOneWithoutRoomDataInput
+    session: demo_sessionCreateNestedOneWithoutRoomDataInput
+    roomRecording?: RecordingCreateNestedOneWithoutRoomDataAsRoomInput
     bed_info: bed_infoCreateNestedOneWithoutRoom_dataInput
   }
 
-  export type room_dataUncheckedCreateWithoutRecordingInput = {
+  export type room_dataUncheckedCreateWithoutNoteRecordingInput = {
     id?: number
     bed_id: number
     patient_note: string
     is_approved?: number
-    pdf_id?: string | null
+    sessionId: string
+    roomRecordingId?: string | null
   }
 
-  export type room_dataCreateOrConnectWithoutRecordingInput = {
+  export type room_dataCreateOrConnectWithoutNoteRecordingInput = {
     where: room_dataWhereUniqueInput
-    create: XOR<room_dataCreateWithoutRecordingInput, room_dataUncheckedCreateWithoutRecordingInput>
+    create: XOR<room_dataCreateWithoutNoteRecordingInput, room_dataUncheckedCreateWithoutNoteRecordingInput>
   }
 
-  export type room_dataCreateManyRecordingInputEnvelope = {
-    data: room_dataCreateManyRecordingInput | room_dataCreateManyRecordingInput[]
+  export type room_dataCreateManyNoteRecordingInputEnvelope = {
+    data: room_dataCreateManyNoteRecordingInput | room_dataCreateManyNoteRecordingInput[]
     skipDuplicates?: boolean
   }
 
-  export type room_dataUpsertWithWhereUniqueWithoutRecordingInput = {
+  export type room_dataUpsertWithWhereUniqueWithoutRoomRecordingInput = {
     where: room_dataWhereUniqueInput
-    update: XOR<room_dataUpdateWithoutRecordingInput, room_dataUncheckedUpdateWithoutRecordingInput>
-    create: XOR<room_dataCreateWithoutRecordingInput, room_dataUncheckedCreateWithoutRecordingInput>
+    update: XOR<room_dataUpdateWithoutRoomRecordingInput, room_dataUncheckedUpdateWithoutRoomRecordingInput>
+    create: XOR<room_dataCreateWithoutRoomRecordingInput, room_dataUncheckedCreateWithoutRoomRecordingInput>
   }
 
-  export type room_dataUpdateWithWhereUniqueWithoutRecordingInput = {
+  export type room_dataUpdateWithWhereUniqueWithoutRoomRecordingInput = {
     where: room_dataWhereUniqueInput
-    data: XOR<room_dataUpdateWithoutRecordingInput, room_dataUncheckedUpdateWithoutRecordingInput>
+    data: XOR<room_dataUpdateWithoutRoomRecordingInput, room_dataUncheckedUpdateWithoutRoomRecordingInput>
   }
 
-  export type room_dataUpdateManyWithWhereWithoutRecordingInput = {
+  export type room_dataUpdateManyWithWhereWithoutRoomRecordingInput = {
     where: room_dataScalarWhereInput
-    data: XOR<room_dataUpdateManyMutationInput, room_dataUncheckedUpdateManyWithoutRecordingInput>
+    data: XOR<room_dataUpdateManyMutationInput, room_dataUncheckedUpdateManyWithoutRoomRecordingInput>
   }
 
-  export type RecordingCreateWithoutRoomDataInput = {
+  export type room_dataUpsertWithWhereUniqueWithoutNoteRecordingInput = {
+    where: room_dataWhereUniqueInput
+    update: XOR<room_dataUpdateWithoutNoteRecordingInput, room_dataUncheckedUpdateWithoutNoteRecordingInput>
+    create: XOR<room_dataCreateWithoutNoteRecordingInput, room_dataUncheckedCreateWithoutNoteRecordingInput>
+  }
+
+  export type room_dataUpdateWithWhereUniqueWithoutNoteRecordingInput = {
+    where: room_dataWhereUniqueInput
+    data: XOR<room_dataUpdateWithoutNoteRecordingInput, room_dataUncheckedUpdateWithoutNoteRecordingInput>
+  }
+
+  export type room_dataUpdateManyWithWhereWithoutNoteRecordingInput = {
+    where: room_dataScalarWhereInput
+    data: XOR<room_dataUpdateManyMutationInput, room_dataUncheckedUpdateManyWithoutNoteRecordingInput>
+  }
+
+  export type demo_sessionCreateWithoutRoomDataInput = {
+    session_id?: string
+    created_at?: Date | string
+    expires_at: Date | string
+    exportPdf?: PdfFileCreateNestedOneWithoutSessionInput
+    medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutDemo_sessionInput
+  }
+
+  export type demo_sessionUncheckedCreateWithoutRoomDataInput = {
+    session_id?: string
+    created_at?: Date | string
+    expires_at: Date | string
+    center_id: number
+    exportPdf?: PdfFileUncheckedCreateNestedOneWithoutSessionInput
+  }
+
+  export type demo_sessionCreateOrConnectWithoutRoomDataInput = {
+    where: demo_sessionWhereUniqueInput
+    create: XOR<demo_sessionCreateWithoutRoomDataInput, demo_sessionUncheckedCreateWithoutRoomDataInput>
+  }
+
+  export type RecordingCreateWithoutRoomDataAsRoomInput = {
     id?: string
     audioPath: string
-    audioUrl: string
+    transcript?: string | null
+    type: $Enums.RecordingType
     createdAt?: Date | string
+    roomDataAsNote?: room_dataCreateNestedManyWithoutNoteRecordingInput
   }
 
-  export type RecordingUncheckedCreateWithoutRoomDataInput = {
+  export type RecordingUncheckedCreateWithoutRoomDataAsRoomInput = {
     id?: string
     audioPath: string
-    audioUrl: string
+    transcript?: string | null
+    type: $Enums.RecordingType
     createdAt?: Date | string
+    roomDataAsNote?: room_dataUncheckedCreateNestedManyWithoutNoteRecordingInput
   }
 
-  export type RecordingCreateOrConnectWithoutRoomDataInput = {
+  export type RecordingCreateOrConnectWithoutRoomDataAsRoomInput = {
     where: RecordingWhereUniqueInput
-    create: XOR<RecordingCreateWithoutRoomDataInput, RecordingUncheckedCreateWithoutRoomDataInput>
+    create: XOR<RecordingCreateWithoutRoomDataAsRoomInput, RecordingUncheckedCreateWithoutRoomDataAsRoomInput>
   }
 
-  export type PdfFileCreateWithoutRoomDataInput = {
+  export type RecordingCreateWithoutRoomDataAsNoteInput = {
     id?: string
-    filePath: string
-    fileUrl?: string | null
+    audioPath: string
+    transcript?: string | null
+    type: $Enums.RecordingType
     createdAt?: Date | string
+    roomDataAsRoom?: room_dataCreateNestedManyWithoutRoomRecordingInput
   }
 
-  export type PdfFileUncheckedCreateWithoutRoomDataInput = {
+  export type RecordingUncheckedCreateWithoutRoomDataAsNoteInput = {
     id?: string
-    filePath: string
-    fileUrl?: string | null
+    audioPath: string
+    transcript?: string | null
+    type: $Enums.RecordingType
     createdAt?: Date | string
+    roomDataAsRoom?: room_dataUncheckedCreateNestedManyWithoutRoomRecordingInput
   }
 
-  export type PdfFileCreateOrConnectWithoutRoomDataInput = {
-    where: PdfFileWhereUniqueInput
-    create: XOR<PdfFileCreateWithoutRoomDataInput, PdfFileUncheckedCreateWithoutRoomDataInput>
+  export type RecordingCreateOrConnectWithoutRoomDataAsNoteInput = {
+    where: RecordingWhereUniqueInput
+    create: XOR<RecordingCreateWithoutRoomDataAsNoteInput, RecordingUncheckedCreateWithoutRoomDataAsNoteInput>
   }
 
   export type bed_infoCreateWithoutRoom_dataInput = {
@@ -20515,54 +20945,89 @@ export namespace Prisma {
     create: XOR<bed_infoCreateWithoutRoom_dataInput, bed_infoUncheckedCreateWithoutRoom_dataInput>
   }
 
-  export type RecordingUpsertWithoutRoomDataInput = {
-    update: XOR<RecordingUpdateWithoutRoomDataInput, RecordingUncheckedUpdateWithoutRoomDataInput>
-    create: XOR<RecordingCreateWithoutRoomDataInput, RecordingUncheckedCreateWithoutRoomDataInput>
+  export type demo_sessionUpsertWithoutRoomDataInput = {
+    update: XOR<demo_sessionUpdateWithoutRoomDataInput, demo_sessionUncheckedUpdateWithoutRoomDataInput>
+    create: XOR<demo_sessionCreateWithoutRoomDataInput, demo_sessionUncheckedCreateWithoutRoomDataInput>
+    where?: demo_sessionWhereInput
+  }
+
+  export type demo_sessionUpdateToOneWithWhereWithoutRoomDataInput = {
+    where?: demo_sessionWhereInput
+    data: XOR<demo_sessionUpdateWithoutRoomDataInput, demo_sessionUncheckedUpdateWithoutRoomDataInput>
+  }
+
+  export type demo_sessionUpdateWithoutRoomDataInput = {
+    session_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    exportPdf?: PdfFileUpdateOneWithoutSessionNestedInput
+    medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutDemo_sessionNestedInput
+  }
+
+  export type demo_sessionUncheckedUpdateWithoutRoomDataInput = {
+    session_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    center_id?: IntFieldUpdateOperationsInput | number
+    exportPdf?: PdfFileUncheckedUpdateOneWithoutSessionNestedInput
+  }
+
+  export type RecordingUpsertWithoutRoomDataAsRoomInput = {
+    update: XOR<RecordingUpdateWithoutRoomDataAsRoomInput, RecordingUncheckedUpdateWithoutRoomDataAsRoomInput>
+    create: XOR<RecordingCreateWithoutRoomDataAsRoomInput, RecordingUncheckedCreateWithoutRoomDataAsRoomInput>
     where?: RecordingWhereInput
   }
 
-  export type RecordingUpdateToOneWithWhereWithoutRoomDataInput = {
+  export type RecordingUpdateToOneWithWhereWithoutRoomDataAsRoomInput = {
     where?: RecordingWhereInput
-    data: XOR<RecordingUpdateWithoutRoomDataInput, RecordingUncheckedUpdateWithoutRoomDataInput>
+    data: XOR<RecordingUpdateWithoutRoomDataAsRoomInput, RecordingUncheckedUpdateWithoutRoomDataAsRoomInput>
   }
 
-  export type RecordingUpdateWithoutRoomDataInput = {
+  export type RecordingUpdateWithoutRoomDataAsRoomInput = {
     id?: StringFieldUpdateOperationsInput | string
     audioPath?: StringFieldUpdateOperationsInput | string
-    audioUrl?: StringFieldUpdateOperationsInput | string
+    transcript?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumRecordingTypeFieldUpdateOperationsInput | $Enums.RecordingType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomDataAsNote?: room_dataUpdateManyWithoutNoteRecordingNestedInput
   }
 
-  export type RecordingUncheckedUpdateWithoutRoomDataInput = {
+  export type RecordingUncheckedUpdateWithoutRoomDataAsRoomInput = {
     id?: StringFieldUpdateOperationsInput | string
     audioPath?: StringFieldUpdateOperationsInput | string
-    audioUrl?: StringFieldUpdateOperationsInput | string
+    transcript?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumRecordingTypeFieldUpdateOperationsInput | $Enums.RecordingType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomDataAsNote?: room_dataUncheckedUpdateManyWithoutNoteRecordingNestedInput
   }
 
-  export type PdfFileUpsertWithoutRoomDataInput = {
-    update: XOR<PdfFileUpdateWithoutRoomDataInput, PdfFileUncheckedUpdateWithoutRoomDataInput>
-    create: XOR<PdfFileCreateWithoutRoomDataInput, PdfFileUncheckedCreateWithoutRoomDataInput>
-    where?: PdfFileWhereInput
+  export type RecordingUpsertWithoutRoomDataAsNoteInput = {
+    update: XOR<RecordingUpdateWithoutRoomDataAsNoteInput, RecordingUncheckedUpdateWithoutRoomDataAsNoteInput>
+    create: XOR<RecordingCreateWithoutRoomDataAsNoteInput, RecordingUncheckedCreateWithoutRoomDataAsNoteInput>
+    where?: RecordingWhereInput
   }
 
-  export type PdfFileUpdateToOneWithWhereWithoutRoomDataInput = {
-    where?: PdfFileWhereInput
-    data: XOR<PdfFileUpdateWithoutRoomDataInput, PdfFileUncheckedUpdateWithoutRoomDataInput>
+  export type RecordingUpdateToOneWithWhereWithoutRoomDataAsNoteInput = {
+    where?: RecordingWhereInput
+    data: XOR<RecordingUpdateWithoutRoomDataAsNoteInput, RecordingUncheckedUpdateWithoutRoomDataAsNoteInput>
   }
 
-  export type PdfFileUpdateWithoutRoomDataInput = {
+  export type RecordingUpdateWithoutRoomDataAsNoteInput = {
     id?: StringFieldUpdateOperationsInput | string
-    filePath?: StringFieldUpdateOperationsInput | string
-    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    audioPath?: StringFieldUpdateOperationsInput | string
+    transcript?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumRecordingTypeFieldUpdateOperationsInput | $Enums.RecordingType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomDataAsRoom?: room_dataUpdateManyWithoutRoomRecordingNestedInput
   }
 
-  export type PdfFileUncheckedUpdateWithoutRoomDataInput = {
+  export type RecordingUncheckedUpdateWithoutRoomDataAsNoteInput = {
     id?: StringFieldUpdateOperationsInput | string
-    filePath?: StringFieldUpdateOperationsInput | string
-    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    audioPath?: StringFieldUpdateOperationsInput | string
+    transcript?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumRecordingTypeFieldUpdateOperationsInput | $Enums.RecordingType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomDataAsRoom?: room_dataUncheckedUpdateManyWithoutRoomRecordingNestedInput
   }
 
   export type bed_infoUpsertWithoutRoom_dataInput = {
@@ -21038,6 +21503,50 @@ export namespace Prisma {
     bed_info?: bed_infoUncheckedUpdateManyWithoutUser_infoNestedInput
   }
 
+  export type room_dataCreateWithoutSessionInput = {
+    patient_note: string
+    is_approved?: number
+    roomRecording?: RecordingCreateNestedOneWithoutRoomDataAsRoomInput
+    noteRecording?: RecordingCreateNestedOneWithoutRoomDataAsNoteInput
+    bed_info: bed_infoCreateNestedOneWithoutRoom_dataInput
+  }
+
+  export type room_dataUncheckedCreateWithoutSessionInput = {
+    id?: number
+    bed_id: number
+    patient_note: string
+    is_approved?: number
+    roomRecordingId?: string | null
+    noteRecordingId?: string | null
+  }
+
+  export type room_dataCreateOrConnectWithoutSessionInput = {
+    where: room_dataWhereUniqueInput
+    create: XOR<room_dataCreateWithoutSessionInput, room_dataUncheckedCreateWithoutSessionInput>
+  }
+
+  export type room_dataCreateManySessionInputEnvelope = {
+    data: room_dataCreateManySessionInput | room_dataCreateManySessionInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PdfFileCreateWithoutSessionInput = {
+    id?: string
+    filePath: string
+    createdAt?: Date | string
+  }
+
+  export type PdfFileUncheckedCreateWithoutSessionInput = {
+    id?: string
+    filePath: string
+    createdAt?: Date | string
+  }
+
+  export type PdfFileCreateOrConnectWithoutSessionInput = {
+    where: PdfFileWhereUniqueInput
+    create: XOR<PdfFileCreateWithoutSessionInput, PdfFileUncheckedCreateWithoutSessionInput>
+  }
+
   export type medicalcenter_infoCreateWithoutDemo_sessionInput = {
     center_name: string
     address?: string | null
@@ -21066,6 +21575,45 @@ export namespace Prisma {
   export type medicalcenter_infoCreateOrConnectWithoutDemo_sessionInput = {
     where: medicalcenter_infoWhereUniqueInput
     create: XOR<medicalcenter_infoCreateWithoutDemo_sessionInput, medicalcenter_infoUncheckedCreateWithoutDemo_sessionInput>
+  }
+
+  export type room_dataUpsertWithWhereUniqueWithoutSessionInput = {
+    where: room_dataWhereUniqueInput
+    update: XOR<room_dataUpdateWithoutSessionInput, room_dataUncheckedUpdateWithoutSessionInput>
+    create: XOR<room_dataCreateWithoutSessionInput, room_dataUncheckedCreateWithoutSessionInput>
+  }
+
+  export type room_dataUpdateWithWhereUniqueWithoutSessionInput = {
+    where: room_dataWhereUniqueInput
+    data: XOR<room_dataUpdateWithoutSessionInput, room_dataUncheckedUpdateWithoutSessionInput>
+  }
+
+  export type room_dataUpdateManyWithWhereWithoutSessionInput = {
+    where: room_dataScalarWhereInput
+    data: XOR<room_dataUpdateManyMutationInput, room_dataUncheckedUpdateManyWithoutSessionInput>
+  }
+
+  export type PdfFileUpsertWithoutSessionInput = {
+    update: XOR<PdfFileUpdateWithoutSessionInput, PdfFileUncheckedUpdateWithoutSessionInput>
+    create: XOR<PdfFileCreateWithoutSessionInput, PdfFileUncheckedCreateWithoutSessionInput>
+    where?: PdfFileWhereInput
+  }
+
+  export type PdfFileUpdateToOneWithWhereWithoutSessionInput = {
+    where?: PdfFileWhereInput
+    data: XOR<PdfFileUpdateWithoutSessionInput, PdfFileUncheckedUpdateWithoutSessionInput>
+  }
+
+  export type PdfFileUpdateWithoutSessionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PdfFileUncheckedUpdateWithoutSessionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type medicalcenter_infoUpsertWithoutDemo_sessionInput = {
@@ -21437,93 +21985,105 @@ export namespace Prisma {
     id?: number
     patient_note: string
     is_approved?: number
-    recording_id?: string | null
-    pdf_id?: string | null
+    sessionId: string
+    roomRecordingId?: string | null
+    noteRecordingId?: string | null
   }
 
   export type room_dataUpdateWithoutBed_infoInput = {
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    recording?: RecordingUpdateOneWithoutRoomDataNestedInput
-    pdf?: PdfFileUpdateOneWithoutRoomDataNestedInput
+    session?: demo_sessionUpdateOneRequiredWithoutRoomDataNestedInput
+    roomRecording?: RecordingUpdateOneWithoutRoomDataAsRoomNestedInput
+    noteRecording?: RecordingUpdateOneWithoutRoomDataAsNoteNestedInput
   }
 
   export type room_dataUncheckedUpdateWithoutBed_infoInput = {
     id?: IntFieldUpdateOperationsInput | number
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    recording_id?: NullableStringFieldUpdateOperationsInput | string | null
-    pdf_id?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: StringFieldUpdateOperationsInput | string
+    roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+    noteRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type room_dataUncheckedUpdateManyWithoutBed_infoInput = {
     id?: IntFieldUpdateOperationsInput | number
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    recording_id?: NullableStringFieldUpdateOperationsInput | string | null
-    pdf_id?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: StringFieldUpdateOperationsInput | string
+    roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+    noteRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type room_dataCreateManyPdfInput = {
+  export type room_dataCreateManyRoomRecordingInput = {
     id?: number
     bed_id: number
     patient_note: string
     is_approved?: number
-    recording_id?: string | null
+    sessionId: string
+    noteRecordingId?: string | null
   }
 
-  export type room_dataUpdateWithoutPdfInput = {
-    patient_note?: StringFieldUpdateOperationsInput | string
-    is_approved?: IntFieldUpdateOperationsInput | number
-    recording?: RecordingUpdateOneWithoutRoomDataNestedInput
-    bed_info?: bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput
-  }
-
-  export type room_dataUncheckedUpdateWithoutPdfInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    bed_id?: IntFieldUpdateOperationsInput | number
-    patient_note?: StringFieldUpdateOperationsInput | string
-    is_approved?: IntFieldUpdateOperationsInput | number
-    recording_id?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type room_dataUncheckedUpdateManyWithoutPdfInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    bed_id?: IntFieldUpdateOperationsInput | number
-    patient_note?: StringFieldUpdateOperationsInput | string
-    is_approved?: IntFieldUpdateOperationsInput | number
-    recording_id?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type room_dataCreateManyRecordingInput = {
+  export type room_dataCreateManyNoteRecordingInput = {
     id?: number
     bed_id: number
     patient_note: string
     is_approved?: number
-    pdf_id?: string | null
+    sessionId: string
+    roomRecordingId?: string | null
   }
 
-  export type room_dataUpdateWithoutRecordingInput = {
+  export type room_dataUpdateWithoutRoomRecordingInput = {
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    pdf?: PdfFileUpdateOneWithoutRoomDataNestedInput
+    session?: demo_sessionUpdateOneRequiredWithoutRoomDataNestedInput
+    noteRecording?: RecordingUpdateOneWithoutRoomDataAsNoteNestedInput
     bed_info?: bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput
   }
 
-  export type room_dataUncheckedUpdateWithoutRecordingInput = {
+  export type room_dataUncheckedUpdateWithoutRoomRecordingInput = {
     id?: IntFieldUpdateOperationsInput | number
     bed_id?: IntFieldUpdateOperationsInput | number
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    pdf_id?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: StringFieldUpdateOperationsInput | string
+    noteRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type room_dataUncheckedUpdateManyWithoutRecordingInput = {
+  export type room_dataUncheckedUpdateManyWithoutRoomRecordingInput = {
     id?: IntFieldUpdateOperationsInput | number
     bed_id?: IntFieldUpdateOperationsInput | number
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
-    pdf_id?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: StringFieldUpdateOperationsInput | string
+    noteRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type room_dataUpdateWithoutNoteRecordingInput = {
+    patient_note?: StringFieldUpdateOperationsInput | string
+    is_approved?: IntFieldUpdateOperationsInput | number
+    session?: demo_sessionUpdateOneRequiredWithoutRoomDataNestedInput
+    roomRecording?: RecordingUpdateOneWithoutRoomDataAsRoomNestedInput
+    bed_info?: bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput
+  }
+
+  export type room_dataUncheckedUpdateWithoutNoteRecordingInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    bed_id?: IntFieldUpdateOperationsInput | number
+    patient_note?: StringFieldUpdateOperationsInput | string
+    is_approved?: IntFieldUpdateOperationsInput | number
+    sessionId?: StringFieldUpdateOperationsInput | string
+    roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type room_dataUncheckedUpdateManyWithoutNoteRecordingInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    bed_id?: IntFieldUpdateOperationsInput | number
+    patient_note?: StringFieldUpdateOperationsInput | string
+    is_approved?: IntFieldUpdateOperationsInput | number
+    sessionId?: StringFieldUpdateOperationsInput | string
+    roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type bed_infoCreateManyUser_infoInput = {
@@ -21593,6 +22153,41 @@ export namespace Prisma {
     unassigned_uploads?: StringFieldUpdateOperationsInput | string
     upload_date?: DateTimeFieldUpdateOperationsInput | Date | string
     upload_time?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type room_dataCreateManySessionInput = {
+    id?: number
+    bed_id: number
+    patient_note: string
+    is_approved?: number
+    roomRecordingId?: string | null
+    noteRecordingId?: string | null
+  }
+
+  export type room_dataUpdateWithoutSessionInput = {
+    patient_note?: StringFieldUpdateOperationsInput | string
+    is_approved?: IntFieldUpdateOperationsInput | number
+    roomRecording?: RecordingUpdateOneWithoutRoomDataAsRoomNestedInput
+    noteRecording?: RecordingUpdateOneWithoutRoomDataAsNoteNestedInput
+    bed_info?: bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput
+  }
+
+  export type room_dataUncheckedUpdateWithoutSessionInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    bed_id?: IntFieldUpdateOperationsInput | number
+    patient_note?: StringFieldUpdateOperationsInput | string
+    is_approved?: IntFieldUpdateOperationsInput | number
+    roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+    noteRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type room_dataUncheckedUpdateManyWithoutSessionInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    bed_id?: IntFieldUpdateOperationsInput | number
+    patient_note?: StringFieldUpdateOperationsInput | string
+    is_approved?: IntFieldUpdateOperationsInput | number
+    roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+    noteRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 
