@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCookie } from '@/utils/getCookie';
 import HospitalOverviewStep from "@/components/Demo/HospitalOverviewStep";
+import QRCodeStep from "@/components/Demo/QRCodeStep";
 
 // Import the dashboard components
 import StaffDashboard from "../Staff/dashboard/StaffDashboard";
@@ -12,7 +13,10 @@ import AdminDashboard from "../Admin/dashboard/AdminDashboard";
 export default function DashboardPage() {
   const [role, setRole] = useState<string | null>(null);
   const [isDemoSession, setIsDemoSession] = useState(false);
-  const [showDemoStep, setShowDemoStep] = useState(false);
+  // Role: Track which demo onboarding step is active: "hospital" → "qr" → null (dashboard).
+  const [demoStep, setDemoStep] = useState<"hospital" | "qr" | null>(null);
+  // Role: QR step always selects a nurse; force StaffDashboard regardless of the session's own role cookie.
+  const [qrCompleted, setQrCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -31,7 +35,7 @@ export default function DashboardPage() {
     setRole(userRole);
     const hasDemoSession = Boolean(demoSessionId);
     setIsDemoSession(hasDemoSession);
-    setShowDemoStep(hasDemoSession);
+    setDemoStep(hasDemoSession ? "hospital" : null);
     setIsLoading(false);
   }, [router]);
 
@@ -43,9 +47,23 @@ export default function DashboardPage() {
     );
   }
 
-  if (isDemoSession && showDemoStep) {
-    return <HospitalOverviewStep onContinue={() => setShowDemoStep(false)} />;
+  if (isDemoSession && demoStep === "hospital") {
+    return <HospitalOverviewStep onContinue={() => setDemoStep("qr")} />;
   }
+
+  if (isDemoSession && demoStep === "qr") {
+    return (
+      <QRCodeStep
+        onContinue={() => {
+          setQrCompleted(true);
+          setDemoStep(null);
+        }}
+      />
+    );
+  }
+
+  // After the QR step the selected user is always a nurse — show StaffDashboard directly.
+  if (qrCompleted) return <StaffDashboard />;
 
   // Route based on role
   if (role === "Staff") return <StaffDashboard />;

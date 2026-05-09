@@ -10,7 +10,7 @@ const OPENAI_TRANSCRIBE_URL = "https://api.openai.com/v1/audio/transcriptions";
 
 function promptForType(type: RecordingType) {
   if (type === RecordingType.ROOM) {
-    return "This audio contains a hospital room and bed identifier. Return only plain text in this exact pattern: Room <room_number> Bed <bed_number>.";
+    return "This audio contains a hospital room and bed identifier. Return only plain text in this exact pattern: Room <room_number> Bed <bed_letter>.";
   }
 
   return "This audio is a nurse bedside note. Transcribe clearly and completely in plain text, preserving medically relevant details.";
