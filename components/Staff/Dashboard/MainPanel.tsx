@@ -454,12 +454,24 @@ export default function MainPanel() {
       
       {/* Content Area - Show DataTable only when data tab is active */}
       {activeTab === "data" && (
-        <DataTable
-          key={dashboardRefreshNonce}
-          selectedRoom={selectedRoom}
-          initialData={transcriptionCacheRef.current[cacheKeyForRoom(selectedRoom)] || []}
-          onBedChange={setSelectedBed}
-        />
+        <>
+          <div className="flex justify-end px-6 py-2 border-b border-gray-200 bg-gray-50">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-md shadow-sm"
+              onClick={() => void openApproveNotesModal()}
+            >
+              <span>Approve Notes</span>
+            </Button>
+          </div>
+          <DataTable
+            key={dashboardRefreshNonce}
+            selectedRoom={selectedRoom}
+            initialData={transcriptionCacheRef.current[cacheKeyForRoom(selectedRoom)] || []}
+            onBedChange={setSelectedBed}
+          />
+        </>
       )}
 
       {/* Assigned Rooms List for Archive Tab */}
@@ -488,17 +500,6 @@ export default function MainPanel() {
         previewLoading={approvePreviewLoading}
       />
       
-      {activeTab === "data" && (
-      <div className="flex justify-end pr-8">   {/* or pr-6, pr-8 */}
-        <Button 
-          variant="ghost"
-          size="sm"
-          className="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded shadow -mt-2"
-          onClick={() => void openApproveNotesModal()}
-        >
-        <span>Approve Notes</span>
-        </Button>
-      </div>)}
       {activeTab === "unassigned" && <NothingToSee />}
 
 

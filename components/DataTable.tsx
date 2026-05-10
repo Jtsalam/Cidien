@@ -8,6 +8,15 @@ import { Play, Pause, Loader2, Database, Mic, Wifi, WifiOff, Bed, Edit, Trash2, 
 import * as Tooltip from "@radix-ui/react-tooltip"
 import { Button } from "./ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog"
 import type { RealtimeChannel } from "@supabase/supabase-js"
 import { supabaseClient } from "@/lib/supabaseClient"
 
@@ -54,6 +63,8 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
   const [loading, setLoading] = useState(true)
   const [editingRowId, setEditingRowId] = useState<string | number | null>(null);
   const [editedNote, setEditedNote] = useState<string>('');
+  const [deleteTargetId, setDeleteTargetId] = useState<string | number | null>(null);
+  const [deleteInFlight, setDeleteInFlight] = useState(false);
   const tableEndRef = useRef<HTMLDivElement>(null);
   const realtimeChannelsRef = useRef<RealtimeChannel[]>([]);
   const cacheRef = useRef<Record<string, CachedData>>({})
@@ -255,32 +266,36 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
     }
   };
 
-  const handleDeleteRow = async (rowId: string | number) => {
-    // Optional: Add a confirmation dialog here
-    if (!confirm('Are you sure you want to delete this entry? This action cannot be undone.')) {
-      return;
-    }
-    
+  const pendingDeleteRow = deleteTargetId != null ? data.find((r) => r.id === deleteTargetId) : undefined;
+
+  const closeDeleteDialog = useCallback(() => {
+    if (!deleteInFlight) setDeleteTargetId(null);
+  }, [deleteInFlight]);
+
+  const confirmDeleteRow = useCallback(async () => {
+    if (deleteTargetId == null) return;
+    setDeleteInFlight(true);
     try {
-      const response = await fetch(`/api/staff/transcriptions/${rowId}`, {
-        method: 'DELETE',
+      const response = await fetch(`/api/staff/transcriptions/${deleteTargetId}`, {
+        method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete the entry.');
+        throw new Error("Failed to delete the entry.");
       }
 
-      // Update local state by removing the row and re-indexing
-      setData(prevData => 
+      setData((prevData) =>
         prevData
-          .filter(row => row.id !== rowId)
-          .map((row, index) => ({ ...row, index: index + 1 }))
+          .filter((row) => row.id !== deleteTargetId)
+          .map((row, index) => ({ ...row, index: index + 1 })),
       );
+      setDeleteTargetId(null);
     } catch (error) {
       console.error("Error deleting row:", error);
-      // Optionally, show an error message to the user
+    } finally {
+      setDeleteInFlight(false);
     }
-  };
+  }, [deleteTargetId]);
 
   const loadTranscriptions = useCallback(async (roomFilter?: string) => {
     try {
@@ -791,12 +806,15 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
                                     <MoreVertical className="h-4 w-4" />
                                   </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
+                                <DropdownMenuContent align="end" className="z-[200]">
                                   <DropdownMenuItem onClick={() => { setEditingRowId(row.id!); setEditedNote(row.column4); }}>
                                     <Edit className="mr-2 h-4 w-4" />
                                     <span>Edit</span>
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => handleDeleteRow(row.id!)} className="text-red-600">
+                                  <DropdownMenuItem
+                                    onClick={() => setDeleteTargetId(row.id!)}
+                                    className="text-red-600"
+                                  >
                                     <Trash2 className="mr-2 h-4 w-4" />
                                     <span>Delete</span>
                                   </DropdownMenuItem>
@@ -859,6 +877,40 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
           </CardContent>
         </Card>
       </div>
+
+      <AlertDialog open={deleteTargetId !== null} onOpenChange={(open) => !open && closeDeleteDialog()}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this entry?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes the transcription row
+              {pendingDeleteRow
+                ? ` dated ${pendingDeleteRow.column2} · ${pendingDeleteRow.column3}.`
+                : "."}{" "}
+              This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteInFlight}>Cancel</AlertDialogCancel>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={deleteInFlight}
+              onClick={() => void confirmDeleteRow()}
+              className="sm:mt-0"
+            >
+              {deleteInFlight ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+                  Deleting…
+                </>
+              ) : (
+                "Delete"
+              )}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Tooltip.Provider>
   )
 }
