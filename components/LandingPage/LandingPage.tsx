@@ -1,9 +1,8 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
-import { ArrowRight, Mic, FileText, Users, Zap, CheckCircle, Clock, Loader2, PlayCircle } from "lucide-react"
+import { Mic, FileText, Users, Zap, CheckCircle, Clock, Loader2, PlayCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export default function LandingPage() {
@@ -33,54 +32,8 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-emerald-50/30">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-md border-b border-gray-200 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <Link href="/" className="flex items-center space-x-3 group">
-              <Image
-                src="/Cidien.png"
-                alt="Cidien Logo"
-                width={180}
-                height={65}
-                className="transition-transform group-hover:scale-105"
-              />
-            </Link>
-
-            {/* Auth Buttons */}
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="outline"
-                className="hidden sm:inline-flex border-emerald-200 text-emerald-700 hover:bg-emerald-50"
-                onClick={handleStartDemo}
-                disabled={isStartingDemo}
-              >
-                {isStartingDemo ? (
-                  <Loader2 className="mr-2 w-4 h-4 animate-spin" />
-                ) : (
-                  <PlayCircle className="mr-2 w-4 h-4" />
-                )}
-                Try Demo Out
-              </Button>
-              <Link href="/sign-in">
-                <Button variant="ghost" className="text-gray-700 hover:text-emerald-700">
-                  Login
-                </Button>
-              </Link>
-              <Link href="/sign-in">
-                <Button className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg hover:shadow-xl transition-all">
-                  Get Started
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+      {/* Hero Section — global header in root layout shows the Cidien logo on every page */}
+      <section className="pt-6 pb-20 px-4 sm:px-6 lg:px-8 sm:pt-10">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Column - Text Content */}
@@ -115,14 +68,8 @@ export default function LandingPage() {
                   ) : (
                     <PlayCircle className="mr-2 w-5 h-5" />
                   )}
-                  Try Demo Out
+                  Try Demo
                 </Button>
-                <Link href="/sign-in">
-                  <Button size="lg" variant="outline" className="text-gray-700 border-2 text-lg px-8 py-6 group">
-                    Start Free Trial
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
                 <Link href="#how-it-works">
                   <Button size="lg" variant="outline" className="text-gray-700 border-2 text-lg px-8 py-6">
                     See How It Works
@@ -388,62 +335,39 @@ export default function LandingPage() {
               ) : (
                 <PlayCircle className="mr-2 w-5 h-5" />
               )}
-              Try Demo Out
+              Try Demo
             </Button>
-            <Link href="/sign-in">
-              <Button size="lg" variant="outline" className="bg-transparent border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-6 group">
-                Start Your Free Trial
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-            <Link href="/sign-in">
-              <Button size="lg" variant="outline" className="bg-transparent border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-6">
-                Sign In
-              </Button>
-            </Link>
           </div>
-          <p className="text-emerald-100 mt-6 text-sm">
-            No credit card required • 14-day free trial • Cancel anytime
-          </p>
+          <p className="text-emerald-100 mt-6 text-sm">Start from the home page anytime with Try Demo.</p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div className="col-span-2">
-              <Image
-                src="/Cidien.png"
-                alt="Cidien Logo"
-                width={120}
-                height={40}
-                className="mb-4 brightness-200"
-              />
-              <p className="text-sm leading-relaxed max-w-md">
-                Empowering nurses with AI-powered documentation tools. 
-                Less time on charting, more time caring.
+      <footer className="border-t border-gray-800 bg-gray-900 text-gray-400">
+        <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-8 pb-8 sm:flex-row sm:items-start sm:justify-between sm:gap-12">
+            <div className="max-w-md">
+              <p className="text-base font-semibold tracking-tight text-white">Cidien</p>
+              <p className="mt-2 text-sm leading-relaxed text-gray-400">
+                AI-powered documentation for nurses—less time charting, more time with patients.
               </p>
             </div>
-            <div>
-              <h4 className="text-white font-semibold mb-4">Product</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="#" className="hover:text-emerald-400 transition-colors">Features</Link></li>
-                <li><Link href="#" className="hover:text-emerald-400 transition-colors">Pricing</Link></li>
-                <li><Link href="#" className="hover:text-emerald-400 transition-colors">Security</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="#" className="hover:text-emerald-400 transition-colors">About</Link></li>
-                <li><Link href="#" className="hover:text-emerald-400 transition-colors">Contact</Link></li>
-                <li><Link href="#" className="hover:text-emerald-400 transition-colors">Careers</Link></li>
-              </ul>
-            </div>
+            <nav
+              className="flex flex-col gap-3 text-sm sm:min-w-[12rem] sm:items-end sm:text-right"
+              aria-label="Footer"
+            >
+              <Link href="/" className="text-gray-400 transition-colors hover:text-emerald-400">
+                Home
+              </Link>
+              <Link href="#how-it-works" className="text-gray-400 transition-colors hover:text-emerald-400">
+                How it works
+              </Link>
+            </nav>
           </div>
-          <div className="border-t border-gray-800 pt-8 text-center text-sm">
-            <p>&copy; 2025 Cidien. All rights reserved.</p>
+          <div className="border-t border-gray-800 pt-6">
+            <p className="text-center text-xs text-gray-500">
+              &copy; {new Date().getFullYear()} Cidien. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>

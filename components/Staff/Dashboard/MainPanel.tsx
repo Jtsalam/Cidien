@@ -1,7 +1,5 @@
 "use client"
 
-import Image from "next/image"
-import Link from "next/link"
 import { getCookie } from "@/utils/getCookie"
 import { orgMap } from "@/lib/constants"
 import { useEffect, useState, useRef, useCallback, useMemo } from "react"
@@ -127,8 +125,8 @@ export default function MainPanel() {
   }, []);
 
   const handleLogout = useCallback(async () => {
-    await fetch("/api/staff/logout", { method: "POST" })
-    window.location.href = "/sign-in"
+    await fetch("/api/staff/logout", { method: "POST", credentials: "include" })
+    window.location.href = "/"
   }, [])
 
   const clearRoomNewBadge = useCallback((roomNumber: string) => {
@@ -281,18 +279,8 @@ export default function MainPanel() {
       <header className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo Section */}
             <div className="flex items-center space-x-4">
-              <Link href="/" className="bg-white/10 backdrop-blur-sm rounded-lg p-2 hover:bg-white/20 transition-colors cursor-pointer">
-                <Image
-                  src={`/centerImages/Cidien.png`}
-                  alt="Organization logo"
-                  width={100}
-                  height={60}
-                  className="rounded-md"
-                />
-              </Link>
-              <div className="hidden sm:block">
+              <div>
                 <h1 className="text-lg font-semibold">Staff Dashboard</h1>
                 <p className="text-emerald-100 text-sm">Welcome back to your workspace</p>
               </div>

@@ -12,8 +12,8 @@ export default function InactivityTracker() {
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   const handleLogout = async () => {
-    await fetch("/api/staff/logout", { method: "POST" })
-    window.location.href = "/sign-in"
+    await fetch("/api/staff/logout", { method: "POST", credentials: "include" })
+    window.location.href = "/"
   }
 
   const resetInactivityTimer = useCallback(() => {

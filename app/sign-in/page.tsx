@@ -1,25 +1,15 @@
+import { redirect } from "next/navigation";
+
+/**
+ * Organization / desktop sign-in is disabled for now.
+ * Flow: Home → Try Demo → onboarding → Staff dashboard.
+ */
+export default function SignInPage() {
+  redirect("/");
+}
+
+/* Previously:
 "use client";
-
 import SelectOrganizationForm from "@/components/Center/SelectOrganizationForm";
-
-export default function SignIn() {
-  const handleOrgSubmit = async (organization: string, staffId: string) => {
-    const res = await fetch("/api/center/signIn", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ organization, staffId }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Invalid credentials");
-    }
-
-    window.location.href = "/dashboard";
-  };
-
-  return <SelectOrganizationForm onSubmit={handleOrgSubmit} />;
-} 
+export default function SignIn() { ... }
+*/

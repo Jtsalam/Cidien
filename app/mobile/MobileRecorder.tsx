@@ -306,21 +306,6 @@ export default function MobileRecorder() {
 
   const clearStatus = () => { setStatus(""); setIsRecording(false); };
 
-  const logoutLocal = () => {
-    unsubscribeChannel(recordingRealtimeRef.current);
-    recordingRealtimeRef.current = null;
-    streamRef.current?.getTracks().forEach((t) => t.stop());
-    mediaRecorderRef.current = null;
-    streamRef.current = null;
-    audioChunksRef.current = [];
-    setStep("login");
-    setCurrentRoom("");
-    setRoomRecordingId("");
-    setParsedRoomBed(null);
-    setVerifiedBedId(null);
-    setStatus("");
-  };
-
   return (
     <main className={styles.page}>
       <section className={styles.card}>
@@ -384,7 +369,6 @@ export default function MobileRecorder() {
               </div>
             </div>
             <p className={styles.status}>{status}</p>
-            <button className={styles.logoutButton} onClick={logoutLocal}>Switch User</button>
           </div>
         )}
       </section>
