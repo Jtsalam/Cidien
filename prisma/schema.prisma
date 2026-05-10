@@ -74,13 +74,31 @@ model bed_info {
   room_data           room_data[]
 }
 
-model PdfFile {
-  id        String   @id @default(uuid())
-  filePath  String
-  createdAt DateTime @default(now())
+/// One PDF per nurse approval action (not merged across approvals).
+model ApprovalPdfExport {
+  id          String   @id @default(uuid())
+  filePath    String   @unique
+  displayName String   @db.VarChar(200)
+  createdAt   DateTime @default(now())
+  noteCount   Int
 
-  sessionId String   @unique
-  session   demo_session  @relation(fields: [sessionId], references: [session_id])
+  sessionId String
+  session   demo_session @relation(fields: [sessionId], references: [session_id], onDelete: Cascade)
+
+  userId Int
+  user   user_info @relation(fields: [userId], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+
+  rows ApprovalPdfExportRow[]
+}
+
+model ApprovalPdfExportRow {
+  exportId   String
+  roomDataId Int
+
+  export    ApprovalPdfExport @relation(fields: [exportId], references: [id], onDelete: Cascade)
+  room_data room_data         @relation(fields: [roomDataId], references: [id], onDelete: Cascade)
+
+  @@id([exportId, roomDataId])
 }
 
 model Recording {
@@ -115,6 +133,7 @@ model room_data {
   noteRecording    Recording? @relation("NoteRecording", fields: [noteRecordingId], references: [id])
 
   bed_info         bed_info @relation(fields: [bed_id], references: [bed_id])
+  approvalPdfRows  ApprovalPdfExportRow[]
 }
 
 model room_register {
@@ -140,6 +159,7 @@ model user_info {
   bed_info           bed_info[]
   medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: NoAction, onUpdate: NoAction)
   user_uploads       user_uploads[]
+  approvalPdfExports ApprovalPdfExport[]
 }
 
 model user_uploads {
@@ -161,9 +181,9 @@ model demo_session {
   expires_at   DateTime
   center_id    Int      @unique
   
-  roomData  room_data[]
-  exportPdf PdfFile?
-  medicalcenter_info medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: Cascade)
+  roomData             room_data[]
+  approvalPdfExports   ApprovalPdfExport[]
+  medicalcenter_info   medicalcenter_info @relation(fields: [center_id], references: [center_id], onDelete: Cascade)
 
   @@map("demo_session")
 }

@@ -9,7 +9,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { LogOut, Hospital, User, TriangleAlert, Database,  FileArchive, DoorOpen, ArrowLeftRight, ChevronDown } from "lucide-react"
 import LogoutConfirmationModal from "@/components/LogoutConfirmationModal"
-import ApproveNotesModal from "@/components/ApproveNotesConfirmation"
+import ApproveNotesModal, { type ApprovePreviewTarget } from "@/components/ApproveNotesConfirmation"
 import DataTable from "@/components/DataTable"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
 import AssignedRoomsList from "./AssignedRoomsList"
@@ -23,6 +23,7 @@ interface RowData {
   column2: string
   column3: string
   column4: string
+  bedLetter?: string | null
   id?: string | number
   isNew?: boolean
 }
@@ -40,6 +41,11 @@ export default function MainPanel() {
   const transcriptionCacheRef = useRef<Record<string, RowData[]>>({})
   const prefetchControllerRef = useRef<AbortController | null>(null)
   const [selectedBed, setSelectedBed] = useState<string>("ALL")
+  /** Increment after approve to remount DataTable and drop stale transcription cache. */
+  const [dashboardRefreshNonce, setDashboardRefreshNonce] = useState(0)
+  const [approvePreviewTargets, setApprovePreviewTargets] = useState<ApprovePreviewTarget[]>([])
+  const [approvePreviewLoading, setApprovePreviewLoading] = useState(false)
+  const [roomsWithNewApproval, setRoomsWithNewApproval] = useState<Set<string>>(() => new Set())
 
 
   const cacheKeyForRoom = useCallback((room?: string | null) => (room ? `room:${room}` : 'all'), [])
@@ -125,49 +131,100 @@ export default function MainPanel() {
     window.location.href = "/sign-in"
   }, [])
 
-  const handleNoteApproval = useCallback(async () => {
-    // Approve notes for current room/bed or all
+  const clearRoomNewBadge = useCallback((roomNumber: string) => {
+    setRoomsWithNewApproval((prev) => {
+      const next = new Set(prev);
+      next.delete(roomNumber);
+      return next;
+    });
+  }, []);
+
+  const openApproveNotesModal = useCallback(async () => {
+    setApprovePreviewLoading(true);
+    setApprovePreviewTargets([]);
+    setShowApproveNotesModal(true);
     try {
-      const staffId = nurseId;
+      const res = await fetch('/api/staff/approve-notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          room: selectedRoom,
+          bed: selectedBed,
+          dryRun: true,
+        }),
+      });
+      const data = (await res.json()) as {
+        targets?: ApprovePreviewTarget[];
+        error?: string;
+      };
+      if (!res.ok) throw new Error(data.error || 'Could not load approval preview');
+      const targets = data.targets ?? [];
+      setApprovePreviewTargets(targets);
+      if (targets.length === 0) {
+        toast.info('No pending notes to approve for the current filter.');
+        setShowApproveNotesModal(false);
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error(e instanceof Error ? e.message : 'Could not load approval preview');
+      setShowApproveNotesModal(false);
+    } finally {
+      setApprovePreviewLoading(false);
+    }
+  }, [selectedRoom, selectedBed]);
+
+  const handleCloseApproveModal = useCallback(() => {
+    setShowApproveNotesModal(false);
+    setApprovePreviewTargets([]);
+  }, []);
+
+  const handleNoteApproval = useCallback(async () => {
+    const loadingId = toast.loading('Approving notes…');
+    try {
       const room = selectedRoom;
       const bed = selectedBed;
       const res = await fetch('/api/staff/approve-notes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ staff_id: staffId, room, bed }),
+        body: JSON.stringify({ room, bed, dryRun: false }),
       });
-      if (!res.ok) throw new Error('Failed to approve notes');
-      
-      const result = await res.json();
+      const result = (await res.json()) as {
+        updated?: number;
+        message?: string;
+        newlyApprovedRoomNumbers?: string[];
+        error?: string;
+      };
+      if (!res.ok) throw new Error(result.error || 'Failed to approve notes');
+
       console.log('Notes approved successfully:', result);
-      
-      // Show toast notifications for PDF generation
-      if (result.pdfs_generated && result.pdfs_generated > 0 && result.pdf_paths) {
-        // Extract room and bed info from each PDF path and show individual toasts
-        result.pdf_paths.forEach((pdfPath: string) => {
-          // Extract room and bed from filename pattern: chart_S001_20251104_143025_Room3127_BedA.pdf
-          const match = pdfPath.match(/Room(\d+)_Bed([A-Z])/);
-          if (match) {
-            const roomNum = match[1];
-            const bedLetter = match[2];
-            toast.success(`Medical Data Approved for Room ${roomNum}, Bed ${bedLetter}`, {
-              duration: 3000,
-            });
-          }
-        });
-      } else if (result.updated > 0) {
-        console.log('Notes approved but no PDFs generated');
-        toast.warning('Notes approved, but PDF generation failed.');
+
+      const updated = result.updated ?? 0;
+      toast.dismiss(loadingId);
+      if (updated > 0) {
+        toast.success(result.message || `Approved ${updated} note(s).`);
+        if (result.newlyApprovedRoomNumbers?.length) {
+          setRoomsWithNewApproval((prev) => {
+            const next = new Set(prev);
+            for (const r of result.newlyApprovedRoomNumbers!) {
+              next.add(String(r));
+            }
+            return next;
+          });
+        }
+        transcriptionCacheRef.current = {};
+        setDashboardRefreshNonce((n) => n + 1);
       } else {
-        console.log('No notes to approve');
-        toast.info('No notes found to approve.');
+        toast.info(result.message || 'No notes found to approve.');
       }
+
+      handleCloseApproveModal();
+      setActiveTab('archive');
     } catch (e) {
       console.error('Error approving notes:', e);
-      toast.error('Failed to approve notes. Please try again.');
+      toast.dismiss(loadingId);
+      toast.error(e instanceof Error ? e.message : 'Failed to approve notes. Please try again.');
     }
-    setActiveTab("archive");
-  }, [nurseId, selectedRoom, selectedBed]);
+  }, [selectedRoom, selectedBed, handleCloseApproveModal]);
 
   const handleRoomSelect = useCallback((room: string) => {
     console.log(`Switching to room: ${room}`);
@@ -398,15 +455,21 @@ export default function MainPanel() {
       {/* Content Area - Show DataTable only when data tab is active */}
       {activeTab === "data" && (
         <DataTable
+          key={dashboardRefreshNonce}
           selectedRoom={selectedRoom}
           initialData={transcriptionCacheRef.current[cacheKeyForRoom(selectedRoom)] || []}
-          onBedChange={setSelectedBed}  // capture bed from DataTable
+          onBedChange={setSelectedBed}
         />
       )}
 
       {/* Assigned Rooms List for Archive Tab */}
       {activeTab === "archive" && (
-        <AssignedRoomsList nurseId={nurseId} selectedRoom={selectedRoom} />
+        <AssignedRoomsList
+          nurseId={nurseId}
+          selectedRoom={selectedRoom}
+          roomsWithNewApproval={roomsWithNewApproval}
+          onClearNewBadgeForRoom={clearRoomNewBadge}
+        />
       )}
       
       <LogoutConfirmationModal
@@ -416,11 +479,13 @@ export default function MainPanel() {
       />
 
       <ApproveNotesModal
-      open={showApproveNotesModal}
-      onCancel={() => setShowApproveNotesModal(false)}
-      onConfirm={handleNoteApproval}
-      room={getRoomDisplayText}
-      bed={selectedBed}
+        open={showApproveNotesModal}
+        onCancel={handleCloseApproveModal}
+        onConfirm={handleNoteApproval}
+        room={getRoomDisplayText}
+        bed={selectedBed}
+        previewTargets={approvePreviewTargets}
+        previewLoading={approvePreviewLoading}
       />
       
       {activeTab === "data" && (
@@ -429,7 +494,7 @@ export default function MainPanel() {
           variant="ghost"
           size="sm"
           className="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded shadow -mt-2"
-          onClick={() => setShowApproveNotesModal(true)}   
+          onClick={() => void openApproveNotesModal()}
         >
         <span>Approve Notes</span>
         </Button>

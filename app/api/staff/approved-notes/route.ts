@@ -3,6 +3,14 @@ import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
 import { getCurrentCenterId } from '@/lib/demo';
 
+function formatCreatedDate(d: Date): string {
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+function formatCreatedTime(d: Date): string {
+  return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const room = searchParams.get('room');
@@ -14,82 +22,66 @@ export async function GET(req: NextRequest) {
 
   try {
     const cookieStore = await cookies();
-    const centerId = await getCurrentCenterId(cookieStore);
+    const staffId = cookieStore.get('staff_Id')?.value;
+    if (!staffId) {
+      return NextResponse.json({ error: 'Staff ID not found in cookies' }, { status: 401 });
+    }
 
-    // Fetch approved notes for the specific room and bed
-    const notes = await prisma.room_data.findMany({
+    const centerId = await getCurrentCenterId(cookieStore);
+    const user = await prisma.user_info.findFirst({
       where: {
-        is_approved: 1,
-        pdf_path: { not: null },
-        bed_info: {
-          bed_letter: bed,
-          room_info: {
-            room_number: parseInt(room, 10),
-            ...(centerId ? { center_id: centerId } : {}),
+        staff_id: staffId,
+        ...(centerId ? { center_id: centerId } : {}),
+      },
+      select: { user_id: true, center_id: true },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    const roomNum = parseInt(room, 10);
+    if (Number.isNaN(roomNum)) {
+      return NextResponse.json({ error: 'Invalid room number' }, { status: 400 });
+    }
+
+    const exports = await prisma.approvalPdfExport.findMany({
+      where: {
+        userId: user.user_id,
+        rows: {
+          some: {
+            room_data: {
+              bed_info: {
+                bed_letter: bed,
+                room_info: {
+                  room_number: roomNum,
+                  center_id: centerId ?? user.center_id,
+                },
+              },
+            },
           },
         },
       },
+      orderBy: { createdAt: 'desc' },
       select: {
         id: true,
-        pdf_path: true,
-        patient_note: true,
-      },
-      orderBy: {
-        id: 'desc',
+        displayName: true,
+        createdAt: true,
       },
     });
 
-    // Group by unique PDF path (each approval session creates one PDF)
-    const pdfMap = new Map<string, { id: number; pdf_path: string; patient_note: string }>();
-    
-    notes.forEach((note) => {
-      if (note.pdf_path && !pdfMap.has(note.pdf_path)) {
-        pdfMap.set(note.pdf_path, {
-          id: note.id,
-          pdf_path: note.pdf_path,
-          patient_note: note.patient_note
-        });
-      }
+    const archives = exports.map((row, index) => ({
+      index: index + 1,
+      exportId: row.id,
+      created_date: formatCreatedDate(row.createdAt),
+      created_time: formatCreatedTime(row.createdAt),
+      displayName: row.displayName,
+    }));
+
+    return NextResponse.json({
+      archives,
+      hasExports: archives.length > 0,
     });
-
-    // Extract date and time from PDF filename
-    // Filename format: chart_S001_20251103_225015_Room3127_BedA.pdf
-    const notesWithDates = Array.from(pdfMap.values()).map((note) => {
-      let approved_date = 'N/A';
-      let approved_time = 'N/A';
-
-      if (note.pdf_path) {
-        // Extract timestamp from filename
-        const match = note.pdf_path.match(/chart_[^_]+_(\d{8})_(\d{6})_/);
-        if (match) {
-          const dateStr = match[1]; // e.g., "20251103"
-          const timeStr = match[2]; // e.g., "225015"
-          
-          // Format date: YYYY-MM-DD
-          approved_date = `${dateStr.substring(0, 4)}-${dateStr.substring(4, 6)}-${dateStr.substring(6, 8)}`;
-          
-          // Format time: HH:MM:SS
-          approved_time = `${timeStr.substring(0, 2)}:${timeStr.substring(2, 4)}:${timeStr.substring(4, 6)}`;
-        }
-      }
-
-      return {
-        id: note.id,
-        approved_date,
-        approved_time,
-        pdf_path: note.pdf_path || '',
-        patient_note: note.patient_note,
-      };
-    });
-
-    // Sort by date/time descending (newest first)
-    notesWithDates.sort((a, b) => {
-      const dateTimeA = `${a.approved_date} ${a.approved_time}`;
-      const dateTimeB = `${b.approved_date} ${b.approved_time}`;
-      return dateTimeB.localeCompare(dateTimeA);
-    });
-
-    return NextResponse.json({ notes: notesWithDates });
   } catch (error) {
     console.error('Error fetching approved notes:', error);
     return NextResponse.json({ error: 'Failed to fetch approved notes' }, { status: 500 });

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import BedDetailsView from './BedDetailsView';
+import { Badge } from '@/components/ui/badge';
 
 interface BedInfo {
   bed_letter: string;
@@ -14,9 +15,17 @@ interface RoomInfo {
 interface AssignedRoomsListProps {
   nurseId: string;
   selectedRoom: string | null;
+  /** Room numbers (string) that received a new approval — show NEW until the room header is expanded. */
+  roomsWithNewApproval?: Set<string>;
+  onClearNewBadgeForRoom?: (roomNumber: string) => void;
 }
 
-const AssignedRoomsList: React.FC<AssignedRoomsListProps> = ({ nurseId, selectedRoom }) => {
+const AssignedRoomsList: React.FC<AssignedRoomsListProps> = ({
+  nurseId,
+  selectedRoom,
+  roomsWithNewApproval,
+  onClearNewBadgeForRoom,
+}) => {
   const [rooms, setRooms] = useState<RoomInfo[]>([]);
   const [expandedRooms, setExpandedRooms] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
@@ -48,6 +57,7 @@ const AssignedRoomsList: React.FC<AssignedRoomsListProps> = ({ nurseId, selected
         newSet.delete(room_number);
       } else {
         newSet.add(room_number);
+        onClearNewBadgeForRoom?.(room_number);
       }
       return newSet;
     });
@@ -90,10 +100,15 @@ const AssignedRoomsList: React.FC<AssignedRoomsListProps> = ({ nurseId, selected
           <div key={room.room_number} className="border border-gray-200 rounded-lg overflow-hidden">
             <button
               onClick={() => toggleRoom(room.room_number)}
-              className="w-full px-4 py-3 text-left bg-gray-50 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-inset flex justify-between items-center"
+              className="w-full px-4 py-3 text-left bg-gray-50 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-inset flex justify-between items-center gap-2"
             >
-              <span className="font-medium text-emerald-700">Room {room.room_number}</span>
-              <span className={`transition-transform ${expandedRooms.has(room.room_number) ? 'rotate-180' : ''}`}>▼</span>
+              <span className="flex items-center flex-wrap gap-2 font-medium text-emerald-700">
+                Room {room.room_number}
+                {roomsWithNewApproval?.has(room.room_number) ? (
+                  <Badge className="bg-amber-500 text-white hover:bg-amber-600 border-0 shadow-sm">NEW</Badge>
+                ) : null}
+              </span>
+              <span className={`transition-transform shrink-0 ${expandedRooms.has(room.room_number) ? 'rotate-180' : ''}`}>▼</span>
             </button>
             {expandedRooms.has(room.room_number) && (
               <div className="px-4 py-3 bg-white border-t border-gray-200">

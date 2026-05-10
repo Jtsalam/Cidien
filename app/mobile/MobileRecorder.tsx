@@ -144,6 +144,9 @@ export default function MobileRecorder() {
       const color = activeButtonRef.current;
       activeButtonRef.current = "";
       console.log("[MobileRecorder] onstop fired — color:", color, "blob size:", blob.size);
+      if (color === "red" && blob.size > 0) {
+        setStatus("Processing audio transcription");
+      }
       // Call through the ref so we always get the latest uploadRecording (fresh state closure).
       await uploadRecordingRef.current(blob, color);
     };
@@ -269,6 +272,9 @@ export default function MobileRecorder() {
 
   const startRecording = async (color: "green" | "red") => {
     if (isRecording) return;
+
+    if (navigator.vibrate) navigator.vibrate(100);
+
     setButtonColor(color);
     activeButtonRef.current = color;
     console.log("[MobileRecorder] startRecording — color:", color);
@@ -288,9 +294,13 @@ export default function MobileRecorder() {
 
   const stopRecording = () => {
     if (!isRecording || !mediaRecorderRef.current) return;
+
+    if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+
     console.log("[MobileRecorder] stopRecording — activeButtonRef:", activeButtonRef.current);
+    const releasingColor = activeButtonRef.current;
     mediaRecorderRef.current.stop();
-    if (buttonColor !== "red") setStatus("Processing recording...");
+    if (releasingColor !== "red") setStatus("Processing recording...");
     setIsRecording(false);
   };
 

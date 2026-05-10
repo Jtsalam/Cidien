@@ -25,7 +25,7 @@ export async function GET() {
     // In demo mode query by sessionId so the desktop sees all recordings from the
     // session regardless of which nurse is currently shown on the desktop screen.
     const whereClause = demoContext.sessionId
-      ? { sessionId: demoContext.sessionId }
+      ? { sessionId: demoContext.sessionId, is_approved: 0 }
       : (() => {
           // Non-demo: filter by the logged-in nurse's assigned beds.
           return {
@@ -48,6 +48,7 @@ export async function GET() {
       })
       if (!user) return NextResponse.json([])
       nurseFilter = {
+        is_approved: 0,
         bed_info: {
           assigned_nurse_id: user.user_id,
           room_info: { center_id: centerId ?? user.center_id },
@@ -99,6 +100,7 @@ export async function GET() {
 
       return {
         id: item.id,
+        bedLetter: item.bed_info.bed_letter,
         noteRecordingId: item.noteRecordingId,
         roomRecordingId: item.roomRecordingId,
         audioUrl: item.noteRecording?.audioPath ? audioPathToUrl(item.noteRecording.audioPath) : null,
@@ -107,7 +109,10 @@ export async function GET() {
           `${item.bed_info.room_info.room_number} ${item.bed_info.bed_letter}`,
         column2: dateStr,
         column3: timeStr,
-        column4: item.noteRecording?.transcript || item.patient_note || null,
+        column4:
+          (item.patient_note?.trim()
+            ? item.patient_note
+            : item.noteRecording?.transcript || item.patient_note || null) || null,
       }
     })
 

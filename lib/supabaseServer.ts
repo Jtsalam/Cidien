@@ -17,3 +17,7 @@ export const supabaseServer = createClient(supabaseUrl, supabaseServiceRoleKey, 
 
 export const AUDIO_RECORDINGS_BUCKET =
   process.env.SUPABASE_AUDIO_RECORDINGS_BUCKET ?? "audio-recordings";
+
+/** Private bucket for demo session approved-notes PDF exports. */
+export const SESSION_PDFS_BUCKET =
+  process.env.SUPABASE_SESSION_PDFS_BUCKET ?? "session-pdfs";

@@ -20,6 +20,8 @@ interface RowData {
   column2: string
   column3: string
   column4: string
+  /** Stable bed identifier for filtering; column1 may be room transcript text. */
+  bedLetter?: string | null
   noteRecordingId?: string | null
   roomRecordingId?: string | null
   id?: string | number
@@ -241,8 +243,10 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
         throw new Error('Failed to save changes.');
       }
 
-      // Update local state with the saved note
-      setData(data.map(row => row.id === rowId ? { ...row, column4: editedNote } : row));
+      // Update local state with the saved note (functional update avoids stale closure)
+      setData((prev) =>
+        prev.map((row) => (row.id === rowId ? { ...row, column4: editedNote } : row)),
+      );
     } catch (error) {
       console.error("Error saving edit:", error);
       // Optionally, show an error message to the user
@@ -512,8 +516,11 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
     const base = data
     const filtered = selectedRoom && bedFilter !== 'ALL'
       ? base.filter((row) => {
-          const parts = row.column1?.split(' ')
-          const bed = parts?.[1]
+          if (row.bedLetter != null && row.bedLetter !== '') {
+            return row.bedLetter === bedFilter
+          }
+          const parts = row.column1?.trim().split(/\s+/)
+          const bed = parts?.length >= 2 ? parts[parts.length - 1] : undefined
           return bed === bedFilter
         })
       : base

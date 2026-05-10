@@ -39,10 +39,15 @@ export type room_info = $Result.DefaultSelection<Prisma.$room_infoPayload>
  */
 export type bed_info = $Result.DefaultSelection<Prisma.$bed_infoPayload>
 /**
- * Model PdfFile
+ * Model ApprovalPdfExport
+ * One PDF per nurse approval action (not merged across approvals).
+ */
+export type ApprovalPdfExport = $Result.DefaultSelection<Prisma.$ApprovalPdfExportPayload>
+/**
+ * Model ApprovalPdfExportRow
  * 
  */
-export type PdfFile = $Result.DefaultSelection<Prisma.$PdfFilePayload>
+export type ApprovalPdfExportRow = $Result.DefaultSelection<Prisma.$ApprovalPdfExportRowPayload>
 /**
  * Model Recording
  * 
@@ -260,14 +265,24 @@ export class PrismaClient<
   get bed_info(): Prisma.bed_infoDelegate<ExtArgs, ClientOptions>;
 
   /**
-   * `prisma.pdfFile`: Exposes CRUD operations for the **PdfFile** model.
+   * `prisma.approvalPdfExport`: Exposes CRUD operations for the **ApprovalPdfExport** model.
     * Example usage:
     * ```ts
-    * // Fetch zero or more PdfFiles
-    * const pdfFiles = await prisma.pdfFile.findMany()
+    * // Fetch zero or more ApprovalPdfExports
+    * const approvalPdfExports = await prisma.approvalPdfExport.findMany()
     * ```
     */
-  get pdfFile(): Prisma.PdfFileDelegate<ExtArgs, ClientOptions>;
+  get approvalPdfExport(): Prisma.ApprovalPdfExportDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.approvalPdfExportRow`: Exposes CRUD operations for the **ApprovalPdfExportRow** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ApprovalPdfExportRows
+    * const approvalPdfExportRows = await prisma.approvalPdfExportRow.findMany()
+    * ```
+    */
+  get approvalPdfExportRow(): Prisma.ApprovalPdfExportRowDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.recording`: Exposes CRUD operations for the **Recording** model.
@@ -774,7 +789,8 @@ export namespace Prisma {
     patient_uploads: 'patient_uploads',
     room_info: 'room_info',
     bed_info: 'bed_info',
-    PdfFile: 'PdfFile',
+    ApprovalPdfExport: 'ApprovalPdfExport',
+    ApprovalPdfExportRow: 'ApprovalPdfExportRow',
     Recording: 'Recording',
     room_data: 'room_data',
     room_register: 'room_register',
@@ -799,7 +815,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "medicalcenter_info" | "patient_info" | "patient_uploads" | "room_info" | "bed_info" | "pdfFile" | "recording" | "room_data" | "room_register" | "user_info" | "user_uploads" | "demo_session"
+      modelProps: "medicalcenter_info" | "patient_info" | "patient_uploads" | "room_info" | "bed_info" | "approvalPdfExport" | "approvalPdfExportRow" | "recording" | "room_data" | "room_register" | "user_info" | "user_uploads" | "demo_session"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1173,77 +1189,151 @@ export namespace Prisma {
           }
         }
       }
-      PdfFile: {
-        payload: Prisma.$PdfFilePayload<ExtArgs>
-        fields: Prisma.PdfFileFieldRefs
+      ApprovalPdfExport: {
+        payload: Prisma.$ApprovalPdfExportPayload<ExtArgs>
+        fields: Prisma.ApprovalPdfExportFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.PdfFileFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload> | null
+            args: Prisma.ApprovalPdfExportFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportPayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.PdfFileFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>
+            args: Prisma.ApprovalPdfExportFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportPayload>
           }
           findFirst: {
-            args: Prisma.PdfFileFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload> | null
+            args: Prisma.ApprovalPdfExportFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportPayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.PdfFileFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>
+            args: Prisma.ApprovalPdfExportFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportPayload>
           }
           findMany: {
-            args: Prisma.PdfFileFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>[]
+            args: Prisma.ApprovalPdfExportFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportPayload>[]
           }
           create: {
-            args: Prisma.PdfFileCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>
+            args: Prisma.ApprovalPdfExportCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportPayload>
           }
           createMany: {
-            args: Prisma.PdfFileCreateManyArgs<ExtArgs>
+            args: Prisma.ApprovalPdfExportCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
           createManyAndReturn: {
-            args: Prisma.PdfFileCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>[]
+            args: Prisma.ApprovalPdfExportCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportPayload>[]
           }
           delete: {
-            args: Prisma.PdfFileDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>
+            args: Prisma.ApprovalPdfExportDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportPayload>
           }
           update: {
-            args: Prisma.PdfFileUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>
+            args: Prisma.ApprovalPdfExportUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportPayload>
           }
           deleteMany: {
-            args: Prisma.PdfFileDeleteManyArgs<ExtArgs>
+            args: Prisma.ApprovalPdfExportDeleteManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateMany: {
-            args: Prisma.PdfFileUpdateManyArgs<ExtArgs>
+            args: Prisma.ApprovalPdfExportUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateManyAndReturn: {
-            args: Prisma.PdfFileUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>[]
+            args: Prisma.ApprovalPdfExportUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportPayload>[]
           }
           upsert: {
-            args: Prisma.PdfFileUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfFilePayload>
+            args: Prisma.ApprovalPdfExportUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportPayload>
           }
           aggregate: {
-            args: Prisma.PdfFileAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregatePdfFile>
+            args: Prisma.ApprovalPdfExportAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateApprovalPdfExport>
           }
           groupBy: {
-            args: Prisma.PdfFileGroupByArgs<ExtArgs>
-            result: $Utils.Optional<PdfFileGroupByOutputType>[]
+            args: Prisma.ApprovalPdfExportGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ApprovalPdfExportGroupByOutputType>[]
           }
           count: {
-            args: Prisma.PdfFileCountArgs<ExtArgs>
-            result: $Utils.Optional<PdfFileCountAggregateOutputType> | number
+            args: Prisma.ApprovalPdfExportCountArgs<ExtArgs>
+            result: $Utils.Optional<ApprovalPdfExportCountAggregateOutputType> | number
+          }
+        }
+      }
+      ApprovalPdfExportRow: {
+        payload: Prisma.$ApprovalPdfExportRowPayload<ExtArgs>
+        fields: Prisma.ApprovalPdfExportRowFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ApprovalPdfExportRowFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportRowPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ApprovalPdfExportRowFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportRowPayload>
+          }
+          findFirst: {
+            args: Prisma.ApprovalPdfExportRowFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportRowPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ApprovalPdfExportRowFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportRowPayload>
+          }
+          findMany: {
+            args: Prisma.ApprovalPdfExportRowFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportRowPayload>[]
+          }
+          create: {
+            args: Prisma.ApprovalPdfExportRowCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportRowPayload>
+          }
+          createMany: {
+            args: Prisma.ApprovalPdfExportRowCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ApprovalPdfExportRowCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportRowPayload>[]
+          }
+          delete: {
+            args: Prisma.ApprovalPdfExportRowDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportRowPayload>
+          }
+          update: {
+            args: Prisma.ApprovalPdfExportRowUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportRowPayload>
+          }
+          deleteMany: {
+            args: Prisma.ApprovalPdfExportRowDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ApprovalPdfExportRowUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ApprovalPdfExportRowUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportRowPayload>[]
+          }
+          upsert: {
+            args: Prisma.ApprovalPdfExportRowUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPdfExportRowPayload>
+          }
+          aggregate: {
+            args: Prisma.ApprovalPdfExportRowAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateApprovalPdfExportRow>
+          }
+          groupBy: {
+            args: Prisma.ApprovalPdfExportRowGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ApprovalPdfExportRowGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ApprovalPdfExportRowCountArgs<ExtArgs>
+            result: $Utils.Optional<ApprovalPdfExportRowCountAggregateOutputType> | number
           }
         }
       }
@@ -1792,7 +1882,8 @@ export namespace Prisma {
     patient_uploads?: patient_uploadsOmit
     room_info?: room_infoOmit
     bed_info?: bed_infoOmit
-    pdfFile?: PdfFileOmit
+    approvalPdfExport?: ApprovalPdfExportOmit
+    approvalPdfExportRow?: ApprovalPdfExportRowOmit
     recording?: RecordingOmit
     room_data?: room_dataOmit
     room_register?: room_registerOmit
@@ -2062,6 +2153,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type ApprovalPdfExportCountOutputType
+   */
+
+  export type ApprovalPdfExportCountOutputType = {
+    rows: number
+  }
+
+  export type ApprovalPdfExportCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    rows?: boolean | ApprovalPdfExportCountOutputTypeCountRowsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ApprovalPdfExportCountOutputType without action
+   */
+  export type ApprovalPdfExportCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExportCountOutputType
+     */
+    select?: ApprovalPdfExportCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ApprovalPdfExportCountOutputType without action
+   */
+  export type ApprovalPdfExportCountOutputTypeCountRowsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ApprovalPdfExportRowWhereInput
+  }
+
+
+  /**
    * Count Type RecordingCountOutputType
    */
 
@@ -2102,17 +2224,50 @@ export namespace Prisma {
 
 
   /**
+   * Count Type Room_dataCountOutputType
+   */
+
+  export type Room_dataCountOutputType = {
+    approvalPdfRows: number
+  }
+
+  export type Room_dataCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    approvalPdfRows?: boolean | Room_dataCountOutputTypeCountApprovalPdfRowsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * Room_dataCountOutputType without action
+   */
+  export type Room_dataCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Room_dataCountOutputType
+     */
+    select?: Room_dataCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * Room_dataCountOutputType without action
+   */
+  export type Room_dataCountOutputTypeCountApprovalPdfRowsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ApprovalPdfExportRowWhereInput
+  }
+
+
+  /**
    * Count Type User_infoCountOutputType
    */
 
   export type User_infoCountOutputType = {
     bed_info: number
     user_uploads: number
+    approvalPdfExports: number
   }
 
   export type User_infoCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     bed_info?: boolean | User_infoCountOutputTypeCountBed_infoArgs
     user_uploads?: boolean | User_infoCountOutputTypeCountUser_uploadsArgs
+    approvalPdfExports?: boolean | User_infoCountOutputTypeCountApprovalPdfExportsArgs
   }
 
   // Custom InputTypes
@@ -2140,6 +2295,13 @@ export namespace Prisma {
     where?: user_uploadsWhereInput
   }
 
+  /**
+   * User_infoCountOutputType without action
+   */
+  export type User_infoCountOutputTypeCountApprovalPdfExportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ApprovalPdfExportWhereInput
+  }
+
 
   /**
    * Count Type Demo_sessionCountOutputType
@@ -2147,10 +2309,12 @@ export namespace Prisma {
 
   export type Demo_sessionCountOutputType = {
     roomData: number
+    approvalPdfExports: number
   }
 
   export type Demo_sessionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     roomData?: boolean | Demo_sessionCountOutputTypeCountRoomDataArgs
+    approvalPdfExports?: boolean | Demo_sessionCountOutputTypeCountApprovalPdfExportsArgs
   }
 
   // Custom InputTypes
@@ -2169,6 +2333,13 @@ export namespace Prisma {
    */
   export type Demo_sessionCountOutputTypeCountRoomDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: room_dataWhereInput
+  }
+
+  /**
+   * Demo_sessionCountOutputType without action
+   */
+  export type Demo_sessionCountOutputTypeCountApprovalPdfExportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ApprovalPdfExportWhereInput
   }
 
 
@@ -8083,338 +8254,424 @@ export namespace Prisma {
 
 
   /**
-   * Model PdfFile
+   * Model ApprovalPdfExport
    */
 
-  export type AggregatePdfFile = {
-    _count: PdfFileCountAggregateOutputType | null
-    _min: PdfFileMinAggregateOutputType | null
-    _max: PdfFileMaxAggregateOutputType | null
+  export type AggregateApprovalPdfExport = {
+    _count: ApprovalPdfExportCountAggregateOutputType | null
+    _avg: ApprovalPdfExportAvgAggregateOutputType | null
+    _sum: ApprovalPdfExportSumAggregateOutputType | null
+    _min: ApprovalPdfExportMinAggregateOutputType | null
+    _max: ApprovalPdfExportMaxAggregateOutputType | null
   }
 
-  export type PdfFileMinAggregateOutputType = {
+  export type ApprovalPdfExportAvgAggregateOutputType = {
+    noteCount: number | null
+    userId: number | null
+  }
+
+  export type ApprovalPdfExportSumAggregateOutputType = {
+    noteCount: number | null
+    userId: number | null
+  }
+
+  export type ApprovalPdfExportMinAggregateOutputType = {
     id: string | null
     filePath: string | null
+    displayName: string | null
     createdAt: Date | null
+    noteCount: number | null
     sessionId: string | null
+    userId: number | null
   }
 
-  export type PdfFileMaxAggregateOutputType = {
+  export type ApprovalPdfExportMaxAggregateOutputType = {
     id: string | null
     filePath: string | null
+    displayName: string | null
     createdAt: Date | null
+    noteCount: number | null
     sessionId: string | null
+    userId: number | null
   }
 
-  export type PdfFileCountAggregateOutputType = {
+  export type ApprovalPdfExportCountAggregateOutputType = {
     id: number
     filePath: number
+    displayName: number
     createdAt: number
+    noteCount: number
     sessionId: number
+    userId: number
     _all: number
   }
 
 
-  export type PdfFileMinAggregateInputType = {
-    id?: true
-    filePath?: true
-    createdAt?: true
-    sessionId?: true
+  export type ApprovalPdfExportAvgAggregateInputType = {
+    noteCount?: true
+    userId?: true
   }
 
-  export type PdfFileMaxAggregateInputType = {
-    id?: true
-    filePath?: true
-    createdAt?: true
-    sessionId?: true
+  export type ApprovalPdfExportSumAggregateInputType = {
+    noteCount?: true
+    userId?: true
   }
 
-  export type PdfFileCountAggregateInputType = {
+  export type ApprovalPdfExportMinAggregateInputType = {
     id?: true
     filePath?: true
+    displayName?: true
     createdAt?: true
+    noteCount?: true
     sessionId?: true
+    userId?: true
+  }
+
+  export type ApprovalPdfExportMaxAggregateInputType = {
+    id?: true
+    filePath?: true
+    displayName?: true
+    createdAt?: true
+    noteCount?: true
+    sessionId?: true
+    userId?: true
+  }
+
+  export type ApprovalPdfExportCountAggregateInputType = {
+    id?: true
+    filePath?: true
+    displayName?: true
+    createdAt?: true
+    noteCount?: true
+    sessionId?: true
+    userId?: true
     _all?: true
   }
 
-  export type PdfFileAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which PdfFile to aggregate.
+     * Filter which ApprovalPdfExport to aggregate.
      */
-    where?: PdfFileWhereInput
+    where?: ApprovalPdfExportWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of PdfFiles to fetch.
+     * Determine the order of ApprovalPdfExports to fetch.
      */
-    orderBy?: PdfFileOrderByWithRelationInput | PdfFileOrderByWithRelationInput[]
+    orderBy?: ApprovalPdfExportOrderByWithRelationInput | ApprovalPdfExportOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
      */
-    cursor?: PdfFileWhereUniqueInput
+    cursor?: ApprovalPdfExportWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` PdfFiles from the position of the cursor.
+     * Take `±n` ApprovalPdfExports from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` PdfFiles.
+     * Skip the first `n` ApprovalPdfExports.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Count returned PdfFiles
+     * Count returned ApprovalPdfExports
     **/
-    _count?: true | PdfFileCountAggregateInputType
+    _count?: true | ApprovalPdfExportCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ApprovalPdfExportAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ApprovalPdfExportSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the minimum value
     **/
-    _min?: PdfFileMinAggregateInputType
+    _min?: ApprovalPdfExportMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the maximum value
     **/
-    _max?: PdfFileMaxAggregateInputType
+    _max?: ApprovalPdfExportMaxAggregateInputType
   }
 
-  export type GetPdfFileAggregateType<T extends PdfFileAggregateArgs> = {
-        [P in keyof T & keyof AggregatePdfFile]: P extends '_count' | 'count'
+  export type GetApprovalPdfExportAggregateType<T extends ApprovalPdfExportAggregateArgs> = {
+        [P in keyof T & keyof AggregateApprovalPdfExport]: P extends '_count' | 'count'
       ? T[P] extends true
         ? number
-        : GetScalarType<T[P], AggregatePdfFile[P]>
-      : GetScalarType<T[P], AggregatePdfFile[P]>
+        : GetScalarType<T[P], AggregateApprovalPdfExport[P]>
+      : GetScalarType<T[P], AggregateApprovalPdfExport[P]>
   }
 
 
 
 
-  export type PdfFileGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PdfFileWhereInput
-    orderBy?: PdfFileOrderByWithAggregationInput | PdfFileOrderByWithAggregationInput[]
-    by: PdfFileScalarFieldEnum[] | PdfFileScalarFieldEnum
-    having?: PdfFileScalarWhereWithAggregatesInput
+  export type ApprovalPdfExportGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ApprovalPdfExportWhereInput
+    orderBy?: ApprovalPdfExportOrderByWithAggregationInput | ApprovalPdfExportOrderByWithAggregationInput[]
+    by: ApprovalPdfExportScalarFieldEnum[] | ApprovalPdfExportScalarFieldEnum
+    having?: ApprovalPdfExportScalarWhereWithAggregatesInput
     take?: number
     skip?: number
-    _count?: PdfFileCountAggregateInputType | true
-    _min?: PdfFileMinAggregateInputType
-    _max?: PdfFileMaxAggregateInputType
+    _count?: ApprovalPdfExportCountAggregateInputType | true
+    _avg?: ApprovalPdfExportAvgAggregateInputType
+    _sum?: ApprovalPdfExportSumAggregateInputType
+    _min?: ApprovalPdfExportMinAggregateInputType
+    _max?: ApprovalPdfExportMaxAggregateInputType
   }
 
-  export type PdfFileGroupByOutputType = {
+  export type ApprovalPdfExportGroupByOutputType = {
     id: string
     filePath: string
+    displayName: string
     createdAt: Date
+    noteCount: number
     sessionId: string
-    _count: PdfFileCountAggregateOutputType | null
-    _min: PdfFileMinAggregateOutputType | null
-    _max: PdfFileMaxAggregateOutputType | null
+    userId: number
+    _count: ApprovalPdfExportCountAggregateOutputType | null
+    _avg: ApprovalPdfExportAvgAggregateOutputType | null
+    _sum: ApprovalPdfExportSumAggregateOutputType | null
+    _min: ApprovalPdfExportMinAggregateOutputType | null
+    _max: ApprovalPdfExportMaxAggregateOutputType | null
   }
 
-  type GetPdfFileGroupByPayload<T extends PdfFileGroupByArgs> = Prisma.PrismaPromise<
+  type GetApprovalPdfExportGroupByPayload<T extends ApprovalPdfExportGroupByArgs> = Prisma.PrismaPromise<
     Array<
-      PickEnumerable<PdfFileGroupByOutputType, T['by']> &
+      PickEnumerable<ApprovalPdfExportGroupByOutputType, T['by']> &
         {
-          [P in ((keyof T) & (keyof PdfFileGroupByOutputType))]: P extends '_count'
+          [P in ((keyof T) & (keyof ApprovalPdfExportGroupByOutputType))]: P extends '_count'
             ? T[P] extends boolean
               ? number
-              : GetScalarType<T[P], PdfFileGroupByOutputType[P]>
-            : GetScalarType<T[P], PdfFileGroupByOutputType[P]>
+              : GetScalarType<T[P], ApprovalPdfExportGroupByOutputType[P]>
+            : GetScalarType<T[P], ApprovalPdfExportGroupByOutputType[P]>
         }
       >
     >
 
 
-  export type PdfFileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type ApprovalPdfExportSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     filePath?: boolean
+    displayName?: boolean
     createdAt?: boolean
+    noteCount?: boolean
     sessionId?: boolean
+    userId?: boolean
     session?: boolean | demo_sessionDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["pdfFile"]>
+    user?: boolean | user_infoDefaultArgs<ExtArgs>
+    rows?: boolean | ApprovalPdfExport$rowsArgs<ExtArgs>
+    _count?: boolean | ApprovalPdfExportCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["approvalPdfExport"]>
 
-  export type PdfFileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type ApprovalPdfExportSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     filePath?: boolean
+    displayName?: boolean
     createdAt?: boolean
+    noteCount?: boolean
     sessionId?: boolean
+    userId?: boolean
     session?: boolean | demo_sessionDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["pdfFile"]>
+    user?: boolean | user_infoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["approvalPdfExport"]>
 
-  export type PdfFileSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type ApprovalPdfExportSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     filePath?: boolean
+    displayName?: boolean
     createdAt?: boolean
+    noteCount?: boolean
     sessionId?: boolean
+    userId?: boolean
     session?: boolean | demo_sessionDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["pdfFile"]>
+    user?: boolean | user_infoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["approvalPdfExport"]>
 
-  export type PdfFileSelectScalar = {
+  export type ApprovalPdfExportSelectScalar = {
     id?: boolean
     filePath?: boolean
+    displayName?: boolean
     createdAt?: boolean
+    noteCount?: boolean
     sessionId?: boolean
+    userId?: boolean
   }
 
-  export type PdfFileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "filePath" | "createdAt" | "sessionId", ExtArgs["result"]["pdfFile"]>
-  export type PdfFileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "filePath" | "displayName" | "createdAt" | "noteCount" | "sessionId" | "userId", ExtArgs["result"]["approvalPdfExport"]>
+  export type ApprovalPdfExportInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     session?: boolean | demo_sessionDefaultArgs<ExtArgs>
+    user?: boolean | user_infoDefaultArgs<ExtArgs>
+    rows?: boolean | ApprovalPdfExport$rowsArgs<ExtArgs>
+    _count?: boolean | ApprovalPdfExportCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type PdfFileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     session?: boolean | demo_sessionDefaultArgs<ExtArgs>
+    user?: boolean | user_infoDefaultArgs<ExtArgs>
   }
-  export type PdfFileIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     session?: boolean | demo_sessionDefaultArgs<ExtArgs>
+    user?: boolean | user_infoDefaultArgs<ExtArgs>
   }
 
-  export type $PdfFilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "PdfFile"
+  export type $ApprovalPdfExportPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ApprovalPdfExport"
     objects: {
       session: Prisma.$demo_sessionPayload<ExtArgs>
+      user: Prisma.$user_infoPayload<ExtArgs>
+      rows: Prisma.$ApprovalPdfExportRowPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       filePath: string
+      displayName: string
       createdAt: Date
+      noteCount: number
       sessionId: string
-    }, ExtArgs["result"]["pdfFile"]>
+      userId: number
+    }, ExtArgs["result"]["approvalPdfExport"]>
     composites: {}
   }
 
-  type PdfFileGetPayload<S extends boolean | null | undefined | PdfFileDefaultArgs> = $Result.GetResult<Prisma.$PdfFilePayload, S>
+  type ApprovalPdfExportGetPayload<S extends boolean | null | undefined | ApprovalPdfExportDefaultArgs> = $Result.GetResult<Prisma.$ApprovalPdfExportPayload, S>
 
-  type PdfFileCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<PdfFileFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: PdfFileCountAggregateInputType | true
+  type ApprovalPdfExportCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ApprovalPdfExportFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ApprovalPdfExportCountAggregateInputType | true
     }
 
-  export interface PdfFileDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PdfFile'], meta: { name: 'PdfFile' } }
+  export interface ApprovalPdfExportDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ApprovalPdfExport'], meta: { name: 'ApprovalPdfExport' } }
     /**
-     * Find zero or one PdfFile that matches the filter.
-     * @param {PdfFileFindUniqueArgs} args - Arguments to find a PdfFile
+     * Find zero or one ApprovalPdfExport that matches the filter.
+     * @param {ApprovalPdfExportFindUniqueArgs} args - Arguments to find a ApprovalPdfExport
      * @example
-     * // Get one PdfFile
-     * const pdfFile = await prisma.pdfFile.findUnique({
+     * // Get one ApprovalPdfExport
+     * const approvalPdfExport = await prisma.approvalPdfExport.findUnique({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUnique<T extends PdfFileFindUniqueArgs>(args: SelectSubset<T, PdfFileFindUniqueArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findUnique<T extends ApprovalPdfExportFindUniqueArgs>(args: SelectSubset<T, ApprovalPdfExportFindUniqueArgs<ExtArgs>>): Prisma__ApprovalPdfExportClient<$Result.GetResult<Prisma.$ApprovalPdfExportPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one PdfFile that matches the filter or throw an error with `error.code='P2025'`
+     * Find one ApprovalPdfExport that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
-     * @param {PdfFileFindUniqueOrThrowArgs} args - Arguments to find a PdfFile
+     * @param {ApprovalPdfExportFindUniqueOrThrowArgs} args - Arguments to find a ApprovalPdfExport
      * @example
-     * // Get one PdfFile
-     * const pdfFile = await prisma.pdfFile.findUniqueOrThrow({
+     * // Get one ApprovalPdfExport
+     * const approvalPdfExport = await prisma.approvalPdfExport.findUniqueOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUniqueOrThrow<T extends PdfFileFindUniqueOrThrowArgs>(args: SelectSubset<T, PdfFileFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findUniqueOrThrow<T extends ApprovalPdfExportFindUniqueOrThrowArgs>(args: SelectSubset<T, ApprovalPdfExportFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ApprovalPdfExportClient<$Result.GetResult<Prisma.$ApprovalPdfExportPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first PdfFile that matches the filter.
+     * Find the first ApprovalPdfExport that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {PdfFileFindFirstArgs} args - Arguments to find a PdfFile
+     * @param {ApprovalPdfExportFindFirstArgs} args - Arguments to find a ApprovalPdfExport
      * @example
-     * // Get one PdfFile
-     * const pdfFile = await prisma.pdfFile.findFirst({
+     * // Get one ApprovalPdfExport
+     * const approvalPdfExport = await prisma.approvalPdfExport.findFirst({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirst<T extends PdfFileFindFirstArgs>(args?: SelectSubset<T, PdfFileFindFirstArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findFirst<T extends ApprovalPdfExportFindFirstArgs>(args?: SelectSubset<T, ApprovalPdfExportFindFirstArgs<ExtArgs>>): Prisma__ApprovalPdfExportClient<$Result.GetResult<Prisma.$ApprovalPdfExportPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first PdfFile that matches the filter or
+     * Find the first ApprovalPdfExport that matches the filter or
      * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {PdfFileFindFirstOrThrowArgs} args - Arguments to find a PdfFile
+     * @param {ApprovalPdfExportFindFirstOrThrowArgs} args - Arguments to find a ApprovalPdfExport
      * @example
-     * // Get one PdfFile
-     * const pdfFile = await prisma.pdfFile.findFirstOrThrow({
+     * // Get one ApprovalPdfExport
+     * const approvalPdfExport = await prisma.approvalPdfExport.findFirstOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirstOrThrow<T extends PdfFileFindFirstOrThrowArgs>(args?: SelectSubset<T, PdfFileFindFirstOrThrowArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findFirstOrThrow<T extends ApprovalPdfExportFindFirstOrThrowArgs>(args?: SelectSubset<T, ApprovalPdfExportFindFirstOrThrowArgs<ExtArgs>>): Prisma__ApprovalPdfExportClient<$Result.GetResult<Prisma.$ApprovalPdfExportPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find zero or more PdfFiles that matches the filter.
+     * Find zero or more ApprovalPdfExports that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {PdfFileFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @param {ApprovalPdfExportFindManyArgs} args - Arguments to filter and select certain fields only.
      * @example
-     * // Get all PdfFiles
-     * const pdfFiles = await prisma.pdfFile.findMany()
+     * // Get all ApprovalPdfExports
+     * const approvalPdfExports = await prisma.approvalPdfExport.findMany()
      * 
-     * // Get first 10 PdfFiles
-     * const pdfFiles = await prisma.pdfFile.findMany({ take: 10 })
+     * // Get first 10 ApprovalPdfExports
+     * const approvalPdfExports = await prisma.approvalPdfExport.findMany({ take: 10 })
      * 
      * // Only select the `id`
-     * const pdfFileWithIdOnly = await prisma.pdfFile.findMany({ select: { id: true } })
+     * const approvalPdfExportWithIdOnly = await prisma.approvalPdfExport.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends PdfFileFindManyArgs>(args?: SelectSubset<T, PdfFileFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+    findMany<T extends ApprovalPdfExportFindManyArgs>(args?: SelectSubset<T, ApprovalPdfExportFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPdfExportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
-     * Create a PdfFile.
-     * @param {PdfFileCreateArgs} args - Arguments to create a PdfFile.
+     * Create a ApprovalPdfExport.
+     * @param {ApprovalPdfExportCreateArgs} args - Arguments to create a ApprovalPdfExport.
      * @example
-     * // Create one PdfFile
-     * const PdfFile = await prisma.pdfFile.create({
+     * // Create one ApprovalPdfExport
+     * const ApprovalPdfExport = await prisma.approvalPdfExport.create({
      *   data: {
-     *     // ... data to create a PdfFile
+     *     // ... data to create a ApprovalPdfExport
      *   }
      * })
      * 
      */
-    create<T extends PdfFileCreateArgs>(args: SelectSubset<T, PdfFileCreateArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    create<T extends ApprovalPdfExportCreateArgs>(args: SelectSubset<T, ApprovalPdfExportCreateArgs<ExtArgs>>): Prisma__ApprovalPdfExportClient<$Result.GetResult<Prisma.$ApprovalPdfExportPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Create many PdfFiles.
-     * @param {PdfFileCreateManyArgs} args - Arguments to create many PdfFiles.
+     * Create many ApprovalPdfExports.
+     * @param {ApprovalPdfExportCreateManyArgs} args - Arguments to create many ApprovalPdfExports.
      * @example
-     * // Create many PdfFiles
-     * const pdfFile = await prisma.pdfFile.createMany({
+     * // Create many ApprovalPdfExports
+     * const approvalPdfExport = await prisma.approvalPdfExport.createMany({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      *     
      */
-    createMany<T extends PdfFileCreateManyArgs>(args?: SelectSubset<T, PdfFileCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    createMany<T extends ApprovalPdfExportCreateManyArgs>(args?: SelectSubset<T, ApprovalPdfExportCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Create many PdfFiles and returns the data saved in the database.
-     * @param {PdfFileCreateManyAndReturnArgs} args - Arguments to create many PdfFiles.
+     * Create many ApprovalPdfExports and returns the data saved in the database.
+     * @param {ApprovalPdfExportCreateManyAndReturnArgs} args - Arguments to create many ApprovalPdfExports.
      * @example
-     * // Create many PdfFiles
-     * const pdfFile = await prisma.pdfFile.createManyAndReturn({
+     * // Create many ApprovalPdfExports
+     * const approvalPdfExport = await prisma.approvalPdfExport.createManyAndReturn({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      * 
-     * // Create many PdfFiles and only return the `id`
-     * const pdfFileWithIdOnly = await prisma.pdfFile.createManyAndReturn({
+     * // Create many ApprovalPdfExports and only return the `id`
+     * const approvalPdfExportWithIdOnly = await prisma.approvalPdfExport.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -8424,28 +8681,28 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends PdfFileCreateManyAndReturnArgs>(args?: SelectSubset<T, PdfFileCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+    createManyAndReturn<T extends ApprovalPdfExportCreateManyAndReturnArgs>(args?: SelectSubset<T, ApprovalPdfExportCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPdfExportPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
-     * Delete a PdfFile.
-     * @param {PdfFileDeleteArgs} args - Arguments to delete one PdfFile.
+     * Delete a ApprovalPdfExport.
+     * @param {ApprovalPdfExportDeleteArgs} args - Arguments to delete one ApprovalPdfExport.
      * @example
-     * // Delete one PdfFile
-     * const PdfFile = await prisma.pdfFile.delete({
+     * // Delete one ApprovalPdfExport
+     * const ApprovalPdfExport = await prisma.approvalPdfExport.delete({
      *   where: {
-     *     // ... filter to delete one PdfFile
+     *     // ... filter to delete one ApprovalPdfExport
      *   }
      * })
      * 
      */
-    delete<T extends PdfFileDeleteArgs>(args: SelectSubset<T, PdfFileDeleteArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    delete<T extends ApprovalPdfExportDeleteArgs>(args: SelectSubset<T, ApprovalPdfExportDeleteArgs<ExtArgs>>): Prisma__ApprovalPdfExportClient<$Result.GetResult<Prisma.$ApprovalPdfExportPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Update one PdfFile.
-     * @param {PdfFileUpdateArgs} args - Arguments to update one PdfFile.
+     * Update one ApprovalPdfExport.
+     * @param {ApprovalPdfExportUpdateArgs} args - Arguments to update one ApprovalPdfExport.
      * @example
-     * // Update one PdfFile
-     * const pdfFile = await prisma.pdfFile.update({
+     * // Update one ApprovalPdfExport
+     * const approvalPdfExport = await prisma.approvalPdfExport.update({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -8455,30 +8712,30 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends PdfFileUpdateArgs>(args: SelectSubset<T, PdfFileUpdateArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    update<T extends ApprovalPdfExportUpdateArgs>(args: SelectSubset<T, ApprovalPdfExportUpdateArgs<ExtArgs>>): Prisma__ApprovalPdfExportClient<$Result.GetResult<Prisma.$ApprovalPdfExportPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Delete zero or more PdfFiles.
-     * @param {PdfFileDeleteManyArgs} args - Arguments to filter PdfFiles to delete.
+     * Delete zero or more ApprovalPdfExports.
+     * @param {ApprovalPdfExportDeleteManyArgs} args - Arguments to filter ApprovalPdfExports to delete.
      * @example
-     * // Delete a few PdfFiles
-     * const { count } = await prisma.pdfFile.deleteMany({
+     * // Delete a few ApprovalPdfExports
+     * const { count } = await prisma.approvalPdfExport.deleteMany({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      * 
      */
-    deleteMany<T extends PdfFileDeleteManyArgs>(args?: SelectSubset<T, PdfFileDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    deleteMany<T extends ApprovalPdfExportDeleteManyArgs>(args?: SelectSubset<T, ApprovalPdfExportDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more PdfFiles.
+     * Update zero or more ApprovalPdfExports.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {PdfFileUpdateManyArgs} args - Arguments to update one or more rows.
+     * @param {ApprovalPdfExportUpdateManyArgs} args - Arguments to update one or more rows.
      * @example
-     * // Update many PdfFiles
-     * const pdfFile = await prisma.pdfFile.updateMany({
+     * // Update many ApprovalPdfExports
+     * const approvalPdfExport = await prisma.approvalPdfExport.updateMany({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -8488,14 +8745,14 @@ export namespace Prisma {
      * })
      * 
      */
-    updateMany<T extends PdfFileUpdateManyArgs>(args: SelectSubset<T, PdfFileUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    updateMany<T extends ApprovalPdfExportUpdateManyArgs>(args: SelectSubset<T, ApprovalPdfExportUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more PdfFiles and returns the data updated in the database.
-     * @param {PdfFileUpdateManyAndReturnArgs} args - Arguments to update many PdfFiles.
+     * Update zero or more ApprovalPdfExports and returns the data updated in the database.
+     * @param {ApprovalPdfExportUpdateManyAndReturnArgs} args - Arguments to update many ApprovalPdfExports.
      * @example
-     * // Update many PdfFiles
-     * const pdfFile = await prisma.pdfFile.updateManyAndReturn({
+     * // Update many ApprovalPdfExports
+     * const approvalPdfExport = await prisma.approvalPdfExport.updateManyAndReturn({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -8504,8 +8761,8 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Update zero or more PdfFiles and only return the `id`
-     * const pdfFileWithIdOnly = await prisma.pdfFile.updateManyAndReturn({
+     * // Update zero or more ApprovalPdfExports and only return the `id`
+     * const approvalPdfExportWithIdOnly = await prisma.approvalPdfExport.updateManyAndReturn({
      *   select: { id: true },
      *   where: {
      *     // ... provide filter here
@@ -8518,56 +8775,56 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    updateManyAndReturn<T extends PdfFileUpdateManyAndReturnArgs>(args: SelectSubset<T, PdfFileUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+    updateManyAndReturn<T extends ApprovalPdfExportUpdateManyAndReturnArgs>(args: SelectSubset<T, ApprovalPdfExportUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPdfExportPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
     /**
-     * Create or update one PdfFile.
-     * @param {PdfFileUpsertArgs} args - Arguments to update or create a PdfFile.
+     * Create or update one ApprovalPdfExport.
+     * @param {ApprovalPdfExportUpsertArgs} args - Arguments to update or create a ApprovalPdfExport.
      * @example
-     * // Update or create a PdfFile
-     * const pdfFile = await prisma.pdfFile.upsert({
+     * // Update or create a ApprovalPdfExport
+     * const approvalPdfExport = await prisma.approvalPdfExport.upsert({
      *   create: {
-     *     // ... data to create a PdfFile
+     *     // ... data to create a ApprovalPdfExport
      *   },
      *   update: {
      *     // ... in case it already exists, update
      *   },
      *   where: {
-     *     // ... the filter for the PdfFile we want to update
+     *     // ... the filter for the ApprovalPdfExport we want to update
      *   }
      * })
      */
-    upsert<T extends PdfFileUpsertArgs>(args: SelectSubset<T, PdfFileUpsertArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    upsert<T extends ApprovalPdfExportUpsertArgs>(args: SelectSubset<T, ApprovalPdfExportUpsertArgs<ExtArgs>>): Prisma__ApprovalPdfExportClient<$Result.GetResult<Prisma.$ApprovalPdfExportPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
-     * Count the number of PdfFiles.
+     * Count the number of ApprovalPdfExports.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {PdfFileCountArgs} args - Arguments to filter PdfFiles to count.
+     * @param {ApprovalPdfExportCountArgs} args - Arguments to filter ApprovalPdfExports to count.
      * @example
-     * // Count the number of PdfFiles
-     * const count = await prisma.pdfFile.count({
+     * // Count the number of ApprovalPdfExports
+     * const count = await prisma.approvalPdfExport.count({
      *   where: {
-     *     // ... the filter for the PdfFiles we want to count
+     *     // ... the filter for the ApprovalPdfExports we want to count
      *   }
      * })
     **/
-    count<T extends PdfFileCountArgs>(
-      args?: Subset<T, PdfFileCountArgs>,
+    count<T extends ApprovalPdfExportCountArgs>(
+      args?: Subset<T, ApprovalPdfExportCountArgs>,
     ): Prisma.PrismaPromise<
       T extends $Utils.Record<'select', any>
         ? T['select'] extends true
           ? number
-          : GetScalarType<T['select'], PdfFileCountAggregateOutputType>
+          : GetScalarType<T['select'], ApprovalPdfExportCountAggregateOutputType>
         : number
     >
 
     /**
-     * Allows you to perform aggregations operations on a PdfFile.
+     * Allows you to perform aggregations operations on a ApprovalPdfExport.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {PdfFileAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @param {ApprovalPdfExportAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
      * @example
      * // Ordered by age ascending
      * // Where email contains prisma.io
@@ -8587,13 +8844,13 @@ export namespace Prisma {
      *   take: 10,
      * })
     **/
-    aggregate<T extends PdfFileAggregateArgs>(args: Subset<T, PdfFileAggregateArgs>): Prisma.PrismaPromise<GetPdfFileAggregateType<T>>
+    aggregate<T extends ApprovalPdfExportAggregateArgs>(args: Subset<T, ApprovalPdfExportAggregateArgs>): Prisma.PrismaPromise<GetApprovalPdfExportAggregateType<T>>
 
     /**
-     * Group by PdfFile.
+     * Group by ApprovalPdfExport.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {PdfFileGroupByArgs} args - Group by arguments.
+     * @param {ApprovalPdfExportGroupByArgs} args - Group by arguments.
      * @example
      * // Group by city, order by createdAt, get count
      * const result = await prisma.user.groupBy({
@@ -8608,14 +8865,14 @@ export namespace Prisma {
      * 
     **/
     groupBy<
-      T extends PdfFileGroupByArgs,
+      T extends ApprovalPdfExportGroupByArgs,
       HasSelectOrTake extends Or<
         Extends<'skip', Keys<T>>,
         Extends<'take', Keys<T>>
       >,
       OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: PdfFileGroupByArgs['orderBy'] }
-        : { orderBy?: PdfFileGroupByArgs['orderBy'] },
+        ? { orderBy: ApprovalPdfExportGroupByArgs['orderBy'] }
+        : { orderBy?: ApprovalPdfExportGroupByArgs['orderBy'] },
       OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
       ByFields extends MaybeTupleToUnion<T['by']>,
       ByValid extends Has<ByFields, OrderFields>,
@@ -8664,22 +8921,24 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, PdfFileGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPdfFileGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+    >(args: SubsetIntersection<T, ApprovalPdfExportGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetApprovalPdfExportGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
   /**
-   * Fields of the PdfFile model
+   * Fields of the ApprovalPdfExport model
    */
-  readonly fields: PdfFileFieldRefs;
+  readonly fields: ApprovalPdfExportFieldRefs;
   }
 
   /**
-   * The delegate class that acts as a "Promise-like" for PdfFile.
+   * The delegate class that acts as a "Promise-like" for ApprovalPdfExport.
    * Why is this prefixed with `Prisma__`?
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__PdfFileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__ApprovalPdfExportClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     session<T extends demo_sessionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, demo_sessionDefaultArgs<ExtArgs>>): Prisma__demo_sessionClient<$Result.GetResult<Prisma.$demo_sessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends user_infoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, user_infoDefaultArgs<ExtArgs>>): Prisma__user_infoClient<$Result.GetResult<Prisma.$user_infoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    rows<T extends ApprovalPdfExport$rowsArgs<ExtArgs> = {}>(args?: Subset<T, ApprovalPdfExport$rowsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPdfExportRowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8706,424 +8965,1512 @@ export namespace Prisma {
 
 
   /**
-   * Fields of the PdfFile model
+   * Fields of the ApprovalPdfExport model
    */
-  interface PdfFileFieldRefs {
-    readonly id: FieldRef<"PdfFile", 'String'>
-    readonly filePath: FieldRef<"PdfFile", 'String'>
-    readonly createdAt: FieldRef<"PdfFile", 'DateTime'>
-    readonly sessionId: FieldRef<"PdfFile", 'String'>
+  interface ApprovalPdfExportFieldRefs {
+    readonly id: FieldRef<"ApprovalPdfExport", 'String'>
+    readonly filePath: FieldRef<"ApprovalPdfExport", 'String'>
+    readonly displayName: FieldRef<"ApprovalPdfExport", 'String'>
+    readonly createdAt: FieldRef<"ApprovalPdfExport", 'DateTime'>
+    readonly noteCount: FieldRef<"ApprovalPdfExport", 'Int'>
+    readonly sessionId: FieldRef<"ApprovalPdfExport", 'String'>
+    readonly userId: FieldRef<"ApprovalPdfExport", 'Int'>
   }
     
 
   // Custom InputTypes
   /**
-   * PdfFile findUnique
+   * ApprovalPdfExport findUnique
    */
-  export type PdfFileFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PdfFile
+     * Select specific fields to fetch from the ApprovalPdfExport
      */
-    select?: PdfFileSelect<ExtArgs> | null
+    select?: ApprovalPdfExportSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the PdfFile
+     * Omit specific fields from the ApprovalPdfExport
      */
-    omit?: PdfFileOmit<ExtArgs> | null
+    omit?: ApprovalPdfExportOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: PdfFileInclude<ExtArgs> | null
+    include?: ApprovalPdfExportInclude<ExtArgs> | null
     /**
-     * Filter, which PdfFile to fetch.
+     * Filter, which ApprovalPdfExport to fetch.
      */
-    where: PdfFileWhereUniqueInput
+    where: ApprovalPdfExportWhereUniqueInput
   }
 
   /**
-   * PdfFile findUniqueOrThrow
+   * ApprovalPdfExport findUniqueOrThrow
    */
-  export type PdfFileFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PdfFile
+     * Select specific fields to fetch from the ApprovalPdfExport
      */
-    select?: PdfFileSelect<ExtArgs> | null
+    select?: ApprovalPdfExportSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the PdfFile
+     * Omit specific fields from the ApprovalPdfExport
      */
-    omit?: PdfFileOmit<ExtArgs> | null
+    omit?: ApprovalPdfExportOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: PdfFileInclude<ExtArgs> | null
+    include?: ApprovalPdfExportInclude<ExtArgs> | null
     /**
-     * Filter, which PdfFile to fetch.
+     * Filter, which ApprovalPdfExport to fetch.
      */
-    where: PdfFileWhereUniqueInput
+    where: ApprovalPdfExportWhereUniqueInput
   }
 
   /**
-   * PdfFile findFirst
+   * ApprovalPdfExport findFirst
    */
-  export type PdfFileFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PdfFile
+     * Select specific fields to fetch from the ApprovalPdfExport
      */
-    select?: PdfFileSelect<ExtArgs> | null
+    select?: ApprovalPdfExportSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the PdfFile
+     * Omit specific fields from the ApprovalPdfExport
      */
-    omit?: PdfFileOmit<ExtArgs> | null
+    omit?: ApprovalPdfExportOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: PdfFileInclude<ExtArgs> | null
+    include?: ApprovalPdfExportInclude<ExtArgs> | null
     /**
-     * Filter, which PdfFile to fetch.
+     * Filter, which ApprovalPdfExport to fetch.
      */
-    where?: PdfFileWhereInput
+    where?: ApprovalPdfExportWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of PdfFiles to fetch.
+     * Determine the order of ApprovalPdfExports to fetch.
      */
-    orderBy?: PdfFileOrderByWithRelationInput | PdfFileOrderByWithRelationInput[]
+    orderBy?: ApprovalPdfExportOrderByWithRelationInput | ApprovalPdfExportOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for PdfFiles.
+     * Sets the position for searching for ApprovalPdfExports.
      */
-    cursor?: PdfFileWhereUniqueInput
+    cursor?: ApprovalPdfExportWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` PdfFiles from the position of the cursor.
+     * Take `±n` ApprovalPdfExports from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` PdfFiles.
+     * Skip the first `n` ApprovalPdfExports.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of PdfFiles.
+     * Filter by unique combinations of ApprovalPdfExports.
      */
-    distinct?: PdfFileScalarFieldEnum | PdfFileScalarFieldEnum[]
+    distinct?: ApprovalPdfExportScalarFieldEnum | ApprovalPdfExportScalarFieldEnum[]
   }
 
   /**
-   * PdfFile findFirstOrThrow
+   * ApprovalPdfExport findFirstOrThrow
    */
-  export type PdfFileFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PdfFile
+     * Select specific fields to fetch from the ApprovalPdfExport
      */
-    select?: PdfFileSelect<ExtArgs> | null
+    select?: ApprovalPdfExportSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the PdfFile
+     * Omit specific fields from the ApprovalPdfExport
      */
-    omit?: PdfFileOmit<ExtArgs> | null
+    omit?: ApprovalPdfExportOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: PdfFileInclude<ExtArgs> | null
+    include?: ApprovalPdfExportInclude<ExtArgs> | null
     /**
-     * Filter, which PdfFile to fetch.
+     * Filter, which ApprovalPdfExport to fetch.
      */
-    where?: PdfFileWhereInput
+    where?: ApprovalPdfExportWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of PdfFiles to fetch.
+     * Determine the order of ApprovalPdfExports to fetch.
      */
-    orderBy?: PdfFileOrderByWithRelationInput | PdfFileOrderByWithRelationInput[]
+    orderBy?: ApprovalPdfExportOrderByWithRelationInput | ApprovalPdfExportOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for PdfFiles.
+     * Sets the position for searching for ApprovalPdfExports.
      */
-    cursor?: PdfFileWhereUniqueInput
+    cursor?: ApprovalPdfExportWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` PdfFiles from the position of the cursor.
+     * Take `±n` ApprovalPdfExports from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` PdfFiles.
+     * Skip the first `n` ApprovalPdfExports.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of PdfFiles.
+     * Filter by unique combinations of ApprovalPdfExports.
      */
-    distinct?: PdfFileScalarFieldEnum | PdfFileScalarFieldEnum[]
+    distinct?: ApprovalPdfExportScalarFieldEnum | ApprovalPdfExportScalarFieldEnum[]
   }
 
   /**
-   * PdfFile findMany
+   * ApprovalPdfExport findMany
    */
-  export type PdfFileFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PdfFile
+     * Select specific fields to fetch from the ApprovalPdfExport
      */
-    select?: PdfFileSelect<ExtArgs> | null
+    select?: ApprovalPdfExportSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the PdfFile
+     * Omit specific fields from the ApprovalPdfExport
      */
-    omit?: PdfFileOmit<ExtArgs> | null
+    omit?: ApprovalPdfExportOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: PdfFileInclude<ExtArgs> | null
+    include?: ApprovalPdfExportInclude<ExtArgs> | null
     /**
-     * Filter, which PdfFiles to fetch.
+     * Filter, which ApprovalPdfExports to fetch.
      */
-    where?: PdfFileWhereInput
+    where?: ApprovalPdfExportWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of PdfFiles to fetch.
+     * Determine the order of ApprovalPdfExports to fetch.
      */
-    orderBy?: PdfFileOrderByWithRelationInput | PdfFileOrderByWithRelationInput[]
+    orderBy?: ApprovalPdfExportOrderByWithRelationInput | ApprovalPdfExportOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing PdfFiles.
+     * Sets the position for listing ApprovalPdfExports.
      */
-    cursor?: PdfFileWhereUniqueInput
+    cursor?: ApprovalPdfExportWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` PdfFiles from the position of the cursor.
+     * Take `±n` ApprovalPdfExports from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` PdfFiles.
+     * Skip the first `n` ApprovalPdfExports.
      */
     skip?: number
-    distinct?: PdfFileScalarFieldEnum | PdfFileScalarFieldEnum[]
+    distinct?: ApprovalPdfExportScalarFieldEnum | ApprovalPdfExportScalarFieldEnum[]
   }
 
   /**
-   * PdfFile create
+   * ApprovalPdfExport create
    */
-  export type PdfFileCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PdfFile
+     * Select specific fields to fetch from the ApprovalPdfExport
      */
-    select?: PdfFileSelect<ExtArgs> | null
+    select?: ApprovalPdfExportSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the PdfFile
+     * Omit specific fields from the ApprovalPdfExport
      */
-    omit?: PdfFileOmit<ExtArgs> | null
+    omit?: ApprovalPdfExportOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: PdfFileInclude<ExtArgs> | null
+    include?: ApprovalPdfExportInclude<ExtArgs> | null
     /**
-     * The data needed to create a PdfFile.
+     * The data needed to create a ApprovalPdfExport.
      */
-    data: XOR<PdfFileCreateInput, PdfFileUncheckedCreateInput>
+    data: XOR<ApprovalPdfExportCreateInput, ApprovalPdfExportUncheckedCreateInput>
   }
 
   /**
-   * PdfFile createMany
+   * ApprovalPdfExport createMany
    */
-  export type PdfFileCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to create many PdfFiles.
+     * The data used to create many ApprovalPdfExports.
      */
-    data: PdfFileCreateManyInput | PdfFileCreateManyInput[]
+    data: ApprovalPdfExportCreateManyInput | ApprovalPdfExportCreateManyInput[]
     skipDuplicates?: boolean
   }
 
   /**
-   * PdfFile createManyAndReturn
+   * ApprovalPdfExport createManyAndReturn
    */
-  export type PdfFileCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PdfFile
+     * Select specific fields to fetch from the ApprovalPdfExport
      */
-    select?: PdfFileSelectCreateManyAndReturn<ExtArgs> | null
+    select?: ApprovalPdfExportSelectCreateManyAndReturn<ExtArgs> | null
     /**
-     * Omit specific fields from the PdfFile
+     * Omit specific fields from the ApprovalPdfExport
      */
-    omit?: PdfFileOmit<ExtArgs> | null
+    omit?: ApprovalPdfExportOmit<ExtArgs> | null
     /**
-     * The data used to create many PdfFiles.
+     * The data used to create many ApprovalPdfExports.
      */
-    data: PdfFileCreateManyInput | PdfFileCreateManyInput[]
+    data: ApprovalPdfExportCreateManyInput | ApprovalPdfExportCreateManyInput[]
     skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: PdfFileIncludeCreateManyAndReturn<ExtArgs> | null
+    include?: ApprovalPdfExportIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
-   * PdfFile update
+   * ApprovalPdfExport update
    */
-  export type PdfFileUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PdfFile
+     * Select specific fields to fetch from the ApprovalPdfExport
      */
-    select?: PdfFileSelect<ExtArgs> | null
+    select?: ApprovalPdfExportSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the PdfFile
+     * Omit specific fields from the ApprovalPdfExport
      */
-    omit?: PdfFileOmit<ExtArgs> | null
+    omit?: ApprovalPdfExportOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: PdfFileInclude<ExtArgs> | null
+    include?: ApprovalPdfExportInclude<ExtArgs> | null
     /**
-     * The data needed to update a PdfFile.
+     * The data needed to update a ApprovalPdfExport.
      */
-    data: XOR<PdfFileUpdateInput, PdfFileUncheckedUpdateInput>
+    data: XOR<ApprovalPdfExportUpdateInput, ApprovalPdfExportUncheckedUpdateInput>
     /**
-     * Choose, which PdfFile to update.
+     * Choose, which ApprovalPdfExport to update.
      */
-    where: PdfFileWhereUniqueInput
+    where: ApprovalPdfExportWhereUniqueInput
   }
 
   /**
-   * PdfFile updateMany
+   * ApprovalPdfExport updateMany
    */
-  export type PdfFileUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to update PdfFiles.
+     * The data used to update ApprovalPdfExports.
      */
-    data: XOR<PdfFileUpdateManyMutationInput, PdfFileUncheckedUpdateManyInput>
+    data: XOR<ApprovalPdfExportUpdateManyMutationInput, ApprovalPdfExportUncheckedUpdateManyInput>
     /**
-     * Filter which PdfFiles to update
+     * Filter which ApprovalPdfExports to update
      */
-    where?: PdfFileWhereInput
+    where?: ApprovalPdfExportWhereInput
     /**
-     * Limit how many PdfFiles to update.
+     * Limit how many ApprovalPdfExports to update.
      */
     limit?: number
   }
 
   /**
-   * PdfFile updateManyAndReturn
+   * ApprovalPdfExport updateManyAndReturn
    */
-  export type PdfFileUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PdfFile
+     * Select specific fields to fetch from the ApprovalPdfExport
      */
-    select?: PdfFileSelectUpdateManyAndReturn<ExtArgs> | null
+    select?: ApprovalPdfExportSelectUpdateManyAndReturn<ExtArgs> | null
     /**
-     * Omit specific fields from the PdfFile
+     * Omit specific fields from the ApprovalPdfExport
      */
-    omit?: PdfFileOmit<ExtArgs> | null
+    omit?: ApprovalPdfExportOmit<ExtArgs> | null
     /**
-     * The data used to update PdfFiles.
+     * The data used to update ApprovalPdfExports.
      */
-    data: XOR<PdfFileUpdateManyMutationInput, PdfFileUncheckedUpdateManyInput>
+    data: XOR<ApprovalPdfExportUpdateManyMutationInput, ApprovalPdfExportUncheckedUpdateManyInput>
     /**
-     * Filter which PdfFiles to update
+     * Filter which ApprovalPdfExports to update
      */
-    where?: PdfFileWhereInput
+    where?: ApprovalPdfExportWhereInput
     /**
-     * Limit how many PdfFiles to update.
+     * Limit how many ApprovalPdfExports to update.
      */
     limit?: number
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: PdfFileIncludeUpdateManyAndReturn<ExtArgs> | null
+    include?: ApprovalPdfExportIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
-   * PdfFile upsert
+   * ApprovalPdfExport upsert
    */
-  export type PdfFileUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PdfFile
+     * Select specific fields to fetch from the ApprovalPdfExport
      */
-    select?: PdfFileSelect<ExtArgs> | null
+    select?: ApprovalPdfExportSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the PdfFile
+     * Omit specific fields from the ApprovalPdfExport
      */
-    omit?: PdfFileOmit<ExtArgs> | null
+    omit?: ApprovalPdfExportOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: PdfFileInclude<ExtArgs> | null
+    include?: ApprovalPdfExportInclude<ExtArgs> | null
     /**
-     * The filter to search for the PdfFile to update in case it exists.
+     * The filter to search for the ApprovalPdfExport to update in case it exists.
      */
-    where: PdfFileWhereUniqueInput
+    where: ApprovalPdfExportWhereUniqueInput
     /**
-     * In case the PdfFile found by the `where` argument doesn't exist, create a new PdfFile with this data.
+     * In case the ApprovalPdfExport found by the `where` argument doesn't exist, create a new ApprovalPdfExport with this data.
      */
-    create: XOR<PdfFileCreateInput, PdfFileUncheckedCreateInput>
+    create: XOR<ApprovalPdfExportCreateInput, ApprovalPdfExportUncheckedCreateInput>
     /**
-     * In case the PdfFile was found with the provided `where` argument, update it with this data.
+     * In case the ApprovalPdfExport was found with the provided `where` argument, update it with this data.
      */
-    update: XOR<PdfFileUpdateInput, PdfFileUncheckedUpdateInput>
+    update: XOR<ApprovalPdfExportUpdateInput, ApprovalPdfExportUncheckedUpdateInput>
   }
 
   /**
-   * PdfFile delete
+   * ApprovalPdfExport delete
    */
-  export type PdfFileDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PdfFile
+     * Select specific fields to fetch from the ApprovalPdfExport
      */
-    select?: PdfFileSelect<ExtArgs> | null
+    select?: ApprovalPdfExportSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the PdfFile
+     * Omit specific fields from the ApprovalPdfExport
      */
-    omit?: PdfFileOmit<ExtArgs> | null
+    omit?: ApprovalPdfExportOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: PdfFileInclude<ExtArgs> | null
+    include?: ApprovalPdfExportInclude<ExtArgs> | null
     /**
-     * Filter which PdfFile to delete.
+     * Filter which ApprovalPdfExport to delete.
      */
-    where: PdfFileWhereUniqueInput
+    where: ApprovalPdfExportWhereUniqueInput
   }
 
   /**
-   * PdfFile deleteMany
+   * ApprovalPdfExport deleteMany
    */
-  export type PdfFileDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExportDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which PdfFiles to delete
+     * Filter which ApprovalPdfExports to delete
      */
-    where?: PdfFileWhereInput
+    where?: ApprovalPdfExportWhereInput
     /**
-     * Limit how many PdfFiles to delete.
+     * Limit how many ApprovalPdfExports to delete.
      */
     limit?: number
   }
 
   /**
-   * PdfFile without action
+   * ApprovalPdfExport.rows
    */
-  export type PdfFileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ApprovalPdfExport$rowsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PdfFile
+     * Select specific fields to fetch from the ApprovalPdfExportRow
      */
-    select?: PdfFileSelect<ExtArgs> | null
+    select?: ApprovalPdfExportRowSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the PdfFile
+     * Omit specific fields from the ApprovalPdfExportRow
      */
-    omit?: PdfFileOmit<ExtArgs> | null
+    omit?: ApprovalPdfExportRowOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: PdfFileInclude<ExtArgs> | null
+    include?: ApprovalPdfExportRowInclude<ExtArgs> | null
+    where?: ApprovalPdfExportRowWhereInput
+    orderBy?: ApprovalPdfExportRowOrderByWithRelationInput | ApprovalPdfExportRowOrderByWithRelationInput[]
+    cursor?: ApprovalPdfExportRowWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ApprovalPdfExportRowScalarFieldEnum | ApprovalPdfExportRowScalarFieldEnum[]
+  }
+
+  /**
+   * ApprovalPdfExport without action
+   */
+  export type ApprovalPdfExportDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExport
+     */
+    select?: ApprovalPdfExportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalPdfExport
+     */
+    omit?: ApprovalPdfExportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalPdfExportInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ApprovalPdfExportRow
+   */
+
+  export type AggregateApprovalPdfExportRow = {
+    _count: ApprovalPdfExportRowCountAggregateOutputType | null
+    _avg: ApprovalPdfExportRowAvgAggregateOutputType | null
+    _sum: ApprovalPdfExportRowSumAggregateOutputType | null
+    _min: ApprovalPdfExportRowMinAggregateOutputType | null
+    _max: ApprovalPdfExportRowMaxAggregateOutputType | null
+  }
+
+  export type ApprovalPdfExportRowAvgAggregateOutputType = {
+    roomDataId: number | null
+  }
+
+  export type ApprovalPdfExportRowSumAggregateOutputType = {
+    roomDataId: number | null
+  }
+
+  export type ApprovalPdfExportRowMinAggregateOutputType = {
+    exportId: string | null
+    roomDataId: number | null
+  }
+
+  export type ApprovalPdfExportRowMaxAggregateOutputType = {
+    exportId: string | null
+    roomDataId: number | null
+  }
+
+  export type ApprovalPdfExportRowCountAggregateOutputType = {
+    exportId: number
+    roomDataId: number
+    _all: number
+  }
+
+
+  export type ApprovalPdfExportRowAvgAggregateInputType = {
+    roomDataId?: true
+  }
+
+  export type ApprovalPdfExportRowSumAggregateInputType = {
+    roomDataId?: true
+  }
+
+  export type ApprovalPdfExportRowMinAggregateInputType = {
+    exportId?: true
+    roomDataId?: true
+  }
+
+  export type ApprovalPdfExportRowMaxAggregateInputType = {
+    exportId?: true
+    roomDataId?: true
+  }
+
+  export type ApprovalPdfExportRowCountAggregateInputType = {
+    exportId?: true
+    roomDataId?: true
+    _all?: true
+  }
+
+  export type ApprovalPdfExportRowAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ApprovalPdfExportRow to aggregate.
+     */
+    where?: ApprovalPdfExportRowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ApprovalPdfExportRows to fetch.
+     */
+    orderBy?: ApprovalPdfExportRowOrderByWithRelationInput | ApprovalPdfExportRowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ApprovalPdfExportRowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ApprovalPdfExportRows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ApprovalPdfExportRows.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ApprovalPdfExportRows
+    **/
+    _count?: true | ApprovalPdfExportRowCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ApprovalPdfExportRowAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ApprovalPdfExportRowSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ApprovalPdfExportRowMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ApprovalPdfExportRowMaxAggregateInputType
+  }
+
+  export type GetApprovalPdfExportRowAggregateType<T extends ApprovalPdfExportRowAggregateArgs> = {
+        [P in keyof T & keyof AggregateApprovalPdfExportRow]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateApprovalPdfExportRow[P]>
+      : GetScalarType<T[P], AggregateApprovalPdfExportRow[P]>
+  }
+
+
+
+
+  export type ApprovalPdfExportRowGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ApprovalPdfExportRowWhereInput
+    orderBy?: ApprovalPdfExportRowOrderByWithAggregationInput | ApprovalPdfExportRowOrderByWithAggregationInput[]
+    by: ApprovalPdfExportRowScalarFieldEnum[] | ApprovalPdfExportRowScalarFieldEnum
+    having?: ApprovalPdfExportRowScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ApprovalPdfExportRowCountAggregateInputType | true
+    _avg?: ApprovalPdfExportRowAvgAggregateInputType
+    _sum?: ApprovalPdfExportRowSumAggregateInputType
+    _min?: ApprovalPdfExportRowMinAggregateInputType
+    _max?: ApprovalPdfExportRowMaxAggregateInputType
+  }
+
+  export type ApprovalPdfExportRowGroupByOutputType = {
+    exportId: string
+    roomDataId: number
+    _count: ApprovalPdfExportRowCountAggregateOutputType | null
+    _avg: ApprovalPdfExportRowAvgAggregateOutputType | null
+    _sum: ApprovalPdfExportRowSumAggregateOutputType | null
+    _min: ApprovalPdfExportRowMinAggregateOutputType | null
+    _max: ApprovalPdfExportRowMaxAggregateOutputType | null
+  }
+
+  type GetApprovalPdfExportRowGroupByPayload<T extends ApprovalPdfExportRowGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ApprovalPdfExportRowGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ApprovalPdfExportRowGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ApprovalPdfExportRowGroupByOutputType[P]>
+            : GetScalarType<T[P], ApprovalPdfExportRowGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ApprovalPdfExportRowSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    exportId?: boolean
+    roomDataId?: boolean
+    export?: boolean | ApprovalPdfExportDefaultArgs<ExtArgs>
+    room_data?: boolean | room_dataDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["approvalPdfExportRow"]>
+
+  export type ApprovalPdfExportRowSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    exportId?: boolean
+    roomDataId?: boolean
+    export?: boolean | ApprovalPdfExportDefaultArgs<ExtArgs>
+    room_data?: boolean | room_dataDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["approvalPdfExportRow"]>
+
+  export type ApprovalPdfExportRowSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    exportId?: boolean
+    roomDataId?: boolean
+    export?: boolean | ApprovalPdfExportDefaultArgs<ExtArgs>
+    room_data?: boolean | room_dataDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["approvalPdfExportRow"]>
+
+  export type ApprovalPdfExportRowSelectScalar = {
+    exportId?: boolean
+    roomDataId?: boolean
+  }
+
+  export type ApprovalPdfExportRowOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"exportId" | "roomDataId", ExtArgs["result"]["approvalPdfExportRow"]>
+  export type ApprovalPdfExportRowInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    export?: boolean | ApprovalPdfExportDefaultArgs<ExtArgs>
+    room_data?: boolean | room_dataDefaultArgs<ExtArgs>
+  }
+  export type ApprovalPdfExportRowIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    export?: boolean | ApprovalPdfExportDefaultArgs<ExtArgs>
+    room_data?: boolean | room_dataDefaultArgs<ExtArgs>
+  }
+  export type ApprovalPdfExportRowIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    export?: boolean | ApprovalPdfExportDefaultArgs<ExtArgs>
+    room_data?: boolean | room_dataDefaultArgs<ExtArgs>
+  }
+
+  export type $ApprovalPdfExportRowPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ApprovalPdfExportRow"
+    objects: {
+      export: Prisma.$ApprovalPdfExportPayload<ExtArgs>
+      room_data: Prisma.$room_dataPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      exportId: string
+      roomDataId: number
+    }, ExtArgs["result"]["approvalPdfExportRow"]>
+    composites: {}
+  }
+
+  type ApprovalPdfExportRowGetPayload<S extends boolean | null | undefined | ApprovalPdfExportRowDefaultArgs> = $Result.GetResult<Prisma.$ApprovalPdfExportRowPayload, S>
+
+  type ApprovalPdfExportRowCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ApprovalPdfExportRowFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ApprovalPdfExportRowCountAggregateInputType | true
+    }
+
+  export interface ApprovalPdfExportRowDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ApprovalPdfExportRow'], meta: { name: 'ApprovalPdfExportRow' } }
+    /**
+     * Find zero or one ApprovalPdfExportRow that matches the filter.
+     * @param {ApprovalPdfExportRowFindUniqueArgs} args - Arguments to find a ApprovalPdfExportRow
+     * @example
+     * // Get one ApprovalPdfExportRow
+     * const approvalPdfExportRow = await prisma.approvalPdfExportRow.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ApprovalPdfExportRowFindUniqueArgs>(args: SelectSubset<T, ApprovalPdfExportRowFindUniqueArgs<ExtArgs>>): Prisma__ApprovalPdfExportRowClient<$Result.GetResult<Prisma.$ApprovalPdfExportRowPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ApprovalPdfExportRow that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ApprovalPdfExportRowFindUniqueOrThrowArgs} args - Arguments to find a ApprovalPdfExportRow
+     * @example
+     * // Get one ApprovalPdfExportRow
+     * const approvalPdfExportRow = await prisma.approvalPdfExportRow.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ApprovalPdfExportRowFindUniqueOrThrowArgs>(args: SelectSubset<T, ApprovalPdfExportRowFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ApprovalPdfExportRowClient<$Result.GetResult<Prisma.$ApprovalPdfExportRowPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ApprovalPdfExportRow that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApprovalPdfExportRowFindFirstArgs} args - Arguments to find a ApprovalPdfExportRow
+     * @example
+     * // Get one ApprovalPdfExportRow
+     * const approvalPdfExportRow = await prisma.approvalPdfExportRow.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ApprovalPdfExportRowFindFirstArgs>(args?: SelectSubset<T, ApprovalPdfExportRowFindFirstArgs<ExtArgs>>): Prisma__ApprovalPdfExportRowClient<$Result.GetResult<Prisma.$ApprovalPdfExportRowPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ApprovalPdfExportRow that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApprovalPdfExportRowFindFirstOrThrowArgs} args - Arguments to find a ApprovalPdfExportRow
+     * @example
+     * // Get one ApprovalPdfExportRow
+     * const approvalPdfExportRow = await prisma.approvalPdfExportRow.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ApprovalPdfExportRowFindFirstOrThrowArgs>(args?: SelectSubset<T, ApprovalPdfExportRowFindFirstOrThrowArgs<ExtArgs>>): Prisma__ApprovalPdfExportRowClient<$Result.GetResult<Prisma.$ApprovalPdfExportRowPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ApprovalPdfExportRows that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApprovalPdfExportRowFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ApprovalPdfExportRows
+     * const approvalPdfExportRows = await prisma.approvalPdfExportRow.findMany()
+     * 
+     * // Get first 10 ApprovalPdfExportRows
+     * const approvalPdfExportRows = await prisma.approvalPdfExportRow.findMany({ take: 10 })
+     * 
+     * // Only select the `exportId`
+     * const approvalPdfExportRowWithExportIdOnly = await prisma.approvalPdfExportRow.findMany({ select: { exportId: true } })
+     * 
+     */
+    findMany<T extends ApprovalPdfExportRowFindManyArgs>(args?: SelectSubset<T, ApprovalPdfExportRowFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPdfExportRowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ApprovalPdfExportRow.
+     * @param {ApprovalPdfExportRowCreateArgs} args - Arguments to create a ApprovalPdfExportRow.
+     * @example
+     * // Create one ApprovalPdfExportRow
+     * const ApprovalPdfExportRow = await prisma.approvalPdfExportRow.create({
+     *   data: {
+     *     // ... data to create a ApprovalPdfExportRow
+     *   }
+     * })
+     * 
+     */
+    create<T extends ApprovalPdfExportRowCreateArgs>(args: SelectSubset<T, ApprovalPdfExportRowCreateArgs<ExtArgs>>): Prisma__ApprovalPdfExportRowClient<$Result.GetResult<Prisma.$ApprovalPdfExportRowPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ApprovalPdfExportRows.
+     * @param {ApprovalPdfExportRowCreateManyArgs} args - Arguments to create many ApprovalPdfExportRows.
+     * @example
+     * // Create many ApprovalPdfExportRows
+     * const approvalPdfExportRow = await prisma.approvalPdfExportRow.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ApprovalPdfExportRowCreateManyArgs>(args?: SelectSubset<T, ApprovalPdfExportRowCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ApprovalPdfExportRows and returns the data saved in the database.
+     * @param {ApprovalPdfExportRowCreateManyAndReturnArgs} args - Arguments to create many ApprovalPdfExportRows.
+     * @example
+     * // Create many ApprovalPdfExportRows
+     * const approvalPdfExportRow = await prisma.approvalPdfExportRow.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ApprovalPdfExportRows and only return the `exportId`
+     * const approvalPdfExportRowWithExportIdOnly = await prisma.approvalPdfExportRow.createManyAndReturn({
+     *   select: { exportId: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ApprovalPdfExportRowCreateManyAndReturnArgs>(args?: SelectSubset<T, ApprovalPdfExportRowCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPdfExportRowPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ApprovalPdfExportRow.
+     * @param {ApprovalPdfExportRowDeleteArgs} args - Arguments to delete one ApprovalPdfExportRow.
+     * @example
+     * // Delete one ApprovalPdfExportRow
+     * const ApprovalPdfExportRow = await prisma.approvalPdfExportRow.delete({
+     *   where: {
+     *     // ... filter to delete one ApprovalPdfExportRow
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ApprovalPdfExportRowDeleteArgs>(args: SelectSubset<T, ApprovalPdfExportRowDeleteArgs<ExtArgs>>): Prisma__ApprovalPdfExportRowClient<$Result.GetResult<Prisma.$ApprovalPdfExportRowPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ApprovalPdfExportRow.
+     * @param {ApprovalPdfExportRowUpdateArgs} args - Arguments to update one ApprovalPdfExportRow.
+     * @example
+     * // Update one ApprovalPdfExportRow
+     * const approvalPdfExportRow = await prisma.approvalPdfExportRow.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ApprovalPdfExportRowUpdateArgs>(args: SelectSubset<T, ApprovalPdfExportRowUpdateArgs<ExtArgs>>): Prisma__ApprovalPdfExportRowClient<$Result.GetResult<Prisma.$ApprovalPdfExportRowPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ApprovalPdfExportRows.
+     * @param {ApprovalPdfExportRowDeleteManyArgs} args - Arguments to filter ApprovalPdfExportRows to delete.
+     * @example
+     * // Delete a few ApprovalPdfExportRows
+     * const { count } = await prisma.approvalPdfExportRow.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ApprovalPdfExportRowDeleteManyArgs>(args?: SelectSubset<T, ApprovalPdfExportRowDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ApprovalPdfExportRows.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApprovalPdfExportRowUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ApprovalPdfExportRows
+     * const approvalPdfExportRow = await prisma.approvalPdfExportRow.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ApprovalPdfExportRowUpdateManyArgs>(args: SelectSubset<T, ApprovalPdfExportRowUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ApprovalPdfExportRows and returns the data updated in the database.
+     * @param {ApprovalPdfExportRowUpdateManyAndReturnArgs} args - Arguments to update many ApprovalPdfExportRows.
+     * @example
+     * // Update many ApprovalPdfExportRows
+     * const approvalPdfExportRow = await prisma.approvalPdfExportRow.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ApprovalPdfExportRows and only return the `exportId`
+     * const approvalPdfExportRowWithExportIdOnly = await prisma.approvalPdfExportRow.updateManyAndReturn({
+     *   select: { exportId: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ApprovalPdfExportRowUpdateManyAndReturnArgs>(args: SelectSubset<T, ApprovalPdfExportRowUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPdfExportRowPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ApprovalPdfExportRow.
+     * @param {ApprovalPdfExportRowUpsertArgs} args - Arguments to update or create a ApprovalPdfExportRow.
+     * @example
+     * // Update or create a ApprovalPdfExportRow
+     * const approvalPdfExportRow = await prisma.approvalPdfExportRow.upsert({
+     *   create: {
+     *     // ... data to create a ApprovalPdfExportRow
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ApprovalPdfExportRow we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ApprovalPdfExportRowUpsertArgs>(args: SelectSubset<T, ApprovalPdfExportRowUpsertArgs<ExtArgs>>): Prisma__ApprovalPdfExportRowClient<$Result.GetResult<Prisma.$ApprovalPdfExportRowPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ApprovalPdfExportRows.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApprovalPdfExportRowCountArgs} args - Arguments to filter ApprovalPdfExportRows to count.
+     * @example
+     * // Count the number of ApprovalPdfExportRows
+     * const count = await prisma.approvalPdfExportRow.count({
+     *   where: {
+     *     // ... the filter for the ApprovalPdfExportRows we want to count
+     *   }
+     * })
+    **/
+    count<T extends ApprovalPdfExportRowCountArgs>(
+      args?: Subset<T, ApprovalPdfExportRowCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ApprovalPdfExportRowCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ApprovalPdfExportRow.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApprovalPdfExportRowAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ApprovalPdfExportRowAggregateArgs>(args: Subset<T, ApprovalPdfExportRowAggregateArgs>): Prisma.PrismaPromise<GetApprovalPdfExportRowAggregateType<T>>
+
+    /**
+     * Group by ApprovalPdfExportRow.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApprovalPdfExportRowGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ApprovalPdfExportRowGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ApprovalPdfExportRowGroupByArgs['orderBy'] }
+        : { orderBy?: ApprovalPdfExportRowGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ApprovalPdfExportRowGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetApprovalPdfExportRowGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ApprovalPdfExportRow model
+   */
+  readonly fields: ApprovalPdfExportRowFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ApprovalPdfExportRow.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ApprovalPdfExportRowClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    export<T extends ApprovalPdfExportDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ApprovalPdfExportDefaultArgs<ExtArgs>>): Prisma__ApprovalPdfExportClient<$Result.GetResult<Prisma.$ApprovalPdfExportPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    room_data<T extends room_dataDefaultArgs<ExtArgs> = {}>(args?: Subset<T, room_dataDefaultArgs<ExtArgs>>): Prisma__room_dataClient<$Result.GetResult<Prisma.$room_dataPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ApprovalPdfExportRow model
+   */
+  interface ApprovalPdfExportRowFieldRefs {
+    readonly exportId: FieldRef<"ApprovalPdfExportRow", 'String'>
+    readonly roomDataId: FieldRef<"ApprovalPdfExportRow", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ApprovalPdfExportRow findUnique
+   */
+  export type ApprovalPdfExportRowFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExportRow
+     */
+    select?: ApprovalPdfExportRowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalPdfExportRow
+     */
+    omit?: ApprovalPdfExportRowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalPdfExportRowInclude<ExtArgs> | null
+    /**
+     * Filter, which ApprovalPdfExportRow to fetch.
+     */
+    where: ApprovalPdfExportRowWhereUniqueInput
+  }
+
+  /**
+   * ApprovalPdfExportRow findUniqueOrThrow
+   */
+  export type ApprovalPdfExportRowFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExportRow
+     */
+    select?: ApprovalPdfExportRowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalPdfExportRow
+     */
+    omit?: ApprovalPdfExportRowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalPdfExportRowInclude<ExtArgs> | null
+    /**
+     * Filter, which ApprovalPdfExportRow to fetch.
+     */
+    where: ApprovalPdfExportRowWhereUniqueInput
+  }
+
+  /**
+   * ApprovalPdfExportRow findFirst
+   */
+  export type ApprovalPdfExportRowFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExportRow
+     */
+    select?: ApprovalPdfExportRowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalPdfExportRow
+     */
+    omit?: ApprovalPdfExportRowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalPdfExportRowInclude<ExtArgs> | null
+    /**
+     * Filter, which ApprovalPdfExportRow to fetch.
+     */
+    where?: ApprovalPdfExportRowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ApprovalPdfExportRows to fetch.
+     */
+    orderBy?: ApprovalPdfExportRowOrderByWithRelationInput | ApprovalPdfExportRowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ApprovalPdfExportRows.
+     */
+    cursor?: ApprovalPdfExportRowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ApprovalPdfExportRows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ApprovalPdfExportRows.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ApprovalPdfExportRows.
+     */
+    distinct?: ApprovalPdfExportRowScalarFieldEnum | ApprovalPdfExportRowScalarFieldEnum[]
+  }
+
+  /**
+   * ApprovalPdfExportRow findFirstOrThrow
+   */
+  export type ApprovalPdfExportRowFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExportRow
+     */
+    select?: ApprovalPdfExportRowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalPdfExportRow
+     */
+    omit?: ApprovalPdfExportRowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalPdfExportRowInclude<ExtArgs> | null
+    /**
+     * Filter, which ApprovalPdfExportRow to fetch.
+     */
+    where?: ApprovalPdfExportRowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ApprovalPdfExportRows to fetch.
+     */
+    orderBy?: ApprovalPdfExportRowOrderByWithRelationInput | ApprovalPdfExportRowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ApprovalPdfExportRows.
+     */
+    cursor?: ApprovalPdfExportRowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ApprovalPdfExportRows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ApprovalPdfExportRows.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ApprovalPdfExportRows.
+     */
+    distinct?: ApprovalPdfExportRowScalarFieldEnum | ApprovalPdfExportRowScalarFieldEnum[]
+  }
+
+  /**
+   * ApprovalPdfExportRow findMany
+   */
+  export type ApprovalPdfExportRowFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExportRow
+     */
+    select?: ApprovalPdfExportRowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalPdfExportRow
+     */
+    omit?: ApprovalPdfExportRowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalPdfExportRowInclude<ExtArgs> | null
+    /**
+     * Filter, which ApprovalPdfExportRows to fetch.
+     */
+    where?: ApprovalPdfExportRowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ApprovalPdfExportRows to fetch.
+     */
+    orderBy?: ApprovalPdfExportRowOrderByWithRelationInput | ApprovalPdfExportRowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ApprovalPdfExportRows.
+     */
+    cursor?: ApprovalPdfExportRowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ApprovalPdfExportRows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ApprovalPdfExportRows.
+     */
+    skip?: number
+    distinct?: ApprovalPdfExportRowScalarFieldEnum | ApprovalPdfExportRowScalarFieldEnum[]
+  }
+
+  /**
+   * ApprovalPdfExportRow create
+   */
+  export type ApprovalPdfExportRowCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExportRow
+     */
+    select?: ApprovalPdfExportRowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalPdfExportRow
+     */
+    omit?: ApprovalPdfExportRowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalPdfExportRowInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ApprovalPdfExportRow.
+     */
+    data: XOR<ApprovalPdfExportRowCreateInput, ApprovalPdfExportRowUncheckedCreateInput>
+  }
+
+  /**
+   * ApprovalPdfExportRow createMany
+   */
+  export type ApprovalPdfExportRowCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ApprovalPdfExportRows.
+     */
+    data: ApprovalPdfExportRowCreateManyInput | ApprovalPdfExportRowCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ApprovalPdfExportRow createManyAndReturn
+   */
+  export type ApprovalPdfExportRowCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExportRow
+     */
+    select?: ApprovalPdfExportRowSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalPdfExportRow
+     */
+    omit?: ApprovalPdfExportRowOmit<ExtArgs> | null
+    /**
+     * The data used to create many ApprovalPdfExportRows.
+     */
+    data: ApprovalPdfExportRowCreateManyInput | ApprovalPdfExportRowCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalPdfExportRowIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ApprovalPdfExportRow update
+   */
+  export type ApprovalPdfExportRowUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExportRow
+     */
+    select?: ApprovalPdfExportRowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalPdfExportRow
+     */
+    omit?: ApprovalPdfExportRowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalPdfExportRowInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ApprovalPdfExportRow.
+     */
+    data: XOR<ApprovalPdfExportRowUpdateInput, ApprovalPdfExportRowUncheckedUpdateInput>
+    /**
+     * Choose, which ApprovalPdfExportRow to update.
+     */
+    where: ApprovalPdfExportRowWhereUniqueInput
+  }
+
+  /**
+   * ApprovalPdfExportRow updateMany
+   */
+  export type ApprovalPdfExportRowUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ApprovalPdfExportRows.
+     */
+    data: XOR<ApprovalPdfExportRowUpdateManyMutationInput, ApprovalPdfExportRowUncheckedUpdateManyInput>
+    /**
+     * Filter which ApprovalPdfExportRows to update
+     */
+    where?: ApprovalPdfExportRowWhereInput
+    /**
+     * Limit how many ApprovalPdfExportRows to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ApprovalPdfExportRow updateManyAndReturn
+   */
+  export type ApprovalPdfExportRowUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExportRow
+     */
+    select?: ApprovalPdfExportRowSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalPdfExportRow
+     */
+    omit?: ApprovalPdfExportRowOmit<ExtArgs> | null
+    /**
+     * The data used to update ApprovalPdfExportRows.
+     */
+    data: XOR<ApprovalPdfExportRowUpdateManyMutationInput, ApprovalPdfExportRowUncheckedUpdateManyInput>
+    /**
+     * Filter which ApprovalPdfExportRows to update
+     */
+    where?: ApprovalPdfExportRowWhereInput
+    /**
+     * Limit how many ApprovalPdfExportRows to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalPdfExportRowIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ApprovalPdfExportRow upsert
+   */
+  export type ApprovalPdfExportRowUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExportRow
+     */
+    select?: ApprovalPdfExportRowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalPdfExportRow
+     */
+    omit?: ApprovalPdfExportRowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalPdfExportRowInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ApprovalPdfExportRow to update in case it exists.
+     */
+    where: ApprovalPdfExportRowWhereUniqueInput
+    /**
+     * In case the ApprovalPdfExportRow found by the `where` argument doesn't exist, create a new ApprovalPdfExportRow with this data.
+     */
+    create: XOR<ApprovalPdfExportRowCreateInput, ApprovalPdfExportRowUncheckedCreateInput>
+    /**
+     * In case the ApprovalPdfExportRow was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ApprovalPdfExportRowUpdateInput, ApprovalPdfExportRowUncheckedUpdateInput>
+  }
+
+  /**
+   * ApprovalPdfExportRow delete
+   */
+  export type ApprovalPdfExportRowDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExportRow
+     */
+    select?: ApprovalPdfExportRowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalPdfExportRow
+     */
+    omit?: ApprovalPdfExportRowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalPdfExportRowInclude<ExtArgs> | null
+    /**
+     * Filter which ApprovalPdfExportRow to delete.
+     */
+    where: ApprovalPdfExportRowWhereUniqueInput
+  }
+
+  /**
+   * ApprovalPdfExportRow deleteMany
+   */
+  export type ApprovalPdfExportRowDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ApprovalPdfExportRows to delete
+     */
+    where?: ApprovalPdfExportRowWhereInput
+    /**
+     * Limit how many ApprovalPdfExportRows to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ApprovalPdfExportRow without action
+   */
+  export type ApprovalPdfExportRowDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExportRow
+     */
+    select?: ApprovalPdfExportRowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalPdfExportRow
+     */
+    omit?: ApprovalPdfExportRowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalPdfExportRowInclude<ExtArgs> | null
   }
 
 
@@ -10451,6 +11798,8 @@ export namespace Prisma {
     roomRecording?: boolean | room_data$roomRecordingArgs<ExtArgs>
     noteRecording?: boolean | room_data$noteRecordingArgs<ExtArgs>
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
+    approvalPdfRows?: boolean | room_data$approvalPdfRowsArgs<ExtArgs>
+    _count?: boolean | Room_dataCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["room_data"]>
 
   export type room_dataSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -10497,6 +11846,8 @@ export namespace Prisma {
     roomRecording?: boolean | room_data$roomRecordingArgs<ExtArgs>
     noteRecording?: boolean | room_data$noteRecordingArgs<ExtArgs>
     bed_info?: boolean | bed_infoDefaultArgs<ExtArgs>
+    approvalPdfRows?: boolean | room_data$approvalPdfRowsArgs<ExtArgs>
+    _count?: boolean | Room_dataCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type room_dataIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     session?: boolean | demo_sessionDefaultArgs<ExtArgs>
@@ -10518,6 +11869,7 @@ export namespace Prisma {
       roomRecording: Prisma.$RecordingPayload<ExtArgs> | null
       noteRecording: Prisma.$RecordingPayload<ExtArgs> | null
       bed_info: Prisma.$bed_infoPayload<ExtArgs>
+      approvalPdfRows: Prisma.$ApprovalPdfExportRowPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -10925,6 +12277,7 @@ export namespace Prisma {
     roomRecording<T extends room_data$roomRecordingArgs<ExtArgs> = {}>(args?: Subset<T, room_data$roomRecordingArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     noteRecording<T extends room_data$noteRecordingArgs<ExtArgs> = {}>(args?: Subset<T, room_data$noteRecordingArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     bed_info<T extends bed_infoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, bed_infoDefaultArgs<ExtArgs>>): Prisma__bed_infoClient<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    approvalPdfRows<T extends room_data$approvalPdfRowsArgs<ExtArgs> = {}>(args?: Subset<T, room_data$approvalPdfRowsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPdfExportRowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11392,6 +12745,30 @@ export namespace Prisma {
      */
     include?: RecordingInclude<ExtArgs> | null
     where?: RecordingWhereInput
+  }
+
+  /**
+   * room_data.approvalPdfRows
+   */
+  export type room_data$approvalPdfRowsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExportRow
+     */
+    select?: ApprovalPdfExportRowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalPdfExportRow
+     */
+    omit?: ApprovalPdfExportRowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalPdfExportRowInclude<ExtArgs> | null
+    where?: ApprovalPdfExportRowWhereInput
+    orderBy?: ApprovalPdfExportRowOrderByWithRelationInput | ApprovalPdfExportRowOrderByWithRelationInput[]
+    cursor?: ApprovalPdfExportRowWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ApprovalPdfExportRowScalarFieldEnum | ApprovalPdfExportRowScalarFieldEnum[]
   }
 
   /**
@@ -12751,6 +14128,7 @@ export namespace Prisma {
     bed_info?: boolean | user_info$bed_infoArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
     user_uploads?: boolean | user_info$user_uploadsArgs<ExtArgs>
+    approvalPdfExports?: boolean | user_info$approvalPdfExportsArgs<ExtArgs>
     _count?: boolean | User_infoCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user_info"]>
 
@@ -12785,6 +14163,7 @@ export namespace Prisma {
     bed_info?: boolean | user_info$bed_infoArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
     user_uploads?: boolean | user_info$user_uploadsArgs<ExtArgs>
+    approvalPdfExports?: boolean | user_info$approvalPdfExportsArgs<ExtArgs>
     _count?: boolean | User_infoCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type user_infoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -12800,6 +14179,7 @@ export namespace Prisma {
       bed_info: Prisma.$bed_infoPayload<ExtArgs>[]
       medicalcenter_info: Prisma.$medicalcenter_infoPayload<ExtArgs>
       user_uploads: Prisma.$user_uploadsPayload<ExtArgs>[]
+      approvalPdfExports: Prisma.$ApprovalPdfExportPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       user_id: number
@@ -13204,6 +14584,7 @@ export namespace Prisma {
     bed_info<T extends user_info$bed_infoArgs<ExtArgs> = {}>(args?: Subset<T, user_info$bed_infoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$bed_infoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     medicalcenter_info<T extends medicalcenter_infoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, medicalcenter_infoDefaultArgs<ExtArgs>>): Prisma__medicalcenter_infoClient<$Result.GetResult<Prisma.$medicalcenter_infoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     user_uploads<T extends user_info$user_uploadsArgs<ExtArgs> = {}>(args?: Subset<T, user_info$user_uploadsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$user_uploadsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    approvalPdfExports<T extends user_info$approvalPdfExportsArgs<ExtArgs> = {}>(args?: Subset<T, user_info$approvalPdfExportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPdfExportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13679,6 +15060,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: User_uploadsScalarFieldEnum | User_uploadsScalarFieldEnum[]
+  }
+
+  /**
+   * user_info.approvalPdfExports
+   */
+  export type user_info$approvalPdfExportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalPdfExport
+     */
+    select?: ApprovalPdfExportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalPdfExport
+     */
+    omit?: ApprovalPdfExportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalPdfExportInclude<ExtArgs> | null
+    where?: ApprovalPdfExportWhereInput
+    orderBy?: ApprovalPdfExportOrderByWithRelationInput | ApprovalPdfExportOrderByWithRelationInput[]
+    cursor?: ApprovalPdfExportWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ApprovalPdfExportScalarFieldEnum | ApprovalPdfExportScalarFieldEnum[]
   }
 
   /**
@@ -15008,7 +16413,7 @@ export namespace Prisma {
     expires_at?: boolean
     center_id?: boolean
     roomData?: boolean | demo_session$roomDataArgs<ExtArgs>
-    exportPdf?: boolean | demo_session$exportPdfArgs<ExtArgs>
+    approvalPdfExports?: boolean | demo_session$approvalPdfExportsArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
     _count?: boolean | Demo_sessionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["demo_session"]>
@@ -15039,7 +16444,7 @@ export namespace Prisma {
   export type demo_sessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"session_id" | "created_at" | "expires_at" | "center_id", ExtArgs["result"]["demo_session"]>
   export type demo_sessionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     roomData?: boolean | demo_session$roomDataArgs<ExtArgs>
-    exportPdf?: boolean | demo_session$exportPdfArgs<ExtArgs>
+    approvalPdfExports?: boolean | demo_session$approvalPdfExportsArgs<ExtArgs>
     medicalcenter_info?: boolean | medicalcenter_infoDefaultArgs<ExtArgs>
     _count?: boolean | Demo_sessionCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -15054,7 +16459,7 @@ export namespace Prisma {
     name: "demo_session"
     objects: {
       roomData: Prisma.$room_dataPayload<ExtArgs>[]
-      exportPdf: Prisma.$PdfFilePayload<ExtArgs> | null
+      approvalPdfExports: Prisma.$ApprovalPdfExportPayload<ExtArgs>[]
       medicalcenter_info: Prisma.$medicalcenter_infoPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -15457,7 +16862,7 @@ export namespace Prisma {
   export interface Prisma__demo_sessionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     roomData<T extends demo_session$roomDataArgs<ExtArgs> = {}>(args?: Subset<T, demo_session$roomDataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$room_dataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    exportPdf<T extends demo_session$exportPdfArgs<ExtArgs> = {}>(args?: Subset<T, demo_session$exportPdfArgs<ExtArgs>>): Prisma__PdfFileClient<$Result.GetResult<Prisma.$PdfFilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    approvalPdfExports<T extends demo_session$approvalPdfExportsArgs<ExtArgs> = {}>(args?: Subset<T, demo_session$approvalPdfExportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPdfExportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     medicalcenter_info<T extends medicalcenter_infoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, medicalcenter_infoDefaultArgs<ExtArgs>>): Prisma__medicalcenter_infoClient<$Result.GetResult<Prisma.$medicalcenter_infoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -15912,22 +17317,27 @@ export namespace Prisma {
   }
 
   /**
-   * demo_session.exportPdf
+   * demo_session.approvalPdfExports
    */
-  export type demo_session$exportPdfArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type demo_session$approvalPdfExportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PdfFile
+     * Select specific fields to fetch from the ApprovalPdfExport
      */
-    select?: PdfFileSelect<ExtArgs> | null
+    select?: ApprovalPdfExportSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the PdfFile
+     * Omit specific fields from the ApprovalPdfExport
      */
-    omit?: PdfFileOmit<ExtArgs> | null
+    omit?: ApprovalPdfExportOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: PdfFileInclude<ExtArgs> | null
-    where?: PdfFileWhereInput
+    include?: ApprovalPdfExportInclude<ExtArgs> | null
+    where?: ApprovalPdfExportWhereInput
+    orderBy?: ApprovalPdfExportOrderByWithRelationInput | ApprovalPdfExportOrderByWithRelationInput[]
+    cursor?: ApprovalPdfExportWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ApprovalPdfExportScalarFieldEnum | ApprovalPdfExportScalarFieldEnum[]
   }
 
   /**
@@ -16021,14 +17431,25 @@ export namespace Prisma {
   export type Bed_infoScalarFieldEnum = (typeof Bed_infoScalarFieldEnum)[keyof typeof Bed_infoScalarFieldEnum]
 
 
-  export const PdfFileScalarFieldEnum: {
+  export const ApprovalPdfExportScalarFieldEnum: {
     id: 'id',
     filePath: 'filePath',
+    displayName: 'displayName',
     createdAt: 'createdAt',
-    sessionId: 'sessionId'
+    noteCount: 'noteCount',
+    sessionId: 'sessionId',
+    userId: 'userId'
   };
 
-  export type PdfFileScalarFieldEnum = (typeof PdfFileScalarFieldEnum)[keyof typeof PdfFileScalarFieldEnum]
+  export type ApprovalPdfExportScalarFieldEnum = (typeof ApprovalPdfExportScalarFieldEnum)[keyof typeof ApprovalPdfExportScalarFieldEnum]
+
+
+  export const ApprovalPdfExportRowScalarFieldEnum: {
+    exportId: 'exportId',
+    roomDataId: 'roomDataId'
+  };
+
+  export type ApprovalPdfExportRowScalarFieldEnum = (typeof ApprovalPdfExportRowScalarFieldEnum)[keyof typeof ApprovalPdfExportRowScalarFieldEnum]
 
 
   export const RecordingScalarFieldEnum: {
@@ -16549,54 +17970,123 @@ export namespace Prisma {
     assigned_nurse_id?: IntNullableWithAggregatesFilter<"bed_info"> | number | null
   }
 
-  export type PdfFileWhereInput = {
-    AND?: PdfFileWhereInput | PdfFileWhereInput[]
-    OR?: PdfFileWhereInput[]
-    NOT?: PdfFileWhereInput | PdfFileWhereInput[]
-    id?: StringFilter<"PdfFile"> | string
-    filePath?: StringFilter<"PdfFile"> | string
-    createdAt?: DateTimeFilter<"PdfFile"> | Date | string
-    sessionId?: StringFilter<"PdfFile"> | string
+  export type ApprovalPdfExportWhereInput = {
+    AND?: ApprovalPdfExportWhereInput | ApprovalPdfExportWhereInput[]
+    OR?: ApprovalPdfExportWhereInput[]
+    NOT?: ApprovalPdfExportWhereInput | ApprovalPdfExportWhereInput[]
+    id?: StringFilter<"ApprovalPdfExport"> | string
+    filePath?: StringFilter<"ApprovalPdfExport"> | string
+    displayName?: StringFilter<"ApprovalPdfExport"> | string
+    createdAt?: DateTimeFilter<"ApprovalPdfExport"> | Date | string
+    noteCount?: IntFilter<"ApprovalPdfExport"> | number
+    sessionId?: StringFilter<"ApprovalPdfExport"> | string
+    userId?: IntFilter<"ApprovalPdfExport"> | number
     session?: XOR<Demo_sessionScalarRelationFilter, demo_sessionWhereInput>
+    user?: XOR<User_infoScalarRelationFilter, user_infoWhereInput>
+    rows?: ApprovalPdfExportRowListRelationFilter
   }
 
-  export type PdfFileOrderByWithRelationInput = {
+  export type ApprovalPdfExportOrderByWithRelationInput = {
     id?: SortOrder
     filePath?: SortOrder
+    displayName?: SortOrder
     createdAt?: SortOrder
+    noteCount?: SortOrder
     sessionId?: SortOrder
+    userId?: SortOrder
     session?: demo_sessionOrderByWithRelationInput
+    user?: user_infoOrderByWithRelationInput
+    rows?: ApprovalPdfExportRowOrderByRelationAggregateInput
   }
 
-  export type PdfFileWhereUniqueInput = Prisma.AtLeast<{
+  export type ApprovalPdfExportWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    sessionId?: string
-    AND?: PdfFileWhereInput | PdfFileWhereInput[]
-    OR?: PdfFileWhereInput[]
-    NOT?: PdfFileWhereInput | PdfFileWhereInput[]
-    filePath?: StringFilter<"PdfFile"> | string
-    createdAt?: DateTimeFilter<"PdfFile"> | Date | string
+    filePath?: string
+    AND?: ApprovalPdfExportWhereInput | ApprovalPdfExportWhereInput[]
+    OR?: ApprovalPdfExportWhereInput[]
+    NOT?: ApprovalPdfExportWhereInput | ApprovalPdfExportWhereInput[]
+    displayName?: StringFilter<"ApprovalPdfExport"> | string
+    createdAt?: DateTimeFilter<"ApprovalPdfExport"> | Date | string
+    noteCount?: IntFilter<"ApprovalPdfExport"> | number
+    sessionId?: StringFilter<"ApprovalPdfExport"> | string
+    userId?: IntFilter<"ApprovalPdfExport"> | number
     session?: XOR<Demo_sessionScalarRelationFilter, demo_sessionWhereInput>
-  }, "id" | "sessionId">
+    user?: XOR<User_infoScalarRelationFilter, user_infoWhereInput>
+    rows?: ApprovalPdfExportRowListRelationFilter
+  }, "id" | "filePath">
 
-  export type PdfFileOrderByWithAggregationInput = {
+  export type ApprovalPdfExportOrderByWithAggregationInput = {
     id?: SortOrder
     filePath?: SortOrder
+    displayName?: SortOrder
     createdAt?: SortOrder
+    noteCount?: SortOrder
     sessionId?: SortOrder
-    _count?: PdfFileCountOrderByAggregateInput
-    _max?: PdfFileMaxOrderByAggregateInput
-    _min?: PdfFileMinOrderByAggregateInput
+    userId?: SortOrder
+    _count?: ApprovalPdfExportCountOrderByAggregateInput
+    _avg?: ApprovalPdfExportAvgOrderByAggregateInput
+    _max?: ApprovalPdfExportMaxOrderByAggregateInput
+    _min?: ApprovalPdfExportMinOrderByAggregateInput
+    _sum?: ApprovalPdfExportSumOrderByAggregateInput
   }
 
-  export type PdfFileScalarWhereWithAggregatesInput = {
-    AND?: PdfFileScalarWhereWithAggregatesInput | PdfFileScalarWhereWithAggregatesInput[]
-    OR?: PdfFileScalarWhereWithAggregatesInput[]
-    NOT?: PdfFileScalarWhereWithAggregatesInput | PdfFileScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"PdfFile"> | string
-    filePath?: StringWithAggregatesFilter<"PdfFile"> | string
-    createdAt?: DateTimeWithAggregatesFilter<"PdfFile"> | Date | string
-    sessionId?: StringWithAggregatesFilter<"PdfFile"> | string
+  export type ApprovalPdfExportScalarWhereWithAggregatesInput = {
+    AND?: ApprovalPdfExportScalarWhereWithAggregatesInput | ApprovalPdfExportScalarWhereWithAggregatesInput[]
+    OR?: ApprovalPdfExportScalarWhereWithAggregatesInput[]
+    NOT?: ApprovalPdfExportScalarWhereWithAggregatesInput | ApprovalPdfExportScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ApprovalPdfExport"> | string
+    filePath?: StringWithAggregatesFilter<"ApprovalPdfExport"> | string
+    displayName?: StringWithAggregatesFilter<"ApprovalPdfExport"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"ApprovalPdfExport"> | Date | string
+    noteCount?: IntWithAggregatesFilter<"ApprovalPdfExport"> | number
+    sessionId?: StringWithAggregatesFilter<"ApprovalPdfExport"> | string
+    userId?: IntWithAggregatesFilter<"ApprovalPdfExport"> | number
+  }
+
+  export type ApprovalPdfExportRowWhereInput = {
+    AND?: ApprovalPdfExportRowWhereInput | ApprovalPdfExportRowWhereInput[]
+    OR?: ApprovalPdfExportRowWhereInput[]
+    NOT?: ApprovalPdfExportRowWhereInput | ApprovalPdfExportRowWhereInput[]
+    exportId?: StringFilter<"ApprovalPdfExportRow"> | string
+    roomDataId?: IntFilter<"ApprovalPdfExportRow"> | number
+    export?: XOR<ApprovalPdfExportScalarRelationFilter, ApprovalPdfExportWhereInput>
+    room_data?: XOR<Room_dataScalarRelationFilter, room_dataWhereInput>
+  }
+
+  export type ApprovalPdfExportRowOrderByWithRelationInput = {
+    exportId?: SortOrder
+    roomDataId?: SortOrder
+    export?: ApprovalPdfExportOrderByWithRelationInput
+    room_data?: room_dataOrderByWithRelationInput
+  }
+
+  export type ApprovalPdfExportRowWhereUniqueInput = Prisma.AtLeast<{
+    exportId_roomDataId?: ApprovalPdfExportRowExportIdRoomDataIdCompoundUniqueInput
+    AND?: ApprovalPdfExportRowWhereInput | ApprovalPdfExportRowWhereInput[]
+    OR?: ApprovalPdfExportRowWhereInput[]
+    NOT?: ApprovalPdfExportRowWhereInput | ApprovalPdfExportRowWhereInput[]
+    exportId?: StringFilter<"ApprovalPdfExportRow"> | string
+    roomDataId?: IntFilter<"ApprovalPdfExportRow"> | number
+    export?: XOR<ApprovalPdfExportScalarRelationFilter, ApprovalPdfExportWhereInput>
+    room_data?: XOR<Room_dataScalarRelationFilter, room_dataWhereInput>
+  }, "exportId_roomDataId">
+
+  export type ApprovalPdfExportRowOrderByWithAggregationInput = {
+    exportId?: SortOrder
+    roomDataId?: SortOrder
+    _count?: ApprovalPdfExportRowCountOrderByAggregateInput
+    _avg?: ApprovalPdfExportRowAvgOrderByAggregateInput
+    _max?: ApprovalPdfExportRowMaxOrderByAggregateInput
+    _min?: ApprovalPdfExportRowMinOrderByAggregateInput
+    _sum?: ApprovalPdfExportRowSumOrderByAggregateInput
+  }
+
+  export type ApprovalPdfExportRowScalarWhereWithAggregatesInput = {
+    AND?: ApprovalPdfExportRowScalarWhereWithAggregatesInput | ApprovalPdfExportRowScalarWhereWithAggregatesInput[]
+    OR?: ApprovalPdfExportRowScalarWhereWithAggregatesInput[]
+    NOT?: ApprovalPdfExportRowScalarWhereWithAggregatesInput | ApprovalPdfExportRowScalarWhereWithAggregatesInput[]
+    exportId?: StringWithAggregatesFilter<"ApprovalPdfExportRow"> | string
+    roomDataId?: IntWithAggregatesFilter<"ApprovalPdfExportRow"> | number
   }
 
   export type RecordingWhereInput = {
@@ -16672,6 +18162,7 @@ export namespace Prisma {
     roomRecording?: XOR<RecordingNullableScalarRelationFilter, RecordingWhereInput> | null
     noteRecording?: XOR<RecordingNullableScalarRelationFilter, RecordingWhereInput> | null
     bed_info?: XOR<Bed_infoScalarRelationFilter, bed_infoWhereInput>
+    approvalPdfRows?: ApprovalPdfExportRowListRelationFilter
   }
 
   export type room_dataOrderByWithRelationInput = {
@@ -16686,6 +18177,7 @@ export namespace Prisma {
     roomRecording?: RecordingOrderByWithRelationInput
     noteRecording?: RecordingOrderByWithRelationInput
     bed_info?: bed_infoOrderByWithRelationInput
+    approvalPdfRows?: ApprovalPdfExportRowOrderByRelationAggregateInput
   }
 
   export type room_dataWhereUniqueInput = Prisma.AtLeast<{
@@ -16703,6 +18195,7 @@ export namespace Prisma {
     roomRecording?: XOR<RecordingNullableScalarRelationFilter, RecordingWhereInput> | null
     noteRecording?: XOR<RecordingNullableScalarRelationFilter, RecordingWhereInput> | null
     bed_info?: XOR<Bed_infoScalarRelationFilter, bed_infoWhereInput>
+    approvalPdfRows?: ApprovalPdfExportRowListRelationFilter
   }, "id">
 
   export type room_dataOrderByWithAggregationInput = {
@@ -16814,6 +18307,7 @@ export namespace Prisma {
     bed_info?: Bed_infoListRelationFilter
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
     user_uploads?: User_uploadsListRelationFilter
+    approvalPdfExports?: ApprovalPdfExportListRelationFilter
   }
 
   export type user_infoOrderByWithRelationInput = {
@@ -16825,6 +18319,7 @@ export namespace Prisma {
     bed_info?: bed_infoOrderByRelationAggregateInput
     medicalcenter_info?: medicalcenter_infoOrderByWithRelationInput
     user_uploads?: user_uploadsOrderByRelationAggregateInput
+    approvalPdfExports?: ApprovalPdfExportOrderByRelationAggregateInput
   }
 
   export type user_infoWhereUniqueInput = Prisma.AtLeast<{
@@ -16839,6 +18334,7 @@ export namespace Prisma {
     bed_info?: Bed_infoListRelationFilter
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
     user_uploads?: User_uploadsListRelationFilter
+    approvalPdfExports?: ApprovalPdfExportListRelationFilter
   }, "user_id">
 
   export type user_infoOrderByWithAggregationInput = {
@@ -16940,7 +18436,7 @@ export namespace Prisma {
     expires_at?: DateTimeFilter<"demo_session"> | Date | string
     center_id?: IntFilter<"demo_session"> | number
     roomData?: Room_dataListRelationFilter
-    exportPdf?: XOR<PdfFileNullableScalarRelationFilter, PdfFileWhereInput> | null
+    approvalPdfExports?: ApprovalPdfExportListRelationFilter
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
   }
 
@@ -16950,7 +18446,7 @@ export namespace Prisma {
     expires_at?: SortOrder
     center_id?: SortOrder
     roomData?: room_dataOrderByRelationAggregateInput
-    exportPdf?: PdfFileOrderByWithRelationInput
+    approvalPdfExports?: ApprovalPdfExportOrderByRelationAggregateInput
     medicalcenter_info?: medicalcenter_infoOrderByWithRelationInput
   }
 
@@ -16963,7 +18459,7 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"demo_session"> | Date | string
     expires_at?: DateTimeFilter<"demo_session"> | Date | string
     roomData?: Room_dataListRelationFilter
-    exportPdf?: XOR<PdfFileNullableScalarRelationFilter, PdfFileWhereInput> | null
+    approvalPdfExports?: ApprovalPdfExportListRelationFilter
     medicalcenter_info?: XOR<Medicalcenter_infoScalarRelationFilter, medicalcenter_infoWhereInput>
   }, "session_id" | "center_id">
 
@@ -17320,52 +18816,110 @@ export namespace Prisma {
     assigned_nurse_id?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
-  export type PdfFileCreateInput = {
+  export type ApprovalPdfExportCreateInput = {
     id?: string
     filePath: string
+    displayName: string
     createdAt?: Date | string
-    session: demo_sessionCreateNestedOneWithoutExportPdfInput
+    noteCount: number
+    session: demo_sessionCreateNestedOneWithoutApprovalPdfExportsInput
+    user: user_infoCreateNestedOneWithoutApprovalPdfExportsInput
+    rows?: ApprovalPdfExportRowCreateNestedManyWithoutExportInput
   }
 
-  export type PdfFileUncheckedCreateInput = {
+  export type ApprovalPdfExportUncheckedCreateInput = {
     id?: string
     filePath: string
+    displayName: string
     createdAt?: Date | string
+    noteCount: number
     sessionId: string
+    userId: number
+    rows?: ApprovalPdfExportRowUncheckedCreateNestedManyWithoutExportInput
   }
 
-  export type PdfFileUpdateInput = {
+  export type ApprovalPdfExportUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     filePath?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    session?: demo_sessionUpdateOneRequiredWithoutExportPdfNestedInput
+    noteCount?: IntFieldUpdateOperationsInput | number
+    session?: demo_sessionUpdateOneRequiredWithoutApprovalPdfExportsNestedInput
+    user?: user_infoUpdateOneRequiredWithoutApprovalPdfExportsNestedInput
+    rows?: ApprovalPdfExportRowUpdateManyWithoutExportNestedInput
   }
 
-  export type PdfFileUncheckedUpdateInput = {
+  export type ApprovalPdfExportUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     filePath?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    noteCount?: IntFieldUpdateOperationsInput | number
     sessionId?: StringFieldUpdateOperationsInput | string
+    userId?: IntFieldUpdateOperationsInput | number
+    rows?: ApprovalPdfExportRowUncheckedUpdateManyWithoutExportNestedInput
   }
 
-  export type PdfFileCreateManyInput = {
+  export type ApprovalPdfExportCreateManyInput = {
     id?: string
     filePath: string
+    displayName: string
     createdAt?: Date | string
+    noteCount: number
     sessionId: string
+    userId: number
   }
 
-  export type PdfFileUpdateManyMutationInput = {
+  export type ApprovalPdfExportUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     filePath?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    noteCount?: IntFieldUpdateOperationsInput | number
   }
 
-  export type PdfFileUncheckedUpdateManyInput = {
+  export type ApprovalPdfExportUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     filePath?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    noteCount?: IntFieldUpdateOperationsInput | number
     sessionId?: StringFieldUpdateOperationsInput | string
+    userId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type ApprovalPdfExportRowCreateInput = {
+    export: ApprovalPdfExportCreateNestedOneWithoutRowsInput
+    room_data: room_dataCreateNestedOneWithoutApprovalPdfRowsInput
+  }
+
+  export type ApprovalPdfExportRowUncheckedCreateInput = {
+    exportId: string
+    roomDataId: number
+  }
+
+  export type ApprovalPdfExportRowUpdateInput = {
+    export?: ApprovalPdfExportUpdateOneRequiredWithoutRowsNestedInput
+    room_data?: room_dataUpdateOneRequiredWithoutApprovalPdfRowsNestedInput
+  }
+
+  export type ApprovalPdfExportRowUncheckedUpdateInput = {
+    exportId?: StringFieldUpdateOperationsInput | string
+    roomDataId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type ApprovalPdfExportRowCreateManyInput = {
+    exportId: string
+    roomDataId: number
+  }
+
+  export type ApprovalPdfExportRowUpdateManyMutationInput = {
+
+  }
+
+  export type ApprovalPdfExportRowUncheckedUpdateManyInput = {
+    exportId?: StringFieldUpdateOperationsInput | string
+    roomDataId?: IntFieldUpdateOperationsInput | number
   }
 
   export type RecordingCreateInput = {
@@ -17439,6 +18993,7 @@ export namespace Prisma {
     roomRecording?: RecordingCreateNestedOneWithoutRoomDataAsRoomInput
     noteRecording?: RecordingCreateNestedOneWithoutRoomDataAsNoteInput
     bed_info: bed_infoCreateNestedOneWithoutRoom_dataInput
+    approvalPdfRows?: ApprovalPdfExportRowCreateNestedManyWithoutRoom_dataInput
   }
 
   export type room_dataUncheckedCreateInput = {
@@ -17449,6 +19004,7 @@ export namespace Prisma {
     sessionId: string
     roomRecordingId?: string | null
     noteRecordingId?: string | null
+    approvalPdfRows?: ApprovalPdfExportRowUncheckedCreateNestedManyWithoutRoom_dataInput
   }
 
   export type room_dataUpdateInput = {
@@ -17458,6 +19014,7 @@ export namespace Prisma {
     roomRecording?: RecordingUpdateOneWithoutRoomDataAsRoomNestedInput
     noteRecording?: RecordingUpdateOneWithoutRoomDataAsNoteNestedInput
     bed_info?: bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput
+    approvalPdfRows?: ApprovalPdfExportRowUpdateManyWithoutRoom_dataNestedInput
   }
 
   export type room_dataUncheckedUpdateInput = {
@@ -17468,6 +19025,7 @@ export namespace Prisma {
     sessionId?: StringFieldUpdateOperationsInput | string
     roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
     noteRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalPdfRows?: ApprovalPdfExportRowUncheckedUpdateManyWithoutRoom_dataNestedInput
   }
 
   export type room_dataCreateManyInput = {
@@ -17562,6 +19120,7 @@ export namespace Prisma {
     bed_info?: bed_infoCreateNestedManyWithoutUser_infoInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutUser_infoInput
     user_uploads?: user_uploadsCreateNestedManyWithoutUser_infoInput
+    approvalPdfExports?: ApprovalPdfExportCreateNestedManyWithoutUserInput
   }
 
   export type user_infoUncheckedCreateInput = {
@@ -17572,6 +19131,7 @@ export namespace Prisma {
     center_id: number
     bed_info?: bed_infoUncheckedCreateNestedManyWithoutUser_infoInput
     user_uploads?: user_uploadsUncheckedCreateNestedManyWithoutUser_infoInput
+    approvalPdfExports?: ApprovalPdfExportUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type user_infoUpdateInput = {
@@ -17581,6 +19141,7 @@ export namespace Prisma {
     bed_info?: bed_infoUpdateManyWithoutUser_infoNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutUser_infoNestedInput
     user_uploads?: user_uploadsUpdateManyWithoutUser_infoNestedInput
+    approvalPdfExports?: ApprovalPdfExportUpdateManyWithoutUserNestedInput
   }
 
   export type user_infoUncheckedUpdateInput = {
@@ -17591,6 +19152,7 @@ export namespace Prisma {
     center_id?: IntFieldUpdateOperationsInput | number
     bed_info?: bed_infoUncheckedUpdateManyWithoutUser_infoNestedInput
     user_uploads?: user_uploadsUncheckedUpdateManyWithoutUser_infoNestedInput
+    approvalPdfExports?: ApprovalPdfExportUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type user_infoCreateManyInput = {
@@ -17681,7 +19243,7 @@ export namespace Prisma {
     created_at?: Date | string
     expires_at: Date | string
     roomData?: room_dataCreateNestedManyWithoutSessionInput
-    exportPdf?: PdfFileCreateNestedOneWithoutSessionInput
+    approvalPdfExports?: ApprovalPdfExportCreateNestedManyWithoutSessionInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutDemo_sessionInput
   }
 
@@ -17691,7 +19253,7 @@ export namespace Prisma {
     expires_at: Date | string
     center_id: number
     roomData?: room_dataUncheckedCreateNestedManyWithoutSessionInput
-    exportPdf?: PdfFileUncheckedCreateNestedOneWithoutSessionInput
+    approvalPdfExports?: ApprovalPdfExportUncheckedCreateNestedManyWithoutSessionInput
   }
 
   export type demo_sessionUpdateInput = {
@@ -17699,7 +19261,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
     roomData?: room_dataUpdateManyWithoutSessionNestedInput
-    exportPdf?: PdfFileUpdateOneWithoutSessionNestedInput
+    approvalPdfExports?: ApprovalPdfExportUpdateManyWithoutSessionNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutDemo_sessionNestedInput
   }
 
@@ -17709,7 +19271,7 @@ export namespace Prisma {
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
     center_id?: IntFieldUpdateOperationsInput | number
     roomData?: room_dataUncheckedUpdateManyWithoutSessionNestedInput
-    exportPdf?: PdfFileUncheckedUpdateOneWithoutSessionNestedInput
+    approvalPdfExports?: ApprovalPdfExportUncheckedUpdateManyWithoutSessionNestedInput
   }
 
   export type demo_sessionCreateManyInput = {
@@ -18225,25 +19787,97 @@ export namespace Prisma {
     isNot?: demo_sessionWhereInput
   }
 
-  export type PdfFileCountOrderByAggregateInput = {
-    id?: SortOrder
-    filePath?: SortOrder
-    createdAt?: SortOrder
-    sessionId?: SortOrder
+  export type User_infoScalarRelationFilter = {
+    is?: user_infoWhereInput
+    isNot?: user_infoWhereInput
   }
 
-  export type PdfFileMaxOrderByAggregateInput = {
-    id?: SortOrder
-    filePath?: SortOrder
-    createdAt?: SortOrder
-    sessionId?: SortOrder
+  export type ApprovalPdfExportRowListRelationFilter = {
+    every?: ApprovalPdfExportRowWhereInput
+    some?: ApprovalPdfExportRowWhereInput
+    none?: ApprovalPdfExportRowWhereInput
   }
 
-  export type PdfFileMinOrderByAggregateInput = {
+  export type ApprovalPdfExportRowOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ApprovalPdfExportCountOrderByAggregateInput = {
     id?: SortOrder
     filePath?: SortOrder
+    displayName?: SortOrder
     createdAt?: SortOrder
+    noteCount?: SortOrder
     sessionId?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type ApprovalPdfExportAvgOrderByAggregateInput = {
+    noteCount?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type ApprovalPdfExportMaxOrderByAggregateInput = {
+    id?: SortOrder
+    filePath?: SortOrder
+    displayName?: SortOrder
+    createdAt?: SortOrder
+    noteCount?: SortOrder
+    sessionId?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type ApprovalPdfExportMinOrderByAggregateInput = {
+    id?: SortOrder
+    filePath?: SortOrder
+    displayName?: SortOrder
+    createdAt?: SortOrder
+    noteCount?: SortOrder
+    sessionId?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type ApprovalPdfExportSumOrderByAggregateInput = {
+    noteCount?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type ApprovalPdfExportScalarRelationFilter = {
+    is?: ApprovalPdfExportWhereInput
+    isNot?: ApprovalPdfExportWhereInput
+  }
+
+  export type Room_dataScalarRelationFilter = {
+    is?: room_dataWhereInput
+    isNot?: room_dataWhereInput
+  }
+
+  export type ApprovalPdfExportRowExportIdRoomDataIdCompoundUniqueInput = {
+    exportId: string
+    roomDataId: number
+  }
+
+  export type ApprovalPdfExportRowCountOrderByAggregateInput = {
+    exportId?: SortOrder
+    roomDataId?: SortOrder
+  }
+
+  export type ApprovalPdfExportRowAvgOrderByAggregateInput = {
+    roomDataId?: SortOrder
+  }
+
+  export type ApprovalPdfExportRowMaxOrderByAggregateInput = {
+    exportId?: SortOrder
+    roomDataId?: SortOrder
+  }
+
+  export type ApprovalPdfExportRowMinOrderByAggregateInput = {
+    exportId?: SortOrder
+    roomDataId?: SortOrder
+  }
+
+  export type ApprovalPdfExportRowSumOrderByAggregateInput = {
+    roomDataId?: SortOrder
   }
 
   export type EnumRecordingTypeFilter<$PrismaModel = never> = {
@@ -18386,6 +20020,16 @@ export namespace Prisma {
     center_id?: SortOrder
   }
 
+  export type ApprovalPdfExportListRelationFilter = {
+    every?: ApprovalPdfExportWhereInput
+    some?: ApprovalPdfExportWhereInput
+    none?: ApprovalPdfExportWhereInput
+  }
+
+  export type ApprovalPdfExportOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type user_infoCountOrderByAggregateInput = {
     user_id?: SortOrder
     user_name?: SortOrder
@@ -18418,11 +20062,6 @@ export namespace Prisma {
   export type user_infoSumOrderByAggregateInput = {
     user_id?: SortOrder
     center_id?: SortOrder
-  }
-
-  export type User_infoScalarRelationFilter = {
-    is?: user_infoWhereInput
-    isNot?: user_infoWhereInput
   }
 
   export type user_uploadsUser_idCenter_idCompoundUniqueInput = {
@@ -18465,11 +20104,6 @@ export namespace Prisma {
   export type user_uploadsSumOrderByAggregateInput = {
     user_id?: SortOrder
     center_id?: SortOrder
-  }
-
-  export type PdfFileNullableScalarRelationFilter = {
-    is?: PdfFileWhereInput | null
-    isNot?: PdfFileWhereInput | null
   }
 
   export type demo_sessionCountOrderByAggregateInput = {
@@ -19119,18 +20753,102 @@ export namespace Prisma {
     deleteMany?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
   }
 
-  export type demo_sessionCreateNestedOneWithoutExportPdfInput = {
-    create?: XOR<demo_sessionCreateWithoutExportPdfInput, demo_sessionUncheckedCreateWithoutExportPdfInput>
-    connectOrCreate?: demo_sessionCreateOrConnectWithoutExportPdfInput
+  export type demo_sessionCreateNestedOneWithoutApprovalPdfExportsInput = {
+    create?: XOR<demo_sessionCreateWithoutApprovalPdfExportsInput, demo_sessionUncheckedCreateWithoutApprovalPdfExportsInput>
+    connectOrCreate?: demo_sessionCreateOrConnectWithoutApprovalPdfExportsInput
     connect?: demo_sessionWhereUniqueInput
   }
 
-  export type demo_sessionUpdateOneRequiredWithoutExportPdfNestedInput = {
-    create?: XOR<demo_sessionCreateWithoutExportPdfInput, demo_sessionUncheckedCreateWithoutExportPdfInput>
-    connectOrCreate?: demo_sessionCreateOrConnectWithoutExportPdfInput
-    upsert?: demo_sessionUpsertWithoutExportPdfInput
+  export type user_infoCreateNestedOneWithoutApprovalPdfExportsInput = {
+    create?: XOR<user_infoCreateWithoutApprovalPdfExportsInput, user_infoUncheckedCreateWithoutApprovalPdfExportsInput>
+    connectOrCreate?: user_infoCreateOrConnectWithoutApprovalPdfExportsInput
+    connect?: user_infoWhereUniqueInput
+  }
+
+  export type ApprovalPdfExportRowCreateNestedManyWithoutExportInput = {
+    create?: XOR<ApprovalPdfExportRowCreateWithoutExportInput, ApprovalPdfExportRowUncheckedCreateWithoutExportInput> | ApprovalPdfExportRowCreateWithoutExportInput[] | ApprovalPdfExportRowUncheckedCreateWithoutExportInput[]
+    connectOrCreate?: ApprovalPdfExportRowCreateOrConnectWithoutExportInput | ApprovalPdfExportRowCreateOrConnectWithoutExportInput[]
+    createMany?: ApprovalPdfExportRowCreateManyExportInputEnvelope
+    connect?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+  }
+
+  export type ApprovalPdfExportRowUncheckedCreateNestedManyWithoutExportInput = {
+    create?: XOR<ApprovalPdfExportRowCreateWithoutExportInput, ApprovalPdfExportRowUncheckedCreateWithoutExportInput> | ApprovalPdfExportRowCreateWithoutExportInput[] | ApprovalPdfExportRowUncheckedCreateWithoutExportInput[]
+    connectOrCreate?: ApprovalPdfExportRowCreateOrConnectWithoutExportInput | ApprovalPdfExportRowCreateOrConnectWithoutExportInput[]
+    createMany?: ApprovalPdfExportRowCreateManyExportInputEnvelope
+    connect?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+  }
+
+  export type demo_sessionUpdateOneRequiredWithoutApprovalPdfExportsNestedInput = {
+    create?: XOR<demo_sessionCreateWithoutApprovalPdfExportsInput, demo_sessionUncheckedCreateWithoutApprovalPdfExportsInput>
+    connectOrCreate?: demo_sessionCreateOrConnectWithoutApprovalPdfExportsInput
+    upsert?: demo_sessionUpsertWithoutApprovalPdfExportsInput
     connect?: demo_sessionWhereUniqueInput
-    update?: XOR<XOR<demo_sessionUpdateToOneWithWhereWithoutExportPdfInput, demo_sessionUpdateWithoutExportPdfInput>, demo_sessionUncheckedUpdateWithoutExportPdfInput>
+    update?: XOR<XOR<demo_sessionUpdateToOneWithWhereWithoutApprovalPdfExportsInput, demo_sessionUpdateWithoutApprovalPdfExportsInput>, demo_sessionUncheckedUpdateWithoutApprovalPdfExportsInput>
+  }
+
+  export type user_infoUpdateOneRequiredWithoutApprovalPdfExportsNestedInput = {
+    create?: XOR<user_infoCreateWithoutApprovalPdfExportsInput, user_infoUncheckedCreateWithoutApprovalPdfExportsInput>
+    connectOrCreate?: user_infoCreateOrConnectWithoutApprovalPdfExportsInput
+    upsert?: user_infoUpsertWithoutApprovalPdfExportsInput
+    connect?: user_infoWhereUniqueInput
+    update?: XOR<XOR<user_infoUpdateToOneWithWhereWithoutApprovalPdfExportsInput, user_infoUpdateWithoutApprovalPdfExportsInput>, user_infoUncheckedUpdateWithoutApprovalPdfExportsInput>
+  }
+
+  export type ApprovalPdfExportRowUpdateManyWithoutExportNestedInput = {
+    create?: XOR<ApprovalPdfExportRowCreateWithoutExportInput, ApprovalPdfExportRowUncheckedCreateWithoutExportInput> | ApprovalPdfExportRowCreateWithoutExportInput[] | ApprovalPdfExportRowUncheckedCreateWithoutExportInput[]
+    connectOrCreate?: ApprovalPdfExportRowCreateOrConnectWithoutExportInput | ApprovalPdfExportRowCreateOrConnectWithoutExportInput[]
+    upsert?: ApprovalPdfExportRowUpsertWithWhereUniqueWithoutExportInput | ApprovalPdfExportRowUpsertWithWhereUniqueWithoutExportInput[]
+    createMany?: ApprovalPdfExportRowCreateManyExportInputEnvelope
+    set?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    disconnect?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    delete?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    connect?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    update?: ApprovalPdfExportRowUpdateWithWhereUniqueWithoutExportInput | ApprovalPdfExportRowUpdateWithWhereUniqueWithoutExportInput[]
+    updateMany?: ApprovalPdfExportRowUpdateManyWithWhereWithoutExportInput | ApprovalPdfExportRowUpdateManyWithWhereWithoutExportInput[]
+    deleteMany?: ApprovalPdfExportRowScalarWhereInput | ApprovalPdfExportRowScalarWhereInput[]
+  }
+
+  export type ApprovalPdfExportRowUncheckedUpdateManyWithoutExportNestedInput = {
+    create?: XOR<ApprovalPdfExportRowCreateWithoutExportInput, ApprovalPdfExportRowUncheckedCreateWithoutExportInput> | ApprovalPdfExportRowCreateWithoutExportInput[] | ApprovalPdfExportRowUncheckedCreateWithoutExportInput[]
+    connectOrCreate?: ApprovalPdfExportRowCreateOrConnectWithoutExportInput | ApprovalPdfExportRowCreateOrConnectWithoutExportInput[]
+    upsert?: ApprovalPdfExportRowUpsertWithWhereUniqueWithoutExportInput | ApprovalPdfExportRowUpsertWithWhereUniqueWithoutExportInput[]
+    createMany?: ApprovalPdfExportRowCreateManyExportInputEnvelope
+    set?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    disconnect?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    delete?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    connect?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    update?: ApprovalPdfExportRowUpdateWithWhereUniqueWithoutExportInput | ApprovalPdfExportRowUpdateWithWhereUniqueWithoutExportInput[]
+    updateMany?: ApprovalPdfExportRowUpdateManyWithWhereWithoutExportInput | ApprovalPdfExportRowUpdateManyWithWhereWithoutExportInput[]
+    deleteMany?: ApprovalPdfExportRowScalarWhereInput | ApprovalPdfExportRowScalarWhereInput[]
+  }
+
+  export type ApprovalPdfExportCreateNestedOneWithoutRowsInput = {
+    create?: XOR<ApprovalPdfExportCreateWithoutRowsInput, ApprovalPdfExportUncheckedCreateWithoutRowsInput>
+    connectOrCreate?: ApprovalPdfExportCreateOrConnectWithoutRowsInput
+    connect?: ApprovalPdfExportWhereUniqueInput
+  }
+
+  export type room_dataCreateNestedOneWithoutApprovalPdfRowsInput = {
+    create?: XOR<room_dataCreateWithoutApprovalPdfRowsInput, room_dataUncheckedCreateWithoutApprovalPdfRowsInput>
+    connectOrCreate?: room_dataCreateOrConnectWithoutApprovalPdfRowsInput
+    connect?: room_dataWhereUniqueInput
+  }
+
+  export type ApprovalPdfExportUpdateOneRequiredWithoutRowsNestedInput = {
+    create?: XOR<ApprovalPdfExportCreateWithoutRowsInput, ApprovalPdfExportUncheckedCreateWithoutRowsInput>
+    connectOrCreate?: ApprovalPdfExportCreateOrConnectWithoutRowsInput
+    upsert?: ApprovalPdfExportUpsertWithoutRowsInput
+    connect?: ApprovalPdfExportWhereUniqueInput
+    update?: XOR<XOR<ApprovalPdfExportUpdateToOneWithWhereWithoutRowsInput, ApprovalPdfExportUpdateWithoutRowsInput>, ApprovalPdfExportUncheckedUpdateWithoutRowsInput>
+  }
+
+  export type room_dataUpdateOneRequiredWithoutApprovalPdfRowsNestedInput = {
+    create?: XOR<room_dataCreateWithoutApprovalPdfRowsInput, room_dataUncheckedCreateWithoutApprovalPdfRowsInput>
+    connectOrCreate?: room_dataCreateOrConnectWithoutApprovalPdfRowsInput
+    upsert?: room_dataUpsertWithoutApprovalPdfRowsInput
+    connect?: room_dataWhereUniqueInput
+    update?: XOR<XOR<room_dataUpdateToOneWithWhereWithoutApprovalPdfRowsInput, room_dataUpdateWithoutApprovalPdfRowsInput>, room_dataUncheckedUpdateWithoutApprovalPdfRowsInput>
   }
 
   export type room_dataCreateNestedManyWithoutRoomRecordingInput = {
@@ -19245,6 +20963,20 @@ export namespace Prisma {
     connect?: bed_infoWhereUniqueInput
   }
 
+  export type ApprovalPdfExportRowCreateNestedManyWithoutRoom_dataInput = {
+    create?: XOR<ApprovalPdfExportRowCreateWithoutRoom_dataInput, ApprovalPdfExportRowUncheckedCreateWithoutRoom_dataInput> | ApprovalPdfExportRowCreateWithoutRoom_dataInput[] | ApprovalPdfExportRowUncheckedCreateWithoutRoom_dataInput[]
+    connectOrCreate?: ApprovalPdfExportRowCreateOrConnectWithoutRoom_dataInput | ApprovalPdfExportRowCreateOrConnectWithoutRoom_dataInput[]
+    createMany?: ApprovalPdfExportRowCreateManyRoom_dataInputEnvelope
+    connect?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+  }
+
+  export type ApprovalPdfExportRowUncheckedCreateNestedManyWithoutRoom_dataInput = {
+    create?: XOR<ApprovalPdfExportRowCreateWithoutRoom_dataInput, ApprovalPdfExportRowUncheckedCreateWithoutRoom_dataInput> | ApprovalPdfExportRowCreateWithoutRoom_dataInput[] | ApprovalPdfExportRowUncheckedCreateWithoutRoom_dataInput[]
+    connectOrCreate?: ApprovalPdfExportRowCreateOrConnectWithoutRoom_dataInput | ApprovalPdfExportRowCreateOrConnectWithoutRoom_dataInput[]
+    createMany?: ApprovalPdfExportRowCreateManyRoom_dataInputEnvelope
+    connect?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+  }
+
   export type demo_sessionUpdateOneRequiredWithoutRoomDataNestedInput = {
     create?: XOR<demo_sessionCreateWithoutRoomDataInput, demo_sessionUncheckedCreateWithoutRoomDataInput>
     connectOrCreate?: demo_sessionCreateOrConnectWithoutRoomDataInput
@@ -19279,6 +21011,34 @@ export namespace Prisma {
     upsert?: bed_infoUpsertWithoutRoom_dataInput
     connect?: bed_infoWhereUniqueInput
     update?: XOR<XOR<bed_infoUpdateToOneWithWhereWithoutRoom_dataInput, bed_infoUpdateWithoutRoom_dataInput>, bed_infoUncheckedUpdateWithoutRoom_dataInput>
+  }
+
+  export type ApprovalPdfExportRowUpdateManyWithoutRoom_dataNestedInput = {
+    create?: XOR<ApprovalPdfExportRowCreateWithoutRoom_dataInput, ApprovalPdfExportRowUncheckedCreateWithoutRoom_dataInput> | ApprovalPdfExportRowCreateWithoutRoom_dataInput[] | ApprovalPdfExportRowUncheckedCreateWithoutRoom_dataInput[]
+    connectOrCreate?: ApprovalPdfExportRowCreateOrConnectWithoutRoom_dataInput | ApprovalPdfExportRowCreateOrConnectWithoutRoom_dataInput[]
+    upsert?: ApprovalPdfExportRowUpsertWithWhereUniqueWithoutRoom_dataInput | ApprovalPdfExportRowUpsertWithWhereUniqueWithoutRoom_dataInput[]
+    createMany?: ApprovalPdfExportRowCreateManyRoom_dataInputEnvelope
+    set?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    disconnect?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    delete?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    connect?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    update?: ApprovalPdfExportRowUpdateWithWhereUniqueWithoutRoom_dataInput | ApprovalPdfExportRowUpdateWithWhereUniqueWithoutRoom_dataInput[]
+    updateMany?: ApprovalPdfExportRowUpdateManyWithWhereWithoutRoom_dataInput | ApprovalPdfExportRowUpdateManyWithWhereWithoutRoom_dataInput[]
+    deleteMany?: ApprovalPdfExportRowScalarWhereInput | ApprovalPdfExportRowScalarWhereInput[]
+  }
+
+  export type ApprovalPdfExportRowUncheckedUpdateManyWithoutRoom_dataNestedInput = {
+    create?: XOR<ApprovalPdfExportRowCreateWithoutRoom_dataInput, ApprovalPdfExportRowUncheckedCreateWithoutRoom_dataInput> | ApprovalPdfExportRowCreateWithoutRoom_dataInput[] | ApprovalPdfExportRowUncheckedCreateWithoutRoom_dataInput[]
+    connectOrCreate?: ApprovalPdfExportRowCreateOrConnectWithoutRoom_dataInput | ApprovalPdfExportRowCreateOrConnectWithoutRoom_dataInput[]
+    upsert?: ApprovalPdfExportRowUpsertWithWhereUniqueWithoutRoom_dataInput | ApprovalPdfExportRowUpsertWithWhereUniqueWithoutRoom_dataInput[]
+    createMany?: ApprovalPdfExportRowCreateManyRoom_dataInputEnvelope
+    set?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    disconnect?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    delete?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    connect?: ApprovalPdfExportRowWhereUniqueInput | ApprovalPdfExportRowWhereUniqueInput[]
+    update?: ApprovalPdfExportRowUpdateWithWhereUniqueWithoutRoom_dataInput | ApprovalPdfExportRowUpdateWithWhereUniqueWithoutRoom_dataInput[]
+    updateMany?: ApprovalPdfExportRowUpdateManyWithWhereWithoutRoom_dataInput | ApprovalPdfExportRowUpdateManyWithWhereWithoutRoom_dataInput[]
+    deleteMany?: ApprovalPdfExportRowScalarWhereInput | ApprovalPdfExportRowScalarWhereInput[]
   }
 
   export type medicalcenter_infoCreateNestedOneWithoutRoom_registerInput = {
@@ -19343,6 +21103,13 @@ export namespace Prisma {
     connect?: user_uploadsWhereUniqueInput | user_uploadsWhereUniqueInput[]
   }
 
+  export type ApprovalPdfExportCreateNestedManyWithoutUserInput = {
+    create?: XOR<ApprovalPdfExportCreateWithoutUserInput, ApprovalPdfExportUncheckedCreateWithoutUserInput> | ApprovalPdfExportCreateWithoutUserInput[] | ApprovalPdfExportUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ApprovalPdfExportCreateOrConnectWithoutUserInput | ApprovalPdfExportCreateOrConnectWithoutUserInput[]
+    createMany?: ApprovalPdfExportCreateManyUserInputEnvelope
+    connect?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+  }
+
   export type bed_infoUncheckedCreateNestedManyWithoutUser_infoInput = {
     create?: XOR<bed_infoCreateWithoutUser_infoInput, bed_infoUncheckedCreateWithoutUser_infoInput> | bed_infoCreateWithoutUser_infoInput[] | bed_infoUncheckedCreateWithoutUser_infoInput[]
     connectOrCreate?: bed_infoCreateOrConnectWithoutUser_infoInput | bed_infoCreateOrConnectWithoutUser_infoInput[]
@@ -19355,6 +21122,13 @@ export namespace Prisma {
     connectOrCreate?: user_uploadsCreateOrConnectWithoutUser_infoInput | user_uploadsCreateOrConnectWithoutUser_infoInput[]
     createMany?: user_uploadsCreateManyUser_infoInputEnvelope
     connect?: user_uploadsWhereUniqueInput | user_uploadsWhereUniqueInput[]
+  }
+
+  export type ApprovalPdfExportUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ApprovalPdfExportCreateWithoutUserInput, ApprovalPdfExportUncheckedCreateWithoutUserInput> | ApprovalPdfExportCreateWithoutUserInput[] | ApprovalPdfExportUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ApprovalPdfExportCreateOrConnectWithoutUserInput | ApprovalPdfExportCreateOrConnectWithoutUserInput[]
+    createMany?: ApprovalPdfExportCreateManyUserInputEnvelope
+    connect?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
   }
 
   export type bed_infoUpdateManyWithoutUser_infoNestedInput = {
@@ -19393,6 +21167,20 @@ export namespace Prisma {
     deleteMany?: user_uploadsScalarWhereInput | user_uploadsScalarWhereInput[]
   }
 
+  export type ApprovalPdfExportUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ApprovalPdfExportCreateWithoutUserInput, ApprovalPdfExportUncheckedCreateWithoutUserInput> | ApprovalPdfExportCreateWithoutUserInput[] | ApprovalPdfExportUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ApprovalPdfExportCreateOrConnectWithoutUserInput | ApprovalPdfExportCreateOrConnectWithoutUserInput[]
+    upsert?: ApprovalPdfExportUpsertWithWhereUniqueWithoutUserInput | ApprovalPdfExportUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ApprovalPdfExportCreateManyUserInputEnvelope
+    set?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    disconnect?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    delete?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    connect?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    update?: ApprovalPdfExportUpdateWithWhereUniqueWithoutUserInput | ApprovalPdfExportUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ApprovalPdfExportUpdateManyWithWhereWithoutUserInput | ApprovalPdfExportUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ApprovalPdfExportScalarWhereInput | ApprovalPdfExportScalarWhereInput[]
+  }
+
   export type bed_infoUncheckedUpdateManyWithoutUser_infoNestedInput = {
     create?: XOR<bed_infoCreateWithoutUser_infoInput, bed_infoUncheckedCreateWithoutUser_infoInput> | bed_infoCreateWithoutUser_infoInput[] | bed_infoUncheckedCreateWithoutUser_infoInput[]
     connectOrCreate?: bed_infoCreateOrConnectWithoutUser_infoInput | bed_infoCreateOrConnectWithoutUser_infoInput[]
@@ -19419,6 +21207,20 @@ export namespace Prisma {
     update?: user_uploadsUpdateWithWhereUniqueWithoutUser_infoInput | user_uploadsUpdateWithWhereUniqueWithoutUser_infoInput[]
     updateMany?: user_uploadsUpdateManyWithWhereWithoutUser_infoInput | user_uploadsUpdateManyWithWhereWithoutUser_infoInput[]
     deleteMany?: user_uploadsScalarWhereInput | user_uploadsScalarWhereInput[]
+  }
+
+  export type ApprovalPdfExportUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ApprovalPdfExportCreateWithoutUserInput, ApprovalPdfExportUncheckedCreateWithoutUserInput> | ApprovalPdfExportCreateWithoutUserInput[] | ApprovalPdfExportUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ApprovalPdfExportCreateOrConnectWithoutUserInput | ApprovalPdfExportCreateOrConnectWithoutUserInput[]
+    upsert?: ApprovalPdfExportUpsertWithWhereUniqueWithoutUserInput | ApprovalPdfExportUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ApprovalPdfExportCreateManyUserInputEnvelope
+    set?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    disconnect?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    delete?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    connect?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    update?: ApprovalPdfExportUpdateWithWhereUniqueWithoutUserInput | ApprovalPdfExportUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ApprovalPdfExportUpdateManyWithWhereWithoutUserInput | ApprovalPdfExportUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ApprovalPdfExportScalarWhereInput | ApprovalPdfExportScalarWhereInput[]
   }
 
   export type medicalcenter_infoCreateNestedOneWithoutUser_uploadsInput = {
@@ -19456,10 +21258,11 @@ export namespace Prisma {
     connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
   }
 
-  export type PdfFileCreateNestedOneWithoutSessionInput = {
-    create?: XOR<PdfFileCreateWithoutSessionInput, PdfFileUncheckedCreateWithoutSessionInput>
-    connectOrCreate?: PdfFileCreateOrConnectWithoutSessionInput
-    connect?: PdfFileWhereUniqueInput
+  export type ApprovalPdfExportCreateNestedManyWithoutSessionInput = {
+    create?: XOR<ApprovalPdfExportCreateWithoutSessionInput, ApprovalPdfExportUncheckedCreateWithoutSessionInput> | ApprovalPdfExportCreateWithoutSessionInput[] | ApprovalPdfExportUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: ApprovalPdfExportCreateOrConnectWithoutSessionInput | ApprovalPdfExportCreateOrConnectWithoutSessionInput[]
+    createMany?: ApprovalPdfExportCreateManySessionInputEnvelope
+    connect?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
   }
 
   export type medicalcenter_infoCreateNestedOneWithoutDemo_sessionInput = {
@@ -19475,10 +21278,11 @@ export namespace Prisma {
     connect?: room_dataWhereUniqueInput | room_dataWhereUniqueInput[]
   }
 
-  export type PdfFileUncheckedCreateNestedOneWithoutSessionInput = {
-    create?: XOR<PdfFileCreateWithoutSessionInput, PdfFileUncheckedCreateWithoutSessionInput>
-    connectOrCreate?: PdfFileCreateOrConnectWithoutSessionInput
-    connect?: PdfFileWhereUniqueInput
+  export type ApprovalPdfExportUncheckedCreateNestedManyWithoutSessionInput = {
+    create?: XOR<ApprovalPdfExportCreateWithoutSessionInput, ApprovalPdfExportUncheckedCreateWithoutSessionInput> | ApprovalPdfExportCreateWithoutSessionInput[] | ApprovalPdfExportUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: ApprovalPdfExportCreateOrConnectWithoutSessionInput | ApprovalPdfExportCreateOrConnectWithoutSessionInput[]
+    createMany?: ApprovalPdfExportCreateManySessionInputEnvelope
+    connect?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
   }
 
   export type room_dataUpdateManyWithoutSessionNestedInput = {
@@ -19495,14 +21299,18 @@ export namespace Prisma {
     deleteMany?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
   }
 
-  export type PdfFileUpdateOneWithoutSessionNestedInput = {
-    create?: XOR<PdfFileCreateWithoutSessionInput, PdfFileUncheckedCreateWithoutSessionInput>
-    connectOrCreate?: PdfFileCreateOrConnectWithoutSessionInput
-    upsert?: PdfFileUpsertWithoutSessionInput
-    disconnect?: PdfFileWhereInput | boolean
-    delete?: PdfFileWhereInput | boolean
-    connect?: PdfFileWhereUniqueInput
-    update?: XOR<XOR<PdfFileUpdateToOneWithWhereWithoutSessionInput, PdfFileUpdateWithoutSessionInput>, PdfFileUncheckedUpdateWithoutSessionInput>
+  export type ApprovalPdfExportUpdateManyWithoutSessionNestedInput = {
+    create?: XOR<ApprovalPdfExportCreateWithoutSessionInput, ApprovalPdfExportUncheckedCreateWithoutSessionInput> | ApprovalPdfExportCreateWithoutSessionInput[] | ApprovalPdfExportUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: ApprovalPdfExportCreateOrConnectWithoutSessionInput | ApprovalPdfExportCreateOrConnectWithoutSessionInput[]
+    upsert?: ApprovalPdfExportUpsertWithWhereUniqueWithoutSessionInput | ApprovalPdfExportUpsertWithWhereUniqueWithoutSessionInput[]
+    createMany?: ApprovalPdfExportCreateManySessionInputEnvelope
+    set?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    disconnect?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    delete?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    connect?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    update?: ApprovalPdfExportUpdateWithWhereUniqueWithoutSessionInput | ApprovalPdfExportUpdateWithWhereUniqueWithoutSessionInput[]
+    updateMany?: ApprovalPdfExportUpdateManyWithWhereWithoutSessionInput | ApprovalPdfExportUpdateManyWithWhereWithoutSessionInput[]
+    deleteMany?: ApprovalPdfExportScalarWhereInput | ApprovalPdfExportScalarWhereInput[]
   }
 
   export type medicalcenter_infoUpdateOneRequiredWithoutDemo_sessionNestedInput = {
@@ -19527,14 +21335,18 @@ export namespace Prisma {
     deleteMany?: room_dataScalarWhereInput | room_dataScalarWhereInput[]
   }
 
-  export type PdfFileUncheckedUpdateOneWithoutSessionNestedInput = {
-    create?: XOR<PdfFileCreateWithoutSessionInput, PdfFileUncheckedCreateWithoutSessionInput>
-    connectOrCreate?: PdfFileCreateOrConnectWithoutSessionInput
-    upsert?: PdfFileUpsertWithoutSessionInput
-    disconnect?: PdfFileWhereInput | boolean
-    delete?: PdfFileWhereInput | boolean
-    connect?: PdfFileWhereUniqueInput
-    update?: XOR<XOR<PdfFileUpdateToOneWithWhereWithoutSessionInput, PdfFileUpdateWithoutSessionInput>, PdfFileUncheckedUpdateWithoutSessionInput>
+  export type ApprovalPdfExportUncheckedUpdateManyWithoutSessionNestedInput = {
+    create?: XOR<ApprovalPdfExportCreateWithoutSessionInput, ApprovalPdfExportUncheckedCreateWithoutSessionInput> | ApprovalPdfExportCreateWithoutSessionInput[] | ApprovalPdfExportUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: ApprovalPdfExportCreateOrConnectWithoutSessionInput | ApprovalPdfExportCreateOrConnectWithoutSessionInput[]
+    upsert?: ApprovalPdfExportUpsertWithWhereUniqueWithoutSessionInput | ApprovalPdfExportUpsertWithWhereUniqueWithoutSessionInput[]
+    createMany?: ApprovalPdfExportCreateManySessionInputEnvelope
+    set?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    disconnect?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    delete?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    connect?: ApprovalPdfExportWhereUniqueInput | ApprovalPdfExportWhereUniqueInput[]
+    update?: ApprovalPdfExportUpdateWithWhereUniqueWithoutSessionInput | ApprovalPdfExportUpdateWithWhereUniqueWithoutSessionInput[]
+    updateMany?: ApprovalPdfExportUpdateManyWithWhereWithoutSessionInput | ApprovalPdfExportUpdateManyWithWhereWithoutSessionInput[]
+    deleteMany?: ApprovalPdfExportScalarWhereInput | ApprovalPdfExportScalarWhereInput[]
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -19760,7 +21572,7 @@ export namespace Prisma {
     created_at?: Date | string
     expires_at: Date | string
     roomData?: room_dataCreateNestedManyWithoutSessionInput
-    exportPdf?: PdfFileCreateNestedOneWithoutSessionInput
+    approvalPdfExports?: ApprovalPdfExportCreateNestedManyWithoutSessionInput
   }
 
   export type demo_sessionUncheckedCreateWithoutMedicalcenter_infoInput = {
@@ -19768,7 +21580,7 @@ export namespace Prisma {
     created_at?: Date | string
     expires_at: Date | string
     roomData?: room_dataUncheckedCreateNestedManyWithoutSessionInput
-    exportPdf?: PdfFileUncheckedCreateNestedOneWithoutSessionInput
+    approvalPdfExports?: ApprovalPdfExportUncheckedCreateNestedManyWithoutSessionInput
   }
 
   export type demo_sessionCreateOrConnectWithoutMedicalcenter_infoInput = {
@@ -19866,6 +21678,7 @@ export namespace Prisma {
     user_role: string
     bed_info?: bed_infoCreateNestedManyWithoutUser_infoInput
     user_uploads?: user_uploadsCreateNestedManyWithoutUser_infoInput
+    approvalPdfExports?: ApprovalPdfExportCreateNestedManyWithoutUserInput
   }
 
   export type user_infoUncheckedCreateWithoutMedicalcenter_infoInput = {
@@ -19875,6 +21688,7 @@ export namespace Prisma {
     user_role: string
     bed_info?: bed_infoUncheckedCreateNestedManyWithoutUser_infoInput
     user_uploads?: user_uploadsUncheckedCreateNestedManyWithoutUser_infoInput
+    approvalPdfExports?: ApprovalPdfExportUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type user_infoCreateOrConnectWithoutMedicalcenter_infoInput = {
@@ -19929,7 +21743,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
     roomData?: room_dataUpdateManyWithoutSessionNestedInput
-    exportPdf?: PdfFileUpdateOneWithoutSessionNestedInput
+    approvalPdfExports?: ApprovalPdfExportUpdateManyWithoutSessionNestedInput
   }
 
   export type demo_sessionUncheckedUpdateWithoutMedicalcenter_infoInput = {
@@ -19937,7 +21751,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
     roomData?: room_dataUncheckedUpdateManyWithoutSessionNestedInput
-    exportPdf?: PdfFileUncheckedUpdateOneWithoutSessionNestedInput
+    approvalPdfExports?: ApprovalPdfExportUncheckedUpdateManyWithoutSessionNestedInput
   }
 
   export type patient_infoUpsertWithWhereUniqueWithoutMedicalcenter_infoInput = {
@@ -20512,6 +22326,7 @@ export namespace Prisma {
     user_role: string
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutUser_infoInput
     user_uploads?: user_uploadsCreateNestedManyWithoutUser_infoInput
+    approvalPdfExports?: ApprovalPdfExportCreateNestedManyWithoutUserInput
   }
 
   export type user_infoUncheckedCreateWithoutBed_infoInput = {
@@ -20521,6 +22336,7 @@ export namespace Prisma {
     user_role: string
     center_id: number
     user_uploads?: user_uploadsUncheckedCreateNestedManyWithoutUser_infoInput
+    approvalPdfExports?: ApprovalPdfExportUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type user_infoCreateOrConnectWithoutBed_infoInput = {
@@ -20582,6 +22398,7 @@ export namespace Prisma {
     session: demo_sessionCreateNestedOneWithoutRoomDataInput
     roomRecording?: RecordingCreateNestedOneWithoutRoomDataAsRoomInput
     noteRecording?: RecordingCreateNestedOneWithoutRoomDataAsNoteInput
+    approvalPdfRows?: ApprovalPdfExportRowCreateNestedManyWithoutRoom_dataInput
   }
 
   export type room_dataUncheckedCreateWithoutBed_infoInput = {
@@ -20591,6 +22408,7 @@ export namespace Prisma {
     sessionId: string
     roomRecordingId?: string | null
     noteRecordingId?: string | null
+    approvalPdfRows?: ApprovalPdfExportRowUncheckedCreateNestedManyWithoutRoom_dataInput
   }
 
   export type room_dataCreateOrConnectWithoutBed_infoInput = {
@@ -20620,6 +22438,7 @@ export namespace Prisma {
     user_role?: StringFieldUpdateOperationsInput | string
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutUser_infoNestedInput
     user_uploads?: user_uploadsUpdateManyWithoutUser_infoNestedInput
+    approvalPdfExports?: ApprovalPdfExportUpdateManyWithoutUserNestedInput
   }
 
   export type user_infoUncheckedUpdateWithoutBed_infoInput = {
@@ -20629,6 +22448,7 @@ export namespace Prisma {
     user_role?: StringFieldUpdateOperationsInput | string
     center_id?: IntFieldUpdateOperationsInput | number
     user_uploads?: user_uploadsUncheckedUpdateManyWithoutUser_infoNestedInput
+    approvalPdfExports?: ApprovalPdfExportUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type patient_infoUpsertWithoutBed_infoInput = {
@@ -20720,7 +22540,7 @@ export namespace Prisma {
     noteRecordingId?: StringNullableFilter<"room_data"> | string | null
   }
 
-  export type demo_sessionCreateWithoutExportPdfInput = {
+  export type demo_sessionCreateWithoutApprovalPdfExportsInput = {
     session_id?: string
     created_at?: Date | string
     expires_at: Date | string
@@ -20728,7 +22548,7 @@ export namespace Prisma {
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutDemo_sessionInput
   }
 
-  export type demo_sessionUncheckedCreateWithoutExportPdfInput = {
+  export type demo_sessionUncheckedCreateWithoutApprovalPdfExportsInput = {
     session_id?: string
     created_at?: Date | string
     expires_at: Date | string
@@ -20736,23 +22556,65 @@ export namespace Prisma {
     roomData?: room_dataUncheckedCreateNestedManyWithoutSessionInput
   }
 
-  export type demo_sessionCreateOrConnectWithoutExportPdfInput = {
+  export type demo_sessionCreateOrConnectWithoutApprovalPdfExportsInput = {
     where: demo_sessionWhereUniqueInput
-    create: XOR<demo_sessionCreateWithoutExportPdfInput, demo_sessionUncheckedCreateWithoutExportPdfInput>
+    create: XOR<demo_sessionCreateWithoutApprovalPdfExportsInput, demo_sessionUncheckedCreateWithoutApprovalPdfExportsInput>
   }
 
-  export type demo_sessionUpsertWithoutExportPdfInput = {
-    update: XOR<demo_sessionUpdateWithoutExportPdfInput, demo_sessionUncheckedUpdateWithoutExportPdfInput>
-    create: XOR<demo_sessionCreateWithoutExportPdfInput, demo_sessionUncheckedCreateWithoutExportPdfInput>
+  export type user_infoCreateWithoutApprovalPdfExportsInput = {
+    user_name: string
+    staff_id: string
+    user_role: string
+    bed_info?: bed_infoCreateNestedManyWithoutUser_infoInput
+    medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutUser_infoInput
+    user_uploads?: user_uploadsCreateNestedManyWithoutUser_infoInput
+  }
+
+  export type user_infoUncheckedCreateWithoutApprovalPdfExportsInput = {
+    user_id?: number
+    user_name: string
+    staff_id: string
+    user_role: string
+    center_id: number
+    bed_info?: bed_infoUncheckedCreateNestedManyWithoutUser_infoInput
+    user_uploads?: user_uploadsUncheckedCreateNestedManyWithoutUser_infoInput
+  }
+
+  export type user_infoCreateOrConnectWithoutApprovalPdfExportsInput = {
+    where: user_infoWhereUniqueInput
+    create: XOR<user_infoCreateWithoutApprovalPdfExportsInput, user_infoUncheckedCreateWithoutApprovalPdfExportsInput>
+  }
+
+  export type ApprovalPdfExportRowCreateWithoutExportInput = {
+    room_data: room_dataCreateNestedOneWithoutApprovalPdfRowsInput
+  }
+
+  export type ApprovalPdfExportRowUncheckedCreateWithoutExportInput = {
+    roomDataId: number
+  }
+
+  export type ApprovalPdfExportRowCreateOrConnectWithoutExportInput = {
+    where: ApprovalPdfExportRowWhereUniqueInput
+    create: XOR<ApprovalPdfExportRowCreateWithoutExportInput, ApprovalPdfExportRowUncheckedCreateWithoutExportInput>
+  }
+
+  export type ApprovalPdfExportRowCreateManyExportInputEnvelope = {
+    data: ApprovalPdfExportRowCreateManyExportInput | ApprovalPdfExportRowCreateManyExportInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type demo_sessionUpsertWithoutApprovalPdfExportsInput = {
+    update: XOR<demo_sessionUpdateWithoutApprovalPdfExportsInput, demo_sessionUncheckedUpdateWithoutApprovalPdfExportsInput>
+    create: XOR<demo_sessionCreateWithoutApprovalPdfExportsInput, demo_sessionUncheckedCreateWithoutApprovalPdfExportsInput>
     where?: demo_sessionWhereInput
   }
 
-  export type demo_sessionUpdateToOneWithWhereWithoutExportPdfInput = {
+  export type demo_sessionUpdateToOneWithWhereWithoutApprovalPdfExportsInput = {
     where?: demo_sessionWhereInput
-    data: XOR<demo_sessionUpdateWithoutExportPdfInput, demo_sessionUncheckedUpdateWithoutExportPdfInput>
+    data: XOR<demo_sessionUpdateWithoutApprovalPdfExportsInput, demo_sessionUncheckedUpdateWithoutApprovalPdfExportsInput>
   }
 
-  export type demo_sessionUpdateWithoutExportPdfInput = {
+  export type demo_sessionUpdateWithoutApprovalPdfExportsInput = {
     session_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20760,12 +22622,176 @@ export namespace Prisma {
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutDemo_sessionNestedInput
   }
 
-  export type demo_sessionUncheckedUpdateWithoutExportPdfInput = {
+  export type demo_sessionUncheckedUpdateWithoutApprovalPdfExportsInput = {
     session_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
     center_id?: IntFieldUpdateOperationsInput | number
     roomData?: room_dataUncheckedUpdateManyWithoutSessionNestedInput
+  }
+
+  export type user_infoUpsertWithoutApprovalPdfExportsInput = {
+    update: XOR<user_infoUpdateWithoutApprovalPdfExportsInput, user_infoUncheckedUpdateWithoutApprovalPdfExportsInput>
+    create: XOR<user_infoCreateWithoutApprovalPdfExportsInput, user_infoUncheckedCreateWithoutApprovalPdfExportsInput>
+    where?: user_infoWhereInput
+  }
+
+  export type user_infoUpdateToOneWithWhereWithoutApprovalPdfExportsInput = {
+    where?: user_infoWhereInput
+    data: XOR<user_infoUpdateWithoutApprovalPdfExportsInput, user_infoUncheckedUpdateWithoutApprovalPdfExportsInput>
+  }
+
+  export type user_infoUpdateWithoutApprovalPdfExportsInput = {
+    user_name?: StringFieldUpdateOperationsInput | string
+    staff_id?: StringFieldUpdateOperationsInput | string
+    user_role?: StringFieldUpdateOperationsInput | string
+    bed_info?: bed_infoUpdateManyWithoutUser_infoNestedInput
+    medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutUser_infoNestedInput
+    user_uploads?: user_uploadsUpdateManyWithoutUser_infoNestedInput
+  }
+
+  export type user_infoUncheckedUpdateWithoutApprovalPdfExportsInput = {
+    user_id?: IntFieldUpdateOperationsInput | number
+    user_name?: StringFieldUpdateOperationsInput | string
+    staff_id?: StringFieldUpdateOperationsInput | string
+    user_role?: StringFieldUpdateOperationsInput | string
+    center_id?: IntFieldUpdateOperationsInput | number
+    bed_info?: bed_infoUncheckedUpdateManyWithoutUser_infoNestedInput
+    user_uploads?: user_uploadsUncheckedUpdateManyWithoutUser_infoNestedInput
+  }
+
+  export type ApprovalPdfExportRowUpsertWithWhereUniqueWithoutExportInput = {
+    where: ApprovalPdfExportRowWhereUniqueInput
+    update: XOR<ApprovalPdfExportRowUpdateWithoutExportInput, ApprovalPdfExportRowUncheckedUpdateWithoutExportInput>
+    create: XOR<ApprovalPdfExportRowCreateWithoutExportInput, ApprovalPdfExportRowUncheckedCreateWithoutExportInput>
+  }
+
+  export type ApprovalPdfExportRowUpdateWithWhereUniqueWithoutExportInput = {
+    where: ApprovalPdfExportRowWhereUniqueInput
+    data: XOR<ApprovalPdfExportRowUpdateWithoutExportInput, ApprovalPdfExportRowUncheckedUpdateWithoutExportInput>
+  }
+
+  export type ApprovalPdfExportRowUpdateManyWithWhereWithoutExportInput = {
+    where: ApprovalPdfExportRowScalarWhereInput
+    data: XOR<ApprovalPdfExportRowUpdateManyMutationInput, ApprovalPdfExportRowUncheckedUpdateManyWithoutExportInput>
+  }
+
+  export type ApprovalPdfExportRowScalarWhereInput = {
+    AND?: ApprovalPdfExportRowScalarWhereInput | ApprovalPdfExportRowScalarWhereInput[]
+    OR?: ApprovalPdfExportRowScalarWhereInput[]
+    NOT?: ApprovalPdfExportRowScalarWhereInput | ApprovalPdfExportRowScalarWhereInput[]
+    exportId?: StringFilter<"ApprovalPdfExportRow"> | string
+    roomDataId?: IntFilter<"ApprovalPdfExportRow"> | number
+  }
+
+  export type ApprovalPdfExportCreateWithoutRowsInput = {
+    id?: string
+    filePath: string
+    displayName: string
+    createdAt?: Date | string
+    noteCount: number
+    session: demo_sessionCreateNestedOneWithoutApprovalPdfExportsInput
+    user: user_infoCreateNestedOneWithoutApprovalPdfExportsInput
+  }
+
+  export type ApprovalPdfExportUncheckedCreateWithoutRowsInput = {
+    id?: string
+    filePath: string
+    displayName: string
+    createdAt?: Date | string
+    noteCount: number
+    sessionId: string
+    userId: number
+  }
+
+  export type ApprovalPdfExportCreateOrConnectWithoutRowsInput = {
+    where: ApprovalPdfExportWhereUniqueInput
+    create: XOR<ApprovalPdfExportCreateWithoutRowsInput, ApprovalPdfExportUncheckedCreateWithoutRowsInput>
+  }
+
+  export type room_dataCreateWithoutApprovalPdfRowsInput = {
+    patient_note: string
+    is_approved?: number
+    session: demo_sessionCreateNestedOneWithoutRoomDataInput
+    roomRecording?: RecordingCreateNestedOneWithoutRoomDataAsRoomInput
+    noteRecording?: RecordingCreateNestedOneWithoutRoomDataAsNoteInput
+    bed_info: bed_infoCreateNestedOneWithoutRoom_dataInput
+  }
+
+  export type room_dataUncheckedCreateWithoutApprovalPdfRowsInput = {
+    id?: number
+    bed_id: number
+    patient_note: string
+    is_approved?: number
+    sessionId: string
+    roomRecordingId?: string | null
+    noteRecordingId?: string | null
+  }
+
+  export type room_dataCreateOrConnectWithoutApprovalPdfRowsInput = {
+    where: room_dataWhereUniqueInput
+    create: XOR<room_dataCreateWithoutApprovalPdfRowsInput, room_dataUncheckedCreateWithoutApprovalPdfRowsInput>
+  }
+
+  export type ApprovalPdfExportUpsertWithoutRowsInput = {
+    update: XOR<ApprovalPdfExportUpdateWithoutRowsInput, ApprovalPdfExportUncheckedUpdateWithoutRowsInput>
+    create: XOR<ApprovalPdfExportCreateWithoutRowsInput, ApprovalPdfExportUncheckedCreateWithoutRowsInput>
+    where?: ApprovalPdfExportWhereInput
+  }
+
+  export type ApprovalPdfExportUpdateToOneWithWhereWithoutRowsInput = {
+    where?: ApprovalPdfExportWhereInput
+    data: XOR<ApprovalPdfExportUpdateWithoutRowsInput, ApprovalPdfExportUncheckedUpdateWithoutRowsInput>
+  }
+
+  export type ApprovalPdfExportUpdateWithoutRowsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    noteCount?: IntFieldUpdateOperationsInput | number
+    session?: demo_sessionUpdateOneRequiredWithoutApprovalPdfExportsNestedInput
+    user?: user_infoUpdateOneRequiredWithoutApprovalPdfExportsNestedInput
+  }
+
+  export type ApprovalPdfExportUncheckedUpdateWithoutRowsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    noteCount?: IntFieldUpdateOperationsInput | number
+    sessionId?: StringFieldUpdateOperationsInput | string
+    userId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type room_dataUpsertWithoutApprovalPdfRowsInput = {
+    update: XOR<room_dataUpdateWithoutApprovalPdfRowsInput, room_dataUncheckedUpdateWithoutApprovalPdfRowsInput>
+    create: XOR<room_dataCreateWithoutApprovalPdfRowsInput, room_dataUncheckedCreateWithoutApprovalPdfRowsInput>
+    where?: room_dataWhereInput
+  }
+
+  export type room_dataUpdateToOneWithWhereWithoutApprovalPdfRowsInput = {
+    where?: room_dataWhereInput
+    data: XOR<room_dataUpdateWithoutApprovalPdfRowsInput, room_dataUncheckedUpdateWithoutApprovalPdfRowsInput>
+  }
+
+  export type room_dataUpdateWithoutApprovalPdfRowsInput = {
+    patient_note?: StringFieldUpdateOperationsInput | string
+    is_approved?: IntFieldUpdateOperationsInput | number
+    session?: demo_sessionUpdateOneRequiredWithoutRoomDataNestedInput
+    roomRecording?: RecordingUpdateOneWithoutRoomDataAsRoomNestedInput
+    noteRecording?: RecordingUpdateOneWithoutRoomDataAsNoteNestedInput
+    bed_info?: bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput
+  }
+
+  export type room_dataUncheckedUpdateWithoutApprovalPdfRowsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    bed_id?: IntFieldUpdateOperationsInput | number
+    patient_note?: StringFieldUpdateOperationsInput | string
+    is_approved?: IntFieldUpdateOperationsInput | number
+    sessionId?: StringFieldUpdateOperationsInput | string
+    roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+    noteRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type room_dataCreateWithoutRoomRecordingInput = {
@@ -20774,6 +22800,7 @@ export namespace Prisma {
     session: demo_sessionCreateNestedOneWithoutRoomDataInput
     noteRecording?: RecordingCreateNestedOneWithoutRoomDataAsNoteInput
     bed_info: bed_infoCreateNestedOneWithoutRoom_dataInput
+    approvalPdfRows?: ApprovalPdfExportRowCreateNestedManyWithoutRoom_dataInput
   }
 
   export type room_dataUncheckedCreateWithoutRoomRecordingInput = {
@@ -20783,6 +22810,7 @@ export namespace Prisma {
     is_approved?: number
     sessionId: string
     noteRecordingId?: string | null
+    approvalPdfRows?: ApprovalPdfExportRowUncheckedCreateNestedManyWithoutRoom_dataInput
   }
 
   export type room_dataCreateOrConnectWithoutRoomRecordingInput = {
@@ -20801,6 +22829,7 @@ export namespace Prisma {
     session: demo_sessionCreateNestedOneWithoutRoomDataInput
     roomRecording?: RecordingCreateNestedOneWithoutRoomDataAsRoomInput
     bed_info: bed_infoCreateNestedOneWithoutRoom_dataInput
+    approvalPdfRows?: ApprovalPdfExportRowCreateNestedManyWithoutRoom_dataInput
   }
 
   export type room_dataUncheckedCreateWithoutNoteRecordingInput = {
@@ -20810,6 +22839,7 @@ export namespace Prisma {
     is_approved?: number
     sessionId: string
     roomRecordingId?: string | null
+    approvalPdfRows?: ApprovalPdfExportRowUncheckedCreateNestedManyWithoutRoom_dataInput
   }
 
   export type room_dataCreateOrConnectWithoutNoteRecordingInput = {
@@ -20858,7 +22888,7 @@ export namespace Prisma {
     session_id?: string
     created_at?: Date | string
     expires_at: Date | string
-    exportPdf?: PdfFileCreateNestedOneWithoutSessionInput
+    approvalPdfExports?: ApprovalPdfExportCreateNestedManyWithoutSessionInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutDemo_sessionInput
   }
 
@@ -20867,7 +22897,7 @@ export namespace Prisma {
     created_at?: Date | string
     expires_at: Date | string
     center_id: number
-    exportPdf?: PdfFileUncheckedCreateNestedOneWithoutSessionInput
+    approvalPdfExports?: ApprovalPdfExportUncheckedCreateNestedManyWithoutSessionInput
   }
 
   export type demo_sessionCreateOrConnectWithoutRoomDataInput = {
@@ -20945,6 +22975,24 @@ export namespace Prisma {
     create: XOR<bed_infoCreateWithoutRoom_dataInput, bed_infoUncheckedCreateWithoutRoom_dataInput>
   }
 
+  export type ApprovalPdfExportRowCreateWithoutRoom_dataInput = {
+    export: ApprovalPdfExportCreateNestedOneWithoutRowsInput
+  }
+
+  export type ApprovalPdfExportRowUncheckedCreateWithoutRoom_dataInput = {
+    exportId: string
+  }
+
+  export type ApprovalPdfExportRowCreateOrConnectWithoutRoom_dataInput = {
+    where: ApprovalPdfExportRowWhereUniqueInput
+    create: XOR<ApprovalPdfExportRowCreateWithoutRoom_dataInput, ApprovalPdfExportRowUncheckedCreateWithoutRoom_dataInput>
+  }
+
+  export type ApprovalPdfExportRowCreateManyRoom_dataInputEnvelope = {
+    data: ApprovalPdfExportRowCreateManyRoom_dataInput | ApprovalPdfExportRowCreateManyRoom_dataInput[]
+    skipDuplicates?: boolean
+  }
+
   export type demo_sessionUpsertWithoutRoomDataInput = {
     update: XOR<demo_sessionUpdateWithoutRoomDataInput, demo_sessionUncheckedUpdateWithoutRoomDataInput>
     create: XOR<demo_sessionCreateWithoutRoomDataInput, demo_sessionUncheckedCreateWithoutRoomDataInput>
@@ -20960,7 +23008,7 @@ export namespace Prisma {
     session_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    exportPdf?: PdfFileUpdateOneWithoutSessionNestedInput
+    approvalPdfExports?: ApprovalPdfExportUpdateManyWithoutSessionNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutDemo_sessionNestedInput
   }
 
@@ -20969,7 +23017,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
     center_id?: IntFieldUpdateOperationsInput | number
-    exportPdf?: PdfFileUncheckedUpdateOneWithoutSessionNestedInput
+    approvalPdfExports?: ApprovalPdfExportUncheckedUpdateManyWithoutSessionNestedInput
   }
 
   export type RecordingUpsertWithoutRoomDataAsRoomInput = {
@@ -21058,6 +23106,22 @@ export namespace Prisma {
     is_assigned?: BoolFieldUpdateOperationsInput | boolean
     assigned_patient_id?: NullableIntFieldUpdateOperationsInput | number | null
     assigned_nurse_id?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type ApprovalPdfExportRowUpsertWithWhereUniqueWithoutRoom_dataInput = {
+    where: ApprovalPdfExportRowWhereUniqueInput
+    update: XOR<ApprovalPdfExportRowUpdateWithoutRoom_dataInput, ApprovalPdfExportRowUncheckedUpdateWithoutRoom_dataInput>
+    create: XOR<ApprovalPdfExportRowCreateWithoutRoom_dataInput, ApprovalPdfExportRowUncheckedCreateWithoutRoom_dataInput>
+  }
+
+  export type ApprovalPdfExportRowUpdateWithWhereUniqueWithoutRoom_dataInput = {
+    where: ApprovalPdfExportRowWhereUniqueInput
+    data: XOR<ApprovalPdfExportRowUpdateWithoutRoom_dataInput, ApprovalPdfExportRowUncheckedUpdateWithoutRoom_dataInput>
+  }
+
+  export type ApprovalPdfExportRowUpdateManyWithWhereWithoutRoom_dataInput = {
+    where: ApprovalPdfExportRowScalarWhereInput
+    data: XOR<ApprovalPdfExportRowUpdateManyMutationInput, ApprovalPdfExportRowUncheckedUpdateManyWithoutRoom_dataInput>
   }
 
   export type medicalcenter_infoCreateWithoutRoom_registerInput = {
@@ -21319,6 +23383,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ApprovalPdfExportCreateWithoutUserInput = {
+    id?: string
+    filePath: string
+    displayName: string
+    createdAt?: Date | string
+    noteCount: number
+    session: demo_sessionCreateNestedOneWithoutApprovalPdfExportsInput
+    rows?: ApprovalPdfExportRowCreateNestedManyWithoutExportInput
+  }
+
+  export type ApprovalPdfExportUncheckedCreateWithoutUserInput = {
+    id?: string
+    filePath: string
+    displayName: string
+    createdAt?: Date | string
+    noteCount: number
+    sessionId: string
+    rows?: ApprovalPdfExportRowUncheckedCreateNestedManyWithoutExportInput
+  }
+
+  export type ApprovalPdfExportCreateOrConnectWithoutUserInput = {
+    where: ApprovalPdfExportWhereUniqueInput
+    create: XOR<ApprovalPdfExportCreateWithoutUserInput, ApprovalPdfExportUncheckedCreateWithoutUserInput>
+  }
+
+  export type ApprovalPdfExportCreateManyUserInputEnvelope = {
+    data: ApprovalPdfExportCreateManyUserInput | ApprovalPdfExportCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type bed_infoUpsertWithWhereUniqueWithoutUser_infoInput = {
     where: bed_infoWhereUniqueInput
     update: XOR<bed_infoUpdateWithoutUser_infoInput, bed_infoUncheckedUpdateWithoutUser_infoInput>
@@ -21387,6 +23481,35 @@ export namespace Prisma {
     data: XOR<user_uploadsUpdateManyMutationInput, user_uploadsUncheckedUpdateManyWithoutUser_infoInput>
   }
 
+  export type ApprovalPdfExportUpsertWithWhereUniqueWithoutUserInput = {
+    where: ApprovalPdfExportWhereUniqueInput
+    update: XOR<ApprovalPdfExportUpdateWithoutUserInput, ApprovalPdfExportUncheckedUpdateWithoutUserInput>
+    create: XOR<ApprovalPdfExportCreateWithoutUserInput, ApprovalPdfExportUncheckedCreateWithoutUserInput>
+  }
+
+  export type ApprovalPdfExportUpdateWithWhereUniqueWithoutUserInput = {
+    where: ApprovalPdfExportWhereUniqueInput
+    data: XOR<ApprovalPdfExportUpdateWithoutUserInput, ApprovalPdfExportUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ApprovalPdfExportUpdateManyWithWhereWithoutUserInput = {
+    where: ApprovalPdfExportScalarWhereInput
+    data: XOR<ApprovalPdfExportUpdateManyMutationInput, ApprovalPdfExportUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ApprovalPdfExportScalarWhereInput = {
+    AND?: ApprovalPdfExportScalarWhereInput | ApprovalPdfExportScalarWhereInput[]
+    OR?: ApprovalPdfExportScalarWhereInput[]
+    NOT?: ApprovalPdfExportScalarWhereInput | ApprovalPdfExportScalarWhereInput[]
+    id?: StringFilter<"ApprovalPdfExport"> | string
+    filePath?: StringFilter<"ApprovalPdfExport"> | string
+    displayName?: StringFilter<"ApprovalPdfExport"> | string
+    createdAt?: DateTimeFilter<"ApprovalPdfExport"> | Date | string
+    noteCount?: IntFilter<"ApprovalPdfExport"> | number
+    sessionId?: StringFilter<"ApprovalPdfExport"> | string
+    userId?: IntFilter<"ApprovalPdfExport"> | number
+  }
+
   export type medicalcenter_infoCreateWithoutUser_uploadsInput = {
     center_name: string
     address?: string | null
@@ -21423,6 +23546,7 @@ export namespace Prisma {
     user_role: string
     bed_info?: bed_infoCreateNestedManyWithoutUser_infoInput
     medicalcenter_info: medicalcenter_infoCreateNestedOneWithoutUser_infoInput
+    approvalPdfExports?: ApprovalPdfExportCreateNestedManyWithoutUserInput
   }
 
   export type user_infoUncheckedCreateWithoutUser_uploadsInput = {
@@ -21432,6 +23556,7 @@ export namespace Prisma {
     user_role: string
     center_id: number
     bed_info?: bed_infoUncheckedCreateNestedManyWithoutUser_infoInput
+    approvalPdfExports?: ApprovalPdfExportUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type user_infoCreateOrConnectWithoutUser_uploadsInput = {
@@ -21492,6 +23617,7 @@ export namespace Prisma {
     user_role?: StringFieldUpdateOperationsInput | string
     bed_info?: bed_infoUpdateManyWithoutUser_infoNestedInput
     medicalcenter_info?: medicalcenter_infoUpdateOneRequiredWithoutUser_infoNestedInput
+    approvalPdfExports?: ApprovalPdfExportUpdateManyWithoutUserNestedInput
   }
 
   export type user_infoUncheckedUpdateWithoutUser_uploadsInput = {
@@ -21501,6 +23627,7 @@ export namespace Prisma {
     user_role?: StringFieldUpdateOperationsInput | string
     center_id?: IntFieldUpdateOperationsInput | number
     bed_info?: bed_infoUncheckedUpdateManyWithoutUser_infoNestedInput
+    approvalPdfExports?: ApprovalPdfExportUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type room_dataCreateWithoutSessionInput = {
@@ -21509,6 +23636,7 @@ export namespace Prisma {
     roomRecording?: RecordingCreateNestedOneWithoutRoomDataAsRoomInput
     noteRecording?: RecordingCreateNestedOneWithoutRoomDataAsNoteInput
     bed_info: bed_infoCreateNestedOneWithoutRoom_dataInput
+    approvalPdfRows?: ApprovalPdfExportRowCreateNestedManyWithoutRoom_dataInput
   }
 
   export type room_dataUncheckedCreateWithoutSessionInput = {
@@ -21518,6 +23646,7 @@ export namespace Prisma {
     is_approved?: number
     roomRecordingId?: string | null
     noteRecordingId?: string | null
+    approvalPdfRows?: ApprovalPdfExportRowUncheckedCreateNestedManyWithoutRoom_dataInput
   }
 
   export type room_dataCreateOrConnectWithoutSessionInput = {
@@ -21530,21 +23659,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type PdfFileCreateWithoutSessionInput = {
+  export type ApprovalPdfExportCreateWithoutSessionInput = {
     id?: string
     filePath: string
+    displayName: string
     createdAt?: Date | string
+    noteCount: number
+    user: user_infoCreateNestedOneWithoutApprovalPdfExportsInput
+    rows?: ApprovalPdfExportRowCreateNestedManyWithoutExportInput
   }
 
-  export type PdfFileUncheckedCreateWithoutSessionInput = {
+  export type ApprovalPdfExportUncheckedCreateWithoutSessionInput = {
     id?: string
     filePath: string
+    displayName: string
     createdAt?: Date | string
+    noteCount: number
+    userId: number
+    rows?: ApprovalPdfExportRowUncheckedCreateNestedManyWithoutExportInput
   }
 
-  export type PdfFileCreateOrConnectWithoutSessionInput = {
-    where: PdfFileWhereUniqueInput
-    create: XOR<PdfFileCreateWithoutSessionInput, PdfFileUncheckedCreateWithoutSessionInput>
+  export type ApprovalPdfExportCreateOrConnectWithoutSessionInput = {
+    where: ApprovalPdfExportWhereUniqueInput
+    create: XOR<ApprovalPdfExportCreateWithoutSessionInput, ApprovalPdfExportUncheckedCreateWithoutSessionInput>
+  }
+
+  export type ApprovalPdfExportCreateManySessionInputEnvelope = {
+    data: ApprovalPdfExportCreateManySessionInput | ApprovalPdfExportCreateManySessionInput[]
+    skipDuplicates?: boolean
   }
 
   export type medicalcenter_infoCreateWithoutDemo_sessionInput = {
@@ -21593,27 +23735,20 @@ export namespace Prisma {
     data: XOR<room_dataUpdateManyMutationInput, room_dataUncheckedUpdateManyWithoutSessionInput>
   }
 
-  export type PdfFileUpsertWithoutSessionInput = {
-    update: XOR<PdfFileUpdateWithoutSessionInput, PdfFileUncheckedUpdateWithoutSessionInput>
-    create: XOR<PdfFileCreateWithoutSessionInput, PdfFileUncheckedCreateWithoutSessionInput>
-    where?: PdfFileWhereInput
+  export type ApprovalPdfExportUpsertWithWhereUniqueWithoutSessionInput = {
+    where: ApprovalPdfExportWhereUniqueInput
+    update: XOR<ApprovalPdfExportUpdateWithoutSessionInput, ApprovalPdfExportUncheckedUpdateWithoutSessionInput>
+    create: XOR<ApprovalPdfExportCreateWithoutSessionInput, ApprovalPdfExportUncheckedCreateWithoutSessionInput>
   }
 
-  export type PdfFileUpdateToOneWithWhereWithoutSessionInput = {
-    where?: PdfFileWhereInput
-    data: XOR<PdfFileUpdateWithoutSessionInput, PdfFileUncheckedUpdateWithoutSessionInput>
+  export type ApprovalPdfExportUpdateWithWhereUniqueWithoutSessionInput = {
+    where: ApprovalPdfExportWhereUniqueInput
+    data: XOR<ApprovalPdfExportUpdateWithoutSessionInput, ApprovalPdfExportUncheckedUpdateWithoutSessionInput>
   }
 
-  export type PdfFileUpdateWithoutSessionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    filePath?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PdfFileUncheckedUpdateWithoutSessionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    filePath?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type ApprovalPdfExportUpdateManyWithWhereWithoutSessionInput = {
+    where: ApprovalPdfExportScalarWhereInput
+    data: XOR<ApprovalPdfExportUpdateManyMutationInput, ApprovalPdfExportUncheckedUpdateManyWithoutSessionInput>
   }
 
   export type medicalcenter_infoUpsertWithoutDemo_sessionInput = {
@@ -21773,6 +23908,7 @@ export namespace Prisma {
     user_role?: StringFieldUpdateOperationsInput | string
     bed_info?: bed_infoUpdateManyWithoutUser_infoNestedInput
     user_uploads?: user_uploadsUpdateManyWithoutUser_infoNestedInput
+    approvalPdfExports?: ApprovalPdfExportUpdateManyWithoutUserNestedInput
   }
 
   export type user_infoUncheckedUpdateWithoutMedicalcenter_infoInput = {
@@ -21782,6 +23918,7 @@ export namespace Prisma {
     user_role?: StringFieldUpdateOperationsInput | string
     bed_info?: bed_infoUncheckedUpdateManyWithoutUser_infoNestedInput
     user_uploads?: user_uploadsUncheckedUpdateManyWithoutUser_infoNestedInput
+    approvalPdfExports?: ApprovalPdfExportUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type user_infoUncheckedUpdateManyWithoutMedicalcenter_infoInput = {
@@ -21996,6 +24133,7 @@ export namespace Prisma {
     session?: demo_sessionUpdateOneRequiredWithoutRoomDataNestedInput
     roomRecording?: RecordingUpdateOneWithoutRoomDataAsRoomNestedInput
     noteRecording?: RecordingUpdateOneWithoutRoomDataAsNoteNestedInput
+    approvalPdfRows?: ApprovalPdfExportRowUpdateManyWithoutRoom_dataNestedInput
   }
 
   export type room_dataUncheckedUpdateWithoutBed_infoInput = {
@@ -22005,6 +24143,7 @@ export namespace Prisma {
     sessionId?: StringFieldUpdateOperationsInput | string
     roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
     noteRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalPdfRows?: ApprovalPdfExportRowUncheckedUpdateManyWithoutRoom_dataNestedInput
   }
 
   export type room_dataUncheckedUpdateManyWithoutBed_infoInput = {
@@ -22014,6 +24153,22 @@ export namespace Prisma {
     sessionId?: StringFieldUpdateOperationsInput | string
     roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
     noteRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ApprovalPdfExportRowCreateManyExportInput = {
+    roomDataId: number
+  }
+
+  export type ApprovalPdfExportRowUpdateWithoutExportInput = {
+    room_data?: room_dataUpdateOneRequiredWithoutApprovalPdfRowsNestedInput
+  }
+
+  export type ApprovalPdfExportRowUncheckedUpdateWithoutExportInput = {
+    roomDataId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type ApprovalPdfExportRowUncheckedUpdateManyWithoutExportInput = {
+    roomDataId?: IntFieldUpdateOperationsInput | number
   }
 
   export type room_dataCreateManyRoomRecordingInput = {
@@ -22040,6 +24195,7 @@ export namespace Prisma {
     session?: demo_sessionUpdateOneRequiredWithoutRoomDataNestedInput
     noteRecording?: RecordingUpdateOneWithoutRoomDataAsNoteNestedInput
     bed_info?: bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput
+    approvalPdfRows?: ApprovalPdfExportRowUpdateManyWithoutRoom_dataNestedInput
   }
 
   export type room_dataUncheckedUpdateWithoutRoomRecordingInput = {
@@ -22049,6 +24205,7 @@ export namespace Prisma {
     is_approved?: IntFieldUpdateOperationsInput | number
     sessionId?: StringFieldUpdateOperationsInput | string
     noteRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalPdfRows?: ApprovalPdfExportRowUncheckedUpdateManyWithoutRoom_dataNestedInput
   }
 
   export type room_dataUncheckedUpdateManyWithoutRoomRecordingInput = {
@@ -22066,6 +24223,7 @@ export namespace Prisma {
     session?: demo_sessionUpdateOneRequiredWithoutRoomDataNestedInput
     roomRecording?: RecordingUpdateOneWithoutRoomDataAsRoomNestedInput
     bed_info?: bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput
+    approvalPdfRows?: ApprovalPdfExportRowUpdateManyWithoutRoom_dataNestedInput
   }
 
   export type room_dataUncheckedUpdateWithoutNoteRecordingInput = {
@@ -22075,6 +24233,7 @@ export namespace Prisma {
     is_approved?: IntFieldUpdateOperationsInput | number
     sessionId?: StringFieldUpdateOperationsInput | string
     roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalPdfRows?: ApprovalPdfExportRowUncheckedUpdateManyWithoutRoom_dataNestedInput
   }
 
   export type room_dataUncheckedUpdateManyWithoutNoteRecordingInput = {
@@ -22084,6 +24243,22 @@ export namespace Prisma {
     is_approved?: IntFieldUpdateOperationsInput | number
     sessionId?: StringFieldUpdateOperationsInput | string
     roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ApprovalPdfExportRowCreateManyRoom_dataInput = {
+    exportId: string
+  }
+
+  export type ApprovalPdfExportRowUpdateWithoutRoom_dataInput = {
+    export?: ApprovalPdfExportUpdateOneRequiredWithoutRowsNestedInput
+  }
+
+  export type ApprovalPdfExportRowUncheckedUpdateWithoutRoom_dataInput = {
+    exportId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ApprovalPdfExportRowUncheckedUpdateManyWithoutRoom_dataInput = {
+    exportId?: StringFieldUpdateOperationsInput | string
   }
 
   export type bed_infoCreateManyUser_infoInput = {
@@ -22101,6 +24276,15 @@ export namespace Prisma {
     unassigned_uploads: string
     upload_date: Date | string
     upload_time: Date | string
+  }
+
+  export type ApprovalPdfExportCreateManyUserInput = {
+    id?: string
+    filePath: string
+    displayName: string
+    createdAt?: Date | string
+    noteCount: number
+    sessionId: string
   }
 
   export type bed_infoUpdateWithoutUser_infoInput = {
@@ -22155,6 +24339,35 @@ export namespace Prisma {
     upload_time?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ApprovalPdfExportUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    noteCount?: IntFieldUpdateOperationsInput | number
+    session?: demo_sessionUpdateOneRequiredWithoutApprovalPdfExportsNestedInput
+    rows?: ApprovalPdfExportRowUpdateManyWithoutExportNestedInput
+  }
+
+  export type ApprovalPdfExportUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    noteCount?: IntFieldUpdateOperationsInput | number
+    sessionId?: StringFieldUpdateOperationsInput | string
+    rows?: ApprovalPdfExportRowUncheckedUpdateManyWithoutExportNestedInput
+  }
+
+  export type ApprovalPdfExportUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    noteCount?: IntFieldUpdateOperationsInput | number
+    sessionId?: StringFieldUpdateOperationsInput | string
+  }
+
   export type room_dataCreateManySessionInput = {
     id?: number
     bed_id: number
@@ -22164,12 +24377,22 @@ export namespace Prisma {
     noteRecordingId?: string | null
   }
 
+  export type ApprovalPdfExportCreateManySessionInput = {
+    id?: string
+    filePath: string
+    displayName: string
+    createdAt?: Date | string
+    noteCount: number
+    userId: number
+  }
+
   export type room_dataUpdateWithoutSessionInput = {
     patient_note?: StringFieldUpdateOperationsInput | string
     is_approved?: IntFieldUpdateOperationsInput | number
     roomRecording?: RecordingUpdateOneWithoutRoomDataAsRoomNestedInput
     noteRecording?: RecordingUpdateOneWithoutRoomDataAsNoteNestedInput
     bed_info?: bed_infoUpdateOneRequiredWithoutRoom_dataNestedInput
+    approvalPdfRows?: ApprovalPdfExportRowUpdateManyWithoutRoom_dataNestedInput
   }
 
   export type room_dataUncheckedUpdateWithoutSessionInput = {
@@ -22179,6 +24402,7 @@ export namespace Prisma {
     is_approved?: IntFieldUpdateOperationsInput | number
     roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
     noteRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalPdfRows?: ApprovalPdfExportRowUncheckedUpdateManyWithoutRoom_dataNestedInput
   }
 
   export type room_dataUncheckedUpdateManyWithoutSessionInput = {
@@ -22188,6 +24412,35 @@ export namespace Prisma {
     is_approved?: IntFieldUpdateOperationsInput | number
     roomRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
     noteRecordingId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ApprovalPdfExportUpdateWithoutSessionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    noteCount?: IntFieldUpdateOperationsInput | number
+    user?: user_infoUpdateOneRequiredWithoutApprovalPdfExportsNestedInput
+    rows?: ApprovalPdfExportRowUpdateManyWithoutExportNestedInput
+  }
+
+  export type ApprovalPdfExportUncheckedUpdateWithoutSessionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    noteCount?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    rows?: ApprovalPdfExportRowUncheckedUpdateManyWithoutExportNestedInput
+  }
+
+  export type ApprovalPdfExportUncheckedUpdateManyWithoutSessionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    noteCount?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
   }
 
 

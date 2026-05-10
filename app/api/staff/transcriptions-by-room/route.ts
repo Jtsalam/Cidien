@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
     if (demoContext.sessionId) {
       whereClause = {
         sessionId: demoContext.sessionId,
+        is_approved: 0,
         bed_info: {
           room_info: { room_number: parseInt(roomNumber, 10) },
         },
@@ -45,6 +46,7 @@ export async function GET(request: NextRequest) {
       });
       if (!user) return NextResponse.json([]);
       whereClause = {
+        is_approved: 0,
         bed_info: {
           assigned_nurse_id: user.user_id,
           room_info: {
@@ -99,6 +101,7 @@ export async function GET(request: NextRequest) {
 
       return {
         id: item.id,
+        bedLetter: item.bed_info.bed_letter,
         noteRecordingId: item.noteRecordingId,
         roomRecordingId: item.roomRecordingId,
         audioUrl: item.noteRecording?.audioPath ? audioPathToUrl(item.noteRecording.audioPath) : null,
@@ -107,7 +110,10 @@ export async function GET(request: NextRequest) {
           `${item.bed_info.room_info.room_number} ${item.bed_info.bed_letter}`,
         column2: dateStr,
         column3: timeStr,
-        column4: item.noteRecording?.transcript || item.patient_note || null,
+        column4:
+          (item.patient_note?.trim()
+            ? item.patient_note
+            : item.noteRecording?.transcript || item.patient_note || null) || null,
       }
     })
 
