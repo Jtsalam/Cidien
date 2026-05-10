@@ -19,12 +19,10 @@ function promptForType(type: RecordingType) {
 export async function POST(req: Request) {
   try {
     const { recordingId } = (await req.json()) as { recordingId?: string };
+    console.log(`[transcribe] received recordingId=${recordingId}`);
 
     if (!recordingId) {
-      return NextResponse.json(
-        { error: "recordingId is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "recordingId is required" }, { status: 400 });
     }
 
     const recording = await prisma.recording.findUnique({
@@ -33,41 +31,34 @@ export async function POST(req: Request) {
     });
 
     if (!recording) {
-      return NextResponse.json(
-        { error: "Recording not found" },
-        { status: 404 }
-      );
+      console.error("[transcribe] recording not found:", recordingId);
+      return NextResponse.json({ error: "Recording not found" }, { status: 404 });
     }
 
-    // Download audio bytes from Supabase
-    const { data: audioBlob, error: downloadError } =
-      await supabaseServer.storage
-        .from(AUDIO_RECORDINGS_BUCKET)
-        .download(recording.audioPath);
+    console.log(`[transcribe] type=${recording.type} path=${recording.audioPath} — downloading audio...`);
+
+    const { data: audioBlob, error: downloadError } = await supabaseServer.storage
+      .from(AUDIO_RECORDINGS_BUCKET)
+      .download(recording.audioPath);
 
     if (downloadError || !audioBlob) {
-      return NextResponse.json(
-        { error: "Failed to download audio" },
-        { status: 500 }
-      );
+      console.error("[transcribe] download failed:", downloadError?.message);
+      return NextResponse.json({ error: "Failed to download audio" }, { status: 500 });
     }
 
-    // Convert Blob -> Buffer -> File (more reliable for Vercel/Node)
     const buffer = Buffer.from(await audioBlob.arrayBuffer());
+    console.log(`[transcribe] audio downloaded — ${buffer.byteLength}B — sending to OpenAI...`);
 
     const file = new File(
       [buffer],
       `${recording.type.toLowerCase()}.webm`,
-      { type: "audio/webm" }
+      { type: "audio/webm" },
     );
 
-    // Call OpenAI transcription API
     const openAiApiKey = process.env.OPENAI_API_KEY;
     if (!openAiApiKey) {
-      return NextResponse.json(
-        { error: "Missing OPENAI_API_KEY" },
-        { status: 500 }
-      );
+      console.error("[transcribe] OPENAI_API_KEY is not set");
+      return NextResponse.json({ error: "Missing OPENAI_API_KEY" }, { status: 500 });
     }
 
     const form = new FormData();
@@ -78,35 +69,30 @@ export async function POST(req: Request) {
 
     const openAiRes = await fetch(OPENAI_TRANSCRIBE_URL, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${openAiApiKey}`,
-      },
+      headers: { Authorization: `Bearer ${openAiApiKey}` },
       body: form,
     });
 
     if (!openAiRes.ok) {
       const details = await openAiRes.text();
-      console.error("OpenAI transcription error:", details);
-      return NextResponse.json(
-        { error: "Transcription provider failed" },
-        { status: 502 }
-      );
+      console.error("[transcribe] OpenAI error:", details);
+      return NextResponse.json({ error: "Transcription provider failed" }, { status: 502 });
     }
 
     const transcript = (await openAiRes.text()).trim();
+    console.log(`[transcribe] ✓ OpenAI transcript: "${transcript}"`);
 
-    // Save transcript
     await prisma.recording.update({
       where: { id: recording.id },
       data: { transcript },
     });
 
-    // Mirror NOTE transcript into room_data.patient_note (legacy compatibility)
     if (recording.type === RecordingType.NOTE) {
       await prisma.room_data.updateMany({
         where: { noteRecordingId: recording.id },
         data: { patient_note: transcript },
       });
+      console.log(`[transcribe] ✓ patient_note updated for noteRecordingId=${recording.id}`);
     }
 
     return NextResponse.json({
@@ -116,10 +102,7 @@ export async function POST(req: Request) {
       transcript,
     });
   } catch (error) {
-    console.error("Transcribe recording error:", error);
-    return NextResponse.json(
-      { error: "Transcription failed" },
-      { status: 500 }
-    );
+    console.error("[transcribe] unexpected error:", error);
+    return NextResponse.json({ error: "Transcription failed" }, { status: 500 });
   }
 }

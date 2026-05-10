@@ -10,6 +10,8 @@ export async function POST(req: Request) {
     const file = formData.get("file");
     const type = formData.get("type");
 
+    console.log(`[upload] received type=${type} file=${file instanceof File ? `${file.name} ${file.size}B` : "missing"}`);
+
     if (!(file instanceof File)) {
       return NextResponse.json({ error: "No audio file provided" }, { status: 400 });
     }
@@ -21,9 +23,21 @@ export async function POST(req: Request) {
       );
     }
 
+    // Role: Ensure the storage bucket exists before uploading (creates it on first use).
+    const { error: bucketError } = await supabaseServer.storage.createBucket(
+      AUDIO_RECORDINGS_BUCKET,
+      { public: false },
+    );
+    if (bucketError && !bucketError.message.toLowerCase().includes("already exists")) {
+      console.error("[upload] bucket ensure failed:", bucketError.message);
+      return NextResponse.json({ error: "Storage bucket unavailable" }, { status: 500 });
+    }
+
     // Role: Upload the binary audio to Supabase storage for durable retrieval.
     const extension = file.name.split(".").pop() ?? "webm";
     const objectPath = `${type.toLowerCase()}-${crypto.randomUUID()}.${extension}`;
+    console.log(`[upload] uploading to bucket="${AUDIO_RECORDINGS_BUCKET}" path="${objectPath}"`);
+
     const { data, error } = await supabaseServer.storage
       .from(AUDIO_RECORDINGS_BUCKET)
       .upload(objectPath, file, {
@@ -32,6 +46,7 @@ export async function POST(req: Request) {
       });
 
     if (error || !data) {
+      console.error("[upload] supabase storage error:", error?.message);
       return NextResponse.json(
         { error: error?.message ?? "Failed to upload recording" },
         { status: 500 },
@@ -40,17 +55,11 @@ export async function POST(req: Request) {
 
     // Role: Persist the storage path and recording type in Postgres.
     const recording = await prisma.recording.create({
-      data: {
-        audioPath: data.path,
-        type,
-      },
-      select: {
-        id: true,
-        audioPath: true,
-        type: true,
-      },
+      data: { audioPath: data.path, type },
+      select: { id: true, audioPath: true, type: true },
     });
 
+    console.log(`[upload] ✓ recordingId=${recording.id} type=${recording.type} path=${recording.audioPath}`);
     return NextResponse.json({
       success: true,
       recordingId: recording.id,
@@ -58,7 +67,7 @@ export async function POST(req: Request) {
       type: recording.type,
     });
   } catch (error) {
-    console.error("Upload recording error:", error);
+    console.error("[upload] unexpected error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }

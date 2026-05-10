@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { getCurrentCenterId } from '@/lib/demo'
+import { getCurrentCenterId, getCurrentDemoContext } from '@/lib/demo'
 import { prisma } from '@/lib/prisma'
 
 function audioPathToUrl(audioPath: string) {
@@ -19,28 +19,44 @@ export async function GET() {
       )
     }
 
+    const demoContext = await getCurrentDemoContext(cookieStore)
     const centerId = await getCurrentCenterId(cookieStore)
-    const user = await prisma.user_info.findFirst({
-      where: {
-        staff_id: staffId,
-        ...(centerId ? { center_id: centerId } : {}),
-      },
-      select: { user_id: true, center_id: true },
-    })
 
-    if (!user) {
-      return NextResponse.json([])
+    // In demo mode query by sessionId so the desktop sees all recordings from the
+    // session regardless of which nurse is currently shown on the desktop screen.
+    const whereClause = demoContext.sessionId
+      ? { sessionId: demoContext.sessionId }
+      : (() => {
+          // Non-demo: filter by the logged-in nurse's assigned beds.
+          return {
+            bed_info: {
+              assigned_nurse_id: 0, // will be overwritten below
+              room_info: { center_id: 0 },
+            },
+          }
+        })()
+
+    // For non-demo we still need the user row to get user_id.
+    let nurseFilter: object | null = null
+    if (!demoContext.sessionId) {
+      const user = await prisma.user_info.findFirst({
+        where: {
+          staff_id: staffId,
+          ...(centerId ? { center_id: centerId } : {}),
+        },
+        select: { user_id: true, center_id: true },
+      })
+      if (!user) return NextResponse.json([])
+      nurseFilter = {
+        bed_info: {
+          assigned_nurse_id: user.user_id,
+          room_info: { center_id: centerId ?? user.center_id },
+        },
+      }
     }
 
     const transcriptions = await prisma.room_data.findMany({
-      where: {
-        bed_info: {
-          assigned_nurse_id: user.user_id,
-          room_info: {
-            center_id: centerId ?? user.center_id,
-          },
-        },
-      },
+      where: demoContext.sessionId ? whereClause : (nurseFilter ?? {}),
       select: {
         id: true,
         patient_note: true,
@@ -50,6 +66,7 @@ export async function GET() {
           select: {
             audioPath: true,
             transcript: true,
+            createdAt: true,
           },
         },
         roomRecording: {
@@ -71,19 +88,35 @@ export async function GET() {
       orderBy: { id: 'desc' },
     })
 
-    const data = transcriptions.map((item, index) => ({
-      index: index + 1,
-      id: item.id,
-      noteRecordingId: item.noteRecordingId,
-      roomRecordingId: item.roomRecordingId,
-      audioUrl: item.noteRecording?.audioPath ? audioPathToUrl(item.noteRecording.audioPath) : null,
-      column1:
-        item.roomRecording?.transcript?.trim() ||
-        `${item.bed_info.room_info.room_number} ${item.bed_info.bed_letter}`,
-      column2: 'Demo data',
-      column3: '-',
-      column4: item.noteRecording?.transcript || item.patient_note,
-    }))
+    const rawRows = transcriptions.map((item) => {
+      const recordedAt = item.noteRecording?.createdAt
+      const dateStr = recordedAt
+        ? new Date(recordedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : '—'
+      const timeStr = recordedAt
+        ? new Date(recordedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
+        : '—'
+
+      return {
+        id: item.id,
+        noteRecordingId: item.noteRecordingId,
+        roomRecordingId: item.roomRecordingId,
+        audioUrl: item.noteRecording?.audioPath ? audioPathToUrl(item.noteRecording.audioPath) : null,
+        column1:
+          item.roomRecording?.transcript?.trim() ||
+          `${item.bed_info.room_info.room_number} ${item.bed_info.bed_letter}`,
+        column2: dateStr,
+        column3: timeStr,
+        column4: item.noteRecording?.transcript || item.patient_note || null,
+      }
+    })
+
+    // Only return rows that have a completed patient note — prevents the dashboard
+    // from showing a partial row (date/time with empty note) while transcription
+    // is still in-flight. The row will appear once Recording.transcript is set.
+    const data = rawRows
+      .filter((row) => row.column4 && row.column4.trim() !== '')
+      .map((row, index) => ({ ...row, index: index + 1 }))
 
     return NextResponse.json(data)
   } catch (error) {

@@ -23,9 +23,15 @@ type ParsedRoomBed = {
 };
 
 function parseRoomBedFromTranscript(transcript: string): ParsedRoomBed | null {
-  const match = transcript.match(/room\D*(\d{1,5})\D*bed\D*([a-z])/i);
-  if (!match) return null;
-  return { roomNumber: match[1], bedLetter: match[2].toUpperCase() };
+  // Primary: "Room 1011 Bed B" / "Room 1011, Bed B."
+  const withKeywords = transcript.match(/room\s*(\d{1,5})[^a-z\d]*bed\s*([a-z])/i);
+  if (withKeywords) return { roomNumber: withKeywords[1], bedLetter: withKeywords[2].toUpperCase() };
+
+  // Fallback: bare "1011B" or "1011 B" when OpenAI drops the keywords
+  const bare = transcript.trim().match(/^(\d{1,5})\s*([a-z])\.?$/i);
+  if (bare) return { roomNumber: bare[1], bedLetter: bare[2].toUpperCase() };
+
+  return null;
 }
 
 export default function MobileRecorder() {
@@ -43,12 +49,18 @@ export default function MobileRecorder() {
   const [currentRoom, setCurrentRoom] = useState<string>("");
   const [roomRecordingId, setRoomRecordingId] = useState<string>("");
   const [parsedRoomBed, setParsedRoomBed] = useState<ParsedRoomBed | null>(null);
+  const [verifiedBedId, setVerifiedBedId] = useState<number | null>(null);
   const [buttonColor, setButtonColor] = useState<"green" | "red" | "">("");
   const activeButtonRef = useRef<"green" | "red" | "">("");
   const recordingRealtimeRef = useRef<ReturnType<typeof subscribeToRecording> | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const audioChunksRef = useRef<BlobPart[]>([]);
+  // Role: Always point at the latest uploadRecording so the stale onstop closure
+  // still calls the current version (with up-to-date state in its closure).
+  const uploadRecordingRef = useRef<(blob: Blob, color: "green" | "red" | "") => Promise<void>>(
+    async () => {},
+  );
 
   useEffect(() => {
     return () => { unsubscribeChannel(recordingRealtimeRef.current); };
@@ -128,7 +140,12 @@ export default function MobileRecorder() {
     mediaRecorder.onstop = async () => {
       const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
       audioChunksRef.current = [];
-      await uploadRecording(blob, activeButtonRef.current);
+      // Capture color before clearing — stopRecording() runs synchronously before onstop fires.
+      const color = activeButtonRef.current;
+      activeButtonRef.current = "";
+      console.log("[MobileRecorder] onstop fired — color:", color, "blob size:", blob.size);
+      // Call through the ref so we always get the latest uploadRecording (fresh state closure).
+      await uploadRecordingRef.current(blob, color);
     };
     mediaRecorderRef.current = mediaRecorder;
     return mediaRecorder;
@@ -168,57 +185,101 @@ export default function MobileRecorder() {
   };
 
   const uploadRecording = async (audioBlob: Blob, color: "green" | "red" | "") => {
+    console.log("[MobileRecorder] uploadRecording — color:", color, "blob size:", audioBlob.size);
     try {
       if (color === "green") {
+        setStatus("Processing room recording...");
+        console.log("[MobileRecorder] GREEN — uploading room audio...");
         const newRoomRecordingId = await uploadBlob(audioBlob, "ROOM");
+        console.log("[MobileRecorder] GREEN — recordingId:", newRoomRecordingId, "— transcribing...");
         const roomTranscript = await transcribeRecording(newRoomRecordingId);
+        console.log("[MobileRecorder] GREEN — raw transcript:", roomTranscript);
         const parsed = parseRoomBedFromTranscript(roomTranscript);
-        if (!parsed) { setStatus("Room not heard properly, please try again."); return; }
+        console.log("[MobileRecorder] GREEN — parsed room/bed:", parsed);
+        if (!parsed) {
+          setRoomRecordingId("");
+          setParsedRoomBed(null);
+          setCurrentRoom("");
+          setVerifiedBedId(null);
+          // No room+bed combination heard — treat as denied (transcript was: roomTranscript)
+          console.log("[MobileRecorder] GREEN — no room+bed parsed from transcript, denying");
+          setStatus("Room Access Denied");
+          return;
+        }
+
+        setStatus("Checking room assignment...");
+        console.log("[MobileRecorder] GREEN — checking assignment for nurse:", staffId, "room:", parsed.roomNumber, "bed:", parsed.bedLetter);
+        const bedId = await resolveBedId(parsed.roomNumber, parsed.bedLetter);
+        console.log("[MobileRecorder] GREEN — resolved bedId:", bedId);
+        if (!bedId) {
+          setRoomRecordingId("");
+          setParsedRoomBed(null);
+          setCurrentRoom("");
+          setVerifiedBedId(null);
+          setStatus("Room Access Denied");
+          return;
+        }
+
         setRoomRecordingId(newRoomRecordingId);
         setParsedRoomBed(parsed);
-        setCurrentRoom(`${parsed.roomNumber} ${parsed.bedLetter}`);
-        setStatus(`Room verified: ${parsed.roomNumber} ${parsed.bedLetter}`);
+        setCurrentRoom(`Room ${parsed.roomNumber}, Bed ${parsed.bedLetter}`);
+        setVerifiedBedId(bedId);
+        setStatus(`Room ${parsed.roomNumber}, Bed ${parsed.bedLetter} – Room audio processed successfully`);
+        console.log("[MobileRecorder] GREEN — room verified, bedId:", bedId);
         return;
       }
 
-      if (!roomRecordingId || !parsedRoomBed) { setStatus("Record the room first (green button)."); return; }
+      if (!roomRecordingId || !parsedRoomBed || !verifiedBedId) {
+        console.warn("[MobileRecorder] RED — missing room context:", { roomRecordingId, parsedRoomBed, verifiedBedId });
+        setStatus("Record the room first (green button).");
+        return;
+      }
 
+      console.log("[MobileRecorder] RED — uploading note for room:", parsedRoomBed.roomNumber, "bed:", parsedRoomBed.bedLetter, "bedId:", verifiedBedId);
       const noteRecordingId = await uploadBlob(audioBlob, "NOTE");
-      const bedId = await resolveBedId(parsedRoomBed.roomNumber, parsedRoomBed.bedLetter);
-      if (!bedId) { setStatus("Room access denied or bed not assigned to this staff."); return; }
+      console.log("[MobileRecorder] RED — noteRecordingId:", noteRecordingId);
 
       const createResponse = await fetch("/api/room-data/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bed_id: bedId, roomRecordingId, noteRecordingId }),
+        body: JSON.stringify({ bed_id: verifiedBedId, roomRecordingId, noteRecordingId }),
       });
       const createData = (await createResponse.json()) as { error?: string };
+      console.log("[MobileRecorder] RED — room_data create response:", createData);
       if (!createResponse.ok) throw new Error(createData.error || "Failed to create room data");
 
-      void transcribeRecording(noteRecordingId).catch((e) => console.error("Deferred transcription failed:", e));
+      console.log("[MobileRecorder] RED — note submitted, starting deferred transcription...");
+      void transcribeRecording(noteRecordingId).then((t) => {
+        console.log("[MobileRecorder] RED — deferred transcript:", t);
+      }).catch((e) => console.error("Deferred transcription failed:", e));
 
       unsubscribeChannel(recordingRealtimeRef.current);
       recordingRealtimeRef.current = subscribeToRecording(noteRecordingId, () => {
-        setStatus(`Transcription complete for Room ${parsedRoomBed.roomNumber} Bed ${parsedRoomBed.bedLetter}.`);
+        setStatus(`Transcription complete for Room ${parsedRoomBed.roomNumber}, Bed ${parsedRoomBed.bedLetter}.`);
       });
 
-      setStatus(`Note uploaded for Room ${parsedRoomBed.roomNumber} Bed ${parsedRoomBed.bedLetter}. Transcription in progress...`);
+      setStatus(`Note uploaded for Room ${parsedRoomBed.roomNumber}, Bed ${parsedRoomBed.bedLetter}. Transcription in progress...`);
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Audio workflow failed.");
     }
   };
 
+  // Keep the ref pointing at the latest uploadRecording on every render.
+  uploadRecordingRef.current = uploadRecording;
+
   const startRecording = async (color: "green" | "red") => {
     if (isRecording) return;
     setButtonColor(color);
     activeButtonRef.current = color;
+    console.log("[MobileRecorder] startRecording — color:", color);
     try {
       const recorder = await initAudio();
       audioChunksRef.current = [];
       recorder.start();
       setIsRecording(true);
+      console.log("[MobileRecorder] recorder started — state:", recorder.state);
       if (color === "green") setStatus("Recording room information...");
-      else if (currentRoom) setStatus(`Charting to ${currentRoom}...`);
+      else if (parsedRoomBed) setStatus(`Charting to Room ${parsedRoomBed.roomNumber}, Bed ${parsedRoomBed.bedLetter}...`);
       else setStatus("Charting note... (No room specified)");
     } catch (recordingError) {
       setStatus(`Error accessing microphone: ${recordingError instanceof Error ? recordingError.message : "Microphone access failed."}`);
@@ -227,8 +288,8 @@ export default function MobileRecorder() {
 
   const stopRecording = () => {
     if (!isRecording || !mediaRecorderRef.current) return;
+    console.log("[MobileRecorder] stopRecording — activeButtonRef:", activeButtonRef.current);
     mediaRecorderRef.current.stop();
-    activeButtonRef.current = "";
     if (buttonColor !== "red") setStatus("Processing recording...");
     setIsRecording(false);
   };
@@ -246,6 +307,7 @@ export default function MobileRecorder() {
     setCurrentRoom("");
     setRoomRecordingId("");
     setParsedRoomBed(null);
+    setVerifiedBedId(null);
     setStatus("");
   };
 

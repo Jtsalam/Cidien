@@ -13,7 +13,7 @@ export function subscribeToRecording(
       {
         event: "UPDATE",
         schema: "public",
-        table: "Recording",
+        table: "recording",
         filter: `id=eq.${recordingId}`,
       },
       (payload) => {

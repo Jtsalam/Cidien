@@ -39,6 +39,9 @@ interface DataTableProps {
 
 export default function DataTable({ selectedRoom, initialData, onBedChange, }: DataTableProps) {
   const [data, setData] = useState<RowData[]>([])
+  // Role: Mirror of data state in a ref so loadTranscriptions can read current rows
+  // without needing data in its useCallback deps (which would cause a fetch loop).
+  const dataRef = useRef<RowData[]>([])
   const [realtimeSessionId, setRealtimeSessionId] = useState<string | null>(null)
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const [playingIndex, setPlayingIndex] = useState<number | null>(null)
@@ -57,6 +60,14 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
   const preloadedAudioRef = useRef<Map<string, HTMLAudioElement>>(new Map())
   const preloadedObjectUrlRef = useRef<Map<string, string>>(new Map())
   const prefetchPromisesRef = useRef<Map<string, Promise<void>>>(new Map())
+  // Tracks row IDs already shown so subsequent loads can mark genuinely new rows.
+  const knownIdsRef = useRef<Set<string | number>>(new Set())
+  const newRowTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // True only while we are waiting for a brand-new room_data INSERT to get its
+  // transcript.  Prevents intermediate reloads (room_data UPDATE, stale callbacks,
+  // etc.) from prematurely hiding the "Processing new transcription..." banner.
+  const pendingTranscriptionRef = useRef(false)
+  const pendingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Seed initial cache for instant first render if provided
   useEffect(() => {
@@ -81,6 +92,10 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
   useEffect(() => {
     selectedRoomRef.current = selectedRoom
   }, [selectedRoom])
+
+  useEffect(() => {
+    dataRef.current = data
+  }, [data])
 
   // Role: Resolve demo session id for Supabase Realtime filters (same logic as room_data creation).
   useEffect(() => {
@@ -266,7 +281,8 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
   const loadTranscriptions = useCallback(async (roomFilter?: string) => {
     try {
       const cacheKey = roomFilter ? `room:${roomFilter}` : 'all'
-      const previousCacheKey = data.length > 0 ? (selectedRoomRef.current ? `room:${selectedRoomRef.current}` : 'all') : null
+      const currentData = dataRef.current
+      const previousCacheKey = currentData.length > 0 ? (selectedRoomRef.current ? `room:${selectedRoomRef.current}` : 'all') : null
 
       // Only clear data if switching between different rooms/views to prevent flickering
       if (previousCacheKey && previousCacheKey !== cacheKey) {
@@ -279,9 +295,8 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
       const now = Date.now()
       const cacheAge = cached?.lastUpdated ? now - cached.lastUpdated : Infinity
 
-      // Skip cache if live state has more rows than the cache (WebSocket appended new rows)
-      // This prevents newly-recorded transcriptions from disappearing when the cache is served
-      const liveDataLength = data.length
+      // Skip cache if live state has more rows than the cache
+      const liveDataLength = currentData.length
       const cacheIsAheadOfLive = cached ? liveDataLength <= cached.length : false
       
       if (cached && cached.length > 0 && cacheAge < 30000 && cacheIsAheadOfLive) {
@@ -324,33 +339,50 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
       const json = await response.json()
       console.log(`Successfully loaded ${json.length} transcriptions for ${roomFilter ? `room ${roomFilter}` : 'all rooms'}`)
 
-      // Create a Set to track unique IDs and prevent duplicates
-      const existingIds = new Set((cacheRef.current[cacheKey] || []).map(item => String(item.id)))
+      // Treat the API response as the source of truth — no deduplication.
+      // Deduplication was filtering out updated rows and blocking realtime refreshes.
+      const isInitialLoad = knownIdsRef.current.size === 0
+      const processedData = json.map((item: RowData, index: number) => {
+        const id = item.id || `transcription_${Date.now()}_${Math.random().toString(36).slice(2)}_${index}`
+        const isNew = !isInitialLoad && !knownIdsRef.current.has(id)
+        return { ...item, id, isNew, index: index + 1 }
+      })
 
-      const processedData = json
-        .filter((item: RowData) => !existingIds.has(String(item.id || item.audioUrl)))
-        .map((item: RowData, index: number) => ({
-          ...item,
-          id: item.id || `transcription_${Date.now()}_${Math.random().toString(36).substr(2, 9)}_${index}`,
-          isNew: false,
-          index: index + 1,
-        }))
+      // Register all IDs as known so the next reload doesn't re-flag them.
+      processedData.forEach((row: RowData) => { if (row.id != null) knownIdsRef.current.add(row.id) })
 
-      // Merge any rows that were live in state (via WebSocket) but not yet in the API response
-      // This handles the race where a socket row arrives just before a re-fetch
-      const existingStateIds = new Set(processedData.map((item: RowData) => String(item.id)))
-      const socketOnlyRows = data.filter(item => item.id && !existingStateIds.has(String(item.id)))
-      const mergedData = socketOnlyRows.length > 0
-        ? [...processedData, ...socketOnlyRows].map((row: RowData, idx: number) => ({ ...row, index: idx + 1 }))
-        : processedData
+      // Clear the NEW badge after 4 seconds so it doesn't linger.
+      const hasNew = processedData.some((r: RowData) => r.isNew)
+      if (hasNew) {
+        if (newRowTimeoutRef.current) clearTimeout(newRowTimeoutRef.current)
+        newRowTimeoutRef.current = setTimeout(() => {
+          setData((prev) => prev.map((r) => r.isNew ? { ...r, isNew: false } : r))
+        }, 4000)
+      }
 
       // Store data with timestamp for cache freshness
-      const dataWithTimestamp = mergedData as CachedData
+      const dataWithTimestamp = processedData as CachedData
       dataWithTimestamp.lastUpdated = Date.now()
       cacheRef.current[cacheKey] = dataWithTimestamp
-      setData(mergedData)
-      preloadForDataset(mergedData)
+      console.log('[loadTranscriptions] setData — rows:', processedData.length, 'new:', processedData.filter((r: RowData) => r.isNew).length)
+      setData(processedData)
+      preloadForDataset(processedData)
       setLoading(false)
+
+      if (hasNew) {
+        // A brand-new row arrived — the transcription we were waiting for is here.
+        // Clear the pending flag, cancel the safety timeout, hide the banner.
+        pendingTranscriptionRef.current = false
+        if (pendingTimeoutRef.current) clearTimeout(pendingTimeoutRef.current)
+        setIsReceiving(false)
+      } else if (!pendingTranscriptionRef.current) {
+        // No INSERT is in-flight — clear any stale banner that old subscription
+        // callbacks may have set (e.g. a DELETE event triggering setIsReceiving(true)
+        // from a pre-Fast-Refresh closure).
+        setIsReceiving(false)
+      }
+      // If pendingTranscriptionRef is true but no new row arrived yet, the banner
+      // intentionally stays visible until the next reload that brings the new row.
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') {
         return
@@ -358,90 +390,93 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
       console.error('Failed to load data:', err)
       setLoading(false)
     }
-  }, [data.length, preloadForDataset])
+  }, [preloadForDataset])
 
-  // Role: Subscribe to Supabase realtime events for room_data and Recording updates.
+  // Role: Stable ref always pointing at the latest loadTranscriptions + selectedRoom so
+  // subscription callbacks never capture a stale closure.
+  const reloadRef = useRef<() => void>(() => {})
+  const reloadTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  reloadRef.current = () => {
+    if (reloadTimeoutRef.current) clearTimeout(reloadTimeoutRef.current)
+    reloadTimeoutRef.current = setTimeout(() => {
+      const room = selectedRoomRef.current
+      const cacheKey = room ? `room:${room}` : 'all'
+      delete cacheRef.current[cacheKey]
+      console.log('[reload] calling loadTranscriptions — room:', room ?? 'all')
+      void loadTranscriptions(room || undefined)
+    }, 300)
+  }
+
+  // Role: Subscribe to room_data changes for the current demo session.
+  // Catches INSERTs (new submission), UPDATEs (recording linked / approved).
   useEffect(() => {
-    const channels = realtimeChannelsRef.current;
-    channels.forEach((channel) => supabaseClient.removeChannel(channel));
-    realtimeChannelsRef.current = [];
-
-    const nextChannels: RealtimeChannel[] = [];
-
-    const setLiveIfSubscribed = (status: string) => {
-      if (status === "SUBSCRIBED") setIsConnected(true);
-      if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
-        setIsConnected(false);
-      }
-    };
-
-    if (realtimeSessionId) {
-      const roomDataChannel = supabaseClient
-        .channel(`room-data-session-${realtimeSessionId}-${selectedRoom ?? "all"}`)
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "room_data",
-            filter: `sessionId=eq.${realtimeSessionId}`,
-          },
-          async () => {
-            setIsReceiving(true);
-            await loadTranscriptions(selectedRoom || undefined);
-            tableEndRef.current?.scrollIntoView({ behavior: "smooth" });
-            setIsReceiving(false);
-          },
-        )
-        .subscribe(setLiveIfSubscribed);
-
-      nextChannels.push(roomDataChannel);
-    } else {
-      setIsConnected(false);
+    if (!realtimeSessionId) {
+      setIsConnected(false)
+      return
     }
 
-    const recordingChannel = supabaseClient
-      .channel(`recordings-${selectedRoom ?? "all"}`)
+    const channel = supabaseClient
+      .channel(`room-data-${realtimeSessionId}`)
       .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "Recording" },
+        'postgres_changes',
+        // No server-side filter — camelCase column names ("sessionId") can silently
+        // fail Supabase filter matching. Check the session client-side instead.
+        { event: '*', schema: 'public', table: 'room_data' },
         (payload) => {
-          const transcript = payload.new?.transcript;
-          const recordingId = payload.new?.id;
-          if (typeof transcript !== "string" || transcript.trim().length === 0) return;
-
-          setData((prev) => {
-            const updated = prev.map((row) => {
-              if (row.noteRecordingId && row.noteRecordingId === recordingId) {
-                return { ...row, column4: transcript, isNew: true };
-              }
-              return row;
-            });
-            return updated;
-          });
-
-          setTimeout(() => {
-            setData((prev) =>
-              prev.map((row) =>
-                row.noteRecordingId === recordingId ? { ...row, isNew: false } : row,
-              ),
-            );
-          }, 3000);
+          const row = (payload.new ?? payload.old) as Record<string, unknown> | undefined
+          const rowSession = row?.sessionId as string | undefined
+          if (rowSession && rowSession !== realtimeSessionId) return
+          console.log('[realtime] room_data change:', payload.eventType)
+          if (payload.eventType === 'INSERT') {
+            // New room_data row — transcript not ready yet. Mark as pending and show
+            // the banner. The Recording UPDATE triggers the reload that clears it.
+            pendingTranscriptionRef.current = true
+            setIsReceiving(true)
+            // Safety valve: if the Recording UPDATE never fires (e.g. transcription
+            // error), clear the banner and reload after 15 s.
+            if (pendingTimeoutRef.current) clearTimeout(pendingTimeoutRef.current)
+            pendingTimeoutRef.current = setTimeout(() => {
+              pendingTranscriptionRef.current = false
+              setIsReceiving(false)
+              reloadRef.current()
+            }, 15000)
+          } else {
+            // UPDATE (e.g. patient_note written) or DELETE — reload silently.
+            reloadRef.current()
+          }
         },
       )
       .subscribe((status) => {
-        if (!realtimeSessionId) setLiveIfSubscribed(status);
-      });
+        console.log('[realtime] room_data channel status:', status)
+        if (status === 'SUBSCRIBED') setIsConnected(true)
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          setIsConnected(false)
+        }
+      })
 
-    nextChannels.push(recordingChannel);
+    return () => { supabaseClient.removeChannel(channel) }
+  }, [realtimeSessionId])
 
-    realtimeChannelsRef.current = nextChannels;
+  // Role: Subscribe to Recording table UPDATEs to catch transcript completion.
+  // When transcription finishes, the backend updates Recording.transcript and this fires.
+  useEffect(() => {
+    const channel = supabaseClient
+      .channel('recording-updates')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'recording' },
+        (payload) => {
+          // transcript is undefined when REPLICA IDENTITY is not FULL — reload regardless.
+          console.log('[realtime] Recording updated — id:', payload.new?.id, 'transcript present:', !!payload.new?.transcript)
+          reloadRef.current()
+        },
+      )
+      .subscribe((status) => {
+        console.log('[realtime] Recording channel status:', status)
+      })
 
-    return () => {
-      realtimeChannelsRef.current.forEach((channel) => supabaseClient.removeChannel(channel));
-      realtimeChannelsRef.current = [];
-    };
-  }, [loadTranscriptions, selectedRoom, realtimeSessionId])
+    return () => { supabaseClient.removeChannel(channel) }
+  }, [])
 
   // Load data on mount and whenever room filter changes
   useEffect(() => {
@@ -462,6 +497,7 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
       urlMap.clear()
     }
   }, [selectedRoom, loadTranscriptions])
+
 
   
   // Memoize filtered and processed data
