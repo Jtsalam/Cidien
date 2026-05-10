@@ -17,7 +17,6 @@ import {
   AlertDialogDescription,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog"
-import type { RealtimeChannel } from "@supabase/supabase-js"
 import { supabaseClient } from "@/lib/supabaseClient"
 
 // Socket will be initialized inside the component
@@ -66,7 +65,6 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
   const [deleteTargetId, setDeleteTargetId] = useState<string | number | null>(null);
   const [deleteInFlight, setDeleteInFlight] = useState(false);
   const tableEndRef = useRef<HTMLDivElement>(null);
-  const realtimeChannelsRef = useRef<RealtimeChannel[]>([]);
   const cacheRef = useRef<Record<string, CachedData>>({})
   const fetchControllerRef = useRef<AbortController | null>(null)
   const selectedRoomRef = useRef<string | null | undefined>(selectedRoom)

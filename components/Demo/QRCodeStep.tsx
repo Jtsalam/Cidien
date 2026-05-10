@@ -41,9 +41,9 @@ export default function QRCodeStep({ onContinue }: Props) {
           setToken(t);
 
           // Role: Build the full bypass URL the phone will open when it scans the QR code.
-          const base = window.location.origin;
+          const base = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin;
           setMobileUrl(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/mobile?session=${encodeURIComponent(t.sessionId)}&staffId=${encodeURIComponent(t.staffId)}&bypass=true`,
+            `${base}/mobile?session=${encodeURIComponent(t.sessionId)}&staffId=${encodeURIComponent(t.staffId)}&bypass=true`,
           );
 
           // Role: Subscribe to the broadcast channel so we know the instant the phone connects.

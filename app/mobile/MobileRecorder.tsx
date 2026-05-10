@@ -46,11 +46,9 @@ export default function MobileRecorder() {
 
   const [status, setStatus] = useState<string>("");
   const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [currentRoom, setCurrentRoom] = useState<string>("");
   const [roomRecordingId, setRoomRecordingId] = useState<string>("");
   const [parsedRoomBed, setParsedRoomBed] = useState<ParsedRoomBed | null>(null);
   const [verifiedBedId, setVerifiedBedId] = useState<number | null>(null);
-  const [buttonColor, setButtonColor] = useState<"green" | "red" | "">("");
   const activeButtonRef = useRef<"green" | "red" | "">("");
   const recordingRealtimeRef = useRef<ReturnType<typeof subscribeToRecording> | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -103,9 +101,9 @@ export default function MobileRecorder() {
     }
 
     void activateBypass();
-    return () => { cancelled = true; };
-  // searchParams object reference is stable; this runs once after hydration when params are present.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      cancelled = true;
+    };
   }, [searchParams]);
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
@@ -202,7 +200,6 @@ export default function MobileRecorder() {
         if (!parsed) {
           setRoomRecordingId("");
           setParsedRoomBed(null);
-          setCurrentRoom("");
           setVerifiedBedId(null);
           // No room+bed combination heard — treat as denied (transcript was: roomTranscript)
           console.log("[MobileRecorder] GREEN — no room+bed parsed from transcript, denying");
@@ -217,7 +214,6 @@ export default function MobileRecorder() {
         if (!bedId) {
           setRoomRecordingId("");
           setParsedRoomBed(null);
-          setCurrentRoom("");
           setVerifiedBedId(null);
           setStatus("Room Access Denied");
           return;
@@ -225,7 +221,6 @@ export default function MobileRecorder() {
 
         setRoomRecordingId(newRoomRecordingId);
         setParsedRoomBed(parsed);
-        setCurrentRoom(`Room ${parsed.roomNumber}, Bed ${parsed.bedLetter}`);
         setVerifiedBedId(bedId);
         setStatus(`Room ${parsed.roomNumber}, Bed ${parsed.bedLetter} – Room audio processed successfully`);
         console.log("[MobileRecorder] GREEN — room verified, bedId:", bedId);
@@ -275,7 +270,6 @@ export default function MobileRecorder() {
 
     if (navigator.vibrate) navigator.vibrate(100);
 
-    setButtonColor(color);
     activeButtonRef.current = color;
     console.log("[MobileRecorder] startRecording — color:", color);
     try {

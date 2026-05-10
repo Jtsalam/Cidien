@@ -51,16 +51,21 @@ const AssignedRoomsList: React.FC<AssignedRoomsListProps> = ({
   }, [nurseId, selectedRoom]);
 
   const toggleRoom = (room_number: string) => {
+    let expandedNow = false;
     setExpandedRooms((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(room_number)) {
-        newSet.delete(room_number);
+      const next = new Set(prev);
+      if (next.has(room_number)) {
+        next.delete(room_number);
       } else {
-        newSet.add(room_number);
-        onClearNewBadgeForRoom?.(room_number);
+        next.add(room_number);
+        expandedNow = true;
       }
-      return newSet;
+      return next;
     });
+    // Must not call parent setState from inside setExpandedRooms updater — defer until after.
+    if (expandedNow) {
+      onClearNewBadgeForRoom?.(room_number);
+    }
   };
 
   const handleBedClick = (roomNumber: string, bedLetter: string) => {
