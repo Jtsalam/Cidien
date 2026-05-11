@@ -5,6 +5,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import { subscribeMobileConnected, unsubscribeChannel } from "@/lib/realtime/mobileSignal";
 import type { RealtimeChannel } from "@supabase/supabase-js";
+import { ArrowRight, QrCode, Smartphone } from "lucide-react";
 
 type MobileToken = {
   sessionId: string;
@@ -88,16 +89,19 @@ export default function QRCodeStep({ onContinue }: Props) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-        <p className="text-lg text-gray-700">Preparing nurse QR code…</p>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-emerald-50/40">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-600" />
+          <p className="text-lg text-gray-700">Preparing nurse QR code...</p>
+        </div>
       </div>
     );
   }
 
   if (error || !token) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-6">
-        <div className="max-w-md w-full rounded-2xl border border-red-200 bg-white p-6 shadow-sm space-y-4">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-emerald-50/40 p-6">
+        <div className="w-full max-w-md space-y-4 rounded-2xl border border-red-200 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-semibold text-red-700">QR step failed</h2>
           <p className="text-sm text-gray-700">{error}</p>
           <Button onClick={onContinue}>Skip to dashboard</Button>
@@ -107,37 +111,33 @@ export default function QRCodeStep({ onContinue }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8 flex items-start justify-center">
-      <div className="max-w-xl w-full space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50/40">
+      <header className="border-b border-emerald-100 bg-white/80 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-6 md:px-8">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600">
+            <QrCode className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Step 2 of 3</p>
+            <h1 className="text-xl font-bold text-gray-900 md:text-2xl">Mobile Charting Device</h1>
+          </div>
+        </div>
+      </header>
 
-        {/* Header card */}
-        <div className="rounded-2xl border bg-white p-6 shadow-sm">
-          <p className="text-sm text-emerald-700 font-medium">Step 2: Mobile Charting Device</p>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mt-1">
-            Scan to start charting
-          </h1>
-          <p className="text-sm text-gray-600 mt-2">
-            Open the camera on your phone and scan the code below. You will be logged in as{" "}
+      <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 md:px-8">
+        <section className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">Scan to start charting</h2>
+          <p className="mt-2 max-w-3xl text-sm text-gray-600 md:text-base">
+            Open your phone camera and scan this QR code. You will sign in as{" "}
             <span className="font-semibold text-gray-900">{token.staffName}</span> at{" "}
             <span className="font-semibold text-gray-900">{token.hospitalName}</span>.
           </p>
-        </div>
+        </section>
 
-        {/* QR card */}
-        <div className="rounded-2xl border bg-white p-8 shadow-sm flex flex-col items-center space-y-6">
-          {scanned ? (
-            <div className="flex flex-col items-center space-y-3 py-6">
-              <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center">
-                <svg className="w-8 h-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <p className="text-lg font-semibold text-emerald-700">Phone connected!</p>
-              <p className="text-sm text-gray-500">Redirecting to dashboard…</p>
-            </div>
-          ) : (
-            <>
-              <div className="p-4 border-2 border-emerald-200 rounded-xl">
+        <section className="rounded-2xl border border-emerald-100 bg-white p-8 shadow-sm">
+          <div className="grid gap-8 lg:grid-cols-[320px,1fr] lg:items-start">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="rounded-xl border-2 border-emerald-200 bg-white p-4">
                 <QRCodeSVG
                   value={mobileUrl}
                   size={220}
@@ -145,44 +145,67 @@ export default function QRCodeStep({ onContinue }: Props) {
                   includeMargin={false}
                 />
               </div>
-
-              {/* Pulse ring to signal "waiting" */}
-              <div className="flex items-center space-x-2 text-sm text-gray-500">
-                <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500" />
-                </span>
-                <span>Waiting for phone to connect…</span>
-              </div>
-
-              {/* Nurse info */}
-              <div className="w-full rounded-lg bg-gray-50 px-4 py-3 text-sm space-y-1">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Nurse</span>
-                  <span className="font-medium text-gray-900">{token.staffName}</span>
+              {!scanned && (
+                <div className="flex items-center space-x-2 text-sm text-gray-500">
+                  <span className="relative flex h-3 w-3">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500" />
+                  </span>
+                  <span>Waiting for phone to connect...</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Staff ID</span>
-                  <span className="font-medium text-gray-900">{token.staffId}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Hospital</span>
-                  <span className="font-medium text-gray-900">{token.hospitalName}</span>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
+              )}
+            </div>
 
-        {/* Skip link */}
+            <div className="space-y-4">
+              {scanned ? (
+                <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-5">
+                  <p className="text-lg font-semibold text-emerald-700">Phone connected!</p>
+                  <p className="mt-1 text-sm text-emerald-800/80">Redirecting to dashboard...</p>
+                </div>
+              ) : (
+                <>
+                  <div className="rounded-xl border border-gray-100 bg-gray-50 p-5">
+                    <div className="mb-3 flex items-center gap-2">
+                      <Smartphone className="h-4 w-4 text-emerald-600" />
+                      <p className="text-sm font-semibold text-gray-900">Session details</p>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Nurse</span>
+                        <span className="font-medium text-gray-900">{token.staffName}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Staff ID</span>
+                        <span className="font-medium text-gray-900">{token.staffId}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Hospital</span>
+                        <span className="font-medium text-gray-900">{token.hospitalName}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    If you do not have a phone available right now, you can continue and access the dashboard directly.
+                  </p>
+                  <Button variant="outline" onClick={onContinue}>
+                    Skip to dashboard
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+        </section>
+
         {!scanned && (
           <div className="flex justify-end">
-            <Button variant="outline" onClick={onContinue}>
-              Skip to dashboard
+            <Button onClick={onContinue}>
+              Continue to dashboard
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }

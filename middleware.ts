@@ -1,8 +1,18 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { isPhoneUserAgent } from "@/lib/isPhoneUserAgent";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  const isMobileAppRoute = pathname === "/mobile" || pathname.startsWith("/mobile/");
+  if (isMobileAppRoute) {
+    const ua = request.headers.get("user-agent");
+    if (!isPhoneUserAgent(ua)) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  }
+
   if (pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up")) {
     return NextResponse.redirect(new URL("/", request.url));
   }

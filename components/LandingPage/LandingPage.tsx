@@ -86,21 +86,6 @@ export default function LandingPage() {
                 </Link>
               </div>
 
-              {/* Quick Stats */}
-              <div className="flex items-center gap-8 pt-8 border-t border-gray-200">
-                <div>
-                  <div className="text-3xl font-bold text-emerald-600">70%</div>
-                  <div className="text-sm text-gray-600">Time Saved</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-emerald-600">99.5%</div>
-                  <div className="text-sm text-gray-600">Accuracy</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-emerald-600">24/7</div>
-                  <div className="text-sm text-gray-600">Real-time</div>
-                </div>
-              </div>
             </div>
 
             {/* Right Column - Visual */}
@@ -158,7 +143,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
@@ -181,10 +166,7 @@ export default function LandingPage() {
                 structured medical documentation in real-time.
               </p>
               <ul className="space-y-2">
-                <li className="flex items-center text-sm text-gray-700">
-                  <CheckCircle className="w-4 h-4 text-emerald-600 mr-2" />
-                  99.5% accuracy rate
-                </li>
+
                 <li className="flex items-center text-sm text-gray-700">
                   <CheckCircle className="w-4 h-4 text-emerald-600 mr-2" />
                   Medical terminology trained
@@ -213,10 +195,6 @@ export default function LandingPage() {
                 </li>
                 <li className="flex items-center text-sm text-gray-700">
                   <CheckCircle className="w-4 h-4 text-emerald-600 mr-2" />
-                  Professional formatting
-                </li>
-                <li className="flex items-center text-sm text-gray-700">
-                  <CheckCircle className="w-4 h-4 text-emerald-600 mr-2" />
                   Secure archiving
                 </li>
               </ul>
@@ -240,10 +218,6 @@ export default function LandingPage() {
                 <li className="flex items-center text-sm text-gray-700">
                   <CheckCircle className="w-4 h-4 text-emerald-600 mr-2" />
                   Multi-room management
-                </li>
-                <li className="flex items-center text-sm text-gray-700">
-                  <CheckCircle className="w-4 h-4 text-emerald-600 mr-2" />
-                  Team collaboration
                 </li>
               </ul>
             </div>
@@ -329,9 +303,6 @@ export default function LandingPage() {
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
             Ready to Transform Your Workflow?
           </h2>
-          <p className="text-xl text-emerald-100 mb-8 max-w-2xl mx-auto">
-            Join healthcare facilities already saving hours of documentation time every day.
-          </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
@@ -358,7 +329,7 @@ export default function LandingPage() {
             <div className="max-w-md">
               <p className="text-base font-semibold tracking-tight text-white">Cidien</p>
               <p className="mt-2 text-sm leading-relaxed text-gray-400">
-                AI-powered documentation for nurses—less time charting, more time with patients.
+                AI-powered documentation for nurses - less time charting, more time with patients.
               </p>
             </div>
             <nav
@@ -370,6 +341,9 @@ export default function LandingPage() {
               </Link>
               <Link href="#how-it-works" className="text-gray-400 transition-colors hover:text-emerald-400">
                 How it works
+              </Link>
+              <Link href="#features" className="text-gray-400 transition-colors hover:text-emerald-400">
+                Features
               </Link>
             </nav>
           </div>
