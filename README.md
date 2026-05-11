@@ -131,7 +131,7 @@ references/   Design/reference notes used during UI iterations
 
 Contributions are welcome. Fork the repository, create a feature branch, and open a pull request with a clear description of your changes. Small, focused PRs are preferred.
 
-Happy Coding :)
+Happy Coding :)<br>
 ~Tobi
 
 ## License
