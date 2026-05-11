@@ -1,198 +1,171 @@
 .
 ├── app
-│   ├── api
-│   │   ├── center
-│   │   │   ├── logout
-│   │   │   │   └── route.ts
-│   │   │   └── signIn
-│   │   │       └── route.ts
-│   │   └── staff
-│   │       ├── logout
-│   │       │   └── route.ts
-│   │       └── signIn
-│   │           └── route.ts
-│   ├── Center
-│   │   └── sign-in
-│   │       └── page.tsx
-│   ├── favicon.ico
-│   ├── globals.css
-│   ├── layout.tsx
-│   ├── page.tsx
-│   ├── Room
-│   │   └── dashboard
-│   │       └── page.tsx
-│   └── Staff
-│       ├── dashboard
-│       │   └── page.tsx
-│       └── sign-in
-│           └── page.tsx
-├── Charting-Device
-│   ├── __pycache__
-│   │   └── functions.cpython-310.pyc
-│   ├── functions.py
-│   ├── Idea Documents
-│   │   ├── Advice1.pdf
-│   │   ├── Advice2.pdf
-│   │   ├── Advice3.pdf
-│   │   ├── Advice4.pdf
-│   │   └── Core idea.pdf
-│   ├── remote.py
-│   ├── static
-│   │   ├── login_form.css
-│   │   ├── remote.css
-│   │   └── remote.js
-│   ├── templates
-│   │   ├── login_form.html
-│   │   └── remote.html
-│   └── uploads
-│       ├── 3438
-│       │   ├── room.recording_1.wav
-│       │   ├── room.recording_1.webm
-│       │   ├── room.recording_3.wav
-│       │   ├── room.recording_3.webm
-│       │   ├── room.recording_4.wav
-│       │   └── room.recording_4.webm
-│       ├── 3439
-│       │   ├── room.recording_1.wav
-│       │   └── room.recording_1.webm
-│       ├── 3461
-│       │   ├── room.recording_1.wav
-│       │   └── room.recording_1.webm
-│       ├── 3463
-│       │   ├── room.recording_1.wav
-│       │   └── room.recording_1.webm
-│       ├── room_aud
-│       │   ├── room.recording_1.wav
-│       │   ├── room.recording_1.webm
-│       │   ├── room.recording_10.webm
-│       │   ├── room.recording_11.webm
-│       │   ├── room.recording_12.webm
-│       │   ├── room.recording_13.webm
-│       │   ├── room.recording_14.webm
-│       │   ├── room.recording_15.webm
-│       │   ├── room.recording_16.webm
-│       │   ├── room.recording_17.webm
-│       │   ├── room.recording_18.wav
-│       │   ├── room.recording_18.webm
-│       │   ├── room.recording_19.wav
-│       │   ├── room.recording_19.webm
-│       │   ├── room.recording_2.wav
-│       │   ├── room.recording_2.webm
-│       │   ├── room.recording_20.wav
-│       │   ├── room.recording_20.webm
-│       │   ├── room.recording_21.wav
-│       │   ├── room.recording_21.webm
-│       │   ├── room.recording_22.wav
-│       │   ├── room.recording_22.webm
-│       │   ├── room.recording_28.wav
-│       │   ├── room.recording_28.webm
-│       │   ├── room.recording_29.wav
-│       │   ├── room.recording_29.webm
-│       │   ├── room.recording_3.wav
-│       │   ├── room.recording_3.webm
-│       │   ├── room.recording_30.wav
-│       │   ├── room.recording_30.webm
-│       │   ├── room.recording_4.wav
-│       │   ├── room.recording_4.webm
-│       │   └── room.recording_9.webm
-│       └── Unassigned
-│           └── nothing.txt
+│   ├── api
+│   │   ├── center
+│   │   │   ├── logout
+│   │   │   │   └── route.ts
+│   │   │   └── signIn
+│   │   │       └── route.ts
+│   │   ├── demo
+│   │   │   ├── hospital-overview
+│   │   │   │   └── route.ts
+│   │   │   ├── mobile-token
+│   │   │   │   └── route.ts
+│   │   │   └── start
+│   │   │       └── route.ts
+│   │   ├── mobile
+│   │   │   └── bypass
+│   │   │       └── route.ts
+│   │   ├── recordings
+│   │   │   ├── audio
+│   │   │   │   └── route.ts
+│   │   │   ├── confirm-room-access
+│   │   │   │   └── route.ts
+│   │   │   ├── transcribe
+│   │   │   │   └── route.ts
+│   │   │   └── upload
+│   │   │       └── route.ts
+│   │   ├── room-data
+│   │   │   └── create
+│   │   │       └── route.ts
+│   │   └── staff
+│   │       ├── approve-notes
+│   │       │   └── route.ts
+│   │       ├── approved-notes
+│   │       │   └── route.ts
+│   │       ├── assigned-beds
+│   │       │   └── route.ts
+│   │       ├── assigned-rooms
+│   │       │   └── route.ts
+│   │       ├── assigned-rooms-beds
+│   │       │   └── route.ts
+│   │       ├── logout
+│   │       │   └── route.ts
+│   │       ├── pdf
+│   │       │   └── route.ts
+│   │       ├── RoomMngr
+│   │       │   ├── assign-bed
+│   │       │   │   └── route.ts
+│   │       │   ├── bed-info
+│   │       │   │   └── [bedId]
+│   │       │   │       └── route.ts
+│   │       │   ├── discharge-bed
+│   │       │   │   └── route.ts
+│   │       │   ├── nurses
+│   │       │   │   └── route.ts
+│   │       │   └── rooms
+│   │       │       └── route.ts
+│   │       ├── session-id
+│   │       │   └── route.ts
+│   │       ├── transcriptions
+│   │       │   ├── [id]
+│   │       │   │   └── route.ts
+│   │       │   └── route.ts
+│   │       └── transcriptions-by-room
+│   │           └── route.ts
+│   ├── Admin
+│   │   └── dashboard
+│   │       └── AdminDashboard.tsx
+│   ├── dashboard
+│   │   └── page.tsx
+│   ├── mobile
+│   │   ├── MobileRecorder.tsx
+│   │   ├── mobile.module.css
+│   │   ├── MobileTutorial.tsx
+│   │   └── page.tsx
+│   ├── sign-in
+│   │   └── page.tsx
+│   ├── Staff
+│   │   └── dashboard
+│   │       └── StaffDashboard.tsx
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
 ├── components
-│   ├── Center
-│   │   └── SelectOrganizationForm.tsx
-│   ├── Dashboard
-│   │   ├── DataTable.tsx
-│   │   ├── InactivityTracker.tsx
-│   │   ├── LogoutConfirmationModal.tsx
-│   │   ├── MainPanel.tsx
-│   │   └── RoomPanel.tsx
-│   ├── Staff
-│   │   ├── OrganizationPanel.tsx
-│   │   ├── RoomLoginForm.tsx
-│   │   └── StaffLoginForm.tsx
-│   └── ui
-│       ├── badge.tsx
-│       ├── button.tsx
-│       ├── card.tsx
-│       ├── dialog.tsx
-│       ├── table.tsx
-│       └── tabs.tsx
-├── components.json
-├── eslint.config.mjs
-├── fileOrganizationTree.txt
+│   ├── Admin
+│   │   └── Dashboard
+│   │       ├── Home
+│   │       │   ├── AssignBedPopup.tsx
+│   │       │   └── RoomList.tsx
+│   │       └── MainPanel.tsx
+│   ├── Center
+│   │   └── SelectOrganizationForm.tsx
+│   ├── Demo
+│   │   ├── HospitalOverviewStep.tsx
+│   │   └── QRCodeStep.tsx
+│   ├── LandingPage
+│   │   └── LandingPage.tsx
+│   ├── Staff
+│   │   └── Dashboard
+│   │       ├── AssignedRoomsList.tsx
+│   │       ├── BedDetailsView.tsx
+│   │       ├── MainPanel.tsx
+│   │       └── SessionPdfPreviewModal.tsx
+│   ├── ui
+│   │   ├── alert-dialog.tsx
+│   │   ├── badge.tsx
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── checkbox.tsx
+│   │   ├── dialog.tsx
+│   │   ├── dropdown-menu.tsx
+│   │   ├── input.tsx
+│   │   ├── table.tsx
+│   │   ├── tabs.tsx
+│   │   ├── toaster.tsx
+│   │   └── tooltip.tsx
+│   ├── ApproveNotesConfirmation.tsx
+│   ├── DataTable.tsx
+│   ├── ErrorBoundary.tsx
+│   ├── InactivityTracker.tsx
+│   ├── LogoutConfirmationModal.tsx
+│   ├── NothingTosee.tsx
+│   └── SiteHeader.tsx
 ├── lib
-│   ├── constants.ts
-│   ├── generated
-│   │   └── prisma
-│   │       ├── client.d.ts
-│   │       ├── client.js
-│   │       ├── default.d.ts
-│   │       ├── default.js
-│   │       ├── edge.d.ts
-│   │       ├── edge.js
-│   │       ├── index-browser.js
-│   │       ├── index.d.ts
-│   │       ├── index.js
-│   │       ├── libquery_engine-darwin-arm64.dylib.node
-│   │       ├── package.json
-│   │       ├── query_engine-windows.dll.node
-│   │       ├── runtime
-│   │       │   ├── edge-esm.js
-│   │       │   ├── edge.js
-│   │       │   ├── index-browser.d.ts
-│   │       │   ├── index-browser.js
-│   │       │   ├── library.d.ts
-│   │       │   ├── library.js
-│   │       │   ├── react-native.js
-│   │       │   └── wasm.js
-│   │       ├── schema.prisma
-│   │       ├── wasm.d.ts
-│   │       └── wasm.js
-│   ├── prisma.ts
-│   └── utils.ts
-├── middleware.ts
-├── MobileCharterDocumentation.txt
-├── next-env.d.ts
-├── next.config.ts
-├── package-lock.json
-├── package.json
-├── postcss.config.js
-├── postcss.config.mjs
+│   ├── generated
+│   │   └── prisma
+│   │       ├── runtime
+│   │       ├── client.d.ts
+│   │       ├── client.js
+│   │       ├── default.d.ts
+│   │       ├── default.js
+│   │       ├── edge.d.ts
+│   │       ├── edge.js
+│   │       ├── index-browser.js
+│   │       ├── index.d.ts
+│   │       ├── index.js
+│   │       ├── package.json
+│   │       ├── schema.prisma
+│   │       ├── wasm.d.ts
+│   │       └── wasm.js
+│   ├── pdf
+│   │   └── buildSessionApprovedNotesPdf.ts
+│   ├── realtime
+│   │   ├── mobileSignal.ts
+│   │   └── recordings.ts
+│   ├── constants.ts
+│   ├── demo-session.ts
+│   ├── demo.ts
+│   ├── isPhoneUserAgent.ts
+│   ├── prisma.ts
+│   ├── supabaseClient.ts
+│   ├── supabaseServer.ts
+│   ├── transcriptionDemoRateLimit.ts
+│   └── utils.ts
 ├── prisma
-│   ├── migrations
-│   │   ├── 20250710033553_init
-│   │   │   └── migration.sql
-│   │   └── migration_lock.toml
-│   └── schema.prisma
+│   ├── migrations
+│   └── schema.prisma
 ├── public
-│   ├── centerImages
-│   │   ├── SGH.png
-│   │   ├── HGH.png
-│   │   ├── NCI.png
-│   │   ├── EHI.png
-│   │   └── NMC.png
-│   ├── DocFiles
-│   │   ├── D2_step1.jpg
-│   │   ├── D2_step2.jpg
-│   │   ├── D2_step3.jpg
-│   │   └── RegisterAccountLogic.jpg
-│   ├── file.svg
-│   ├── globe.svg
-│   ├── next.svg
-│   ├── vercel.svg
-│   └── window.svg
+│   ├── centerImages
+│   ├── DocFiles
+│   ├── Cidien.svg
+│   └── favicon.ico
+├── references
+│   ├── frontend_design.md
+│   └── HospitalOverviewStep_design.md
+├── utils
+│   └── getCookie.ts
+├── middleware.ts
+├── package.json
 ├── README.md
-├── tailwind.config.js
-├── tailwind.config.ts
-├── tsconfig.json
-├── uploads
-│   ├── 3438
-│   ├── 3439
-│   ├── 3461
-│   ├── 3463
-│   ├── room_aud
-│   └── Unassigned
-└── utils
-    └── getCookie.ts
-
-51 directories, 145 files
+└── fileOrganizationTree.txt
