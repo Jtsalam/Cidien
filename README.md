@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/Cidien.png" alt="Cidien Logo" width="180" />
+  <img src="public/Cidien.svg" alt="Cidien Logo" width="180" />
 </p>
 
 <h1 align="center">Cidien</h1>
