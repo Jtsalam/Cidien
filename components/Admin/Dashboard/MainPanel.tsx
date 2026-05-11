@@ -99,23 +99,24 @@ export default function MainPanel() {
   return (
     <div className="bg-white shadow-lg border-b">
       {/* Header */}
-      <header className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
+      <header className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-lg ring-1 ring-emerald-900/10">
+        <div className="px-4 py-4 sm:px-6">
+          <div className="flex items-center justify-between gap-4">
             {/* Logo Section */}
-            <div className="flex items-center space-x-4">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="flex items-center rounded-xl bg-white/10 px-3 py-2 ring-1 ring-white/15 backdrop-blur-sm">
                 <Image
-                  src={`/centerImages/Cidien.png`}
-                  alt="Organization logo"
-                  width={100}
-                  height={60}
-                  className="rounded-md"
+                  src="/Cidien.svg"
+                  alt="Cidien"
+                  width={375}
+                  height={225}
+                  priority
+                  className="h-7 w-auto brightness-0 invert sm:h-8"
                 />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-lg font-semibold">Admin Dashboard</h1>
-                <p className="text-emerald-100 text-sm">Welcome back to your workspace</p>
+                <h1 className="text-lg font-semibold leading-tight">Admin Dashboard</h1>
+                <p className="text-sm text-emerald-100/90">Welcome back to your workspace</p>
               </div>
             </div>
 

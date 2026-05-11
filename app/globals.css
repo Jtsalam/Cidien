@@ -76,3 +76,17 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/*
+ * The staff dashboard renders its own branded emerald header that already
+ * shows the Cidien logo, so the global site header would duplicate it.
+ * StaffDashboard marks its root with [data-staff-dashboard]; this rule then
+ * hides the [data-site-header] element rendered by app/layout.tsx.
+ *
+ * Demo onboarding routes (hospital overview, QR step) live under the same
+ * /dashboard path but do NOT render a [data-staff-dashboard] node, so they
+ * keep the global header.
+ */
+body:has([data-staff-dashboard]) [data-site-header] {
+  display: none;
+}

@@ -1,5 +1,7 @@
 "use client"
 
+import Image from "next/image"
+import Link from "next/link"
 import { getCookie } from "@/utils/getCookie"
 import { orgMap } from "@/lib/constants"
 import { useEffect, useState, useRef, useCallback, useMemo } from "react"
@@ -276,13 +278,27 @@ export default function MainPanel() {
   return (
     <div className="bg-white shadow-lg border-b">
       {/* Header */}
-      <header className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div>
-                <h1 className="text-lg font-semibold">Staff Dashboard</h1>
-                <p className="text-emerald-100 text-sm">Welcome back to your workspace</p>
+      <header className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-lg ring-1 ring-emerald-900/10">
+        <div className="px-4 py-4 sm:px-6">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <Link
+                href="/"
+                aria-label="Cidien — Home"
+                className="flex items-center rounded-xl bg-white/10 px-3 py-2 ring-1 ring-white/15 outline-none backdrop-blur-sm transition hover:bg-white/15 hover:ring-white/25 focus-visible:ring-2 focus-visible:ring-white"
+              >
+                <Image
+                  src="/Cidien.svg"
+                  alt="Cidien"
+                  width={375}
+                  height={225}
+                  priority
+                  className="h-7 w-auto brightness-0 invert sm:h-8"
+                />
+              </Link>
+              <div className="hidden sm:block">
+                <h1 className="text-lg font-semibold leading-tight">Staff Dashboard</h1>
+                <p className="text-sm text-emerald-100/90">Welcome back to your workspace</p>
               </div>
             </div>
 

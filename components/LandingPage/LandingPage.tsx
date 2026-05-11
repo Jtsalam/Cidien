@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
 import { Mic, FileText, Users, Zap, CheckCircle, Clock, Loader2, PlayCircle } from "lucide-react"
@@ -32,24 +33,32 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-emerald-50/30">
-      {/* Hero Section — global header in root layout shows the Cidien logo on every page */}
+      {/* Hero Section — wordmark lockup leads the hero; the global header is hidden inside /dashboard. */}
       <section className="pt-6 pb-20 px-4 sm:px-6 lg:px-8 sm:pt-10">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Column - Text Content */}
             <div className="space-y-8">
-              <div className="inline-flex items-center px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">
-                <Zap className="w-4 h-4 mr-2" />
-                AI-Powered Healthcare Documentation
+              <div className="flex flex-col items-start gap-4">
+                  <Image
+                src="/Cidien.svg"
+                alt="Cidien"
+                width={200}
+                height={60}
+                priority
+                className="h-24 w-auto sm:h-28"
+              />
+                <span className="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-600 ring-1 ring-inset ring-emerald-100">
+                  AI-Powered Healthcare Documentation
+                </span>
+                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight">
+                  Less time on{" "}
+                  <span className="text-emerald-600">Charting</span>,
+                  <br />
+                  more time{" "}
+                  <span className="text-emerald-600">Caring</span>
+                </h1>
               </div>
-              
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight">
-                Less time on{" "}
-                <span className="text-emerald-600">Charting</span>,
-                <br />
-                more time{" "}
-                <span className="text-emerald-600">Caring</span>
-              </h1>
               
               <p className="text-xl text-gray-600 leading-relaxed max-w-2xl">
                 Cidien reduces the overall time nurses spend on documentation through AI. 

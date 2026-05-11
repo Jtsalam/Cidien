@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useLayoutEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { LogIn, Menu, Mic, Trash2, UserRound } from "lucide-react";
 import styles from "./mobile.module.css";
@@ -616,7 +617,17 @@ export default function MobileRecorder() {
         ) : (
           <div className={styles.recordingShell}>
             <div className={styles.recordingHeader}>
-              <h1 className={styles.recordingTitle}>Cidien Mobile</h1>
+              <div className={styles.recordingBrand}>
+                <Image
+                  src="/Cidien.svg"
+                  alt="Cidien"
+                  width={375}
+                  height={225}
+                  priority
+                  className={styles.recordingLogo}
+                />
+                <span className={styles.recordingBadge}>Mobile</span>
+              </div>
               <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
                 <DropdownMenuTrigger asChild>
                   <button type="button" className={styles.menuTrigger} aria-label="Open menu">

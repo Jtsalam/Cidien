@@ -294,17 +294,35 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  margin: 0 0 4px;
-  padding: 0 40px 0 0;
+  min-height: 48px;
+  margin: 0 0 8px;
+  padding: 4px 44px 4px 0;
 }
 
-.recordingTitle {
-  margin: 0;
-  color: #111827;
-  font-size: 1.7rem;
+.recordingBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.recordingLogo {
+  display: block;
+  height: 32px;
+  width: auto;
+}
+
+.recordingBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 0.6875rem;
   font-weight: 700;
-  text-align: center;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
 }
 
 .menuTrigger {
