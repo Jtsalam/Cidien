@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/Cidien.svg" alt="Cidien Logo" width="180" />
+  <img src="public/Cidien.png" alt="Cidien Logo" width="180" />
 </p>
 
 <h1 align="center">Cidien</h1>
@@ -39,7 +39,7 @@ _Add demo video here_
   <tr>
     <td><img src="public/screenshots/home.png" alt="Cidien Homepage" /></td>
     <td><img src="public/screenshots/dashboard.png" alt="Cidien Dashboard" /></td>
-    <td><img src="public/screenshots/mobile.png" alt="Cidien Mobile View" /></td>
+    <td><img src="public/screenshots/mobile.jpeg" alt="Cidien Mobile View" /></td>
   </tr>
 </table>
 
