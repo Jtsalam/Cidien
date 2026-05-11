@@ -1,11 +1,22 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { LogIn, Mic, Trash2, UserRound } from "lucide-react";
+import { LogIn, Menu, Mic, Trash2, UserRound } from "lucide-react";
 import styles from "./mobile.module.css";
+import MobileTutorial from "./MobileTutorial";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 import { subscribeToRecording, unsubscribeChannel } from "@/lib/realtime/recordings";
 import { emitMobileConnected } from "@/lib/realtime/mobileSignal";
+
+const MOBILE_TUTORIAL_STORAGE_KEY = "cidien-mobile-tutorial-complete";
 
 const ORGANIZATIONS = [
   "Starlane General Hospital",
@@ -23,15 +34,84 @@ type ParsedRoomBed = {
 };
 
 function parseRoomBedFromTranscript(transcript: string): ParsedRoomBed | null {
-  // Primary: "Room 1011 Bed B" / "Room 1011, Bed B."
-  const withKeywords = transcript.match(/room\s*(\d{1,5})[^a-z\d]*bed\s*([a-z])/i);
-  if (withKeywords) return { roomNumber: withKeywords[1], bedLetter: withKeywords[2].toUpperCase() };
+  const raw = transcript.trim();
+  if (!raw) return null;
+  // Normalize inner whitespace; trim trailing periods (e.g. "205A." / "Room … Bed C.")
+  const spaced = raw.replace(/\s+/g, " ").replace(/\.+$/, "").trim();
 
-  // Fallback: bare "1011B" or "1011 B" when OpenAI drops the keywords
-  const bare = transcript.trim().match(/^(\d{1,5})\s*([a-z])\.?$/i);
-  if (bare) return { roomNumber: bare[1], bedLetter: bare[2].toUpperCase() };
+  const fromGroups = (m: RegExpMatchArray) =>
+    ({ roomNumber: m[1], bedLetter: m[2].toUpperCase() } as ParsedRoomBed);
+
+  // Room + digits + Bed + letter (any 1–5 digit room, any bed letter); substring OK
+  const roomBedWord = spaced.match(/\broom\s*(\d{1,5})\s*[^a-z\d]*\s*bed\s*([a-z])\b/i);
+  if (roomBedWord) return fromGroups(roomBedWord);
+
+  // Digits + Bed + letter without leading "Room"
+  const digitsBedWord = spaced.match(/\b(\d{1,5})\s*[^a-z\d]*\s*bed\s*([a-z])\b/i);
+  if (digitsBedWord) return fromGroups(digitsBedWord);
+
+  // "Room" + digits + letter (tight "Room205A" or spaced "Room 205 A"); \b avoids the letter in "Bed"
+  const roomDigitsLetter = spaced.match(/\broom\s*(\d{1,5})\s*([a-z])\b/i);
+  if (roomDigitsLetter) return fromGroups(roomDigitsLetter);
+
+  // Whole utterance only: digits + optional space + one letter (e.g. "12C", "12 C")
+  const bareLine = spaced.match(/^(\d{1,5})\s*([a-z])$/i);
+  if (bareLine) return fromGroups(bareLine);
 
   return null;
+}
+
+type AssignedRoomsBedsPayload = {
+  nurseName?: string | null;
+  staffId?: string;
+  rooms?: Array<{
+    room_number: string;
+    beds: Array<{ bed_id: number; bed_letter: string; patient_name?: string }>;
+  }>;
+  error?: string;
+};
+
+type MenuAssignmentRow = {
+  room_number: string;
+  bed_letter: string;
+  patient_label: string;
+};
+
+function formatPatientLabel(patientName: string | undefined): string {
+  const raw = (patientName ?? "").trim();
+  if (!raw || raw.toLowerCase() === "unassigned") return "—";
+  const parts = raw.split(/\s+/).filter(Boolean);
+  if (parts.length === 1) return parts[0];
+  const first = parts[0];
+  const last = parts[parts.length - 1];
+  const initial = first[0];
+  if (!initial) return raw;
+  return `${initial.toUpperCase()}. ${last}`;
+}
+
+function buildMenuAssignmentRows(
+  rooms: NonNullable<AssignedRoomsBedsPayload["rooms"]>,
+  limit: number,
+): MenuAssignmentRow[] {
+  const sortedRooms = [...rooms].sort((a, b) => {
+    const na = Number.parseInt(a.room_number, 10);
+    const nb = Number.parseInt(b.room_number, 10);
+    if (!Number.isNaN(na) && !Number.isNaN(nb)) return na - nb;
+    return a.room_number.localeCompare(b.room_number, undefined, { numeric: true });
+  });
+  const rows: MenuAssignmentRow[] = [];
+  for (const r of sortedRooms) {
+    const beds = [...r.beds].sort((a, b) => a.bed_letter.localeCompare(b.bed_letter));
+    for (const b of beds) {
+      rows.push({
+        room_number: r.room_number,
+        bed_letter: b.bed_letter,
+        patient_label: formatPatientLabel(b.patient_name),
+      });
+      if (rows.length >= limit) return rows;
+    }
+  }
+  return rows;
 }
 
 export default function MobileRecorder() {
@@ -44,7 +124,10 @@ export default function MobileRecorder() {
   const [error, setError] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
 
-  const [status, setStatus] = useState<string>("");
+  const [status, setStatusLine] = useState<string>("");
+  const [statusShowMenuLink, setStatusShowMenuLink] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [tutorialOpen, setTutorialOpen] = useState(false);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [roomRecordingId, setRoomRecordingId] = useState<string>("");
   const [parsedRoomBed, setParsedRoomBed] = useState<ParsedRoomBed | null>(null);
@@ -60,9 +143,94 @@ export default function MobileRecorder() {
     async () => {},
   );
 
+  function setStatus(message: string, options?: { showMenuLink?: boolean }) {
+    setStatusLine(message);
+    setStatusShowMenuLink(Boolean(options?.showMenuLink));
+  }
+
+  const openAssignmentsMenu = () => {
+    setMenuOpen(true);
+    if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(30);
+  };
+
   useEffect(() => {
     return () => { unsubscribeChannel(recordingRealtimeRef.current); };
   }, []);
+
+  useLayoutEffect(() => {
+    if (step !== "recording") return;
+    try {
+      if (!localStorage.getItem(MOBILE_TUTORIAL_STORAGE_KEY)) setTutorialOpen(true);
+    } catch {
+      setTutorialOpen(true);
+    }
+  }, [step]);
+
+  const completeTutorial = () => {
+    try {
+      localStorage.setItem(MOBILE_TUTORIAL_STORAGE_KEY, "1");
+    } catch {
+      /* private mode */
+    }
+    setTutorialOpen(false);
+  };
+
+  const restartTutorial = () => setTutorialOpen(true);
+
+  const [nurseMenu, setNurseMenu] = useState<{
+    loading: boolean;
+    error: string | null;
+    nurseName: string | null;
+    staffIdDisplay: string;
+    assignments: MenuAssignmentRow[];
+  }>({
+    loading: false,
+    error: null,
+    nurseName: null,
+    staffIdDisplay: "",
+    assignments: [],
+  });
+
+  useEffect(() => {
+    if (step !== "recording" || !staffId) return;
+    let cancelled = false;
+    setNurseMenu((prev) => ({
+      ...prev,
+      loading: true,
+      error: null,
+      staffIdDisplay: staffId,
+    }));
+    const url = `/api/staff/assigned-rooms-beds?nurseId=${encodeURIComponent(staffId)}`;
+    void fetch(url)
+      .then(async (res) => {
+        const data = (await res.json()) as AssignedRoomsBedsPayload;
+        if (!res.ok) throw new Error(data.error ?? "Unable to load your assignments.");
+        return data;
+      })
+      .then((data) => {
+        if (cancelled) return;
+        setNurseMenu({
+          loading: false,
+          error: null,
+          nurseName: data.nurseName ?? null,
+          staffIdDisplay: data.staffId ?? staffId,
+          assignments: buildMenuAssignmentRows(data.rooms ?? [], 3),
+        });
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setNurseMenu({
+          loading: false,
+          error: err instanceof Error ? err.message : "Unable to load assignments.",
+          nurseName: null,
+          staffIdDisplay: staffId,
+          assignments: [],
+        });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [step, staffId]);
 
   // Role: QR bypass — fires once searchParams are available after hydration.
   useEffect(() => {
@@ -197,13 +365,16 @@ export default function MobileRecorder() {
         console.log("[MobileRecorder] GREEN — raw transcript:", roomTranscript);
         const parsed = parseRoomBedFromTranscript(roomTranscript);
         console.log("[MobileRecorder] GREEN — parsed room/bed:", parsed);
+        const heardSnippet = roomTranscript.replace(/"/g, "'").trim();
         if (!parsed) {
           setRoomRecordingId("");
           setParsedRoomBed(null);
           setVerifiedBedId(null);
-          // No room+bed combination heard — treat as denied (transcript was: roomTranscript)
           console.log("[MobileRecorder] GREEN — no room+bed parsed from transcript, denying");
-          setStatus("Room Access Denied");
+          setStatus(
+            `Couldn't identify a room — heard "${heardSnippet}". Try saying "Room 311 Bed B" or "311 B".`,
+            { showMenuLink: true },
+          );
           return;
         }
 
@@ -215,7 +386,9 @@ export default function MobileRecorder() {
           setRoomRecordingId("");
           setParsedRoomBed(null);
           setVerifiedBedId(null);
-          setStatus("Room Access Denied");
+          setStatus(`Room Access Denied — heard "${heardSnippet}". Please try again.`, {
+            showMenuLink: true,
+          });
           return;
         }
 
@@ -298,7 +471,11 @@ export default function MobileRecorder() {
     setIsRecording(false);
   };
 
-  const clearStatus = () => { setStatus(""); setIsRecording(false); };
+  const clearStatus = () => {
+    setStatus("");
+    setMenuOpen(false);
+    setIsRecording(false);
+  };
 
   return (
     <main className={styles.page}>
@@ -334,7 +511,59 @@ export default function MobileRecorder() {
           </>
         ) : (
           <div className={styles.recordingShell}>
-            <h1 className={styles.title}>Cidien Mobile</h1>
+            <div className={styles.recordingHeader}>
+              <h1 className={styles.recordingTitle}>Cidien Mobile</h1>
+              <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+                <DropdownMenuTrigger asChild>
+                  <button type="button" className={styles.menuTrigger} aria-label="Open menu">
+                    <div className="icon-menu">
+                      <Menu size={22} aria-hidden />
+                    </div>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className={cn(styles.mobileMenuContent, "p-0")}>
+                  <div className={styles.menuPanelInner}>
+                    <div className={styles.menuProfileBlock}>
+                      {nurseMenu.loading ? (
+                        <p className={styles.menuProfileLine}>Loading your profile…</p>
+                      ) : (
+                        <p className={styles.menuProfileLine}>
+                          <span className={styles.menuProfileName}>{nurseMenu.nurseName ?? "Nurse"}</span>
+                          <span className={styles.menuProfileSep} aria-hidden>
+                            ·
+                          </span>
+                          <span className={styles.menuProfileId}>{nurseMenu.staffIdDisplay}</span>
+                        </p>
+                      )}
+                      {nurseMenu.error ? <p className={styles.menuAssignmentsError}>{nurseMenu.error}</p> : null}
+                    </div>
+                    {!nurseMenu.loading && !nurseMenu.error ? (
+                      nurseMenu.assignments.length > 0 ? (
+                        nurseMenu.assignments.map((row) => (
+                          <p key={`${row.room_number}-${row.bed_letter}`} className={styles.menuAssignmentRow}>
+                            <span className={styles.menuAssignmentMeta}>
+                              Room {row.room_number} Bed {row.bed_letter}
+                            </span>
+                            <span className={styles.menuAssignmentArrow} aria-hidden>
+                              →
+                            </span>
+                            <span className={styles.menuAssignmentPatient}>{row.patient_label}</span>
+                          </p>
+                        ))
+                      ) : (
+                        <p className={styles.menuAssignmentsEmpty}>No bed assignments on file for this account.</p>
+                      )
+                    ) : null}
+                  </div>
+                  <DropdownMenuSeparator className="m-0" />
+                  <div className={styles.menuActionsArea}>
+                    <DropdownMenuItem className={styles.restartTutorialItem} onSelect={restartTutorial}>
+                      Restart tutorial
+                    </DropdownMenuItem>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
             <p className={styles.subtitle}>Hold a button to record</p>
             <div className={styles.buttonRow}>
               <button className={`${styles.recordButton} ${styles.green}`}
@@ -362,7 +591,23 @@ export default function MobileRecorder() {
                 Grey button: clear status text
               </div>
             </div>
-            <p className={styles.status}>{status}</p>
+            <p className={styles.status}>
+              {status}
+              {statusShowMenuLink ? (
+                <>
+                  {" "}
+                  <button
+                    type="button"
+                    className={styles.statusMenuLink}
+                    onClick={openAssignmentsMenu}
+                    aria-label="Open menu to see your assigned rooms and profile"
+                  >
+                    Check menu for assigned rooms.
+                  </button>
+                </>
+              ) : null}
+            </p>
+            <MobileTutorial open={tutorialOpen} onFinish={completeTutorial} />
           </div>
         )}
       </section>

@@ -21,10 +21,10 @@ export async function GET(req: NextRequest) {
       staff_id: nurseId,
       ...(centerId ? { center_id: centerId } : {}),
     },
-    select: { user_id: true },
+    select: { user_id: true, user_name: true, staff_id: true },
   });
   if (!nurse) {
-    return NextResponse.json({ rooms: [] });
+    return NextResponse.json({ nurseName: null, staffId: nurseId, rooms: [] });
   }
 
   // Find all beds assigned to this nurse
@@ -70,5 +70,9 @@ export async function GET(req: NextRequest) {
   }
 
   const rooms = Object.values(roomMap);
-  return NextResponse.json({ rooms });
+  return NextResponse.json({
+    nurseName: nurse.user_name,
+    staffId: nurse.staff_id,
+    rooms,
+  });
 }
