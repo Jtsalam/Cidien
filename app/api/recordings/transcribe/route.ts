@@ -2,11 +2,19 @@ import { NextResponse } from "next/server";
 import { RecordingType } from "@/lib/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import {
+  REPO_URL,
+  demoLimitJsonBody,
+  evaluateTranscriptionDemoLimit,
+  incrementTranscriptionUsage,
+  transcriptionUsageJson,
+} from "@/lib/transcriptionDemoRateLimit";
+import {
   AUDIO_RECORDINGS_BUCKET,
   supabaseServer,
 } from "@/lib/supabaseServer";
 
 const OPENAI_TRANSCRIBE_URL = "https://api.openai.com/v1/audio/transcriptions";
+const LIMIT_PLACEHOLDER_NOTE = `[Transcription limit reached — clone the repo to self-host with no limits: ${REPO_URL}]`;
 
 function promptForType(type: RecordingType) {
   if (type === RecordingType.ROOM) {
@@ -33,6 +41,24 @@ export async function POST(req: Request) {
     if (!recording) {
       console.error("[transcribe] recording not found:", recordingId);
       return NextResponse.json({ error: "Recording not found" }, { status: 404 });
+    }
+
+    // Role: Only NOTE transcriptions are gated by the demo limit. ROOM transcriptions
+    // always run (the resulting transcript is what the green-button flow uses to
+    // verify bed access); the counter ticks via /api/recordings/confirm-room-access.
+    let noteLimitDecision: Awaited<ReturnType<typeof evaluateTranscriptionDemoLimit>> | null = null;
+    if (recording.type === RecordingType.NOTE) {
+      noteLimitDecision = await evaluateTranscriptionDemoLimit(req);
+      if (noteLimitDecision.limited) {
+        await prisma.room_data.updateMany({
+          where: { noteRecordingId: recording.id, patient_note: "" },
+          data: { patient_note: LIMIT_PLACEHOLDER_NOTE },
+        });
+        return NextResponse.json(demoLimitJsonBody(noteLimitDecision), {
+          status: 429,
+          headers: { "Retry-After": String(noteLimitDecision.retryAfterSec) },
+        });
+      }
     }
 
     console.log(`[transcribe] type=${recording.type} path=${recording.audioPath} — downloading audio...`);
@@ -95,11 +121,23 @@ export async function POST(req: Request) {
       console.log(`[transcribe] ✓ patient_note updated for noteRecordingId=${recording.id}`);
     }
 
+    // Role: NOTE successes charge the rolling 24h counter; ROOM successes don't,
+    // since the room-access confirmation step charges instead (only on a verified bed).
+    let usagePayload: ReturnType<typeof transcriptionUsageJson> | undefined;
+    if (noteLimitDecision && !noteLimitDecision.limited) {
+      const { total, windowStart } = await incrementTranscriptionUsage(noteLimitDecision);
+      console.log(
+        `[transcribe] usage ip=${noteLimitDecision.ip} total=${total} (NOTE)`,
+      );
+      usagePayload = transcriptionUsageJson(total, windowStart);
+    }
+
     return NextResponse.json({
       success: true,
       recordingId: recording.id,
       type: recording.type,
       transcript,
+      ...(usagePayload ? { usage: usagePayload } : {}),
     });
   } catch (error) {
     console.error("[transcribe] unexpected error:", error);

@@ -187,3 +187,11 @@ model demo_session {
 
   @@map("demo_session")
 }
+
+model transcription_usage {
+  ip         String   @id
+  total      Int      @default(0)
+  first_used DateTime @default(now())
+
+  @@map("transcription_usage")
+}

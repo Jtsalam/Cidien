@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { RecordingType } from "@/lib/generated/prisma";
 import { prisma } from "@/lib/prisma";
+import {
+  demoLimitJsonBody,
+  evaluateTranscriptionDemoLimit,
+} from "@/lib/transcriptionDemoRateLimit";
 import { AUDIO_RECORDINGS_BUCKET, supabaseServer } from "@/lib/supabaseServer";
 
 export async function POST(req: Request) {
@@ -21,6 +25,20 @@ export async function POST(req: Request) {
         { error: "Invalid recording type. Expected ROOM or NOTE." },
         { status: 400 },
       );
+    }
+
+    // Role: NOTE uploads count against the demo limit on success, so reject here when
+    // the user is already capped — avoids orphan audio in Storage for blocked notes.
+    // ROOM uploads are always allowed: the room transcript is needed to verify access,
+    // and the counter only ticks via /api/recordings/confirm-room-access on success.
+    if (type === RecordingType.NOTE) {
+      const limitDecision = await evaluateTranscriptionDemoLimit(req);
+      if (limitDecision.limited) {
+        return NextResponse.json(demoLimitJsonBody(limitDecision), {
+          status: 429,
+          headers: { "Retry-After": String(limitDecision.retryAfterSec) },
+        });
+      }
     }
 
     // Role: Ensure the storage bucket exists before uploading (creates it on first use).

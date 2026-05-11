@@ -17,6 +17,30 @@ import { subscribeToRecording, unsubscribeChannel } from "@/lib/realtime/recordi
 import { emitMobileConnected } from "@/lib/realtime/mobileSignal";
 
 const MOBILE_TUTORIAL_STORAGE_KEY = "cidien-mobile-tutorial-complete";
+const REPO_URL = "https://github.com/Jtsalam/Cidien";
+
+class TranscriptionLimitError extends Error {
+  repoUrl: string;
+  retryAt: string | null;
+  constructor(message: string, repoUrl: string, retryAt: string | null = null) {
+    super(message);
+    this.name = "TranscriptionLimitError";
+    this.repoUrl = repoUrl;
+    this.retryAt = retryAt;
+  }
+}
+
+function formatRetryAt(retryAtIso: string | null): string {
+  if (!retryAtIso) return "";
+  const retryAt = new Date(retryAtIso);
+  if (Number.isNaN(retryAt.getTime())) return "";
+  const diffMs = retryAt.getTime() - Date.now();
+  if (diffMs <= 0) return "";
+  const hours = Math.floor(diffMs / (60 * 60 * 1000));
+  const minutes = Math.ceil((diffMs % (60 * 60 * 1000)) / (60 * 1000));
+  if (hours >= 1) return `${hours}h ${minutes}m`;
+  return `${minutes}m`;
+}
 
 const ORGANIZATIONS = [
   "Starlane General Hospital",
@@ -126,6 +150,10 @@ export default function MobileRecorder() {
 
   const [status, setStatusLine] = useState<string>("");
   const [statusShowMenuLink, setStatusShowMenuLink] = useState(false);
+  const [transcriptionLimit, setTranscriptionLimit] = useState<{
+    reached: boolean;
+    retryAt: string | null;
+  }>({ reached: false, retryAt: null });
   const [menuOpen, setMenuOpen] = useState(false);
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -325,7 +353,20 @@ export default function MobileRecorder() {
     formData.append("file", audioBlob, `${type.toLowerCase()}.webm`);
     formData.append("type", type);
     const uploadResponse = await fetch("/api/recordings/upload", { method: "POST", body: formData });
-    const uploadData = (await uploadResponse.json()) as { recordingId?: string; error?: string };
+    const uploadData = (await uploadResponse.json()) as {
+      recordingId?: string;
+      error?: string;
+      limitReached?: boolean;
+      repoUrl?: string;
+      retryAt?: string;
+    };
+    if (uploadResponse.status === 429 && uploadData.limitReached) {
+      throw new TranscriptionLimitError(
+        uploadData.error || "Demo transcription limit reached.",
+        uploadData.repoUrl || REPO_URL,
+        uploadData.retryAt ?? null,
+      );
+    }
     if (!uploadResponse.ok || !uploadData.recordingId) throw new Error(uploadData.error || "Upload failed");
     return uploadData.recordingId;
   };
@@ -336,7 +377,20 @@ export default function MobileRecorder() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ recordingId }),
     });
-    const data = (await response.json()) as { transcript?: string; error?: string };
+    const data = (await response.json()) as {
+      transcript?: string;
+      error?: string;
+      limitReached?: boolean;
+      repoUrl?: string;
+      retryAt?: string;
+    };
+    if (response.status === 429 && data.limitReached) {
+      throw new TranscriptionLimitError(
+        data.error || "Demo transcription limit reached.",
+        data.repoUrl || REPO_URL,
+        data.retryAt ?? null,
+      );
+    }
     if (!response.ok || !data.transcript) throw new Error(data.error || "Transcription failed");
     return data.transcript;
   };
@@ -351,6 +405,32 @@ export default function MobileRecorder() {
     if (!response.ok || !data.rooms?.length) return null;
     const bed = data.rooms[0].beds.find((item) => item.bed_letter === bedLetter);
     return bed?.bed_id ?? null;
+  };
+
+  // Role: Charge the demo transcription counter only after green-button room access
+  // is confirmed (parse + bed assignment both succeeded). Throws TranscriptionLimitError
+  // on 429 so the existing outer catch surfaces the banner + disables the buttons.
+  const confirmRoomAccess = async (recordingId: string) => {
+    const response = await fetch("/api/recordings/confirm-room-access", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ recordingId }),
+    });
+    const data = (await response.json()) as {
+      success?: boolean;
+      error?: string;
+      limitReached?: boolean;
+      repoUrl?: string;
+      retryAt?: string;
+    };
+    if (response.status === 429 && data.limitReached) {
+      throw new TranscriptionLimitError(
+        data.error || "Demo transcription limit reached.",
+        data.repoUrl || REPO_URL,
+        data.retryAt ?? null,
+      );
+    }
+    if (!response.ok) throw new Error(data.error || "Room access confirmation failed");
   };
 
   const uploadRecording = async (audioBlob: Blob, color: "green" | "red" | "") => {
@@ -392,6 +472,11 @@ export default function MobileRecorder() {
           return;
         }
 
+        // Only now does this attempt cost a demo credit. If we're already at the cap
+        // this call throws TranscriptionLimitError (handled by the outer catch) and
+        // we leave room state unset so the user can't proceed to the red button.
+        await confirmRoomAccess(newRoomRecordingId);
+
         setRoomRecordingId(newRoomRecordingId);
         setParsedRoomBed(parsed);
         setVerifiedBedId(bedId);
@@ -420,9 +505,19 @@ export default function MobileRecorder() {
       if (!createResponse.ok) throw new Error(createData.error || "Failed to create room data");
 
       console.log("[MobileRecorder] RED — note submitted, starting deferred transcription...");
-      void transcribeRecording(noteRecordingId).then((t) => {
-        console.log("[MobileRecorder] RED — deferred transcript:", t);
-      }).catch((e) => console.error("Deferred transcription failed:", e));
+      void transcribeRecording(noteRecordingId)
+        .then((t) => {
+          console.log("[MobileRecorder] RED — deferred transcript:", t);
+        })
+        .catch((e) => {
+          console.error("Deferred transcription failed:", e);
+          if (e instanceof TranscriptionLimitError) {
+            setTranscriptionLimit({ reached: true, retryAt: e.retryAt });
+            setStatus(
+              "Demo transcription limit reached. The note was saved with a placeholder; clone the repo to self-host with no limits.",
+            );
+          }
+        });
 
       unsubscribeChannel(recordingRealtimeRef.current);
       recordingRealtimeRef.current = subscribeToRecording(noteRecordingId, () => {
@@ -431,6 +526,11 @@ export default function MobileRecorder() {
 
       setStatus(`Note uploaded for Room ${parsedRoomBed.roomNumber}, Bed ${parsedRoomBed.bedLetter}. Transcription in progress...`);
     } catch (error) {
+      if (error instanceof TranscriptionLimitError) {
+        setTranscriptionLimit({ reached: true, retryAt: error.retryAt });
+        setStatus("Demo transcription limit reached. Clone the repo to self-host with no limits.");
+        return;
+      }
       setStatus(error instanceof Error ? error.message : "Audio workflow failed.");
     }
   };
@@ -440,6 +540,10 @@ export default function MobileRecorder() {
 
   const startRecording = async (color: "green" | "red") => {
     if (isRecording) return;
+    if (transcriptionLimit.reached) {
+      setStatus("Demo transcription limit reached. Clone the repo to self-host with no limits.");
+      return;
+    }
 
     if (navigator.vibrate) navigator.vibrate(100);
 
@@ -565,17 +669,59 @@ export default function MobileRecorder() {
               </DropdownMenu>
             </div>
             <p className={styles.subtitle}>Hold a button to record</p>
+            {transcriptionLimit.reached ? (
+              <div className={styles.limitBanner} role="alert" aria-live="polite">
+                <p className={styles.limitBannerTitle}>Demo transcription limit reached</p>
+                <p className={styles.limitBannerBody}>
+                  You&apos;ve used the 10 free transcriptions for this 24-hour window
+                  {formatRetryAt(transcriptionLimit.retryAt)
+                    ? ` (resets in ~${formatRetryAt(transcriptionLimit.retryAt)})`
+                    : ""}
+                  . Clone the repo to self-host Cidien with no limits.
+                </p>
+                <a
+                  href={REPO_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.limitBannerCta}
+                  aria-label="Open the Cidien GitHub repository to self-host"
+                >
+                  Open the repo on GitHub →
+                </a>
+              </div>
+            ) : null}
             <div className={styles.buttonRow}>
-              <button className={`${styles.recordButton} ${styles.green}`}
-                onMouseDown={() => startRecording("green")} onMouseUp={stopRecording}
-                onTouchStart={() => startRecording("green")} onTouchEnd={stopRecording}
-                aria-label="Record room information"><Mic size={30} /></button>
-              <button className={`${styles.recordButton} ${styles.red}`}
-                onMouseDown={() => startRecording("red")} onMouseUp={stopRecording}
-                onTouchStart={() => startRecording("red")} onTouchEnd={stopRecording}
-                aria-label="Record patient note"><Mic size={30} /></button>
-              <button className={`${styles.recordButton} ${styles.gray}`}
-                onClick={clearStatus} aria-label="Clear status text"><Trash2 size={28} /></button>
+              <button
+                className={`${styles.recordButton} ${styles.green}`}
+                onMouseDown={() => startRecording("green")}
+                onMouseUp={stopRecording}
+                onTouchStart={() => startRecording("green")}
+                onTouchEnd={stopRecording}
+                disabled={transcriptionLimit.reached}
+                aria-disabled={transcriptionLimit.reached}
+                aria-label="Record room information"
+              >
+                <Mic size={30} />
+              </button>
+              <button
+                className={`${styles.recordButton} ${styles.red}`}
+                onMouseDown={() => startRecording("red")}
+                onMouseUp={stopRecording}
+                onTouchStart={() => startRecording("red")}
+                onTouchEnd={stopRecording}
+                disabled={transcriptionLimit.reached}
+                aria-disabled={transcriptionLimit.reached}
+                aria-label="Record patient note"
+              >
+                <Mic size={30} />
+              </button>
+              <button
+                className={`${styles.recordButton} ${styles.gray}`}
+                onClick={clearStatus}
+                aria-label="Clear status text"
+              >
+                <Trash2 size={28} />
+              </button>
             </div>
             <div className={styles.legend}>
               <div className={styles.legendItem}>

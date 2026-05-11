@@ -78,6 +78,11 @@ export type user_uploads = $Result.DefaultSelection<Prisma.$user_uploadsPayload>
  * 
  */
 export type demo_session = $Result.DefaultSelection<Prisma.$demo_sessionPayload>
+/**
+ * Model transcription_usage
+ * 
+ */
+export type transcription_usage = $Result.DefaultSelection<Prisma.$transcription_usagePayload>
 
 /**
  * Enums
@@ -343,6 +348,16 @@ export class PrismaClient<
     * ```
     */
   get demo_session(): Prisma.demo_sessionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.transcription_usage`: Exposes CRUD operations for the **transcription_usage** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Transcription_usages
+    * const transcription_usages = await prisma.transcription_usage.findMany()
+    * ```
+    */
+  get transcription_usage(): Prisma.transcription_usageDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -796,7 +811,8 @@ export namespace Prisma {
     room_register: 'room_register',
     user_info: 'user_info',
     user_uploads: 'user_uploads',
-    demo_session: 'demo_session'
+    demo_session: 'demo_session',
+    transcription_usage: 'transcription_usage'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -815,7 +831,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "medicalcenter_info" | "patient_info" | "patient_uploads" | "room_info" | "bed_info" | "approvalPdfExport" | "approvalPdfExportRow" | "recording" | "room_data" | "room_register" | "user_info" | "user_uploads" | "demo_session"
+      modelProps: "medicalcenter_info" | "patient_info" | "patient_uploads" | "room_info" | "bed_info" | "approvalPdfExport" | "approvalPdfExportRow" | "recording" | "room_data" | "room_register" | "user_info" | "user_uploads" | "demo_session" | "transcription_usage"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1781,6 +1797,80 @@ export namespace Prisma {
           }
         }
       }
+      transcription_usage: {
+        payload: Prisma.$transcription_usagePayload<ExtArgs>
+        fields: Prisma.transcription_usageFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.transcription_usageFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$transcription_usagePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.transcription_usageFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$transcription_usagePayload>
+          }
+          findFirst: {
+            args: Prisma.transcription_usageFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$transcription_usagePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.transcription_usageFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$transcription_usagePayload>
+          }
+          findMany: {
+            args: Prisma.transcription_usageFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$transcription_usagePayload>[]
+          }
+          create: {
+            args: Prisma.transcription_usageCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$transcription_usagePayload>
+          }
+          createMany: {
+            args: Prisma.transcription_usageCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.transcription_usageCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$transcription_usagePayload>[]
+          }
+          delete: {
+            args: Prisma.transcription_usageDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$transcription_usagePayload>
+          }
+          update: {
+            args: Prisma.transcription_usageUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$transcription_usagePayload>
+          }
+          deleteMany: {
+            args: Prisma.transcription_usageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.transcription_usageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.transcription_usageUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$transcription_usagePayload>[]
+          }
+          upsert: {
+            args: Prisma.transcription_usageUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$transcription_usagePayload>
+          }
+          aggregate: {
+            args: Prisma.Transcription_usageAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTranscription_usage>
+          }
+          groupBy: {
+            args: Prisma.transcription_usageGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Transcription_usageGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.transcription_usageCountArgs<ExtArgs>
+            result: $Utils.Optional<Transcription_usageCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1890,6 +1980,7 @@ export namespace Prisma {
     user_info?: user_infoOmit
     user_uploads?: user_uploadsOmit
     demo_session?: demo_sessionOmit
+    transcription_usage?: transcription_usageOmit
   }
 
   /* Types for Logging */
@@ -17360,6 +17451,1009 @@ export namespace Prisma {
 
 
   /**
+   * Model transcription_usage
+   */
+
+  export type AggregateTranscription_usage = {
+    _count: Transcription_usageCountAggregateOutputType | null
+    _avg: Transcription_usageAvgAggregateOutputType | null
+    _sum: Transcription_usageSumAggregateOutputType | null
+    _min: Transcription_usageMinAggregateOutputType | null
+    _max: Transcription_usageMaxAggregateOutputType | null
+  }
+
+  export type Transcription_usageAvgAggregateOutputType = {
+    total: number | null
+  }
+
+  export type Transcription_usageSumAggregateOutputType = {
+    total: number | null
+  }
+
+  export type Transcription_usageMinAggregateOutputType = {
+    ip: string | null
+    total: number | null
+    first_used: Date | null
+  }
+
+  export type Transcription_usageMaxAggregateOutputType = {
+    ip: string | null
+    total: number | null
+    first_used: Date | null
+  }
+
+  export type Transcription_usageCountAggregateOutputType = {
+    ip: number
+    total: number
+    first_used: number
+    _all: number
+  }
+
+
+  export type Transcription_usageAvgAggregateInputType = {
+    total?: true
+  }
+
+  export type Transcription_usageSumAggregateInputType = {
+    total?: true
+  }
+
+  export type Transcription_usageMinAggregateInputType = {
+    ip?: true
+    total?: true
+    first_used?: true
+  }
+
+  export type Transcription_usageMaxAggregateInputType = {
+    ip?: true
+    total?: true
+    first_used?: true
+  }
+
+  export type Transcription_usageCountAggregateInputType = {
+    ip?: true
+    total?: true
+    first_used?: true
+    _all?: true
+  }
+
+  export type Transcription_usageAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which transcription_usage to aggregate.
+     */
+    where?: transcription_usageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of transcription_usages to fetch.
+     */
+    orderBy?: transcription_usageOrderByWithRelationInput | transcription_usageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: transcription_usageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` transcription_usages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` transcription_usages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned transcription_usages
+    **/
+    _count?: true | Transcription_usageCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Transcription_usageAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Transcription_usageSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Transcription_usageMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Transcription_usageMaxAggregateInputType
+  }
+
+  export type GetTranscription_usageAggregateType<T extends Transcription_usageAggregateArgs> = {
+        [P in keyof T & keyof AggregateTranscription_usage]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTranscription_usage[P]>
+      : GetScalarType<T[P], AggregateTranscription_usage[P]>
+  }
+
+
+
+
+  export type transcription_usageGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: transcription_usageWhereInput
+    orderBy?: transcription_usageOrderByWithAggregationInput | transcription_usageOrderByWithAggregationInput[]
+    by: Transcription_usageScalarFieldEnum[] | Transcription_usageScalarFieldEnum
+    having?: transcription_usageScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Transcription_usageCountAggregateInputType | true
+    _avg?: Transcription_usageAvgAggregateInputType
+    _sum?: Transcription_usageSumAggregateInputType
+    _min?: Transcription_usageMinAggregateInputType
+    _max?: Transcription_usageMaxAggregateInputType
+  }
+
+  export type Transcription_usageGroupByOutputType = {
+    ip: string
+    total: number
+    first_used: Date
+    _count: Transcription_usageCountAggregateOutputType | null
+    _avg: Transcription_usageAvgAggregateOutputType | null
+    _sum: Transcription_usageSumAggregateOutputType | null
+    _min: Transcription_usageMinAggregateOutputType | null
+    _max: Transcription_usageMaxAggregateOutputType | null
+  }
+
+  type GetTranscription_usageGroupByPayload<T extends transcription_usageGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Transcription_usageGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Transcription_usageGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Transcription_usageGroupByOutputType[P]>
+            : GetScalarType<T[P], Transcription_usageGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type transcription_usageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    ip?: boolean
+    total?: boolean
+    first_used?: boolean
+  }, ExtArgs["result"]["transcription_usage"]>
+
+  export type transcription_usageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    ip?: boolean
+    total?: boolean
+    first_used?: boolean
+  }, ExtArgs["result"]["transcription_usage"]>
+
+  export type transcription_usageSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    ip?: boolean
+    total?: boolean
+    first_used?: boolean
+  }, ExtArgs["result"]["transcription_usage"]>
+
+  export type transcription_usageSelectScalar = {
+    ip?: boolean
+    total?: boolean
+    first_used?: boolean
+  }
+
+  export type transcription_usageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"ip" | "total" | "first_used", ExtArgs["result"]["transcription_usage"]>
+
+  export type $transcription_usagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "transcription_usage"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      ip: string
+      total: number
+      first_used: Date
+    }, ExtArgs["result"]["transcription_usage"]>
+    composites: {}
+  }
+
+  type transcription_usageGetPayload<S extends boolean | null | undefined | transcription_usageDefaultArgs> = $Result.GetResult<Prisma.$transcription_usagePayload, S>
+
+  type transcription_usageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<transcription_usageFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Transcription_usageCountAggregateInputType | true
+    }
+
+  export interface transcription_usageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['transcription_usage'], meta: { name: 'transcription_usage' } }
+    /**
+     * Find zero or one Transcription_usage that matches the filter.
+     * @param {transcription_usageFindUniqueArgs} args - Arguments to find a Transcription_usage
+     * @example
+     * // Get one Transcription_usage
+     * const transcription_usage = await prisma.transcription_usage.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends transcription_usageFindUniqueArgs>(args: SelectSubset<T, transcription_usageFindUniqueArgs<ExtArgs>>): Prisma__transcription_usageClient<$Result.GetResult<Prisma.$transcription_usagePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Transcription_usage that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {transcription_usageFindUniqueOrThrowArgs} args - Arguments to find a Transcription_usage
+     * @example
+     * // Get one Transcription_usage
+     * const transcription_usage = await prisma.transcription_usage.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends transcription_usageFindUniqueOrThrowArgs>(args: SelectSubset<T, transcription_usageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__transcription_usageClient<$Result.GetResult<Prisma.$transcription_usagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Transcription_usage that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {transcription_usageFindFirstArgs} args - Arguments to find a Transcription_usage
+     * @example
+     * // Get one Transcription_usage
+     * const transcription_usage = await prisma.transcription_usage.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends transcription_usageFindFirstArgs>(args?: SelectSubset<T, transcription_usageFindFirstArgs<ExtArgs>>): Prisma__transcription_usageClient<$Result.GetResult<Prisma.$transcription_usagePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Transcription_usage that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {transcription_usageFindFirstOrThrowArgs} args - Arguments to find a Transcription_usage
+     * @example
+     * // Get one Transcription_usage
+     * const transcription_usage = await prisma.transcription_usage.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends transcription_usageFindFirstOrThrowArgs>(args?: SelectSubset<T, transcription_usageFindFirstOrThrowArgs<ExtArgs>>): Prisma__transcription_usageClient<$Result.GetResult<Prisma.$transcription_usagePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Transcription_usages that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {transcription_usageFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Transcription_usages
+     * const transcription_usages = await prisma.transcription_usage.findMany()
+     * 
+     * // Get first 10 Transcription_usages
+     * const transcription_usages = await prisma.transcription_usage.findMany({ take: 10 })
+     * 
+     * // Only select the `ip`
+     * const transcription_usageWithIpOnly = await prisma.transcription_usage.findMany({ select: { ip: true } })
+     * 
+     */
+    findMany<T extends transcription_usageFindManyArgs>(args?: SelectSubset<T, transcription_usageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$transcription_usagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Transcription_usage.
+     * @param {transcription_usageCreateArgs} args - Arguments to create a Transcription_usage.
+     * @example
+     * // Create one Transcription_usage
+     * const Transcription_usage = await prisma.transcription_usage.create({
+     *   data: {
+     *     // ... data to create a Transcription_usage
+     *   }
+     * })
+     * 
+     */
+    create<T extends transcription_usageCreateArgs>(args: SelectSubset<T, transcription_usageCreateArgs<ExtArgs>>): Prisma__transcription_usageClient<$Result.GetResult<Prisma.$transcription_usagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Transcription_usages.
+     * @param {transcription_usageCreateManyArgs} args - Arguments to create many Transcription_usages.
+     * @example
+     * // Create many Transcription_usages
+     * const transcription_usage = await prisma.transcription_usage.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends transcription_usageCreateManyArgs>(args?: SelectSubset<T, transcription_usageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Transcription_usages and returns the data saved in the database.
+     * @param {transcription_usageCreateManyAndReturnArgs} args - Arguments to create many Transcription_usages.
+     * @example
+     * // Create many Transcription_usages
+     * const transcription_usage = await prisma.transcription_usage.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Transcription_usages and only return the `ip`
+     * const transcription_usageWithIpOnly = await prisma.transcription_usage.createManyAndReturn({
+     *   select: { ip: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends transcription_usageCreateManyAndReturnArgs>(args?: SelectSubset<T, transcription_usageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$transcription_usagePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Transcription_usage.
+     * @param {transcription_usageDeleteArgs} args - Arguments to delete one Transcription_usage.
+     * @example
+     * // Delete one Transcription_usage
+     * const Transcription_usage = await prisma.transcription_usage.delete({
+     *   where: {
+     *     // ... filter to delete one Transcription_usage
+     *   }
+     * })
+     * 
+     */
+    delete<T extends transcription_usageDeleteArgs>(args: SelectSubset<T, transcription_usageDeleteArgs<ExtArgs>>): Prisma__transcription_usageClient<$Result.GetResult<Prisma.$transcription_usagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Transcription_usage.
+     * @param {transcription_usageUpdateArgs} args - Arguments to update one Transcription_usage.
+     * @example
+     * // Update one Transcription_usage
+     * const transcription_usage = await prisma.transcription_usage.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends transcription_usageUpdateArgs>(args: SelectSubset<T, transcription_usageUpdateArgs<ExtArgs>>): Prisma__transcription_usageClient<$Result.GetResult<Prisma.$transcription_usagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Transcription_usages.
+     * @param {transcription_usageDeleteManyArgs} args - Arguments to filter Transcription_usages to delete.
+     * @example
+     * // Delete a few Transcription_usages
+     * const { count } = await prisma.transcription_usage.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends transcription_usageDeleteManyArgs>(args?: SelectSubset<T, transcription_usageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Transcription_usages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {transcription_usageUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Transcription_usages
+     * const transcription_usage = await prisma.transcription_usage.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends transcription_usageUpdateManyArgs>(args: SelectSubset<T, transcription_usageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Transcription_usages and returns the data updated in the database.
+     * @param {transcription_usageUpdateManyAndReturnArgs} args - Arguments to update many Transcription_usages.
+     * @example
+     * // Update many Transcription_usages
+     * const transcription_usage = await prisma.transcription_usage.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Transcription_usages and only return the `ip`
+     * const transcription_usageWithIpOnly = await prisma.transcription_usage.updateManyAndReturn({
+     *   select: { ip: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends transcription_usageUpdateManyAndReturnArgs>(args: SelectSubset<T, transcription_usageUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$transcription_usagePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Transcription_usage.
+     * @param {transcription_usageUpsertArgs} args - Arguments to update or create a Transcription_usage.
+     * @example
+     * // Update or create a Transcription_usage
+     * const transcription_usage = await prisma.transcription_usage.upsert({
+     *   create: {
+     *     // ... data to create a Transcription_usage
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Transcription_usage we want to update
+     *   }
+     * })
+     */
+    upsert<T extends transcription_usageUpsertArgs>(args: SelectSubset<T, transcription_usageUpsertArgs<ExtArgs>>): Prisma__transcription_usageClient<$Result.GetResult<Prisma.$transcription_usagePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Transcription_usages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {transcription_usageCountArgs} args - Arguments to filter Transcription_usages to count.
+     * @example
+     * // Count the number of Transcription_usages
+     * const count = await prisma.transcription_usage.count({
+     *   where: {
+     *     // ... the filter for the Transcription_usages we want to count
+     *   }
+     * })
+    **/
+    count<T extends transcription_usageCountArgs>(
+      args?: Subset<T, transcription_usageCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Transcription_usageCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Transcription_usage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Transcription_usageAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Transcription_usageAggregateArgs>(args: Subset<T, Transcription_usageAggregateArgs>): Prisma.PrismaPromise<GetTranscription_usageAggregateType<T>>
+
+    /**
+     * Group by Transcription_usage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {transcription_usageGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends transcription_usageGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: transcription_usageGroupByArgs['orderBy'] }
+        : { orderBy?: transcription_usageGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, transcription_usageGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTranscription_usageGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the transcription_usage model
+   */
+  readonly fields: transcription_usageFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for transcription_usage.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__transcription_usageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the transcription_usage model
+   */
+  interface transcription_usageFieldRefs {
+    readonly ip: FieldRef<"transcription_usage", 'String'>
+    readonly total: FieldRef<"transcription_usage", 'Int'>
+    readonly first_used: FieldRef<"transcription_usage", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * transcription_usage findUnique
+   */
+  export type transcription_usageFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the transcription_usage
+     */
+    select?: transcription_usageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the transcription_usage
+     */
+    omit?: transcription_usageOmit<ExtArgs> | null
+    /**
+     * Filter, which transcription_usage to fetch.
+     */
+    where: transcription_usageWhereUniqueInput
+  }
+
+  /**
+   * transcription_usage findUniqueOrThrow
+   */
+  export type transcription_usageFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the transcription_usage
+     */
+    select?: transcription_usageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the transcription_usage
+     */
+    omit?: transcription_usageOmit<ExtArgs> | null
+    /**
+     * Filter, which transcription_usage to fetch.
+     */
+    where: transcription_usageWhereUniqueInput
+  }
+
+  /**
+   * transcription_usage findFirst
+   */
+  export type transcription_usageFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the transcription_usage
+     */
+    select?: transcription_usageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the transcription_usage
+     */
+    omit?: transcription_usageOmit<ExtArgs> | null
+    /**
+     * Filter, which transcription_usage to fetch.
+     */
+    where?: transcription_usageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of transcription_usages to fetch.
+     */
+    orderBy?: transcription_usageOrderByWithRelationInput | transcription_usageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for transcription_usages.
+     */
+    cursor?: transcription_usageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` transcription_usages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` transcription_usages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of transcription_usages.
+     */
+    distinct?: Transcription_usageScalarFieldEnum | Transcription_usageScalarFieldEnum[]
+  }
+
+  /**
+   * transcription_usage findFirstOrThrow
+   */
+  export type transcription_usageFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the transcription_usage
+     */
+    select?: transcription_usageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the transcription_usage
+     */
+    omit?: transcription_usageOmit<ExtArgs> | null
+    /**
+     * Filter, which transcription_usage to fetch.
+     */
+    where?: transcription_usageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of transcription_usages to fetch.
+     */
+    orderBy?: transcription_usageOrderByWithRelationInput | transcription_usageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for transcription_usages.
+     */
+    cursor?: transcription_usageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` transcription_usages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` transcription_usages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of transcription_usages.
+     */
+    distinct?: Transcription_usageScalarFieldEnum | Transcription_usageScalarFieldEnum[]
+  }
+
+  /**
+   * transcription_usage findMany
+   */
+  export type transcription_usageFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the transcription_usage
+     */
+    select?: transcription_usageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the transcription_usage
+     */
+    omit?: transcription_usageOmit<ExtArgs> | null
+    /**
+     * Filter, which transcription_usages to fetch.
+     */
+    where?: transcription_usageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of transcription_usages to fetch.
+     */
+    orderBy?: transcription_usageOrderByWithRelationInput | transcription_usageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing transcription_usages.
+     */
+    cursor?: transcription_usageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` transcription_usages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` transcription_usages.
+     */
+    skip?: number
+    distinct?: Transcription_usageScalarFieldEnum | Transcription_usageScalarFieldEnum[]
+  }
+
+  /**
+   * transcription_usage create
+   */
+  export type transcription_usageCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the transcription_usage
+     */
+    select?: transcription_usageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the transcription_usage
+     */
+    omit?: transcription_usageOmit<ExtArgs> | null
+    /**
+     * The data needed to create a transcription_usage.
+     */
+    data: XOR<transcription_usageCreateInput, transcription_usageUncheckedCreateInput>
+  }
+
+  /**
+   * transcription_usage createMany
+   */
+  export type transcription_usageCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many transcription_usages.
+     */
+    data: transcription_usageCreateManyInput | transcription_usageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * transcription_usage createManyAndReturn
+   */
+  export type transcription_usageCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the transcription_usage
+     */
+    select?: transcription_usageSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the transcription_usage
+     */
+    omit?: transcription_usageOmit<ExtArgs> | null
+    /**
+     * The data used to create many transcription_usages.
+     */
+    data: transcription_usageCreateManyInput | transcription_usageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * transcription_usage update
+   */
+  export type transcription_usageUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the transcription_usage
+     */
+    select?: transcription_usageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the transcription_usage
+     */
+    omit?: transcription_usageOmit<ExtArgs> | null
+    /**
+     * The data needed to update a transcription_usage.
+     */
+    data: XOR<transcription_usageUpdateInput, transcription_usageUncheckedUpdateInput>
+    /**
+     * Choose, which transcription_usage to update.
+     */
+    where: transcription_usageWhereUniqueInput
+  }
+
+  /**
+   * transcription_usage updateMany
+   */
+  export type transcription_usageUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update transcription_usages.
+     */
+    data: XOR<transcription_usageUpdateManyMutationInput, transcription_usageUncheckedUpdateManyInput>
+    /**
+     * Filter which transcription_usages to update
+     */
+    where?: transcription_usageWhereInput
+    /**
+     * Limit how many transcription_usages to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * transcription_usage updateManyAndReturn
+   */
+  export type transcription_usageUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the transcription_usage
+     */
+    select?: transcription_usageSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the transcription_usage
+     */
+    omit?: transcription_usageOmit<ExtArgs> | null
+    /**
+     * The data used to update transcription_usages.
+     */
+    data: XOR<transcription_usageUpdateManyMutationInput, transcription_usageUncheckedUpdateManyInput>
+    /**
+     * Filter which transcription_usages to update
+     */
+    where?: transcription_usageWhereInput
+    /**
+     * Limit how many transcription_usages to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * transcription_usage upsert
+   */
+  export type transcription_usageUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the transcription_usage
+     */
+    select?: transcription_usageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the transcription_usage
+     */
+    omit?: transcription_usageOmit<ExtArgs> | null
+    /**
+     * The filter to search for the transcription_usage to update in case it exists.
+     */
+    where: transcription_usageWhereUniqueInput
+    /**
+     * In case the transcription_usage found by the `where` argument doesn't exist, create a new transcription_usage with this data.
+     */
+    create: XOR<transcription_usageCreateInput, transcription_usageUncheckedCreateInput>
+    /**
+     * In case the transcription_usage was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<transcription_usageUpdateInput, transcription_usageUncheckedUpdateInput>
+  }
+
+  /**
+   * transcription_usage delete
+   */
+  export type transcription_usageDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the transcription_usage
+     */
+    select?: transcription_usageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the transcription_usage
+     */
+    omit?: transcription_usageOmit<ExtArgs> | null
+    /**
+     * Filter which transcription_usage to delete.
+     */
+    where: transcription_usageWhereUniqueInput
+  }
+
+  /**
+   * transcription_usage deleteMany
+   */
+  export type transcription_usageDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which transcription_usages to delete
+     */
+    where?: transcription_usageWhereInput
+    /**
+     * Limit how many transcription_usages to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * transcription_usage without action
+   */
+  export type transcription_usageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the transcription_usage
+     */
+    select?: transcription_usageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the transcription_usage
+     */
+    omit?: transcription_usageOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -17519,6 +18613,15 @@ export namespace Prisma {
   };
 
   export type Demo_sessionScalarFieldEnum = (typeof Demo_sessionScalarFieldEnum)[keyof typeof Demo_sessionScalarFieldEnum]
+
+
+  export const Transcription_usageScalarFieldEnum: {
+    ip: 'ip',
+    total: 'total',
+    first_used: 'first_used'
+  };
+
+  export type Transcription_usageScalarFieldEnum = (typeof Transcription_usageScalarFieldEnum)[keyof typeof Transcription_usageScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -18485,6 +19588,50 @@ export namespace Prisma {
     center_id?: IntWithAggregatesFilter<"demo_session"> | number
   }
 
+  export type transcription_usageWhereInput = {
+    AND?: transcription_usageWhereInput | transcription_usageWhereInput[]
+    OR?: transcription_usageWhereInput[]
+    NOT?: transcription_usageWhereInput | transcription_usageWhereInput[]
+    ip?: StringFilter<"transcription_usage"> | string
+    total?: IntFilter<"transcription_usage"> | number
+    first_used?: DateTimeFilter<"transcription_usage"> | Date | string
+  }
+
+  export type transcription_usageOrderByWithRelationInput = {
+    ip?: SortOrder
+    total?: SortOrder
+    first_used?: SortOrder
+  }
+
+  export type transcription_usageWhereUniqueInput = Prisma.AtLeast<{
+    ip?: string
+    AND?: transcription_usageWhereInput | transcription_usageWhereInput[]
+    OR?: transcription_usageWhereInput[]
+    NOT?: transcription_usageWhereInput | transcription_usageWhereInput[]
+    total?: IntFilter<"transcription_usage"> | number
+    first_used?: DateTimeFilter<"transcription_usage"> | Date | string
+  }, "ip">
+
+  export type transcription_usageOrderByWithAggregationInput = {
+    ip?: SortOrder
+    total?: SortOrder
+    first_used?: SortOrder
+    _count?: transcription_usageCountOrderByAggregateInput
+    _avg?: transcription_usageAvgOrderByAggregateInput
+    _max?: transcription_usageMaxOrderByAggregateInput
+    _min?: transcription_usageMinOrderByAggregateInput
+    _sum?: transcription_usageSumOrderByAggregateInput
+  }
+
+  export type transcription_usageScalarWhereWithAggregatesInput = {
+    AND?: transcription_usageScalarWhereWithAggregatesInput | transcription_usageScalarWhereWithAggregatesInput[]
+    OR?: transcription_usageScalarWhereWithAggregatesInput[]
+    NOT?: transcription_usageScalarWhereWithAggregatesInput | transcription_usageScalarWhereWithAggregatesInput[]
+    ip?: StringWithAggregatesFilter<"transcription_usage"> | string
+    total?: IntWithAggregatesFilter<"transcription_usage"> | number
+    first_used?: DateTimeWithAggregatesFilter<"transcription_usage"> | Date | string
+  }
+
   export type medicalcenter_infoCreateInput = {
     center_name: string
     address?: string | null
@@ -19292,6 +20439,48 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
     center_id?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type transcription_usageCreateInput = {
+    ip: string
+    total?: number
+    first_used?: Date | string
+  }
+
+  export type transcription_usageUncheckedCreateInput = {
+    ip: string
+    total?: number
+    first_used?: Date | string
+  }
+
+  export type transcription_usageUpdateInput = {
+    ip?: StringFieldUpdateOperationsInput | string
+    total?: IntFieldUpdateOperationsInput | number
+    first_used?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type transcription_usageUncheckedUpdateInput = {
+    ip?: StringFieldUpdateOperationsInput | string
+    total?: IntFieldUpdateOperationsInput | number
+    first_used?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type transcription_usageCreateManyInput = {
+    ip: string
+    total?: number
+    first_used?: Date | string
+  }
+
+  export type transcription_usageUpdateManyMutationInput = {
+    ip?: StringFieldUpdateOperationsInput | string
+    total?: IntFieldUpdateOperationsInput | number
+    first_used?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type transcription_usageUncheckedUpdateManyInput = {
+    ip?: StringFieldUpdateOperationsInput | string
+    total?: IntFieldUpdateOperationsInput | number
+    first_used?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -20133,6 +21322,32 @@ export namespace Prisma {
 
   export type demo_sessionSumOrderByAggregateInput = {
     center_id?: SortOrder
+  }
+
+  export type transcription_usageCountOrderByAggregateInput = {
+    ip?: SortOrder
+    total?: SortOrder
+    first_used?: SortOrder
+  }
+
+  export type transcription_usageAvgOrderByAggregateInput = {
+    total?: SortOrder
+  }
+
+  export type transcription_usageMaxOrderByAggregateInput = {
+    ip?: SortOrder
+    total?: SortOrder
+    first_used?: SortOrder
+  }
+
+  export type transcription_usageMinOrderByAggregateInput = {
+    ip?: SortOrder
+    total?: SortOrder
+    first_used?: SortOrder
+  }
+
+  export type transcription_usageSumOrderByAggregateInput = {
+    total?: SortOrder
   }
 
   export type demo_sessionCreateNestedOneWithoutMedicalcenter_infoInput = {
