@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Menu, Mic, Trash2 } from "lucide-react";
+import { Menu, Trash2 } from "lucide-react";
 import styles from "./mobile.module.css";
 
 export type MobileTutorialProps = {
@@ -57,8 +57,9 @@ export default function MobileTutorial({ open, onFinish }: MobileTutorialProps) 
             </h2>
             <p className={styles.tutorialBody}>
               This short tour explains how to capture room access and charting
-              notes with the three main controls. You can skip anytime using the
-              link above.
+              notes with the three main controls. On mobile web,{" "}
+              <strong>tap to start and tap again to stop</strong> — that pattern avoids
+              browser touch quirks. You can skip anytime using the link above.
             </p>
           </>
         ) : null}
@@ -71,20 +72,25 @@ export default function MobileTutorial({ open, onFinish }: MobileTutorialProps) 
             >
               Green button — room information
             </h2>
-            <div className={styles.tutorialDemoRow}>
-              <div
-                className={`${styles.tutorialPulseWrap} ${styles.tutorialPulseGreen}`}
-              >
-                <div className={`icon-mic ${styles.tutorialMicIcon}`}>
-                  <Mic size={30} strokeWidth={2.25} aria-hidden />
-                </div>
+            <div className={styles.tutorialDemoCol}>
+              <div className={styles.tutorialWaveformDemoGreen}>
+                <span className={styles.waveform} aria-hidden>
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <span
+                      key={i}
+                      className={styles.waveformBar}
+                      style={{ animationDelay: `${i * 0.08}s` }}
+                    />
+                  ))}
+                </span>
               </div>
+              <p className={styles.tutorialListeningDemoGreen}>Listening…</p>
             </div>
             <p className={styles.tutorialBody}>
-              <strong>Hold</strong> the green button and say the room and bed.
-              For example -{" "}
+              <strong>Tap</strong> the green button once, say the room and bed (for example{" "}
               <q className={styles.tutorialQuote}>Room 311 Bed B</q> or{" "}
-              <q className={styles.tutorialQuote}>311 B</q>. Release to confirm.
+              <q className={styles.tutorialQuote}>311 B</q>), then <strong>tap green again</strong>{" "}
+              to stop. While you record, the button grows slightly and shows a moving waveform.
             </p>
           </>
         ) : null}
@@ -97,18 +103,23 @@ export default function MobileTutorial({ open, onFinish }: MobileTutorialProps) 
             >
               Red button — medical / charting notes
             </h2>
-            <div className={styles.tutorialDemoRow}>
-              <div
-                className={`${styles.tutorialPulseWrap} ${styles.tutorialPulseRed}`}
-              >
-                <div className={`icon-mic ${styles.tutorialMicIcon}`}>
-                  <Mic size={30} strokeWidth={2.25} aria-hidden />
-                </div>
+            <div className={styles.tutorialDemoCol}>
+              <div className={styles.tutorialWaveformDemoRed}>
+                <span className={styles.waveform} aria-hidden>
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <span
+                      key={i}
+                      className={styles.waveformBar}
+                      style={{ animationDelay: `${i * 0.08}s` }}
+                    />
+                  ))}
+                </span>
               </div>
+              <p className={styles.tutorialListeningDemoRed}>Listening…</p>
             </div>
             <p className={styles.tutorialBody}>
-              After recording the room, hold the <strong>red</strong> button and
-              dictate your note. It will appear on the dashboard instantly.
+              After the room is confirmed, <strong>tap red</strong> once to start your note, speak,
+              then <strong>tap red again</strong> to stop. Notes show up on the dashboard in real time.
             </p>
           </>
         ) : null}
@@ -157,7 +168,7 @@ export default function MobileTutorial({ open, onFinish }: MobileTutorialProps) 
         <strong>Tap ≡</strong> to see your assigned rooms, beds, and patients.
       </p>
       <p className={styles.tutorialCalloutEmphasis}>
-        Glance there first - it tells you exactly what to say when you hold the green button.
+        Glance there first — it tells you exactly what to say when you tap the green button.
       </p>
     </div>
   </>
@@ -172,9 +183,9 @@ export default function MobileTutorial({ open, onFinish }: MobileTutorialProps) 
               You are ready
             </h2>
             <p className={styles.tutorialBody}>
-              Remember: green first (room and bed), then red for notes. If something fails, read the
-              status line for the next step. Open the menu anytime to review your assignments or run
-              this tutorial again.
+              Remember: <strong>green first</strong> (room and bed, tap to start / tap to stop), then{" "}
+              <strong>red</strong> for notes the same way. If something fails, read the status line for the
+              next step. Open the menu anytime to review your assignments or run this tutorial again.
             </p>
             <p className={styles.tutorialBodyMuted}>
               Prefer to learn by doing? Use <strong>Skip tutorial</strong> above, or tap below to enter

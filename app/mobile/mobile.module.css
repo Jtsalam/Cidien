@@ -121,6 +121,21 @@
   margin: 16px 0;
 }
 
+.recordSlot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-height: 116px;
+  justify-content: flex-start;
+}
+
+.recordSlotSpacer {
+  display: block;
+  min-height: 1.125rem;
+  width: 1px;
+}
+
 .recordButton {
   width: 72px;
   height: 72px;
@@ -131,7 +146,8 @@
   justify-content: center;
   color: #ffffff;
   cursor: pointer;
-  transition: transform 0.15s ease, filter 0.2s ease;
+  transition: transform 0.15s ease, filter 0.2s ease, width 0.2s ease, height 0.2s ease, box-shadow 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .recordButton:hover {
@@ -151,6 +167,76 @@
 .recordButton[aria-disabled="true"]:hover {
   transform: none;
   filter: grayscale(0.4);
+}
+
+.recordButtonDimmed {
+  opacity: 0.28 !important;
+  pointer-events: none !important;
+  transform: none !important;
+}
+
+.recordButtonActiveGreen {
+  width: 88px !important;
+  height: 88px !important;
+  box-shadow:
+    0 0 0 8px rgba(22, 163, 74, 0.15),
+    0 0 0 16px rgba(22, 163, 74, 0.07);
+}
+
+.recordButtonActiveRed {
+  width: 88px !important;
+  height: 88px !important;
+  box-shadow:
+    0 0 0 8px rgba(220, 38, 38, 0.15),
+    0 0 0 16px rgba(220, 38, 38, 0.07);
+}
+
+.recordButtonAwaitingRoom {
+  opacity: 0.72;
+}
+
+.waveform {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 28px;
+}
+
+.waveformBar {
+  width: 3px;
+  border-radius: 2px;
+  background: #ffffff;
+  height: 8px;
+  animation: waveform-bounce 0.7s ease-in-out infinite;
+}
+
+@keyframes waveform-bounce {
+  0%,
+  100% {
+    height: 6px;
+  }
+  50% {
+    height: 22px;
+  }
+}
+
+.listeningLabelGreen {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #15803d;
+  letter-spacing: 0.02em;
+}
+
+.listeningLabelRed {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #b91c1c;
+  letter-spacing: 0.02em;
+}
+
+.legendItemDimmed {
+  opacity: 0.35;
 }
 
 .limitBanner {
@@ -249,7 +335,7 @@
 }
 
 .status {
-  margin-top: 16px;
+  margin-top: 0;
   padding: 10px 12px;
   min-height: 1.5rem;
   border-radius: 8px;
@@ -258,6 +344,11 @@
   font-weight: 500;
   font-size: 0.9rem;
   line-height: 1.55;
+}
+
+.statusArea {
+  margin: 12px 0 8px;
+  min-height: 3rem;
 }
 
 .statusMenuLink {
@@ -650,6 +741,54 @@
   display: flex;
   justify-content: center;
   margin: 16px 0 18px;
+}
+
+.tutorialDemoCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 16px 0 18px;
+  gap: 6px;
+}
+
+.tutorialWaveformDemoGreen {
+  width: 88px;
+  height: 88px;
+  border-radius: 9999px;
+  background: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 0 8px rgba(22, 163, 74, 0.15),
+    0 0 0 16px rgba(22, 163, 74, 0.07);
+}
+
+.tutorialWaveformDemoRed {
+  width: 88px;
+  height: 88px;
+  border-radius: 9999px;
+  background: #dc2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 0 8px rgba(220, 38, 38, 0.15),
+    0 0 0 16px rgba(220, 38, 38, 0.07);
+}
+
+.tutorialListeningDemoGreen {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #15803d;
+}
+
+.tutorialListeningDemoRed {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #b91c1c;
 }
 
 .tutorialMicIcon {

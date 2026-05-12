@@ -19,6 +19,17 @@ import { emitMobileConnected } from "@/lib/realtime/mobileSignal";
 
 const MOBILE_TUTORIAL_STORAGE_KEY = "cidien-mobile-tutorial-complete";
 const REPO_URL = "https://github.com/Jtsalam/Cidien";
+/** Room (green) recording auto-stops so silent/long clips do not run indefinitely. */
+const ROOM_RECORDING_AUTO_STOP_MS = 20_000;
+/** If transcript is longer than this, status line shows first N chars + ellipsis only. */
+const HEARD_STATUS_MAX_CHARS = 30;
+const HEARD_STATUS_TRUNCATE_LEN = 5;
+
+function formatHeardForStatus(raw: string): string {
+  const t = raw.replace(/"/g, "'").trim();
+  if (t.length <= HEARD_STATUS_MAX_CHARS) return t;
+  return `${t.slice(0, HEARD_STATUS_TRUNCATE_LEN)}…`;
+}
 
 class TranscriptionLimitError extends Error {
   repoUrl: string;
@@ -28,6 +39,14 @@ class TranscriptionLimitError extends Error {
     this.name = "TranscriptionLimitError";
     this.repoUrl = repoUrl;
     this.retryAt = retryAt;
+  }
+}
+
+/** Raised when transcription returns no usable text (e.g. silence or inaudible audio). */
+class EmptyTranscriptError extends Error {
+  constructor() {
+    super("EMPTY_TRANSCRIPT");
+    this.name = "EmptyTranscriptError";
   }
 }
 
@@ -102,6 +121,15 @@ type MenuAssignmentRow = {
   patient_label: string;
 };
 
+function pickRandomAssignmentExample(rows: MenuAssignmentRow[]): { long: string; short: string } | null {
+  if (!rows.length) return null;
+  const row = rows[Math.floor(Math.random() * rows.length)];
+  return {
+    long: `Room ${row.room_number} Bed ${row.bed_letter}`,
+    short: `${row.room_number} ${row.bed_letter}`,
+  };
+}
+
 function formatPatientLabel(patientName: string | undefined): string {
   const raw = (patientName ?? "").trim();
   if (!raw || raw.toLowerCase() === "unassigned") return "—";
@@ -139,6 +167,16 @@ function buildMenuAssignmentRows(
   return rows;
 }
 
+function WaveformBars() {
+  return (
+    <span className={styles.waveform} aria-hidden>
+      {[0, 1, 2, 3, 4].map((i) => (
+        <span key={i} className={styles.waveformBar} style={{ animationDelay: `${i * 0.08}s` }} />
+      ))}
+    </span>
+  );
+}
+
 export default function MobileRecorder() {
   // Role: useSearchParams is safe here because this component is wrapped in Suspense by page.tsx.
   const searchParams = useSearchParams();
@@ -158,10 +196,15 @@ export default function MobileRecorder() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [isRecording, setIsRecording] = useState<boolean>(false);
+  /** Idle, which color is actively recording, or upload/transcribe in flight after stop. */
+  type RecordingPhase = "idle" | "green" | "red" | "processing";
+  const [recordingPhase, setRecordingPhase] = useState<RecordingPhase>("idle");
   const [roomRecordingId, setRoomRecordingId] = useState<string>("");
   const [parsedRoomBed, setParsedRoomBed] = useState<ParsedRoomBed | null>(null);
   const [verifiedBedId, setVerifiedBedId] = useState<number | null>(null);
   const activeButtonRef = useRef<"green" | "red" | "">("");
+  const startInProgressRef = useRef(false);
+  const roomAutoStopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const recordingRealtimeRef = useRef<ReturnType<typeof subscribeToRecording> | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -182,8 +225,18 @@ export default function MobileRecorder() {
     if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(30);
   };
 
+  const clearRoomAutoStopTimer = () => {
+    if (roomAutoStopTimerRef.current != null) {
+      clearTimeout(roomAutoStopTimerRef.current);
+      roomAutoStopTimerRef.current = null;
+    }
+  };
+
   useEffect(() => {
-    return () => { unsubscribeChannel(recordingRealtimeRef.current); };
+    return () => {
+      clearRoomAutoStopTimer();
+      unsubscribeChannel(recordingRealtimeRef.current);
+    };
   }, []);
 
   useLayoutEffect(() => {
@@ -287,7 +340,7 @@ export default function MobileRecorder() {
         if (!cancelled) {
           setStaffId(staffIdParam);
           setStep("recording");
-          setStatus("Connected via QR code. Hold a button to start recording.");
+          setStatus("Connected via QR code. Tap green or red to record — tap again to stop.");
           await emitMobileConnected(sessionParam, staffIdParam);
         }
       } catch (err) {
@@ -316,7 +369,7 @@ export default function MobileRecorder() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Sign in failed");
       setStep("recording");
-      setStatus("Signed in. Hold a button to start recording.");
+      setStatus("Signed in. Tap green or red to record — tap again to stop.");
     } catch (loginError) {
       setError(loginError instanceof Error ? loginError.message : "Unable to sign in.");
     } finally {
@@ -342,8 +395,12 @@ export default function MobileRecorder() {
       if (color === "red" && blob.size > 0) {
         setStatus("Processing audio transcription");
       }
-      // Call through the ref so we always get the latest uploadRecording (fresh state closure).
-      await uploadRecordingRef.current(blob, color);
+      try {
+        // Call through the ref so we always get the latest uploadRecording (fresh state closure).
+        await uploadRecordingRef.current(blob, color);
+      } finally {
+        setRecordingPhase("idle");
+      }
     };
     mediaRecorderRef.current = mediaRecorder;
     return mediaRecorder;
@@ -392,8 +449,10 @@ export default function MobileRecorder() {
         data.retryAt ?? null,
       );
     }
-    if (!response.ok || !data.transcript) throw new Error(data.error || "Transcription failed");
-    return data.transcript;
+    if (!response.ok) throw new Error(data.error || "Transcription failed");
+    const trimmed = (data.transcript ?? "").trim();
+    if (!trimmed) throw new EmptyTranscriptError();
+    return trimmed;
   };
 
   const resolveBedId = async (roomNumber: string, bedLetter: string) => {
@@ -446,16 +505,17 @@ export default function MobileRecorder() {
         console.log("[MobileRecorder] GREEN — raw transcript:", roomTranscript);
         const parsed = parseRoomBedFromTranscript(roomTranscript);
         console.log("[MobileRecorder] GREEN — parsed room/bed:", parsed);
-        const heardSnippet = roomTranscript.replace(/"/g, "'").trim();
+        const heardForStatus = formatHeardForStatus(roomTranscript);
         if (!parsed) {
           setRoomRecordingId("");
           setParsedRoomBed(null);
           setVerifiedBedId(null);
           console.log("[MobileRecorder] GREEN — no room+bed parsed from transcript, denying");
-          setStatus(
-            `Couldn't identify a room — heard "${heardSnippet}". Try saying "Room 311 Bed B" or "311 B".`,
-            { showMenuLink: true },
-          );
+          const example = pickRandomAssignmentExample(nurseMenu.assignments);
+          const hint = example
+            ? `Try saying something like "${example.long}" or "${example.short}" (use one of your assigned rooms).`
+            : "Open the menu to see your assigned rooms, then try again.";
+          setStatus(`Couldn't identify a room — heard "${heardForStatus}". ${hint}`, { showMenuLink: true });
           return;
         }
 
@@ -467,7 +527,7 @@ export default function MobileRecorder() {
           setRoomRecordingId("");
           setParsedRoomBed(null);
           setVerifiedBedId(null);
-          setStatus(`Room Access Denied — heard "${heardSnippet}". Please try again.`, {
+          setStatus(`Room Access Denied — heard "${heardForStatus}". Please try again.`, {
             showMenuLink: true,
           });
           return;
@@ -488,7 +548,7 @@ export default function MobileRecorder() {
 
       if (!roomRecordingId || !parsedRoomBed || !verifiedBedId) {
         console.warn("[MobileRecorder] RED — missing room context:", { roomRecordingId, parsedRoomBed, verifiedBedId });
-        setStatus("Record the room first (green button).");
+        setStatus("Record room information first.");
         return;
       }
 
@@ -512,6 +572,10 @@ export default function MobileRecorder() {
         })
         .catch((e) => {
           console.error("Deferred transcription failed:", e);
+          if (e instanceof EmptyTranscriptError) {
+            setStatus("Audio not heard properly, please try again.");
+            return;
+          }
           if (e instanceof TranscriptionLimitError) {
             setTranscriptionLimit({ reached: true, retryAt: e.retryAt });
             setStatus(
@@ -532,6 +596,13 @@ export default function MobileRecorder() {
         setStatus("Demo transcription limit reached. Clone the repo to self-host with no limits.");
         return;
       }
+      if (error instanceof EmptyTranscriptError) {
+        setRoomRecordingId("");
+        setParsedRoomBed(null);
+        setVerifiedBedId(null);
+        setStatus("Audio not heard properly, please try again.", { showMenuLink: true });
+        return;
+      }
       setStatus(error instanceof Error ? error.message : "Audio workflow failed.");
     }
   };
@@ -540,12 +611,13 @@ export default function MobileRecorder() {
   uploadRecordingRef.current = uploadRecording;
 
   const startRecording = async (color: "green" | "red") => {
-    if (isRecording) return;
+    if (isRecording || recordingPhase === "processing" || startInProgressRef.current) return;
     if (transcriptionLimit.reached) {
       setStatus("Demo transcription limit reached. Clone the repo to self-host with no limits.");
       return;
     }
 
+    startInProgressRef.current = true;
     if (navigator.vibrate) navigator.vibrate(100);
 
     activeButtonRef.current = color;
@@ -553,33 +625,83 @@ export default function MobileRecorder() {
     try {
       const recorder = await initAudio();
       audioChunksRef.current = [];
+      clearRoomAutoStopTimer();
       recorder.start();
       setIsRecording(true);
+      setRecordingPhase(color);
       console.log("[MobileRecorder] recorder started — state:", recorder.state);
-      if (color === "green") setStatus("Recording room information...");
-      else if (parsedRoomBed) setStatus(`Charting to Room ${parsedRoomBed.roomNumber}, Bed ${parsedRoomBed.bedLetter}...`);
-      else setStatus("Charting note... (No room specified)");
+      if (color === "green") {
+        setStatus("Listening — say room and bed, then tap green again to stop.");
+        roomAutoStopTimerRef.current = setTimeout(() => {
+          roomAutoStopTimerRef.current = null;
+          const mr = mediaRecorderRef.current;
+          if (!mr || activeButtonRef.current !== "green") return;
+          if (mr.state === "recording" || mr.state === "paused") {
+            stopRecording();
+          }
+        }, ROOM_RECORDING_AUTO_STOP_MS);
+      } else if (parsedRoomBed) setStatus(`Listening — charting to Room ${parsedRoomBed.roomNumber}, Bed ${parsedRoomBed.bedLetter}. Tap red again to stop.`);
+      else setStatus("Listening — dictate your note, then tap red again to stop.");
     } catch (recordingError) {
+      clearRoomAutoStopTimer();
+      activeButtonRef.current = "";
+      setRecordingPhase("idle");
       setStatus(`Error accessing microphone: ${recordingError instanceof Error ? recordingError.message : "Microphone access failed."}`);
+    } finally {
+      startInProgressRef.current = false;
     }
   };
 
   const stopRecording = () => {
-    if (!isRecording || !mediaRecorderRef.current) return;
+    const mr = mediaRecorderRef.current;
+    if (!mr) return;
+    // Do not rely on React `isRecording` here — auto-stop runs from a timer created inside
+    // `startRecording`, where that state can still be stale in the closure.
+    if (mr.state !== "recording" && mr.state !== "paused") return;
 
+    clearRoomAutoStopTimer();
     if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
 
     console.log("[MobileRecorder] stopRecording — activeButtonRef:", activeButtonRef.current);
     const releasingColor = activeButtonRef.current;
-    mediaRecorderRef.current.stop();
+    setRecordingPhase("processing");
+    mr.stop();
     if (releasingColor !== "red") setStatus("Processing recording...");
     setIsRecording(false);
   };
 
   const clearStatus = () => {
+    if (recordingPhase !== "idle") return;
     setStatus("");
     setMenuOpen(false);
-    setIsRecording(false);
+  };
+
+  const handleGreenTap = () => {
+    if (transcriptionLimit.reached || recordingPhase === "processing") return;
+    if (recordingPhase === "green") {
+      stopRecording();
+      return;
+    }
+    if (recordingPhase === "red") return;
+    void startRecording("green");
+  };
+
+  const canRecordCharting =
+    Boolean(roomRecordingId) && Boolean(parsedRoomBed) && verifiedBedId != null;
+
+  const handleRedTap = () => {
+    if (transcriptionLimit.reached || recordingPhase === "processing") return;
+    if (recordingPhase === "red") {
+      stopRecording();
+      return;
+    }
+    if (recordingPhase === "green") return;
+    if (!canRecordCharting) {
+      setStatus("Record room information first.");
+      if (navigator.vibrate) navigator.vibrate(25);
+      return;
+    }
+    void startRecording("red");
   };
 
   return (
@@ -679,7 +801,15 @@ export default function MobileRecorder() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            <p className={styles.subtitle}>Hold a button to record</p>
+            <p className={styles.subtitle}>
+              {recordingPhase === "processing"
+                ? "Processing…"
+                : recordingPhase === "green"
+                  ? "Tap green again to stop"
+                  : recordingPhase === "red"
+                    ? "Tap red again to stop"
+                    : "Tap to start — tap again to stop"}
+            </p>
             {transcriptionLimit.reached ? (
               <div className={styles.limitBanner} role="alert" aria-live="polite">
                 <p className={styles.limitBannerTitle}>Demo transcription limit reached</p>
@@ -701,69 +831,130 @@ export default function MobileRecorder() {
                 </a>
               </div>
             ) : null}
+            <div className={styles.statusArea} role="status" aria-live="polite">
+              <p className={styles.status}>
+                {status}
+                {statusShowMenuLink ? (
+                  <>
+                    {" "}
+                    <button
+                      type="button"
+                      className={styles.statusMenuLink}
+                      onClick={openAssignmentsMenu}
+                      aria-label="Open menu to see your assigned rooms and profile"
+                    >
+                      Check menu for assigned rooms.
+                    </button>
+                  </>
+                ) : null}
+              </p>
+            </div>
             <div className={styles.buttonRow}>
-              <button
-                className={`${styles.recordButton} ${styles.green}`}
-                onMouseDown={() => startRecording("green")}
-                onMouseUp={stopRecording}
-                onTouchStart={() => startRecording("green")}
-                onTouchEnd={stopRecording}
-                disabled={transcriptionLimit.reached}
-                aria-disabled={transcriptionLimit.reached}
-                aria-label="Record room information"
-              >
-                <Mic size={30} />
-              </button>
-              <button
-                className={`${styles.recordButton} ${styles.red}`}
-                onMouseDown={() => startRecording("red")}
-                onMouseUp={stopRecording}
-                onTouchStart={() => startRecording("red")}
-                onTouchEnd={stopRecording}
-                disabled={transcriptionLimit.reached}
-                aria-disabled={transcriptionLimit.reached}
-                aria-label="Record patient note"
-              >
-                <Mic size={30} />
-              </button>
-              <button
-                className={`${styles.recordButton} ${styles.gray}`}
-                onClick={clearStatus}
-                aria-label="Clear status text"
-              >
-                <Trash2 size={28} />
-              </button>
+              <div className={styles.recordSlot}>
+                <button
+                  type="button"
+                  className={cn(
+                    styles.recordButton,
+                    styles.green,
+                    recordingPhase === "green" && styles.recordButtonActiveGreen,
+                    recordingPhase !== "idle" && recordingPhase !== "green" && styles.recordButtonDimmed,
+                  )}
+                  onClick={handleGreenTap}
+                  disabled={
+                    transcriptionLimit.reached ||
+                    recordingPhase === "processing" ||
+                    recordingPhase === "red"
+                  }
+                  aria-pressed={recordingPhase === "green"}
+                  aria-label={
+                    recordingPhase === "green"
+                      ? "Stop recording room information"
+                      : "Record room information"
+                  }
+                >
+                  {recordingPhase === "green" ? <WaveformBars /> : <Mic size={30} />}
+                </button>
+                {recordingPhase === "green" ? (
+                  <span className={styles.listeningLabelGreen}>Listening…</span>
+                ) : (
+                  <span className={styles.recordSlotSpacer} aria-hidden />
+                )}
+              </div>
+              <div className={styles.recordSlot}>
+                <button
+                  type="button"
+                  className={cn(
+                    styles.recordButton,
+                    styles.red,
+                    recordingPhase === "red" && styles.recordButtonActiveRed,
+                    recordingPhase !== "idle" && recordingPhase !== "red" && styles.recordButtonDimmed,
+                    recordingPhase === "idle" && !canRecordCharting && styles.recordButtonAwaitingRoom,
+                  )}
+                  onClick={handleRedTap}
+                  disabled={
+                    transcriptionLimit.reached ||
+                    recordingPhase === "processing" ||
+                    recordingPhase === "green"
+                  }
+                  aria-pressed={recordingPhase === "red"}
+                  aria-label={
+                    recordingPhase === "red" ? "Stop recording patient note" : "Record patient note"
+                  }
+                >
+                  {recordingPhase === "red" ? <WaveformBars /> : <Mic size={30} />}
+                </button>
+                {recordingPhase === "red" ? (
+                  <span className={styles.listeningLabelRed}>Listening…</span>
+                ) : (
+                  <span className={styles.recordSlotSpacer} aria-hidden />
+                )}
+              </div>
+              <div className={styles.recordSlot}>
+                <button
+                  type="button"
+                  className={cn(
+                    styles.recordButton,
+                    styles.gray,
+                    recordingPhase !== "idle" && styles.recordButtonDimmed,
+                  )}
+                  onClick={clearStatus}
+                  disabled={recordingPhase !== "idle"}
+                  aria-label="Clear status text"
+                >
+                  <Trash2 size={28} />
+                </button>
+                <span className={styles.recordSlotSpacer} aria-hidden />
+              </div>
             </div>
             <div className={styles.legend}>
-              <div className={styles.legendItem}>
+              <div
+                className={cn(
+                  styles.legendItem,
+                  recordingPhase !== "idle" && recordingPhase !== "green" && styles.legendItemDimmed,
+                )}
+              >
                 <span className={styles.dot} style={{ background: "#16a34a" }} />
-                Green button: record room information
+                Green: tap to record room and bed — tap again to stop
               </div>
-              <div className={styles.legendItem}>
+              <div
+                className={cn(
+                  styles.legendItem,
+                  recordingPhase !== "idle" && recordingPhase !== "red" && styles.legendItemDimmed,
+                )}
+              >
                 <span className={styles.dot} style={{ background: "#dc2626" }} />
-                Red button: chart patient information
+                Red: tap to chart a note — tap again to stop (after room is confirmed)
               </div>
-              <div className={styles.legendItem}>
+              <div
+                className={cn(
+                  styles.legendItem,
+                  recordingPhase !== "idle" && styles.legendItemDimmed,
+                )}
+              >
                 <span className={styles.dot} style={{ background: "#6b7280" }} />
-                Grey button: clear status text
+                Grey: clear status (available when not recording)
               </div>
             </div>
-            <p className={styles.status}>
-              {status}
-              {statusShowMenuLink ? (
-                <>
-                  {" "}
-                  <button
-                    type="button"
-                    className={styles.statusMenuLink}
-                    onClick={openAssignmentsMenu}
-                    aria-label="Open menu to see your assigned rooms and profile"
-                  >
-                    Check menu for assigned rooms.
-                  </button>
-                </>
-              ) : null}
-            </p>
             <MobileTutorial open={tutorialOpen} onFinish={completeTutorial} />
           </div>
         )}
