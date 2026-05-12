@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Github } from "lucide-react";
+import { useState } from "react";
+import { Github, Loader2 } from "lucide-react";
 
 /**
  * Global site header rendered by app/layout.tsx.
@@ -14,6 +15,28 @@ import { Github } from "lucide-react";
  * under /dashboard) and only hides it once StaffDashboard itself renders.
  */
 export default function SiteHeader() {
+  const [isStartingDemo, setIsStartingDemo] = useState(false);
+
+  const handleStartDemo = async () => {
+    try {
+      setIsStartingDemo(true);
+      const response = await fetch("/api/demo/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to start demo.");
+      }
+
+      window.location.href = data.redirectUrl || "/dashboard";
+    } catch (error) {
+      console.error("Failed to start demo:", error);
+      setIsStartingDemo(false);
+    }
+  };
+
   return (
     <header
       data-site-header
@@ -52,12 +75,21 @@ export default function SiteHeader() {
           <Link className="transition-colors hover:text-emerald-700" href="/#how-it-works">
             How it works
           </Link>
-          <Link
-            className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-emerald-700 transition-colors hover:bg-emerald-100"
-            href="/dashboard"
+          <button
+            type="button"
+            onClick={handleStartDemo}
+            disabled={isStartingDemo}
+            className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-emerald-700 transition-colors hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Get started
-          </Link>
+            {isStartingDemo ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+                Starting…
+              </>
+            ) : (
+              "Get started"
+            )}
+          </button>
         </nav>
       </div>
     </header>
