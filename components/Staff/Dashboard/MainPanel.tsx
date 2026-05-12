@@ -473,6 +473,7 @@ export default function MainPanel() {
             key={dashboardRefreshNonce}
             selectedRoom={selectedRoom}
             initialData={transcriptionCacheRef.current[cacheKeyForRoom(selectedRoom)] || []}
+            staffId={nurseId}
             onBedChange={setSelectedBed}
           />
         </>

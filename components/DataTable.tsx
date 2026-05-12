@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import EditEntryModal from "@/components/EditEntryModal"
 import { supabaseClient } from "@/lib/supabaseClient"
+import { getCookie } from "@/utils/getCookie"
 
 // Socket will be initialized inside the component
 
@@ -44,14 +45,21 @@ interface CachedData extends Array<RowData> {
   lastUpdated?: number
 }
 
+type AssignedRoomsBedsPayload = {
+  rooms?: Array<{
+    beds?: Array<{ bed_id?: number }>
+  }>
+}
+
 interface DataTableProps {
   selectedRoom?: string | null
   initialData?: RowData[]
+  staffId?: string
   onBedChange?: (bed: string) => void   // new
 }
 
 
-export default function DataTable({ selectedRoom, initialData, onBedChange, }: DataTableProps) {
+export default function DataTable({ selectedRoom, initialData, staffId, onBedChange, }: DataTableProps) {
   const [data, setData] = useState<RowData[]>([])
   // Role: Mirror of data state in a ref so loadTranscriptions can read current rows
   // without needing data in its useCallback deps (which would cause a fetch loop).
@@ -69,6 +77,9 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
   const [editSaving, setEditSaving] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | number | null>(null);
   const [deleteInFlight, setDeleteInFlight] = useState(false);
+  // Role: Gates the realtime subscription so it never reads assignedBedIdsRef
+  // before the staff member's assigned bed_ids have finished loading.
+  const [assignedBedIdsReady, setAssignedBedIdsReady] = useState(false);
   const tableEndRef = useRef<HTMLDivElement>(null);
   const cacheRef = useRef<Record<string, CachedData>>({})
   const fetchControllerRef = useRef<AbortController | null>(null)
@@ -76,6 +87,7 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
   const preloadedAudioRef = useRef<Map<string, HTMLAudioElement>>(new Map())
   const preloadedObjectUrlRef = useRef<Map<string, string>>(new Map())
   const prefetchPromisesRef = useRef<Map<string, Promise<void>>>(new Map())
+  const assignedBedIdsRef = useRef<Set<number>>(new Set())
   // Tracks row IDs already shown so subsequent loads can mark genuinely new rows.
   const knownIdsRef = useRef<Set<string | number>>(new Set())
   const newRowTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -112,6 +124,50 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
   useEffect(() => {
     dataRef.current = data
   }, [data])
+
+  // Role: Keep the realtime "processing" banner scoped to beds assigned to this staff member.
+  // assignedBedIdsReady is flipped after this resolves (success or failure) so the
+  // realtime subscription waits for the bed-id set before binding its handler.
+  useEffect(() => {
+    let cancelled = false
+    setAssignedBedIdsReady(false)
+    ;(async () => {
+      const resolvedStaffId = staffId?.trim() || getCookie("staff_Id")?.trim()
+      if (!resolvedStaffId) {
+        if (!cancelled) {
+          assignedBedIdsRef.current = new Set()
+          setAssignedBedIdsReady(true)
+        }
+        return
+      }
+
+      try {
+        const res = await fetch(`/api/staff/assigned-rooms-beds?nurseId=${encodeURIComponent(resolvedStaffId)}`)
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const body = (await res.json()) as AssignedRoomsBedsPayload
+        const ids = new Set<number>()
+        for (const room of body.rooms ?? []) {
+          for (const bed of room.beds ?? []) {
+            if (typeof bed.bed_id === "number") ids.add(bed.bed_id)
+          }
+        }
+        if (!cancelled) {
+          assignedBedIdsRef.current = ids
+          setAssignedBedIdsReady(true)
+        }
+      } catch (error) {
+        console.warn("Failed to load assigned bed ids for realtime filtering", error)
+        if (!cancelled) {
+          assignedBedIdsRef.current = new Set()
+          setAssignedBedIdsReady(true)
+        }
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [staffId])
 
   // Role: Resolve demo session id for Supabase Realtime filters (same logic as room_data creation).
   useEffect(() => {
@@ -444,8 +500,10 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
 
   // Role: Subscribe to room_data changes for the current demo session.
   // Catches INSERTs (new submission), UPDATEs (recording linked / approved).
+  // Waits for assignedBedIdsReady so the INSERT handler can never run against an
+  // empty bed-id set (which would silently suppress the processing banner).
   useEffect(() => {
-    if (!realtimeSessionId) {
+    if (!realtimeSessionId || !assignedBedIdsReady) {
       setIsConnected(false)
       return
     }
@@ -463,6 +521,20 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
           if (rowSession && rowSession !== realtimeSessionId) return
           console.log('[realtime] room_data change:', payload.eventType)
           if (payload.eventType === 'INSERT') {
+            const insertedBedId =
+              typeof row?.bed_id === 'number'
+                ? row.bed_id
+                : typeof row?.bed_id === 'string'
+                  ? Number.parseInt(row.bed_id, 10)
+                  : null
+            if (
+              insertedBedId == null ||
+              Number.isNaN(insertedBedId) ||
+              !assignedBedIdsRef.current.has(insertedBedId)
+            ) {
+              reloadRef.current()
+              return
+            }
             // New room_data row — transcript not ready yet. Mark as pending and show
             // the banner. The Recording UPDATE triggers the reload that clears it.
             pendingTranscriptionRef.current = true
@@ -490,7 +562,7 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
       })
 
     return () => { supabaseClient.removeChannel(channel) }
-  }, [realtimeSessionId])
+  }, [realtimeSessionId, assignedBedIdsReady])
 
   // Role: Subscribe to Recording table UPDATEs to catch transcript completion.
   // When transcription finishes, the backend updates Recording.transcript and this fires.
