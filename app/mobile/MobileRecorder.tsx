@@ -340,7 +340,7 @@ export default function MobileRecorder() {
         if (!cancelled) {
           setStaffId(staffIdParam);
           setStep("recording");
-          setStatus("Connected via QR code. Tap green or red to record — tap again to stop.");
+          setStatus("Connected via QR code. Tap green or red mic to record - tap again to stop.");
           await emitMobileConnected(sessionParam, staffIdParam);
         }
       } catch (err) {
@@ -808,7 +808,7 @@ export default function MobileRecorder() {
                   ? "Tap green again to stop"
                   : recordingPhase === "red"
                     ? "Tap red again to stop"
-                    : "Tap to start — tap again to stop"}
+                    : "Tap to start - tap again to stop"}
             </p>
             {transcriptionLimit.reached ? (
               <div className={styles.limitBanner} role="alert" aria-live="polite">
@@ -934,7 +934,7 @@ export default function MobileRecorder() {
                 )}
               >
                 <span className={styles.dot} style={{ background: "#16a34a" }} />
-                Green: tap to record room and bed — tap again to stop
+                Green: tap to record room and bed - tap again to stop
               </div>
               <div
                 className={cn(
@@ -943,7 +943,7 @@ export default function MobileRecorder() {
                 )}
               >
                 <span className={styles.dot} style={{ background: "#dc2626" }} />
-                Red: tap to chart a note — tap again to stop (after room is confirmed)
+                Red: tap to chart a note - tap again to stop (after room is confirmed)
               </div>
               <div
                 className={cn(
@@ -952,7 +952,7 @@ export default function MobileRecorder() {
                 )}
               >
                 <span className={styles.dot} style={{ background: "#6b7280" }} />
-                Grey: clear status (available when not recording)
+                Grey: clear status
               </div>
             </div>
             <MobileTutorial open={tutorialOpen} onFinish={completeTutorial} />

@@ -58,8 +58,7 @@ export default function MobileTutorial({ open, onFinish }: MobileTutorialProps) 
             <p className={styles.tutorialBody}>
               This short tour explains how to capture room access and charting
               notes with the three main controls. On mobile web,{" "}
-              <strong>tap to start and tap again to stop</strong> — that pattern avoids
-              browser touch quirks. You can skip anytime using the link above.
+              <strong>tap to start and tap again to stop</strong>.You can skip anytime using the link above.
             </p>
           </>
         ) : null}
@@ -70,7 +69,7 @@ export default function MobileTutorial({ open, onFinish }: MobileTutorialProps) 
               id="mobile-tutorial-title"
               className={styles.tutorialHeading}
             >
-              Green button — room information
+              Green button - room information
             </h2>
             <div className={styles.tutorialDemoCol}>
               <div className={styles.tutorialWaveformDemoGreen}>
@@ -90,7 +89,7 @@ export default function MobileTutorial({ open, onFinish }: MobileTutorialProps) 
               <strong>Tap</strong> the green button once, say the room and bed (for example{" "}
               <q className={styles.tutorialQuote}>Room 311 Bed B</q> or{" "}
               <q className={styles.tutorialQuote}>311 B</q>), then <strong>tap green again</strong>{" "}
-              to stop. While you record, the button grows slightly and shows a moving waveform.
+              to stop.
             </p>
           </>
         ) : null}
@@ -101,7 +100,7 @@ export default function MobileTutorial({ open, onFinish }: MobileTutorialProps) 
               id="mobile-tutorial-title"
               className={styles.tutorialHeading}
             >
-              Red button — medical / charting notes
+              Red button - medical / charting notes
             </h2>
             <div className={styles.tutorialDemoCol}>
               <div className={styles.tutorialWaveformDemoRed}>
@@ -168,7 +167,7 @@ export default function MobileTutorial({ open, onFinish }: MobileTutorialProps) 
         <strong>Tap ≡</strong> to see your assigned rooms, beds, and patients.
       </p>
       <p className={styles.tutorialCalloutEmphasis}>
-        Glance there first — it tells you exactly what to say when you tap the green button.
+        Glance there first - it tells you exactly what to say when you tap the green button.
       </p>
     </div>
   </>
