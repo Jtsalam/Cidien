@@ -4,8 +4,9 @@ import { useEffect, useState, useRef, useMemo, useCallback } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Play, Pause, Loader2, Database, Mic, Wifi, WifiOff, Bed, Edit, Trash2, Save, XCircle, MoreVertical } from "lucide-react"
+import { Play, Pause, Loader2, Database, Mic, Wifi, WifiOff, Bed, Edit, Trash2, MoreVertical } from "lucide-react"
 import * as Tooltip from "@radix-ui/react-tooltip"
+import { toast } from "sonner"
 import { Button } from "./ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {
@@ -17,6 +18,7 @@ import {
   AlertDialogDescription,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog"
+import EditEntryModal from "@/components/EditEntryModal"
 import { supabaseClient } from "@/lib/supabaseClient"
 
 // Socket will be initialized inside the component
@@ -30,6 +32,8 @@ interface RowData {
   column4: string
   /** Stable bed identifier for filtering; column1 may be room transcript text. */
   bedLetter?: string | null
+  roomNumber?: number | string | null
+  patientName?: string | null
   noteRecordingId?: string | null
   roomRecordingId?: string | null
   id?: string | number
@@ -61,7 +65,8 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
   const [isConnected, setIsConnected] = useState(false)
   const [loading, setLoading] = useState(true)
   const [editingRowId, setEditingRowId] = useState<string | number | null>(null);
-  const [editedNote, setEditedNote] = useState<string>('');
+  const [editingInitialNote, setEditingInitialNote] = useState<string>('');
+  const [editSaving, setEditSaving] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | number | null>(null);
   const [deleteInFlight, setDeleteInFlight] = useState(false);
   const tableEndRef = useRef<HTMLDivElement>(null);
@@ -240,29 +245,42 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
     handlePlay(audioUrl, index)
   }, [handlePlay])
 
-  const handleSaveEdit = async (rowId: string | number) => {
+  const editingRow = editingRowId != null ? data.find((r) => r.id === editingRowId) : undefined;
+
+  const closeEditModal = useCallback(() => {
+    if (editSaving) return;
+    setEditingRowId(null);
+    setEditingInitialNote('');
+  }, [editSaving]);
+
+  const handleSaveEdit = useCallback(async (note: string) => {
+    if (editingRowId == null) return;
+    const rowId = editingRowId;
+    setEditSaving(true);
     try {
       const response = await fetch(`/api/staff/transcriptions/${rowId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ patient_note: editedNote }),
+        body: JSON.stringify({ patient_note: note }),
       });
 
       if (!response.ok) {
         throw new Error('Failed to save changes.');
       }
 
-      // Update local state with the saved note (functional update avoids stale closure)
       setData((prev) =>
-        prev.map((row) => (row.id === rowId ? { ...row, column4: editedNote } : row)),
+        prev.map((row) => (row.id === rowId ? { ...row, column4: note } : row)),
       );
+      toast.success('Note saved successfully.');
+      setEditingRowId(null);
+      setEditingInitialNote('');
     } catch (error) {
       console.error("Error saving edit:", error);
-      // Optionally, show an error message to the user
+      toast.error(error instanceof Error ? error.message : 'Failed to save note.');
     } finally {
-      setEditingRowId(null);
+      setEditSaving(false);
     }
-  };
+  }, [editingRowId]);
 
   const pendingDeleteRow = deleteTargetId != null ? data.find((r) => r.id === deleteTargetId) : undefined;
 
@@ -757,69 +775,41 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
                         <TableCell className={row.isNew ? "font-medium" : ""}>{row.column2}</TableCell>
                         <TableCell className={row.isNew ? "font-medium" : ""}>{row.column3}</TableCell>
                         <TableCell className={row.isNew ? "font-medium" : ""}>
-                          {editingRowId === row.id ? (
-                            <textarea
-                              value={editedNote}
-                              onChange={(e) => setEditedNote(e.target.value)}
-                              className="w-full p-2 border rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                              rows={3}
-                              autoFocus
-                            />
-                          ) : (
-                            <>
-                              {row.column4}
-                              {row.isNew && (
-                                <Badge variant="secondary" className="ml-2 text-xs bg-emerald-100 text-emerald-800">
-                                  New
-                                </Badge>
-                              )}
-                            </>
+                          {row.column4}
+                          {row.isNew && (
+                            <Badge variant="secondary" className="ml-2 text-xs bg-emerald-100 text-emerald-800">
+                              New
+                            </Badge>
                           )}
                         </TableCell>
                         <TableCell className="text-right">
-                          {editingRowId === row.id ? (
-                            <div className="flex items-center justify-end space-x-2">
-                              <Tooltip.Root>
-                                <Tooltip.Trigger asChild>
-                                  <Button size="icon" variant="ghost" onClick={() => handleSaveEdit(row.id!)}>
-                                    <Save className="w-4 h-4 text-emerald-600" />
-                                  </Button>
-                                </Tooltip.Trigger>
-                                <Tooltip.Content className="bg-gray-800 text-white px-2 py-1 text-xs rounded shadow-md z-50">Save</Tooltip.Content>
-                              </Tooltip.Root>
-                              <Tooltip.Root>
-                                <Tooltip.Trigger asChild>
-                                  <Button size="icon" variant="ghost" onClick={() => setEditingRowId(null)}>
-                                  <XCircle className="w-4 h-4 text-gray-500" />
-                                  </Button>
-                                </Tooltip.Trigger>
-                                <Tooltip.Content className="bg-gray-800 text-white px-2 py-1 text-xs rounded shadow-md z-50">Cancel</Tooltip.Content>
-                              </Tooltip.Root>
-                            </div>
-                          ) : (
-                            <div className="opacity-0 group-hover:opacity-100 transition-opacity flex justify-end">
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="icon">
-                                    <MoreVertical className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="z-[200]">
-                                  <DropdownMenuItem onClick={() => { setEditingRowId(row.id!); setEditedNote(row.column4); }}>
-                                    <Edit className="mr-2 h-4 w-4" />
-                                    <span>Edit</span>
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem
-                                    onClick={() => setDeleteTargetId(row.id!)}
-                                    className="text-red-600"
-                                  >
-                                    <Trash2 className="mr-2 h-4 w-4" />
-                                    <span>Delete</span>
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
-                          )}
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity flex justify-end">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="z-[200]">
+                                <DropdownMenuItem
+                                  onClick={() => {
+                                    setEditingRowId(row.id!);
+                                    setEditingInitialNote(row.column4);
+                                  }}
+                                >
+                                  <Edit className="mr-2 h-4 w-4" />
+                                  <span>Edit</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => setDeleteTargetId(row.id!)}
+                                  className="text-red-600"
+                                >
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  <span>Delete</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))
@@ -875,6 +865,19 @@ export default function DataTable({ selectedRoom, initialData, onBedChange, }: D
           </CardContent>
         </Card>
       </div>
+
+      <EditEntryModal
+        open={editingRowId !== null}
+        date={editingRow?.column2 ?? ''}
+        timestamp={editingRow?.column3 ?? ''}
+        roomNumber={editingRow?.roomNumber ?? null}
+        bedLetter={editingRow?.bedLetter ?? null}
+        patientName={editingRow?.patientName ?? null}
+        initialNote={editingInitialNote}
+        saving={editSaving}
+        onCancel={closeEditModal}
+        onSave={handleSaveEdit}
+      />
 
       <AlertDialog open={deleteTargetId !== null} onOpenChange={(open) => !open && closeDeleteDialog()}>
         <AlertDialogContent>

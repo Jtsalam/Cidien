@@ -83,6 +83,11 @@ export async function GET() {
                 room_number: true,
               },
             },
+            patient_info: {
+              select: {
+                patient_name: true,
+              },
+            },
           },
         },
       },
@@ -101,6 +106,8 @@ export async function GET() {
       return {
         id: item.id,
         bedLetter: item.bed_info.bed_letter,
+        roomNumber: item.bed_info.room_info.room_number,
+        patientName: item.bed_info.patient_info?.patient_name ?? null,
         noteRecordingId: item.noteRecordingId,
         roomRecordingId: item.roomRecordingId,
         audioUrl: item.noteRecording?.audioPath ? audioPathToUrl(item.noteRecording.audioPath) : null,
