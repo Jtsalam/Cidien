@@ -611,7 +611,7 @@ export default function MobileRecorder() {
       setIsRecording(true);
       setRecordingPhase(color);
       if (color === "green") {
-        setStatus("Listening — say room and bed, then tap green again to stop.");
+        setStatus("Listening - say room and bed, then tap green again to stop.");
         roomAutoStopTimerRef.current = setTimeout(() => {
           roomAutoStopTimerRef.current = null;
           const mr = mediaRecorderRef.current;
@@ -620,8 +620,8 @@ export default function MobileRecorder() {
             stopRecording();
           }
         }, ROOM_RECORDING_AUTO_STOP_MS);
-      } else if (parsedRoomBed) setStatus(`Listening — charting to Room ${parsedRoomBed.roomNumber}, Bed ${parsedRoomBed.bedLetter}. Tap red again to stop.`);
-      else setStatus("Listening — dictate your note, then tap red again to stop.");
+      } else if (parsedRoomBed) setStatus(`Listening - charting to Room ${parsedRoomBed.roomNumber}, Bed ${parsedRoomBed.bedLetter}. Tap red again to stop.`);
+      else setStatus("Listening - dictate your note, then tap red again to stop.");
     } catch (recordingError) {
       clearRoomAutoStopTimer();
       activeButtonRef.current = "";
