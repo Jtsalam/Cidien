@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Cidien",
-  description: "Charting Device for Nurses — AI-powered bedside documentation.",
+  description: "Charting Device for Nurses. AI-powered bedside documentation.",
   icons: {
     icon: [{ url: "/Cidien.svg", type: "image/svg+xml" }],
     shortcut: "/Cidien.svg",
