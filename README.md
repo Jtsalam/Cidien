@@ -31,8 +31,7 @@ Cidien is a clinical charting workflow for nurses and care teams that combines m
 ### Demo Video
 
 <!-- TODO: Add demo video link or embed -->
-_Add demo video here_
-
+https://github.com/user-attachments/assets/b3e1647a-c3a8-4c2b-999c-405aca16c3fa
 ### Screenshots
 
 <table>
