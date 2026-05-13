@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
-import { Mic, FileText, Users, Zap, CheckCircle, Clock, Loader2, PlayCircle } from "lucide-react"
+import { Mic, FileText, Users, Zap, CheckCircle, Clock, Loader2, PlayCircle, MonitorSmartphone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export default function LandingPage() {
@@ -85,6 +85,11 @@ export default function LandingPage() {
                   </Button>
                 </Link>
               </div>
+
+              <p className="flex items-center gap-2 text-sm text-gray-500">
+                <MonitorSmartphone className="w-4 h-4 text-emerald-600" aria-hidden="true" />
+                Best experienced on desktop + phone
+              </p>
 
             </div>
 

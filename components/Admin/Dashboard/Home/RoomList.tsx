@@ -131,8 +131,6 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
     nurseId: number | null;
     assignToAllBeds: boolean;
   }) => {
-    console.log('Saving data:', data);
-  
     try {
       const response = await fetch('/api/staff/RoomMngr/assign-bed', {
         method: 'POST',

@@ -407,14 +407,11 @@ export default function DataTable({ selectedRoom, initialData, staffId, onBedCha
       let transcriptionsUrl: string
       if (roomFilter) {
         transcriptionsUrl = `/api/staff/transcriptions-by-room?room=${encodeURIComponent(roomFilter)}`
-        console.log(`Loading transcriptions for room: ${roomFilter}`)
       } else {
         // Use Next API which reads cookie server-side
         transcriptionsUrl = '/api/staff/transcriptions'
-        console.log('Loading all transcriptions via Next API')
       }
 
-      console.log(`Fetching from: ${transcriptionsUrl}`)
       const response = await fetch(transcriptionsUrl, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -428,7 +425,6 @@ export default function DataTable({ selectedRoom, initialData, staffId, onBedCha
       }
 
       const json = await response.json()
-      console.log(`Successfully loaded ${json.length} transcriptions for ${roomFilter ? `room ${roomFilter}` : 'all rooms'}`)
 
       // Treat the API response as the source of truth — no deduplication.
       // Deduplication was filtering out updated rows and blocking realtime refreshes.
@@ -455,7 +451,6 @@ export default function DataTable({ selectedRoom, initialData, staffId, onBedCha
       const dataWithTimestamp = processedData as CachedData
       dataWithTimestamp.lastUpdated = Date.now()
       cacheRef.current[cacheKey] = dataWithTimestamp
-      console.log('[loadTranscriptions] setData — rows:', processedData.length, 'new:', processedData.filter((r: RowData) => r.isNew).length)
       setData(processedData)
       preloadForDataset(processedData)
       setLoading(false)
@@ -493,7 +488,6 @@ export default function DataTable({ selectedRoom, initialData, staffId, onBedCha
       const room = selectedRoomRef.current
       const cacheKey = room ? `room:${room}` : 'all'
       delete cacheRef.current[cacheKey]
-      console.log('[reload] calling loadTranscriptions — room:', room ?? 'all')
       void loadTranscriptions(room || undefined)
     }, 300)
   }
@@ -519,7 +513,6 @@ export default function DataTable({ selectedRoom, initialData, staffId, onBedCha
           const row = (payload.new ?? payload.old) as Record<string, unknown> | undefined
           const rowSession = row?.sessionId as string | undefined
           if (rowSession && rowSession !== realtimeSessionId) return
-          console.log('[realtime] room_data change:', payload.eventType)
           if (payload.eventType === 'INSERT') {
             const insertedBedId =
               typeof row?.bed_id === 'number'
@@ -554,7 +547,6 @@ export default function DataTable({ selectedRoom, initialData, staffId, onBedCha
         },
       )
       .subscribe((status) => {
-        console.log('[realtime] room_data channel status:', status)
         if (status === 'SUBSCRIBED') setIsConnected(true)
         if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
           setIsConnected(false)
@@ -572,15 +564,12 @@ export default function DataTable({ selectedRoom, initialData, staffId, onBedCha
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'recording' },
-        (payload) => {
+        () => {
           // transcript is undefined when REPLICA IDENTITY is not FULL — reload regardless.
-          console.log('[realtime] Recording updated — id:', payload.new?.id, 'transcript present:', !!payload.new?.transcript)
           reloadRef.current()
         },
       )
-      .subscribe((status) => {
-        console.log('[realtime] Recording channel status:', status)
-      })
+      .subscribe()
 
     return () => { supabaseClient.removeChannel(channel) }
   }, [])

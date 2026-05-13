@@ -33,9 +33,7 @@ export function subscribeMobileConnected(
         }
       },
     )
-    .subscribe((status) => {
-      console.log("[desktop] broadcast channel status:", status);
-    });
+    .subscribe();
 }
 
 // Role: Mobile page broadcasts once it has bypassed login and is ready.
@@ -49,7 +47,6 @@ export async function emitMobileConnected(
 
   await new Promise<void>((resolve) => {
     channel.subscribe((status) => {
-      console.log("[mobile] broadcast channel status:", status);
       if (status === "SUBSCRIBED") resolve();
     });
   });

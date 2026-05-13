@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { Github, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Github, Loader2, Menu, X } from "lucide-react";
 
 /**
  * Global site header rendered by app/layout.tsx.
@@ -16,6 +16,7 @@ import { Github, Loader2 } from "lucide-react";
  */
 export default function SiteHeader() {
   const [isStartingDemo, setIsStartingDemo] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleStartDemo = async () => {
     try {
@@ -37,6 +38,18 @@ export default function SiteHeader() {
     }
   };
 
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  // Close on Escape so the menu doesn't trap keyboard users.
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsMobileMenuOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isMobileMenuOpen]);
+
   return (
     <header
       data-site-header
@@ -47,6 +60,7 @@ export default function SiteHeader() {
           href="/"
           aria-label="Cidien — Home"
           className="inline-flex items-center rounded-md outline-none ring-offset-2 transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-emerald-600"
+          onClick={closeMobileMenu}
         >
           <Image
             src="/Cidien.svg"
@@ -91,7 +105,70 @@ export default function SiteHeader() {
             )}
           </button>
         </nav>
+
+        <button
+          type="button"
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isMobileMenuOpen}
+          aria-controls="site-header-mobile-menu"
+          onClick={() => setIsMobileMenuOpen((open) => !open)}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-md text-gray-700 transition-colors hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 md:hidden"
+        >
+          {isMobileMenuOpen ? <X className="h-5 w-5" aria-hidden /> : <Menu className="h-5 w-5" aria-hidden />}
+        </button>
       </div>
+
+      {isMobileMenuOpen && (
+        <div
+          id="site-header-mobile-menu"
+          className="absolute inset-x-0 top-full border-b border-gray-200/80 bg-white/95 shadow-md backdrop-blur supports-[backdrop-filter]:bg-white/85 md:hidden"
+        >
+          <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3 text-base font-medium text-gray-700">
+            <Link
+              onClick={closeMobileMenu}
+              className="rounded-lg px-3 py-3 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+              href="/#features"
+            >
+              Features
+            </Link>
+            <Link
+              onClick={closeMobileMenu}
+              className="rounded-lg px-3 py-3 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+              href="/#how-it-works"
+            >
+              How it works
+            </Link>
+            <Link
+              onClick={closeMobileMenu}
+              className="flex items-center gap-2 rounded-lg px-3 py-3 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+              href="https://github.com/Jtsalam/Cidien"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Github className="h-4 w-4" aria-hidden />
+              GitHub
+            </Link>
+            <button
+              type="button"
+              onClick={() => {
+                closeMobileMenu();
+                void handleStartDemo();
+              }}
+              disabled={isStartingDemo}
+              className="mt-1 inline-flex items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-700 transition-colors hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {isStartingDemo ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+                  Starting…
+                </>
+              ) : (
+                "Get started"
+              )}
+            </button>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

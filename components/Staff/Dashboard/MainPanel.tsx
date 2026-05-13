@@ -77,11 +77,9 @@ export default function MainPanel() {
     // fetch session info here
     const cookieOrg = getCookie("organization") ?? ""
     const demoOrgName = getCookie("demo_org_name") ?? ""
-    console.log("Organization from cookie:", cookieOrg)
     setDisplayName(demoOrgName ? decodeURIComponent(demoOrgName) : (orgMap[cookieOrg.trim()] ?? cookieOrg.trim()))
 
     const staffCookie = getCookie("staff_Id") ?? ""
-    console.log("Staff Id from cookie:", staffCookie)
     setNurseId(staffCookie.trim())
   }, [])
 
@@ -92,12 +90,10 @@ export default function MainPanel() {
       
       setIsLoadingRooms(true);
       try {
-        console.log(`Fetching assigned rooms for staff ID: ${nurseId}`);
         const response = await fetch('/api/staff/assigned-rooms');
-        
+
         if (response.ok) {
           const data = await response.json();
-          console.log(`Loaded ${data.rooms?.length || 0} assigned rooms:`, data.rooms);
           setAssignedRooms(data.rooms || []);
         } else {
           console.error('Failed to fetch assigned rooms:', response.status, response.statusText);
@@ -196,8 +192,6 @@ export default function MainPanel() {
       };
       if (!res.ok) throw new Error(result.error || 'Failed to approve notes');
 
-      console.log('Notes approved successfully:', result);
-
       const updated = result.updated ?? 0;
       toast.dismiss(loadingId);
       if (updated > 0) {
@@ -227,7 +221,6 @@ export default function MainPanel() {
   }, [selectedRoom, selectedBed, handleCloseApproveModal]);
 
   const handleRoomSelect = useCallback((room: string) => {
-    console.log(`Switching to room: ${room}`);
     setSelectedRoom(room);
     setShowRoomDropdown(false);
     // Warm cache for selected room and also keep 'all' warm
@@ -236,7 +229,6 @@ export default function MainPanel() {
   }, [prefetchTranscriptions]);
 
   const handleShowAllRooms = useCallback(() => {
-    console.log('Switching to all rooms');
     setSelectedRoom(null);
     setShowRoomDropdown(false);
     // Warm 'all' cache

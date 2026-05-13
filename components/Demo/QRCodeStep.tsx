@@ -4,8 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import { subscribeMobileConnected, unsubscribeChannel } from "@/lib/realtime/mobileSignal";
+import { isPhoneUserAgent } from "@/lib/isPhoneUserAgent";
+import { IS_PHONE_COOKIE } from "@/lib/constants";
+import { getCookie } from "@/utils/getCookie";
 import type { RealtimeChannel } from "@supabase/supabase-js";
-import { ArrowRight, QrCode, Smartphone } from "lucide-react";
+import { ArrowRight, Monitor, MonitorSmartphone, QrCode, Smartphone } from "lucide-react";
 
 type MobileToken = {
   sessionId: string;
@@ -24,9 +27,32 @@ export default function QRCodeStep({ onContinue }: Props) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [scanned, setScanned] = useState(false);
+  // Role: null while UA hasn't been read yet (SSR / first render); resolved to
+  // true/false after mount. Gates the QR token fetch so phones don't burn a
+  // demo credit on a step that's meant for desktop.
+  const [isMobileDevice, setIsMobileDevice] = useState<boolean | null>(null);
   const channelRef = useRef<RealtimeChannel | null>(null);
 
   useEffect(() => {
+    // Prefer the middleware's verdict (stamped on every page response) so this
+    // UI can never disagree with the /mobile routing rule about the same device.
+    // Fall back to navigator.userAgent only if the cookie is somehow missing
+    // (e.g. the page was served before middleware was deployed, or a stale tab).
+    const stamped = getCookie(IS_PHONE_COOKIE);
+    if (stamped === "1" || stamped === "0") {
+      setIsMobileDevice(stamped === "1");
+    } else {
+      setIsMobileDevice(isPhoneUserAgent(navigator.userAgent));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isMobileDevice === null) return;
+    if (isMobileDevice) {
+      setIsLoading(false);
+      return;
+    }
+
     let cancelled = false;
 
     async function load() {
@@ -85,9 +111,42 @@ export default function QRCodeStep({ onContinue }: Props) {
       unsubscribeChannel(channelRef.current);
       channelRef.current = null;
     };
-  }, [onContinue]);
+  }, [onContinue, isMobileDevice]);
 
-  if (isLoading) {
+  // Layer 3: phone-class device landed on the desktop QR step — redirect them
+  // verbally rather than rendering an unscannable QR code at their own screen.
+  if (isMobileDevice) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-emerald-50/40 p-6">
+        <div className="w-full max-w-md space-y-5 rounded-2xl border border-emerald-100 bg-white p-7 shadow-sm">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50">
+            <MonitorSmartphone className="h-6 w-6 text-emerald-600" aria-hidden="true" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+              This step is meant for your desktop
+            </h2>
+            <p className="text-sm leading-relaxed text-gray-600">
+              Open <span className="font-semibold text-gray-900">cidien.ca</span> on a computer,
+              then use your phone to scan the QR code it shows you. The two screens work together
+              to demo Cidien&apos;s charting flow.
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => {
+              window.location.href = "/";
+            }}
+          >
+            Back to home
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading || isMobileDevice === null) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-emerald-50/40">
         <div className="flex flex-col items-center gap-4">
@@ -126,11 +185,18 @@ export default function QRCodeStep({ onContinue }: Props) {
 
       <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 md:px-8">
         <section className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">Scan to start charting</h2>
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-100">
+            <Monitor className="h-3.5 w-3.5" aria-hidden="true" />
+            You&apos;re on desktop - perfect
+          </div>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
+            Now grab your phone and scan this code to start charting
+          </h2>
           <p className="mt-2 max-w-3xl text-sm text-gray-600 md:text-base">
-            Open your phone camera and scan this QR code. You will sign in as{" "}
+            You&apos;ll sign in as{" "}
             <span className="font-semibold text-gray-900">{token.staffName}</span> at{" "}
-            <span className="font-semibold text-gray-900">{token.hospitalName}</span>.
+            <span className="font-semibold text-gray-900">{token.hospitalName}</span>. Once your
+            phone connects, this screen turns into the live charting dashboard.
           </p>
         </section>
 
