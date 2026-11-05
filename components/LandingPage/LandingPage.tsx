@@ -9,6 +9,7 @@ import {
   FileText,
   Loader2,
   Lock,
+  FlaskConical,
   Mic,
   MonitorSmartphone,
   PlayCircle,
@@ -193,6 +194,14 @@ export default function LandingPage() {
             <p className="mt-5 flex items-center justify-center gap-2 text-sm text-gray-500">
               <MonitorSmartphone className="h-4 w-4 text-emerald-600" aria-hidden="true" />
               Best experienced on desktop + phone
+            </p>
+
+            <p className="mx-auto mt-4 inline-flex max-w-xl items-start gap-2 rounded-xl border border-amber-200/80 bg-amber-50/80 px-3.5 py-2 text-left text-xs leading-relaxed text-amber-900 sm:items-center">
+              <FlaskConical className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600 sm:mt-0" aria-hidden />
+              <span>
+                <strong className="font-semibold">Prototype, not a medical tool.</strong> Cidien explores what healthcare
+                tools could be. It isn&apos;t for real patient care or real patient data.
+              </span>
             </p>
           </div>
 
@@ -559,6 +568,18 @@ export default function LandingPage() {
                 Features
               </Link>
             </nav>
+          </div>
+          <div
+            id="disclaimer"
+            className="mb-8 flex gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4 text-sm leading-relaxed text-gray-400"
+          >
+            <FlaskConical className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" aria-hidden />
+            <p>
+              <span className="font-semibold text-gray-200">Disclaimer:</span> Cidien is a prototype built to explore what
+              healthcare documentation tools could look like. It is not a real medical device, has not been clinically
+              validated or approved by any regulator, and must not be used for patient care or with real patient
+              information. All hospitals, staff and patients in the demo are fictional.
+            </p>
           </div>
           <div className="border-t border-white/[0.08] pt-6">
             <p className="text-center text-xs text-gray-500">

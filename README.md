@@ -18,6 +18,9 @@
   <a href="https://cidien.ca"><img src="https://img.shields.io/badge/Live%20Demo-cidien.ca-10B981?style=for-the-badge" alt="Live Demo" /></a>
 </p>
 
+> [!WARNING]
+> **Cidien is a prototype, not a real medical tool.** It was built to explore what healthcare documentation tools could look like. It is not a medical device, has not been clinically validated or approved by any regulator, and must not be used for patient care or with real patient information. All hospitals, staff and patients in the demo are fictional.
+
 ## Why Cidien
 
 Cidien was inspired by a real complaint from nurses, especially in Saskatchewan: charting takes too much time and energy away from direct patient care. Existing systems like Cerner can be powerful but often feel complex and hard to adopt in fast-moving clinical environments. Cidien simplifies this workflow by letting nurses capture room-based notes through a user-friendly interface while transcriptions appear live on a dashboard; it is still evolving, but it is a strong step toward reducing documentation burden.
