@@ -57,13 +57,13 @@ export default function SelectOrganizationForm({ onSubmit }: Props) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-white flex justify-center items-center p-4">
-      <div className="bg-white p-8 rounded-xl shadow-xl border border-gray-200 text-center max-w-md w-full">
+      <div className="bg-white p-8 rounded-2xl shadow-card border border-slate-900/[0.07] text-center max-w-md w-full animate-fade-up">
         <div className="mb-8">
           {/* Cidien Logo */}
           <Link
             href="/"
             aria-label="Cidien — Home"
-            className="mb-6 inline-block rounded-md outline-none ring-offset-2 transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-emerald-600"
+            className="mb-6 inline-block rounded-md outline-none ring-offset-2 transition-transform duration-200 ease-spring hover:scale-105 focus-visible:ring-2 focus-visible:ring-emerald-600"
           >
             <Image
               src="/Cidien.svg"
@@ -74,7 +74,7 @@ export default function SelectOrganizationForm({ onSubmit }: Props) {
               className="mx-auto h-14 w-auto"
             />
           </Link>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-800 mb-2">Welcome Back</h1>
           <p className="text-gray-600 text-sm">Sign in to access your dashboard</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -87,7 +87,7 @@ export default function SelectOrganizationForm({ onSubmit }: Props) {
               name="option"
               value={organization}
               onChange={handleOrganizationChange}
-              className="w-full p-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors bg-white"
+              className="w-full p-3 border border-slate-900/15 rounded-lg text-base bg-white shadow-sm outline-none transition-[border-color,box-shadow] duration-150 ease-settle hover:border-slate-900/25 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
             >
               <option value="" disabled>Select your Organization</option>
               <option value="SGH">Starlane General Hospital</option>
@@ -111,19 +111,19 @@ export default function SelectOrganizationForm({ onSubmit }: Props) {
               value={staffId}
               onChange={(e) => setStaffId(e.target.value)}
               required
-              className="w-full p-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+              className="w-full p-3 border border-slate-900/15 rounded-lg text-base bg-white shadow-sm outline-none transition-[border-color,box-shadow] duration-150 ease-settle hover:border-slate-900/25 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
             />
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 animate-in fade-in-0 slide-in-from-top-1 duration-200">
               <p className="text-red-600 text-sm">{error}</p>
             </div>
           )}
           
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white text-base font-medium py-3 px-6 rounded-lg hover:from-emerald-700 hover:to-emerald-800 focus:ring-4 focus:ring-emerald-200 transition-all duration-200 shadow-md hover:shadow-lg"
+            className="w-full bg-emerald-600 text-white text-base font-medium py-3 px-6 rounded-lg outline-none shadow-[0_6px_16px_-6px_rgb(5_150_105/0.55)] transition-[background-color,box-shadow,transform] duration-150 ease-settle hover:bg-emerald-700 active:scale-[0.98] focus-visible:ring-4 focus-visible:ring-emerald-500/25"
           >
             Sign In
           </button>

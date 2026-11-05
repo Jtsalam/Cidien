@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { ChevronRight, DoorOpen, FileArchive } from 'lucide-react';
 import BedDetailsView from './BedDetailsView';
-import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface BedInfo {
   bed_letter: string;
@@ -27,7 +28,6 @@ const AssignedRoomsList: React.FC<AssignedRoomsListProps> = ({
   onClearNewBadgeForRoom,
 }) => {
   const [rooms, setRooms] = useState<RoomInfo[]>([]);
-  const [expandedRooms, setExpandedRooms] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedBed, setSelectedBed] = useState<{ room: string; bed: string } | null>(null);
@@ -50,25 +50,9 @@ const AssignedRoomsList: React.FC<AssignedRoomsListProps> = ({
       .finally(() => setLoading(false));
   }, [nurseId, selectedRoom]);
 
-  const toggleRoom = (room_number: string) => {
-    let expandedNow = false;
-    setExpandedRooms((prev) => {
-      const next = new Set(prev);
-      if (next.has(room_number)) {
-        next.delete(room_number);
-      } else {
-        next.add(room_number);
-        expandedNow = true;
-      }
-      return next;
-    });
-    // Must not call parent setState from inside setExpandedRooms updater — defer until after.
-    if (expandedNow) {
-      onClearNewBadgeForRoom?.(room_number);
-    }
-  };
-
   const handleBedClick = (roomNumber: string, bedLetter: string) => {
+    // Opening a bed counts as seeing the room's new approval.
+    onClearNewBadgeForRoom?.(roomNumber);
     setSelectedBed({ room: roomNumber, bed: bedLetter });
   };
 
@@ -87,60 +71,110 @@ const AssignedRoomsList: React.FC<AssignedRoomsListProps> = ({
     );
   }
 
+  const header = (
+    <div className="mb-6">
+      <p className="text-sm font-medium text-emerald-700">{selectedRoom ? `Room ${selectedRoom}` : 'All rooms'}</p>
+      <h1 className="mt-1 text-3xl font-bold tracking-tight text-gray-900">Archive</h1>
+      <p className="mt-1 text-gray-600">Approved notes, filed by room and bed. Pick a bed to see its reports.</p>
+    </div>
+  );
+
   if (loading) {
-    return <div className="p-6 text-gray-500">Loading assigned rooms...</div>;
+    return (
+      <div className="animate-fade-up">
+        {header}
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true" aria-label="Loading rooms">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="space-y-3 rounded-2xl border border-slate-900/[0.07] bg-white p-5 shadow-card">
+              <Skeleton className="h-6 w-28" />
+              <Skeleton className="h-12 w-full rounded-xl" />
+              <Skeleton className="h-12 w-full rounded-xl" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
-  if (error) {
-    return <div className="p-6 text-red-600">Error: {error}</div>;
-  }
-  if (rooms.length === 0) {
-    return <div className="p-6 text-gray-500">No assigned rooms or beds found.</div>;
+
+  if (error || rooms.length === 0) {
+    return (
+      <div className="animate-fade-up">
+        {header}
+        <div className="flex flex-col items-center rounded-3xl border border-slate-900/[0.07] bg-white px-6 py-16 text-center shadow-card">
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 ring-8 ring-emerald-50/50">
+            <FileArchive className="h-7 w-7 text-emerald-600" aria-hidden />
+          </span>
+          <p className="mt-5 text-lg font-semibold text-gray-900">
+            {error ? "We couldn't load your rooms" : 'No rooms assigned yet'}
+          </p>
+          <p className="mt-1 max-w-sm text-sm text-gray-500">
+            {error ?? 'Once you have bed assignments, their approved notes will be filed here.'}
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h2 className="text-lg font-semibold mb-4">Assigned Rooms & Beds</h2>
-      <div className="space-y-4">
-        {rooms.map((room) => (
-          <div key={room.room_number} className="border border-gray-200 rounded-lg overflow-hidden">
-            <button
-              onClick={() => toggleRoom(room.room_number)}
-              className="w-full px-4 py-3 text-left bg-gray-50 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-inset flex justify-between items-center gap-2"
+    <div className="animate-fade-up">
+      {header}
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {rooms.map((room, idx) => {
+          const isNew = roomsWithNewApproval?.has(room.room_number);
+          return (
+            <section
+              key={room.room_number}
+              className={`animate-fade-up rounded-2xl border bg-white p-5 shadow-card transition-shadow duration-200 ease-settle hover:shadow-card-hover ${
+                isNew ? 'border-emerald-300 ring-4 ring-emerald-100' : 'border-slate-900/[0.07]'
+              }`}
+              style={{ animationDelay: `${Math.min(idx, 8) * 40}ms` }}
             >
-              <span className="flex items-center flex-wrap gap-2 font-medium text-emerald-700">
-                Room {room.room_number}
-                {roomsWithNewApproval?.has(room.room_number) ? (
-                  <Badge className="bg-amber-500 text-white hover:bg-amber-600 border-0 shadow-sm">NEW</Badge>
-                ) : null}
-              </span>
-              <span className={`transition-transform shrink-0 ${expandedRooms.has(room.room_number) ? 'rotate-180' : ''}`}>▼</span>
-            </button>
-            {expandedRooms.has(room.room_number) && (
-              <div className="px-4 py-3 bg-white border-t border-gray-200">
-                {room.beds.length === 0 ? (
-                  <p className="text-sm text-gray-500">No beds assigned in this room.</p>
-                ) : (
-                  <ul className="space-y-2">
-                    {room.beds.map((bed) => (
-                      <li key={bed.bed_letter} className="flex items-center space-x-4">
-                        <button
-                          className="font-medium text-left text-emerald-700 hover:underline focus:outline-none transition-colors hover:text-emerald-900"
-                          onClick={() => handleBedClick(room.room_number, bed.bed_letter)}
-                        >
-                          Bed {bed.bed_letter}
-                        </button>
-                        <span className="text-gray-600">→</span>
-                        <span className="text-gray-700">
-                          {bed.patient_name || 'Unassigned'}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+                  <DoorOpen className="h-5 w-5" aria-hidden />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <h2 className="font-bold tracking-tight text-gray-900">Room {room.room_number}</h2>
+                  <p className="text-xs text-gray-500">
+                    {room.beds.length} bed{room.beds.length !== 1 ? 's' : ''}
+                  </p>
+                </div>
+                {isNew && (
+                  <span className="animate-pop rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                    New
+                  </span>
                 )}
               </div>
-            )}
-          </div>
-        ))}
+
+              {room.beds.length === 0 ? (
+                <p className="mt-4 text-sm text-gray-500">No beds assigned in this room.</p>
+              ) : (
+                <ul className="mt-4 space-y-1.5">
+                  {room.beds.map((bed) => (
+                    <li key={bed.bed_letter}>
+                      <button
+                        type="button"
+                        onClick={() => handleBedClick(room.room_number, bed.bed_letter)}
+                        className="group flex w-full items-center gap-3 rounded-xl bg-gray-50/80 px-3 py-2.5 text-left ring-1 ring-inset ring-slate-900/[0.04] transition-[background-color,box-shadow,transform] duration-150 ease-settle hover:bg-emerald-50 hover:ring-emerald-200 active:scale-[0.99]"
+                      >
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-sm font-bold text-emerald-700 shadow-sm ring-1 ring-slate-900/[0.06]">
+                          {bed.bed_letter}
+                        </span>
+                        <span className="min-w-0 flex-1 truncate text-sm font-medium text-gray-800">
+                          {bed.patient_name || 'Unassigned'}
+                        </span>
+                        <ChevronRight
+                          className="h-4 w-4 text-gray-400 transition-transform duration-150 ease-settle group-hover:translate-x-0.5 group-hover:text-emerald-600"
+                          aria-hidden
+                        />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          );
+        })}
       </div>
     </div>
   );

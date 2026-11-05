@@ -69,7 +69,7 @@ export default function MobileTutorial({ open, onFinish }: MobileTutorialProps) 
               id="mobile-tutorial-title"
               className={styles.tutorialHeading}
             >
-              Green button - room information
+              Room button (green) — room and bed
             </h2>
             <div className={styles.tutorialDemoCol}>
               <div className={styles.tutorialWaveformDemoGreen}>
@@ -100,7 +100,7 @@ export default function MobileTutorial({ open, onFinish }: MobileTutorialProps) 
               id="mobile-tutorial-title"
               className={styles.tutorialHeading}
             >
-              Red button - medical / charting notes
+              Note button (red) — charting notes
             </h2>
             <div className={styles.tutorialDemoCol}>
               <div className={styles.tutorialWaveformDemoRed}>
@@ -129,7 +129,7 @@ export default function MobileTutorial({ open, onFinish }: MobileTutorialProps) 
               id="mobile-tutorial-title"
               className={styles.tutorialHeading}
             >
-              Grey button — clear status
+              Clear button (grey) — reset status
             </h2>
             <div className={styles.tutorialDemoRow}>
               <div
@@ -194,17 +194,19 @@ export default function MobileTutorial({ open, onFinish }: MobileTutorialProps) 
         ) : null}
 
         <div className={styles.tutorialFooter}>
-          <span className={styles.tutorialStepHint}>
-            Step {step + 1} of {STEP_COUNT}
+          <span className={styles.tutorialDots} aria-label={`Step ${step + 1} of ${STEP_COUNT}`}>
+            {Array.from({ length: STEP_COUNT }, (_, i) => (
+              <span key={i} className={i === step ? styles.tutorialDotActive : styles.tutorialDot} aria-hidden />
+            ))}
           </span>
 
           {step > 0 && (
             <button
               type="button"
-              className={styles.tutorialPrimary}
+              className={styles.tutorialSecondary}
               onClick={goPrev}
             >
-              Prev
+              Back
             </button>
           )}
 

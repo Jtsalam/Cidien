@@ -34,8 +34,11 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
+      <div data-app-shell className="flex min-h-screen items-center justify-center bg-white">
+        <span className="relative flex h-12 w-12 items-center justify-center" role="status" aria-label="Loading">
+          <span className="absolute inset-0 animate-ping rounded-full bg-emerald-200/60" />
+          <span className="relative h-3 w-3 rounded-full bg-emerald-500" />
+        </span>
       </div>
     );
   }

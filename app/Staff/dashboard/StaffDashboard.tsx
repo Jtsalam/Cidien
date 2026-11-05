@@ -11,7 +11,7 @@ export default function Dashboard() {
           to hide the global SiteHeader while this dashboard is mounted. */}
       <div
         data-staff-dashboard
-        className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100"
+        className="min-h-screen bg-[#f6f8f7]"
       >
         <MainPanel />
         {/* <InactivityTracker /> */}

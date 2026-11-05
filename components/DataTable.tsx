@@ -1,10 +1,8 @@
 "use client"
 
-import { useEffect, useState, useRef, useMemo, useCallback } from "react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Play, Pause, Loader2, Database, Mic, Wifi, WifiOff, Bed, Edit, Trash2, MoreVertical } from "lucide-react"
+import { Fragment, useEffect, useState, useRef, useMemo, useCallback, type ReactNode } from "react"
+import { Play, Pause, Loader2, Mic, WifiOff, Edit, Trash2, MoreHorizontal, NotebookPen, DoorOpen, Users, Clock } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 import * as Tooltip from "@radix-ui/react-tooltip"
 import { toast } from "sonner"
 import { Button } from "./ui/button"
@@ -56,10 +54,21 @@ interface DataTableProps {
   initialData?: RowData[]
   staffId?: string
   onBedChange?: (bed: string) => void   // new
+  /** Human label for the current room filter, shown above the title. */
+  roomLabel?: string
+  /** Primary action rendered in the page header (e.g. Approve notes). */
+  headerAction?: ReactNode
+}
+
+function formatSynced(ms: number) {
+  const s = Math.max(0, Math.round(ms / 1000))
+  if (s < 5) return "just now"
+  if (s < 60) return `${s}s ago`
+  return `${Math.floor(s / 60)} min ago`
 }
 
 
-export default function DataTable({ selectedRoom, initialData, staffId, onBedChange, }: DataTableProps) {
+export default function DataTable({ selectedRoom, initialData, staffId, onBedChange, roomLabel, headerAction }: DataTableProps) {
   const [data, setData] = useState<RowData[]>([])
   // Role: Mirror of data state in a ref so loadTranscriptions can read current rows
   // without needing data in its useCallback deps (which would cause a fetch loop).
@@ -660,195 +669,219 @@ export default function DataTable({ selectedRoom, initialData, staffId, onBedCha
     return () => controller.abort()
   }, [selectedRoom])
 
+  // "Synced" ticker: when the feed last received data on this client.
+  const [syncedAt, setSyncedAt] = useState(() => Date.now())
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => { setSyncedAt(Date.now()) }, [data])
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 5000)
+    return () => clearInterval(t)
+  }, [])
+
+  const figures = useMemo(() => {
+    const rooms = new Set(processedData.map((r) => r.roomNumber).filter((v) => v != null && v !== ""))
+    const patients = new Set(processedData.map((r) => r.patientName).filter(Boolean))
+    const latest = processedData[0]
+    return [
+      { label: "Notes", value: processedData.length, sub: bedFilter !== "ALL" ? `Bed ${bedFilter}` : "In this view", Icon: NotebookPen },
+      { label: "Rooms", value: rooms.size, sub: "With notes", Icon: DoorOpen },
+      { label: "Patients", value: patients.size, sub: "Charted", Icon: Users },
+      { label: "Latest note", value: latest?.column3 ?? "—", sub: `Synced ${formatSynced(now - syncedAt)}`, Icon: Clock },
+    ]
+  }, [processedData, bedFilter, now, syncedAt])
+
   return (
-    <Tooltip.Provider>
-      <div className="p-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Database className="w-5 h-5 text-emerald-600" />
-                <span>
-                  {selectedRoom ? `Room ${selectedRoom} Transcriptions` : "All Rooms Transcriptions"}
+    <Tooltip.Provider delayDuration={300}>
+      <div className="animate-fade-up space-y-6">
+        {/* Page header */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-medium text-emerald-700">{roomLabel ?? (selectedRoom ? `Room ${selectedRoom}` : "All rooms")}</p>
+            <h1 className="mt-1 text-3xl font-bold tracking-tight text-gray-900">Live notes</h1>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            {isConnected ? (
+              <span className="inline-flex h-10 items-center gap-2 rounded-xl bg-emerald-50 px-3 text-sm font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200/70">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                </span>
+                Live
+              </span>
+            ) : (
+              <span className="inline-flex h-10 items-center gap-2 rounded-xl bg-amber-50 px-3 text-sm font-semibold text-amber-700 ring-1 ring-inset ring-amber-200/70">
+                <WifiOff className="h-4 w-4" aria-hidden />
+                Reconnecting…
+              </span>
+            )}
+            {headerAction}
+          </div>
+        </div>
+
+        {/* Figures */}
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {figures.map(({ label, value, sub, Icon }) => (
+            <div key={label} className="rounded-2xl border border-slate-900/[0.07] bg-white p-4 shadow-card">
+              <div className="flex items-center justify-between text-sm text-gray-500">
+                {label}
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                  <Icon className="h-4 w-4" aria-hidden />
                 </span>
               </div>
-              <div className="flex items-center space-x-3">
-                {selectedRoom && (
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-600"><Bed className="w-5 h-5 text-black" /></span>
-                    <div className="relative">
-                      <button
-                        className="px-3 py-1.5 text-sm border rounded-md bg-white hover:bg-gray-50"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          const menu = document.getElementById('bed-filter-menu')
-                          if (menu) {
-                            const isHidden = menu.getAttribute('data-open') !== 'true'
-                            menu.setAttribute('data-open', isHidden ? 'true' : 'false')
-                            menu.style.display = isHidden ? 'block' : 'none'
-                          }
-                        }}
-                        title="Filter by bed"
-                      >
-                        {bedFilter === 'ALL' ? 'All beds' : `Bed ${bedFilter}`}
-                      </button>
-                      <div
-                        id="bed-filter-menu"
-                        data-open="false"
-                        className="absolute right-0 mt-1 w-36 bg-white border rounded-md shadow z-20"
-                        style={{ display: 'none' }}
-                      >
-                        <button
-                          className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 ${bedFilter === 'ALL' ? 'font-semibold' : ''}`}
-                          onClick={() => {
-                            setBedFilter('ALL')
-                            const menu = document.getElementById('bed-filter-menu')
-                            if (menu) { menu.setAttribute('data-open', 'false'); (menu as HTMLElement).style.display = 'none' }
-                          }}
-                        >
-                          All beds
-                        </button>
-                        {bedOptions.map((b) => (
-                          <button
-                            key={b}
-                            className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 ${bedFilter === b ? 'font-semibold' : ''}`}
-                            onClick={() => {
-                              setBedFilter(b)
-                              const menu = document.getElementById('bed-filter-menu')
-                              if (menu) { menu.setAttribute('data-open', 'false'); (menu as HTMLElement).style.display = 'none' }
-                            }}
-                          >
-                            Bed {b}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {isReceiving && (
-                  <div className="flex items-center space-x-2 text-blue-600">
-                    <Mic className="w-4 h-4 animate-pulse" />
-                    <span className="text-sm font-medium">Processing...</span>
-                  </div>
-                )}
+              <p className="mt-1 text-2xl font-bold tabular-nums tracking-tight text-gray-900">{value}</p>
+              <p className="mt-0.5 truncate text-xs text-gray-500">{sub}</p>
+            </div>
+          ))}
+        </div>
 
-                <Badge
-                  variant={isConnected ? "default" : "destructive"}
-                  className={`flex items-center space-x-1 ${isConnected ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-100" : ""}`}
+        {/* Bed filter chips */}
+        {selectedRoom && bedOptions.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by bed">
+            {["ALL", ...bedOptions].map((b) => {
+              const active = bedFilter === b
+              return (
+                <button
+                  key={b}
+                  type="button"
+                  onClick={() => setBedFilter(b)}
+                  aria-pressed={active}
+                  className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-[background-color,color,box-shadow] duration-150 ease-settle active:scale-[0.97] ${
+                    active
+                      ? "bg-gray-900 text-white shadow-sm"
+                      : "bg-white text-gray-700 ring-1 ring-inset ring-slate-900/10 hover:ring-slate-900/20"
+                  }`}
                 >
-                  {isConnected ? (
-                    <>
-                      <Wifi className="w-3 h-3" />
-                      <span>Live</span>
-                    </>
-                  ) : (
-                    <>
-                      <WifiOff className="w-3 h-3" />
-                      <span>Reconnecting...</span>
-                    </>
-                  )}
-                </Badge>
+                  {b === "ALL" ? "All beds" : `Bed ${b}`}
+                </button>
+              )
+            })}
+          </div>
+        )}
+
+        {/* Feed */}
+        <section className="overflow-hidden rounded-3xl border border-slate-900/[0.07] bg-white shadow-card" aria-label="Notes">
+          {isReceiving && (
+            <div
+              className="flex animate-in items-center gap-4 border-b border-emerald-100 bg-gradient-to-r from-emerald-50 via-emerald-50/40 to-white px-5 py-4 fade-in-0 slide-in-from-top-2 duration-300 sm:px-6"
+              role="status"
+              aria-live="polite"
+            >
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center gap-[3px] rounded-xl bg-emerald-600 shadow-[0_8px_20px_-8px_rgb(5_150_105/0.7)]" aria-hidden>
+                {[55, 100, 70, 90].map((h, k) => (
+                  <span key={k} className="w-[3px] animate-wave rounded-full bg-white" style={{ height: `${h * 0.45}%`, animationDelay: `${k * 0.12}s` }} />
+                ))}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold text-emerald-900">Transcribing a new note…</p>
+                <div className="mt-2 space-y-1.5">
+                  <Skeleton className="h-2.5 w-4/5 max-w-md" />
+                  <Skeleton className="h-2.5 w-1/2 max-w-xs" />
+                </div>
               </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="rounded-md border max-h-96 overflow-y-auto">
-              <Table>
-                <TableHeader className="sticky top-0 bg-white z-10">
-                  <TableRow className="bg-gray-50">
-                    <TableHead className="font-semibold text-gray-700">Index</TableHead>
-                    <TableHead className="font-semibold text-gray-700">Date</TableHead>
-                    <TableHead className="font-semibold text-gray-700">Timestamp</TableHead>
-                    <TableHead className="font-semibold text-gray-700">Patient Note</TableHead>
-                    <TableHead className="w-24"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {loading && data.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-                        <div className="flex flex-col items-center space-y-3 py-8">
-                          <div className="relative">
-                            <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
-                            <div className="absolute inset-0 w-8 h-8 border-2 border-emerald-200 rounded-full animate-pulse"></div>
+            </div>
+          )}
+
+          {loading && data.length === 0 ? (
+            <div className="divide-y divide-slate-900/[0.05]" aria-busy="true" aria-label="Loading notes">
+              {[0, 1, 2, 3].map((k) => (
+                <div key={k} className="grid grid-cols-[56px_1fr] gap-4 px-5 py-5 sm:grid-cols-[72px_1fr] sm:px-6">
+                  <Skeleton className="h-4 w-12" />
+                  <div className="space-y-2.5">
+                    <Skeleton className="h-5 w-40 rounded-full" />
+                    <Skeleton className="h-3.5 w-full max-w-xl" />
+                    <Skeleton className="h-3.5 w-2/3 max-w-sm" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : processedData.length > 0 ? (
+            <ol>
+              {processedData.map((row, i) => {
+                const showDay = i === 0 || processedData[i - 1].column2 !== row.column2
+                const isPlaying = playingIndex === i
+                return (
+                  <Fragment key={row.id ?? `fallback_${i}_${row.column2}_${row.column3}`}>
+                    {showDay && (
+                      <li className="border-b border-slate-900/[0.05] bg-gray-50/80 px-5 py-2 text-xs font-semibold uppercase tracking-wider text-gray-500 sm:px-6">
+                        {row.column2}
+                      </li>
+                    )}
+                    <li
+                      className={`group grid grid-cols-[56px_1fr] gap-x-4 px-5 transition-colors duration-300 sm:grid-cols-[72px_1fr] sm:px-6 ${
+                        row.isNew ? "animate-in fade-in-0 slide-in-from-top-3 bg-emerald-50/70 duration-500" : "hover:bg-gray-50/70"
+                      }`}
+                      onDoubleClick={() => row.audioUrl && handleRowDoubleClick(row.audioUrl, i)}
+                    >
+                      <div className="pt-5 text-right">
+                        <p className="text-sm font-semibold tabular-nums text-gray-900">{row.column3}</p>
+                        <p className="mt-0.5 text-xs tabular-nums text-gray-400">#{row.index}</p>
+                      </div>
+
+                      <div className="relative border-l-2 border-emerald-100 py-4 pl-5">
+                        <span
+                          aria-hidden
+                          className={`absolute -left-[7px] top-6 h-3 w-3 rounded-full ring-4 ${
+                            row.isNew ? "bg-emerald-500 ring-emerald-100" : "bg-white ring-white"
+                          } border-2 border-emerald-500`}
+                        />
+                        <div className="flex items-start gap-3">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              {(row.roomNumber != null || row.bedLetter) && (
+                                <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800 ring-1 ring-inset ring-emerald-100">
+                                  <DoorOpen className="h-3 w-3" aria-hidden />
+                                  {row.roomNumber ?? "—"}
+                                  {row.bedLetter ? ` · ${row.bedLetter}` : ""}
+                                </span>
+                              )}
+                              {row.patientName && <span className="text-sm font-medium text-gray-700">{row.patientName}</span>}
+                              {row.isNew && (
+                                <span className="animate-pop rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                                  New
+                                </span>
+                              )}
+                            </div>
+                            <p className="mt-2 text-[15px] leading-relaxed text-gray-800">{row.column4}</p>
                           </div>
-                          <div className="text-center">
-                            <p className="font-medium text-gray-700">
-                              {selectedRoom 
-                                ? `Loading Room ${selectedRoom} Data` 
-                                : "Loading Transcription Data"
-                              }
-                            </p>
-                            <p className="text-sm text-gray-500 mt-1">
-                              Please wait while we fetch the latest information...
-                            </p>
-                          </div>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ) : processedData.length > 0 ? (
-                    processedData.map((row, i) => (
-                      <TableRow
-                        key={row.id || `fallback_${i}_${row.column2}_${row.column3}_${Date.now()}`}
-                        className={`
-                          group hover:bg-gray-50 hover:shadow-md transition-all duration-300 cursor-pointer relative
-                          ${row.isNew ? "animate-in slide-in-from-bottom-2 duration-500 bg-emerald-50 border-l-4 border-l-emerald-400" : ""}
-                        `}
-                        onDoubleClick={() => row.audioUrl && handleRowDoubleClick(row.audioUrl, i)}
-                        title="Double-click to play audio"
-                      >
-                        <TableCell className="relative font-medium w-16 text-center group">
-                          <span
-                            className={`transition-opacity ${playingIndex === i ? "opacity-0" : "group-hover:opacity-0"}`}
-                          >
-                            {row.index}
-                          </span>
-                          {row.isNew && (
-                            <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                          )}
-                          <Tooltip.Root>
-                            <Tooltip.Trigger asChild>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  if (row.audioUrl) handlePlay(row.audioUrl, i)
-                                }}
-                                disabled={!row.audioUrl}
-                                className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-emerald-600 hover:text-emerald-800"
-                              >
-                                {loadingIndex === i ? (
-                                  <Loader2 className="w-5 h-5 animate-spin" />
-                                ) : playingIndex === i ? (
-                                  <Pause className="w-5 h-5" />
-                                ) : (
-                                  <Play className="w-5 h-5" />
-                                )}
-                              </button>
-                            </Tooltip.Trigger>
-                            <Tooltip.Content
-                              className="bg-gray-800 text-white px-2 py-1 text-xs rounded shadow-md z-50"
-                              side="top"
-                            >
-                              {playingIndex === i ? "Click to pause" : "Click to play"}
-                            </Tooltip.Content>
-                          </Tooltip.Root>
-                        </TableCell>
-                        <TableCell className={row.isNew ? "font-medium" : ""}>{row.column2}</TableCell>
-                        <TableCell className={row.isNew ? "font-medium" : ""}>{row.column3}</TableCell>
-                        <TableCell className={row.isNew ? "font-medium" : ""}>
-                          {row.column4}
-                          {row.isNew && (
-                            <Badge variant="secondary" className="ml-2 text-xs bg-emerald-100 text-emerald-800">
-                              New
-                            </Badge>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity flex justify-end">
+
+                          <div className="flex shrink-0 items-center gap-1">
+                            <Tooltip.Root>
+                              <Tooltip.Trigger asChild>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    if (row.audioUrl) handlePlay(row.audioUrl, i)
+                                  }}
+                                  disabled={!row.audioUrl}
+                                  aria-label={isPlaying ? "Pause audio" : "Play audio"}
+                                  className={`flex h-9 w-9 items-center justify-center rounded-full transition-[background-color,color,transform] duration-150 ease-settle active:scale-95 disabled:opacity-30 ${
+                                    isPlaying ? "bg-emerald-600 text-white" : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                                  }`}
+                                >
+                                  {loadingIndex === i ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                                  ) : isPlaying ? (
+                                    <Pause className="h-4 w-4" aria-hidden />
+                                  ) : (
+                                    <Play className="ml-0.5 h-4 w-4" aria-hidden />
+                                  )}
+                                </button>
+                              </Tooltip.Trigger>
+                              <Tooltip.Content className="z-50 rounded-md bg-slate-900 px-2 py-1 text-xs text-white shadow-float" side="top">
+                                {row.audioUrl ? (isPlaying ? "Pause recording" : "Play recording") : "No audio"}
+                              </Tooltip.Content>
+                            </Tooltip.Root>
+
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                  <MoreVertical className="h-4 w-4" />
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label="Note actions"
+                                  className="text-gray-400 hover:text-gray-700 sm:opacity-60 sm:group-hover:opacity-100"
+                                >
+                                  <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="z-[200]">
@@ -859,72 +892,40 @@ export default function DataTable({ selectedRoom, initialData, staffId, onBedCha
                                   }}
                                 >
                                   <Edit className="mr-2 h-4 w-4" />
-                                  <span>Edit</span>
+                                  <span>Edit note</span>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() => setDeleteTargetId(row.id!)}
-                                  className="text-red-600"
-                                >
+                                <DropdownMenuItem onClick={() => setDeleteTargetId(row.id!)} className="text-red-600">
                                   <Trash2 className="mr-2 h-4 w-4" />
                                   <span>Delete</span>
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-                        <div className="flex flex-col items-center space-y-3 py-12">
-                          <div className="flex items-center justify-center w-16 h-16 bg-emerald-50 rounded-full">
-                            <Database className="w-8 h-8 text-emerald-600" />
-                          </div>
-                          <div className="text-center">
-                            <p className="font-medium text-gray-700">
-                              {selectedRoom 
-                                ? `Monitoring Room ${selectedRoom}` 
-                                : "Monitoring All Rooms"
-                              }
-                            </p>
-                            <p className="text-sm text-gray-500 mt-1">
-                              Listening for new transcriptions...
-                            </p>
-                            <div className="flex justify-center mt-3">
-                              <div className="flex space-x-1">
-                                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                              </div>
-                            </div>
-                          </div>
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+                      </div>
+                    </li>
+                  </Fragment>
+                )
+              })}
+            </ol>
+          ) : (
+            <div className="flex flex-col items-center px-6 py-16 text-center">
+              <span className="relative flex h-16 w-16 items-center justify-center">
+                <span className="absolute inset-0 animate-ping rounded-full bg-emerald-200/60 [animation-duration:2.4s]" />
+                <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 ring-8 ring-emerald-50/60">
+                  <Mic className="h-7 w-7 text-emerald-600" aria-hidden />
+                </span>
+              </span>
+              <p className="mt-6 text-lg font-semibold text-gray-900">
+                Listening for notes{selectedRoom ? ` in Room ${selectedRoom}` : ""}
+              </p>
+              <p className="mt-1 max-w-sm text-sm text-gray-500">
+                Record from Cidien Mobile — new notes appear here the moment they&apos;re transcribed.
+              </p>
             </div>
-            <div ref={tableEndRef} />
-            {isReceiving && (
-              <div className="mt-4 flex items-center justify-center space-x-2 text-blue-600 bg-blue-50 rounded-lg p-3">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
-                  <div
-                    className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
-                    style={{ animationDelay: "0.1s" }}
-                  ></div>
-                  <div
-                    className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
-                    style={{ animationDelay: "0.2s" }}
-                  ></div>
-                </div>
-                <span className="text-sm font-medium">Processing new transcription...</span>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+          )}
+        </section>
+        <div ref={tableEndRef} />
       </div>
 
       <EditEntryModal

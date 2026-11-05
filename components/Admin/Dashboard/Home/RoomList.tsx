@@ -231,10 +231,10 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
     return (
       <div className="p-6">
         <div className="animate-pulse">
-          <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
+          <div className="h-4 bg-gray-200 rounded-md w-1/4 mb-4"></div>
           <div className="space-y-2">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-10 bg-gray-200 rounded"></div>
+              <div key={i} className="h-10 bg-gray-200 rounded-xl"></div>
             ))}
           </div>
         </div>
@@ -245,7 +245,7 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
   if (error) {
     return (
       <div className="p-6">
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
           Error: {error}
         </div>
       </div>
@@ -253,13 +253,13 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto relative">
+    <div className="p-6 max-w-4xl mx-auto relative animate-fade-up">
       {/* Toast Notifications */}
       <div className="fixed top-4 right-4 z-50 space-y-2">
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`px-4 py-3 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 ${
+            className={`px-4 py-3 rounded-xl shadow-float max-w-sm animate-in fade-in-0 slide-in-from-right-4 duration-300 ${
               toast.type === 'success' 
                 ? 'bg-green-500 text-white' 
                 : 'bg-red-500 text-white'
@@ -285,20 +285,20 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
         <div className="relative inline-block text-left">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-slate-900/15 rounded-lg shadow-sm transition-[background-color,border-color,transform] duration-150 ease-settle hover:border-slate-900/25 hover:bg-gray-50 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 focus-visible:ring-offset-1"
           >
             {getFilterLabel(filter)}
             <ChevronDown 
-              className={`ml-2 h-4 w-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} 
+              className={`ml-2 h-4 w-4 transition-transform duration-200 ease-settle ${isDropdownOpen ? 'rotate-180' : ''}`} 
             />
           </button>
 
           {isDropdownOpen && (
-            <div className="absolute right-0 z-10 mt-2 w-56 origin-top-right bg-white border border-gray-300 rounded-md shadow-lg">
+            <div className="absolute right-0 z-10 mt-2 w-56 origin-top-right bg-white border border-slate-900/[0.08] rounded-xl shadow-float animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-150">
               <div className="py-1">
                 <button
                   onClick={() => handleFilterChange('all')}
-                  className={`block w-full px-4 py-2 text-left text-sm hover:bg-gray-100 ${
+                  className={`block w-full px-4 py-2 text-left text-sm transition-colors duration-150 hover:bg-slate-900/[0.04] ${
                     filter === 'all' ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
                   }`}
                 >
@@ -306,7 +306,7 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
                 </button>
                 <button
                   onClick={() => handleFilterChange('available')}
-                  className={`block w-full px-4 py-2 text-left text-sm hover:bg-gray-100 ${
+                  className={`block w-full px-4 py-2 text-left text-sm transition-colors duration-150 hover:bg-slate-900/[0.04] ${
                     filter === 'available' ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
                   }`}
                 >
@@ -314,7 +314,7 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
                 </button>
                 <button
                   onClick={() => handleFilterChange('occupied')}
-                  className={`block w-full px-4 py-2 text-left text-sm hover:bg-gray-100 ${
+                  className={`block w-full px-4 py-2 text-left text-sm transition-colors duration-150 hover:bg-slate-900/[0.04] ${
                     filter === 'occupied' ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
                   }`}
                 >
@@ -338,11 +338,11 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
           </div>
         ) : (
           filteredRooms.map((room) => (
-            <div key={room.id} className="border border-gray-200 rounded-lg overflow-hidden">
+            <div key={room.id} className="rounded-xl border border-slate-900/[0.07] bg-white shadow-card overflow-hidden transition-shadow duration-200 ease-settle hover:shadow-card-hover">
               {/* Room Header */}
               <button
                 onClick={() => handleRoomClick(room.id)}
-                className="w-full px-4 py-3 text-left bg-gray-50 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
+                className="w-full px-4 py-3 text-left bg-gray-50/70 hover:bg-gray-100/70 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 focus-visible:ring-inset"
               >
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-3">
@@ -369,7 +369,7 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
 
               {/* Bed Details */}
               {selectedRoom === room.id && (
-                <div className="px-4 py-3 bg-white border-t border-gray-200">
+                <div className="px-4 py-3 bg-white border-t border-slate-900/[0.06] animate-in fade-in-0 slide-in-from-top-1 duration-200">
                   <h3 className="text-sm font-medium text-gray-900 mb-3">
                     Beds in Room {room.room_number}:
                   </h3>
@@ -380,7 +380,7 @@ const RoomList: React.FC<RoomListProps> = ({ centerId }) => {
                       {room.beds.map((bed) => (
                         <div
                           key={bed.id}
-                          className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                          className="flex items-center justify-between p-3 border border-slate-900/[0.07] rounded-lg cursor-pointer transition-[background-color,border-color] duration-150 hover:border-emerald-200 hover:bg-emerald-50/40"
                           onClick={() => handleBedClick(bed)}
                         >
                           <div className="flex items-center space-x-3">

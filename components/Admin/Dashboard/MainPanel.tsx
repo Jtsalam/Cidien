@@ -95,9 +95,9 @@ export default function MainPanel() {
   const [activeTab, setActiveTab] = useState("home")
 
   return (
-    <div className="bg-white shadow-lg border-b">
+    <div className="bg-white">
       {/* Header */}
-      <header className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-lg ring-1 ring-emerald-900/10">
+      <header className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.14),0_1px_0_rgb(4_120_87/0.35)]">
         <div className="px-4 py-4 sm:px-6">
           <div className="flex items-center justify-between gap-4">
             {/* Logo Section */}
@@ -140,7 +140,7 @@ export default function MainPanel() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-white hover:bg-white/10 border border-white/20 hover:border-white/30 transition-all duration-200"
+              className="text-white hover:bg-white/10 border border-white/20 hover:border-white/30"
               onClick={() => setShowLogoutModal(true)}
             >
               <LogOut className="w-4 h-4 mr-2" />
@@ -171,10 +171,10 @@ export default function MainPanel() {
       </header>
 
       {/* Navigation Tabs */}
-      <div className="bg-gray-50 px-6 py-3">
+      <div className="border-b border-slate-900/[0.06] bg-gray-50/80 px-6 py-3">
         <div className="flex justify-center">
           <Tabs value={activeTab} className="w-full max-w-2xl">
-            <TabsList className="grid w-full grid-cols-4 bg-white shadow-sm border h-12">
+            <TabsList className="grid w-full grid-cols-4 h-12 rounded-xl bg-slate-900/[0.05] p-1 ring-1 ring-inset ring-slate-900/[0.04]">
               {tabRoutes.map((tab) => {
                 const IconComponent = tab.icon
                 return (
@@ -182,7 +182,7 @@ export default function MainPanel() {
                     key={tab.value}
                     value={tab.value}
                     onClick={() => setActiveTab(tab.value)}
-                    className="flex items-center space-x-2 text-sm font-medium text-gray-600 data-[state=active]:bg-emerald-600 data-[state=active]:text-white rounded-md transition-all duration-200 hover:bg-gray-100 data-[state=active]:hover:bg-emerald-700"
+                    className="flex items-center space-x-2 text-sm font-medium text-gray-600 rounded-lg transition-[color,background-color,box-shadow] duration-200 ease-settle hover:bg-white/70 hover:text-gray-900 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-[0_1px_3px_rgb(4_120_87/0.35)] data-[state=active]:hover:bg-emerald-700"
                   >
                     <IconComponent className="w-4 h-4" />
                     <span className="hidden sm:inline">{tab.label}</span>
@@ -203,7 +203,7 @@ export default function MainPanel() {
           {loadingCenterId ? (
             <div className="p-6 text-gray-600">Loading rooms...</div>
           ) : centerError || centerId === null ? (
-            <div className="p-6 bg-red-100 border border-red-300 text-red-700 rounded">
+            <div className="m-6 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
               Error: {centerError || "Center ID not found"}
             </div>
           ) : (

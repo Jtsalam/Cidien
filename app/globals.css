@@ -87,6 +87,50 @@ body {
  * /dashboard path but do NOT render a [data-staff-dashboard] node, so they
  * keep the global header.
  */
-body:has([data-staff-dashboard]) [data-site-header] {
+body:has([data-staff-dashboard]) [data-site-header],
+body:has([data-app-shell]) [data-site-header] {
   display: none;
+}
+
+/* ── Polish: selection, rendering, focus, scrollbars, reduced motion ── */
+::selection {
+  background: rgb(16 185 129 / 0.18);
+  color: inherit;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Fallback for raw buttons/links that don't style their own focus ring. */
+:where(a, button, [role="button"]):focus-visible {
+  outline: 2px solid rgb(16 185 129 / 0.55);
+  outline-offset: 2px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(15 23 42 / 0.18) transparent;
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background-color: rgb(15 23 42 / 0.16);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background-color: rgb(15 23 42 / 0.28); }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

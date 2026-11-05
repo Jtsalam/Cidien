@@ -170,7 +170,7 @@ const AssignBedPopup: React.FC<AssignBedPopupProps> = ({
 
         {/* Current Assignment Display */}
         {hasExistingAssignment && (
-          <div className="bg-gray-50 p-3 rounded-lg mb-4">
+          <div className="bg-gray-50 p-3 rounded-xl ring-1 ring-inset ring-slate-900/[0.05] mb-4">
             <h4 className="text-sm font-medium text-gray-900 mb-2">Current Assignment</h4>
             <div className="space-y-1 text-sm">
               {bed.assigned_patient && (
@@ -210,11 +210,11 @@ const AssignBedPopup: React.FC<AssignBedPopupProps> = ({
               placeholder="Search nurse by name"
             />
             {filteredNurses.length > 0 && (
-              <ul className="border rounded mt-1 max-h-28 overflow-auto">
+              <ul className="mt-1 max-h-28 overflow-auto rounded-lg border border-slate-900/[0.08] bg-white shadow-float">
                 {filteredNurses.map((nurse) => (
                   <li
                     key={nurse.user_id}
-                    className={`p-2 text-sm cursor-pointer hover:bg-gray-100 ${
+                    className={`p-2 text-sm cursor-pointer transition-colors duration-150 hover:bg-slate-900/[0.04] ${
                       selectedNurse?.user_id === nurse.user_id ? 'bg-blue-100' : ''
                     }`}
                     onClick={() => {

@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { LogIn, Menu, Mic, Trash2, UserRound } from "lucide-react";
+import { AlertTriangle, Check, DoorOpen, Info, Loader2, LogIn, Menu, Mic, Trash2 } from "lucide-react";
 import styles from "./mobile.module.css";
 import MobileTutorial from "./MobileTutorial";
 import {
@@ -71,6 +71,9 @@ const ORGANIZATIONS = [
 ] as const;
 
 type Step = "login" | "recording";
+
+/** Drives the status card's icon and colour; the message text itself is unchanged. */
+type StatusTone = "info" | "listening" | "processing" | "success" | "error";
 
 type ParsedRoomBed = {
   roomNumber: string;
@@ -189,6 +192,9 @@ export default function MobileRecorder() {
 
   const [status, setStatusLine] = useState<string>("");
   const [statusShowMenuLink, setStatusShowMenuLink] = useState(false);
+  const [statusTone, setStatusTone] = useState<StatusTone>("info");
+  const [nudgeRoom, setNudgeRoom] = useState(false);
+  const nudgeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [transcriptionLimit, setTranscriptionLimit] = useState<{
     reached: boolean;
     retryAt: string | null;
@@ -215,9 +221,10 @@ export default function MobileRecorder() {
     async () => {},
   );
 
-  function setStatus(message: string, options?: { showMenuLink?: boolean }) {
+  function setStatus(message: string, options?: { showMenuLink?: boolean; tone?: StatusTone }) {
     setStatusLine(message);
     setStatusShowMenuLink(Boolean(options?.showMenuLink));
+    setStatusTone(options?.tone ?? "info");
   }
 
   const openAssignmentsMenu = () => {
@@ -236,6 +243,7 @@ export default function MobileRecorder() {
     return () => {
       clearRoomAutoStopTimer();
       unsubscribeChannel(recordingRealtimeRef.current);
+      if (nudgeTimerRef.current) clearTimeout(nudgeTimerRef.current);
     };
   }, []);
 
@@ -340,7 +348,7 @@ export default function MobileRecorder() {
         if (!cancelled) {
           setStaffId(staffIdParam);
           setStep("recording");
-          setStatus("Connected via QR code. Tap green or red mic to record - tap again to stop.");
+          setStatus("Phone connected. Tap Room to set the patient, then Note to chart.", { tone: "success" });
           await emitMobileConnected(sessionParam, staffIdParam);
         }
       } catch (err) {
@@ -369,7 +377,7 @@ export default function MobileRecorder() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Sign in failed");
       setStep("recording");
-      setStatus("Signed in. Tap green or red to record — tap again to stop.");
+      setStatus("Signed in. Tap Room to set the patient, then Note to chart.", { tone: "success" });
     } catch (loginError) {
       setError(loginError instanceof Error ? loginError.message : "Unable to sign in.");
     } finally {
@@ -392,7 +400,7 @@ export default function MobileRecorder() {
       const color = activeButtonRef.current;
       activeButtonRef.current = "";
       if (color === "red" && blob.size > 0) {
-        setStatus("Processing audio transcription");
+        setStatus("Processing audio transcription", { tone: "processing" });
       }
       try {
         // Call through the ref so we always get the latest uploadRecording (fresh state closure).
@@ -495,7 +503,7 @@ export default function MobileRecorder() {
   const uploadRecording = async (audioBlob: Blob, color: "green" | "red" | "") => {
     try {
       if (color === "green") {
-        setStatus("Processing room recording...");
+        setStatus("Processing room recording...", { tone: "processing" });
         const newRoomRecordingId = await uploadBlob(audioBlob, "ROOM");
         const roomTranscript = await transcribeRecording(newRoomRecordingId);
         const parsed = parseRoomBedFromTranscript(roomTranscript);
@@ -508,11 +516,11 @@ export default function MobileRecorder() {
           const hint = example
             ? `Try saying something like "${example.long}" or "${example.short}" (use one of your assigned rooms).`
             : "Open the menu to see your assigned rooms, then try again.";
-          setStatus(`Couldn't identify a room — heard "${heardForStatus}". ${hint}`, { showMenuLink: true });
+          setStatus(`Couldn't identify a room — heard "${heardForStatus}". ${hint}`, { showMenuLink: true, tone: "error" });
           return;
         }
 
-        setStatus("Checking room assignment...");
+        setStatus("Checking room assignment...", { tone: "processing" });
         const bedId = await resolveBedId(parsed.roomNumber, parsed.bedLetter);
         if (!bedId) {
           setRoomRecordingId("");
@@ -520,6 +528,7 @@ export default function MobileRecorder() {
           setVerifiedBedId(null);
           setStatus(`Room Access Denied — heard "${heardForStatus}". Please try again.`, {
             showMenuLink: true,
+            tone: "error",
           });
           return;
         }
@@ -532,7 +541,7 @@ export default function MobileRecorder() {
         setRoomRecordingId(newRoomRecordingId);
         setParsedRoomBed(parsed);
         setVerifiedBedId(bedId);
-        setStatus(`Room ${parsed.roomNumber}, Bed ${parsed.bedLetter} – Room audio processed successfully`);
+        setStatus(`Room ${parsed.roomNumber}, Bed ${parsed.bedLetter} – Room audio processed successfully`, { tone: "success" });
         return;
       }
 
@@ -555,37 +564,38 @@ export default function MobileRecorder() {
         .catch((e) => {
           console.error("Deferred transcription failed:", e);
           if (e instanceof EmptyTranscriptError) {
-            setStatus("Audio not heard properly, please try again.");
+            setStatus("Audio not heard properly, please try again.", { tone: "error" });
             return;
           }
           if (e instanceof TranscriptionLimitError) {
             setTranscriptionLimit({ reached: true, retryAt: e.retryAt });
             setStatus(
               "Demo transcription limit reached. The note was saved with a placeholder; clone the repo to self-host with no limits.",
+              { tone: "error" },
             );
           }
         });
 
       unsubscribeChannel(recordingRealtimeRef.current);
       recordingRealtimeRef.current = subscribeToRecording(noteRecordingId, () => {
-        setStatus(`Transcription complete for Room ${parsedRoomBed.roomNumber}, Bed ${parsedRoomBed.bedLetter}.`);
+        setStatus(`Transcription complete for Room ${parsedRoomBed.roomNumber}, Bed ${parsedRoomBed.bedLetter}.`, { tone: "success" });
       });
 
-      setStatus(`Note uploaded for Room ${parsedRoomBed.roomNumber}, Bed ${parsedRoomBed.bedLetter}. Transcription in progress...`);
+      setStatus(`Note uploaded for Room ${parsedRoomBed.roomNumber}, Bed ${parsedRoomBed.bedLetter}. Transcription in progress...`, { tone: "processing" });
     } catch (error) {
       if (error instanceof TranscriptionLimitError) {
         setTranscriptionLimit({ reached: true, retryAt: error.retryAt });
-        setStatus("Demo transcription limit reached. Clone the repo to self-host with no limits.");
+        setStatus("Demo transcription limit reached. Clone the repo to self-host with no limits.", { tone: "error" });
         return;
       }
       if (error instanceof EmptyTranscriptError) {
         setRoomRecordingId("");
         setParsedRoomBed(null);
         setVerifiedBedId(null);
-        setStatus("Audio not heard properly, please try again.", { showMenuLink: true });
+        setStatus("Audio not heard properly, please try again.", { showMenuLink: true, tone: "error" });
         return;
       }
-      setStatus(error instanceof Error ? error.message : "Audio workflow failed.");
+      setStatus(error instanceof Error ? error.message : "Audio workflow failed.", { tone: "error" });
     }
   };
 
@@ -595,7 +605,7 @@ export default function MobileRecorder() {
   const startRecording = async (color: "green" | "red") => {
     if (isRecording || recordingPhase === "processing" || startInProgressRef.current) return;
     if (transcriptionLimit.reached) {
-      setStatus("Demo transcription limit reached. Clone the repo to self-host with no limits.");
+      setStatus("Demo transcription limit reached. Clone the repo to self-host with no limits.", { tone: "error" });
       return;
     }
 
@@ -611,7 +621,7 @@ export default function MobileRecorder() {
       setIsRecording(true);
       setRecordingPhase(color);
       if (color === "green") {
-        setStatus("Listening - say room and bed, then tap green again to stop.");
+        setStatus("Listening… say the room and bed, then tap Room to stop.", { tone: "listening" });
         roomAutoStopTimerRef.current = setTimeout(() => {
           roomAutoStopTimerRef.current = null;
           const mr = mediaRecorderRef.current;
@@ -620,13 +630,13 @@ export default function MobileRecorder() {
             stopRecording();
           }
         }, ROOM_RECORDING_AUTO_STOP_MS);
-      } else if (parsedRoomBed) setStatus(`Listening - charting to Room ${parsedRoomBed.roomNumber}, Bed ${parsedRoomBed.bedLetter}. Tap red again to stop.`);
-      else setStatus("Listening - dictate your note, then tap red again to stop.");
+      } else if (parsedRoomBed) setStatus(`Listening… charting to Room ${parsedRoomBed.roomNumber}, Bed ${parsedRoomBed.bedLetter}. Tap Note to finish.`, { tone: "listening" });
+      else setStatus("Listening… dictate your note, then tap Note to finish.", { tone: "listening" });
     } catch (recordingError) {
       clearRoomAutoStopTimer();
       activeButtonRef.current = "";
       setRecordingPhase("idle");
-      setStatus(`Error accessing microphone: ${recordingError instanceof Error ? recordingError.message : "Microphone access failed."}`);
+      setStatus(`Error accessing microphone: ${recordingError instanceof Error ? recordingError.message : "Microphone access failed."}`, { tone: "error" });
     } finally {
       startInProgressRef.current = false;
     }
@@ -645,7 +655,7 @@ export default function MobileRecorder() {
     const releasingColor = activeButtonRef.current;
     setRecordingPhase("processing");
     mr.stop();
-    if (releasingColor !== "red") setStatus("Processing recording...");
+    if (releasingColor !== "red") setStatus("Processing recording...", { tone: "processing" });
     setIsRecording(false);
   };
 
@@ -678,57 +688,132 @@ export default function MobileRecorder() {
     if (!canRecordCharting) {
       setStatus("Record room information first.");
       if (navigator.vibrate) navigator.vibrate(25);
+      // Point at the Room button so the next step is obvious at a glance.
+      setNudgeRoom(true);
+      if (nudgeTimerRef.current) clearTimeout(nudgeTimerRef.current);
+      nudgeTimerRef.current = setTimeout(() => setNudgeRoom(false), 1400);
       return;
     }
     void startRecording("red");
   };
 
+  // Elapsed time of the active recording, for the status timer and the Room countdown ring.
+  const [phaseStartedAt, setPhaseStartedAt] = useState<number | null>(null);
+  const [nowTick, setNowTick] = useState(0);
+  useEffect(() => {
+    if (recordingPhase !== "green" && recordingPhase !== "red") {
+      setPhaseStartedAt(null);
+      return;
+    }
+    const started = Date.now();
+    setPhaseStartedAt(started);
+    setNowTick(started);
+    const timer = setInterval(() => setNowTick(Date.now()), 200);
+    return () => clearInterval(timer);
+  }, [recordingPhase]);
+  const elapsedMs = phaseStartedAt ? Math.max(0, nowTick - phaseStartedAt) : 0;
+  const elapsedLabel = `${Math.floor(elapsedMs / 60000)}:${String(Math.floor(elapsedMs / 1000) % 60).padStart(2, "0")}`;
+  const roomProgress = recordingPhase === "green" ? Math.min(1, elapsedMs / ROOM_RECORDING_AUTO_STOP_MS) : 0;
+  const roomSecondsLeft = Math.max(0, Math.ceil((ROOM_RECORDING_AUTO_STOP_MS - elapsedMs) / 1000));
+
+  const patientForRoom = parsedRoomBed
+    ? nurseMenu.assignments.find(
+        (a) => a.room_number === parsedRoomBed.roomNumber && a.bed_letter === parsedRoomBed.bedLetter,
+      )?.patient_label
+    : undefined;
+  const exampleAssignment = nurseMenu.assignments[0];
+  const isConnectingViaQr = step === "login" && searchParams.get("bypass") === "true" && !error;
+
+  const toneStyles: Record<StatusTone, { well: string; text: string }> = {
+    info: { well: "bg-slate-900/[0.05] text-gray-500", text: "text-gray-700" },
+    listening: { well: "bg-red-50 text-red-600", text: "text-gray-900" },
+    processing: { well: "bg-emerald-50 text-emerald-600", text: "text-gray-800" },
+    success: { well: "bg-emerald-600 text-white", text: "text-gray-900" },
+    error: { well: "bg-amber-50 text-amber-600", text: "text-gray-900" },
+  };
+  const liveTone: StatusTone =
+    recordingPhase === "green" || recordingPhase === "red" ? "listening" : recordingPhase === "processing" ? "processing" : statusTone;
+
   return (
-    <main className={styles.page}>
-      <section className={styles.card}>
-        {step === "login" ? (
-          <>
-            <div className={styles.header}>
-              <div className={styles.avatar}><UserRound size={36} /></div>
-              <h1 className={styles.title}>Welcome Back</h1>
-              <p className={styles.subtitle}>Please sign in to your account</p>
+    <main data-app-shell className="flex min-h-[100dvh] flex-col bg-[#f6f8f7] text-gray-900">
+      {step === "login" ? (
+        <div className="flex flex-1 flex-col items-center justify-center px-5 py-10">
+          <Image src="/Cidien.svg" alt="Cidien" width={375} height={225} priority className="h-14 w-auto" />
+          {isConnectingViaQr ? (
+            <div className="mt-8 flex w-full max-w-sm animate-fade-up flex-col items-center rounded-3xl border border-slate-900/[0.07] bg-white p-8 text-center shadow-card" role="status">
+              <span className="relative flex h-16 w-16 items-center justify-center">
+                <span className="absolute inset-0 animate-ping rounded-full bg-emerald-200/70" />
+                <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-emerald-600 text-white">
+                  <Loader2 className="h-7 w-7 animate-spin" aria-hidden />
+                </span>
+              </span>
+              <p className="mt-5 text-lg font-bold tracking-tight">Connecting your phone…</p>
+              <p className="mt-1 text-sm text-gray-500">Signing you in from the QR code.</p>
             </div>
-            <form className={styles.form} onSubmit={handleLogin}>
-              <div>
-                <label htmlFor="organization" className={styles.fieldLabel}>Medical Center</label>
-                <select id="organization" className={styles.fieldInput} value={organization}
-                  onChange={(e) => setOrganization(e.target.value)} required>
-                  <option value="" disabled>Select your Organization</option>
-                  {ORGANIZATIONS.map((name) => <option key={name} value={name}>{name}</option>)}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="staffId" className={styles.fieldLabel}>Staff ID</label>
-                <input id="staffId" type="text" className={styles.fieldInput} value={staffId}
-                  onChange={(e) => setStaffId(e.target.value)} placeholder="Enter your Staff ID"
-                  autoComplete="username" required />
-              </div>
-              <button className={styles.submitButton} type="submit" disabled={submitting}>
-                <LogIn size={18} style={{ marginRight: 8, verticalAlign: "middle" }} />
-                {submitting ? "Signing In..." : "Sign In"}
-              </button>
-            </form>
-            {error ? <div className={styles.error}>{error}</div> : null}
-          </>
-        ) : (
-          <div className={styles.recordingShell}>
-            <div className={styles.recordingHeader}>
-              <div className={styles.recordingBrand}>
-                <Image
-                  src="/Cidien.svg"
-                  alt="Cidien"
-                  width={375}
-                  height={225}
-                  priority
-                  className={styles.recordingLogo}
-                />
-                <span className={styles.recordingBadge}>Mobile</span>
-              </div>
+          ) : (
+            <div className="mt-8 w-full max-w-sm animate-fade-up rounded-3xl border border-slate-900/[0.07] bg-white p-6 shadow-card">
+              <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
+              <p className="mt-1 text-sm text-gray-500">Sign in to start charting.</p>
+              <form className="mt-6 space-y-4" onSubmit={handleLogin}>
+                <div>
+                  <label htmlFor="organization" className="mb-1.5 block text-sm font-semibold text-gray-700">
+                    Medical center
+                  </label>
+                  <select
+                    id="organization"
+                    className={styles.fieldInput}
+                    value={organization}
+                    onChange={(e) => setOrganization(e.target.value)}
+                    required
+                  >
+                    <option value="" disabled>
+                      Select your organization
+                    </option>
+                    {ORGANIZATIONS.map((name) => (
+                      <option key={name} value={name}>
+                        {name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="staffId" className="mb-1.5 block text-sm font-semibold text-gray-700">
+                    Staff ID
+                  </label>
+                  <input
+                    id="staffId"
+                    type="text"
+                    className={styles.fieldInput}
+                    value={staffId}
+                    onChange={(e) => setStaffId(e.target.value)}
+                    placeholder="e.g. Nurse001"
+                    autoComplete="username"
+                    required
+                  />
+                </div>
+                <button className={styles.submitButton} type="submit" disabled={submitting}>
+                  {submitting ? (
+                    <Loader2 size={18} className="animate-spin" aria-hidden />
+                  ) : (
+                    <LogIn size={18} aria-hidden />
+                  )}
+                  {submitting ? "Signing in…" : "Sign in"}
+                </button>
+              </form>
+              {error ? <div className={styles.error}>{error}</div> : null}
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          {/* Top bar */}
+          <header className="sticky top-0 z-30 border-b border-slate-900/[0.06] bg-[#f6f8f7]/85 backdrop-blur-md">
+            <div className="mx-auto flex h-14 max-w-md items-center gap-2 px-4">
+              <Image src="/Cidien.svg" alt="Cidien" width={375} height={225} priority className="h-8 w-auto" />
+              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-emerald-700 ring-1 ring-inset ring-emerald-100">
+                Mobile
+              </span>
+              <div className="flex-1" />
               <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
                 <DropdownMenuTrigger asChild>
                   <button type="button" className={styles.menuTrigger} aria-label="Open menu">
@@ -755,17 +840,20 @@ export default function MobileRecorder() {
                     </div>
                     {!nurseMenu.loading && !nurseMenu.error ? (
                       nurseMenu.assignments.length > 0 ? (
-                        nurseMenu.assignments.map((row) => (
-                          <p key={`${row.room_number}-${row.bed_letter}`} className={styles.menuAssignmentRow}>
-                            <span className={styles.menuAssignmentMeta}>
-                              Room {row.room_number} Bed {row.bed_letter}
-                            </span>
-                            <span className={styles.menuAssignmentArrow} aria-hidden>
-                              →
-                            </span>
-                            <span className={styles.menuAssignmentPatient}>{row.patient_label}</span>
-                          </p>
-                        ))
+                        <>
+                          <p className={styles.menuAssignmentsLabel}>Your beds</p>
+                          {nurseMenu.assignments.map((row) => (
+                            <p key={`${row.room_number}-${row.bed_letter}`} className={styles.menuAssignmentRow}>
+                              <span className={styles.menuAssignmentMeta}>
+                                Room {row.room_number} Bed {row.bed_letter}
+                              </span>
+                              <span className={styles.menuAssignmentArrow} aria-hidden>
+                                →
+                              </span>
+                              <span className={styles.menuAssignmentPatient}>{row.patient_label}</span>
+                            </p>
+                          ))}
+                        </>
                       ) : (
                         <p className={styles.menuAssignmentsEmpty}>No bed assignments on file for this account.</p>
                       )
@@ -780,19 +868,13 @@ export default function MobileRecorder() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            <p className={styles.subtitle}>
-              {recordingPhase === "processing"
-                ? "Processing…"
-                : recordingPhase === "green"
-                  ? "Tap green again to stop"
-                  : recordingPhase === "red"
-                    ? "Tap red again to stop"
-                    : "Tap to start - tap again to stop"}
-            </p>
+          </header>
+
+          <div className="mx-auto w-full max-w-md flex-1 space-y-3 px-4 pb-[calc(env(safe-area-inset-bottom)+176px)] pt-4">
             {transcriptionLimit.reached ? (
-              <div className={styles.limitBanner} role="alert" aria-live="polite">
-                <p className={styles.limitBannerTitle}>Demo transcription limit reached</p>
-                <p className={styles.limitBannerBody}>
+              <div className="animate-fade-up rounded-2xl border border-red-200 bg-red-50 p-4" role="alert">
+                <p className="font-semibold text-red-900">Demo transcription limit reached</p>
+                <p className="mt-1 text-sm leading-relaxed text-red-800/90">
                   You&apos;ve used the 10 free transcriptions for this 24-hour window
                   {formatRetryAt(transcriptionLimit.retryAt)
                     ? ` (resets in ~${formatRetryAt(transcriptionLimit.retryAt)})`
@@ -803,92 +885,216 @@ export default function MobileRecorder() {
                   href={REPO_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={styles.limitBannerCta}
+                  className={cn(styles.limitBannerCta, "mt-3")}
                   aria-label="Open the Cidien GitHub repository to self-host"
                 >
                   Open the repo on GitHub →
                 </a>
               </div>
             ) : null}
-            <div className={styles.statusArea} role="status" aria-live="polite">
-              <p className={styles.status}>
-                {status}
+
+            {/* Who you're charting for */}
+            <section
+              className="relative isolate overflow-hidden rounded-3xl bg-emerald-950 p-5 text-white shadow-[0_20px_40px_-24px_rgb(2_44_34/0.7)]"
+              aria-label="Charting target"
+            >
+              <div aria-hidden className="absolute -right-16 -top-16 -z-10 h-48 w-48 rounded-full bg-emerald-500/30 blur-3xl" />
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-emerald-300">
+                <span className={`h-1.5 w-6 rounded-full ${canRecordCharting ? "bg-emerald-400" : "bg-emerald-400/80"}`} />
+                <span className={`h-1.5 w-6 rounded-full ${canRecordCharting ? "bg-emerald-400" : "bg-white/15"}`} />
+                <span className="ml-1">{canRecordCharting ? "Step 2 · Chart your note" : "Step 1 · Set the room"}</span>
+              </div>
+              {parsedRoomBed ? (
+                <div key={`${parsedRoomBed.roomNumber}${parsedRoomBed.bedLetter}`} className="mt-3 animate-fade-up">
+                  <p className="text-sm text-emerald-100/70">Charting to</p>
+                  <p className="text-3xl font-bold tracking-tight">
+                    Room {parsedRoomBed.roomNumber} · Bed {parsedRoomBed.bedLetter}
+                  </p>
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    {patientForRoom ? (
+                      <span className="rounded-full bg-white/10 px-2.5 py-1 text-sm font-medium">{patientForRoom}</span>
+                    ) : null}
+                    {verifiedBedId != null ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-semibold text-emerald-200">
+                        <Check className="h-3.5 w-3.5 animate-pop" aria-hidden />
+                        Assignment verified
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-3">
+                  <p className="text-2xl font-bold tracking-tight">Which patient?</p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-emerald-100/75">
+                    Tap <span className="font-semibold text-white">Room</span> and say the room and bed
+                    {exampleAssignment
+                      ? `, like “${exampleAssignment.room_number} ${exampleAssignment.bed_letter}”.`
+                      : "."}
+                  </p>
+                </div>
+              )}
+            </section>
+
+            {/* Live status */}
+            <section
+              className="flex min-h-[88px] items-start gap-3 rounded-3xl border border-slate-900/[0.07] bg-white p-4 shadow-card"
+              role="status"
+              aria-live="polite"
+            >
+              <span
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl transition-colors duration-300 ${toneStyles[liveTone].well}`}
+              >
+                {liveTone === "listening" ? (
+                  <span className="flex h-5 items-center gap-[3px]" aria-hidden>
+                    {[60, 100, 45, 85].map((h, i) => (
+                      <span
+                        key={i}
+                        className="w-[3px] animate-wave rounded-full bg-current"
+                        style={{ height: `${h}%`, animationDelay: `${i * 0.12}s` }}
+                      />
+                    ))}
+                  </span>
+                ) : liveTone === "processing" ? (
+                  <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
+                ) : liveTone === "success" ? (
+                  <Check className="h-5 w-5 animate-pop" strokeWidth={2.5} aria-hidden />
+                ) : liveTone === "error" ? (
+                  <AlertTriangle className="h-5 w-5" aria-hidden />
+                ) : (
+                  <Info className="h-5 w-5" aria-hidden />
+                )}
+              </span>
+              <div className="min-w-0 flex-1 pt-0.5">
+                <div className="flex items-start justify-between gap-3">
+                  <p key={status} className={`animate-in text-[15px] leading-snug fade-in-0 duration-200 ${toneStyles[liveTone].text}`}>
+                    {status ||
+                      (recordingPhase === "processing"
+                        ? "Processing…"
+                        : canRecordCharting
+                          ? "Ready. Tap Note when you're at the bedside."
+                          : "Ready when you are.")}
+                  </p>
+                  {phaseStartedAt ? (
+                    <span className="shrink-0 rounded-md bg-red-50 px-1.5 py-0.5 font-mono text-sm font-semibold tabular-nums text-red-600">
+                      {elapsedLabel}
+                    </span>
+                  ) : null}
+                </div>
                 {statusShowMenuLink ? (
-                  <>
-                    {" "}
-                    <button
-                      type="button"
-                      className={styles.statusMenuLink}
-                      onClick={openAssignmentsMenu}
-                      aria-label="Open menu to see your assigned rooms and profile"
-                    >
-                      Check menu for assigned rooms.
-                    </button>
-                  </>
+                  <button
+                    type="button"
+                    className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-emerald-700 underline-offset-2 hover:underline"
+                    onClick={openAssignmentsMenu}
+                    aria-label="Open menu to see your assigned rooms and profile"
+                  >
+                    <DoorOpen className="h-4 w-4" aria-hidden />
+                    See my assigned rooms
+                  </button>
                 ) : null}
-              </p>
-            </div>
-            <div className={styles.buttonRow}>
-              <div className={styles.recordSlot}>
-                <button
-                  type="button"
-                  className={cn(
-                    styles.recordButton,
-                    styles.green,
-                    recordingPhase === "green" && styles.recordButtonActiveGreen,
-                    recordingPhase !== "idle" && recordingPhase !== "green" && styles.recordButtonDimmed,
-                  )}
-                  onClick={handleGreenTap}
-                  disabled={
-                    transcriptionLimit.reached ||
-                    recordingPhase === "processing" ||
-                    recordingPhase === "red"
-                  }
-                  aria-pressed={recordingPhase === "green"}
-                  aria-label={
-                    recordingPhase === "green"
-                      ? "Stop recording room information"
-                      : "Record room information"
-                  }
-                >
-                  {recordingPhase === "green" ? <WaveformBars /> : <Mic size={30} />}
-                </button>
-                {recordingPhase === "green" ? (
-                  <span className={styles.listeningLabelGreen}>Listening…</span>
-                ) : (
-                  <span className={styles.recordSlotSpacer} aria-hidden />
-                )}
               </div>
-              <div className={styles.recordSlot}>
-                <button
-                  type="button"
-                  className={cn(
-                    styles.recordButton,
-                    styles.red,
-                    recordingPhase === "red" && styles.recordButtonActiveRed,
-                    recordingPhase !== "idle" && recordingPhase !== "red" && styles.recordButtonDimmed,
-                    recordingPhase === "idle" && !canRecordCharting && styles.recordButtonAwaitingRoom,
-                  )}
-                  onClick={handleRedTap}
-                  disabled={
-                    transcriptionLimit.reached ||
-                    recordingPhase === "processing" ||
-                    recordingPhase === "green"
-                  }
-                  aria-pressed={recordingPhase === "red"}
-                  aria-label={
-                    recordingPhase === "red" ? "Stop recording patient note" : "Record patient note"
-                  }
-                >
-                  {recordingPhase === "red" ? <WaveformBars /> : <Mic size={30} />}
-                </button>
-                {recordingPhase === "red" ? (
-                  <span className={styles.listeningLabelRed}>Listening…</span>
-                ) : (
-                  <span className={styles.recordSlotSpacer} aria-hidden />
-                )}
+            </section>
+          </div>
+
+          {/* Thumb row: the three buttons */}
+          <nav
+            className="fixed inset-x-0 bottom-0 z-30 rounded-t-[28px] border-t border-slate-900/[0.06] bg-white/90 pb-[calc(env(safe-area-inset-bottom)+14px)] pt-4 shadow-[0_-12px_32px_-16px_rgb(15_23_42/0.18)] backdrop-blur-md"
+            aria-label="Recording controls"
+          >
+            <div className="mx-auto grid max-w-md grid-cols-3 px-3">
+              {/* Room (green) */}
+              <div className="flex flex-col items-center">
+                <div className="relative">
+                  {nudgeRoom && recordingPhase === "idle" ? (
+                    <span aria-hidden className="absolute -inset-1 animate-breathe rounded-full bg-green-500/50 [animation-duration:0.7s]" />
+                  ) : null}
+                  {recordingPhase === "green" ? (
+                    <>
+                      <span aria-hidden className="absolute -inset-1 animate-breathe rounded-full bg-green-500/40" />
+                      <svg aria-hidden viewBox="0 0 88 88" className="pointer-events-none absolute -inset-2 h-[88px] w-[88px] -rotate-90">
+                        <circle cx="44" cy="44" r="41" fill="none" stroke="rgb(22 163 74 / 0.15)" strokeWidth="4" />
+                        <circle
+                          cx="44"
+                          cy="44"
+                          r="41"
+                          fill="none"
+                          stroke="#16a34a"
+                          strokeWidth="4"
+                          strokeLinecap="round"
+                          pathLength={1}
+                          strokeDasharray="1"
+                          strokeDashoffset={roomProgress}
+                          className="transition-[stroke-dashoffset] duration-200 ease-linear"
+                        />
+                      </svg>
+                    </>
+                  ) : null}
+                  <button
+                    type="button"
+                    className={cn(
+                      styles.recordButton,
+                      styles.green,
+                      recordingPhase === "green" && styles.recordButtonActiveGreen,
+                      recordingPhase !== "idle" && recordingPhase !== "green" && styles.recordButtonDimmed,
+                    )}
+                    onClick={handleGreenTap}
+                    disabled={
+                      transcriptionLimit.reached ||
+                      recordingPhase === "processing" ||
+                      recordingPhase === "red"
+                    }
+                    aria-pressed={recordingPhase === "green"}
+                    aria-label={
+                      recordingPhase === "green"
+                        ? "Stop recording room information"
+                        : "Record room information"
+                    }
+                  >
+                    {recordingPhase === "green" ? <WaveformBars /> : <DoorOpen size={28} aria-hidden />}
+                  </button>
+                </div>
+                <span className="mt-2.5 text-sm font-bold text-gray-900">Room</span>
+                <span className="text-xs text-gray-500">
+                  {recordingPhase === "green" ? `Stops in ${roomSecondsLeft}s` : parsedRoomBed ? "Change room" : "Say room & bed"}
+                </span>
               </div>
-              <div className={styles.recordSlot}>
+
+              {/* Note (red) */}
+              <div className="flex flex-col items-center">
+                <div className="relative">
+                  {recordingPhase === "red" ? (
+                    <span aria-hidden className="absolute -inset-1 animate-breathe rounded-full bg-red-500/40" />
+                  ) : null}
+                  <button
+                    type="button"
+                    className={cn(
+                      styles.recordButton,
+                      styles.red,
+                      recordingPhase === "red" && styles.recordButtonActiveRed,
+                      recordingPhase !== "idle" && recordingPhase !== "red" && styles.recordButtonDimmed,
+                      recordingPhase === "idle" && !canRecordCharting && styles.recordButtonAwaitingRoom,
+                    )}
+                    onClick={handleRedTap}
+                    disabled={
+                      transcriptionLimit.reached ||
+                      recordingPhase === "processing" ||
+                      recordingPhase === "green"
+                    }
+                    aria-pressed={recordingPhase === "red"}
+                    aria-label={
+                      recordingPhase === "red" ? "Stop recording patient note" : "Record patient note"
+                    }
+                  >
+                    {recordingPhase === "red" ? <WaveformBars /> : <Mic size={30} aria-hidden />}
+                  </button>
+                </div>
+                <span className="mt-2.5 text-sm font-bold text-gray-900">Note</span>
+                <span className="text-xs text-gray-500">
+                  {recordingPhase === "red" ? "Tap to finish" : canRecordCharting ? "Dictate note" : "Set room first"}
+                </span>
+              </div>
+
+              {/* Clear (grey) */}
+              <div className="flex flex-col items-center">
                 <button
                   type="button"
                   className={cn(
@@ -900,44 +1106,17 @@ export default function MobileRecorder() {
                   disabled={recordingPhase !== "idle"}
                   aria-label="Clear status text"
                 >
-                  <Trash2 size={28} />
+                  <Trash2 size={26} aria-hidden />
                 </button>
-                <span className={styles.recordSlotSpacer} aria-hidden />
+                <span className="mt-2.5 text-sm font-bold text-gray-900">Clear</span>
+                <span className="text-xs text-gray-500">Reset status</span>
               </div>
             </div>
-            <div className={styles.legend}>
-              <div
-                className={cn(
-                  styles.legendItem,
-                  recordingPhase !== "idle" && recordingPhase !== "green" && styles.legendItemDimmed,
-                )}
-              >
-                <span className={styles.dot} style={{ background: "#16a34a" }} />
-                Green: tap to record room and bed - tap again to stop
-              </div>
-              <div
-                className={cn(
-                  styles.legendItem,
-                  recordingPhase !== "idle" && recordingPhase !== "red" && styles.legendItemDimmed,
-                )}
-              >
-                <span className={styles.dot} style={{ background: "#dc2626" }} />
-                Red: tap to chart a note - tap again to stop (after room is confirmed)
-              </div>
-              <div
-                className={cn(
-                  styles.legendItem,
-                  recordingPhase !== "idle" && styles.legendItemDimmed,
-                )}
-              >
-                <span className={styles.dot} style={{ background: "#6b7280" }} />
-                Grey: clear status
-              </div>
-            </div>
-            <MobileTutorial open={tutorialOpen} onFinish={completeTutorial} />
-          </div>
-        )}
-      </section>
+          </nav>
+
+          <MobileTutorial open={tutorialOpen} onFinish={completeTutorial} />
+        </>
+      )}
     </main>
   );
 }

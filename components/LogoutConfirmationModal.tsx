@@ -8,7 +8,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { LogOut, AlertCircle } from "lucide-react"
+import { LogOut } from "lucide-react"
 
 type LogoutConfirmationModalProps = {
   open: boolean
@@ -19,33 +19,23 @@ type LogoutConfirmationModalProps = {
 export default function LogoutConfirmationModal({ open, onCancel, onConfirm }: LogoutConfirmationModalProps) {
   return (
     <Dialog open={open} onOpenChange={onCancel}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-            <LogOut className="w-8 h-8 text-red-600" />
-          </div>
-          <div className="space-y-2">
-            <DialogTitle className="text-xl font-semibold text-gray-900">Confirm Logout</DialogTitle>
-            <DialogDescription className="text-gray-600 leading-relaxed">
-              Are you sure you want to log out of your account? You&apos;ll need to sign in again to access your dashboard.
-            </DialogDescription>
-          </div>
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader className="items-center space-y-3 text-center sm:text-center">
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-600 ring-8 ring-red-50/50">
+            <LogOut className="h-5 w-5" aria-hidden />
+          </span>
+          <DialogTitle className="text-lg font-bold tracking-tight text-gray-900">Log out of Cidien?</DialogTitle>
+          <DialogDescription className="text-sm leading-relaxed text-gray-500">
+            You&apos;ll need to start the demo again to get back to this dashboard. Anything you haven&apos;t saved will be lost.
+          </DialogDescription>
         </DialogHeader>
-        <div className="flex items-center justify-center space-x-2 py-4">
-          <AlertCircle className="w-4 h-4 text-amber-500" />
-          <p className="text-sm text-amber-700 bg-amber-50 px-3 py-2 rounded-md">Any unsaved changes will be lost</p>
-        </div>
-        <DialogFooter className="flex-col sm:flex-row gap-3 sm:gap-2">
-          <Button variant="outline" onClick={onCancel} className="w-full sm:w-auto order-2 sm:order-1 hover:bg-gray-50">
-            Cancel
+        <DialogFooter className="mt-2 flex-col-reverse gap-2 sm:flex-row sm:space-x-0">
+          <Button variant="outline" onClick={onCancel} className="w-full">
+            Stay
           </Button>
-          <Button
-            variant="destructive"
-            onClick={onConfirm}
-            className="w-full sm:w-auto order-1 sm:order-2 bg-red-600 hover:bg-red-700"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
+          <Button variant="destructive" onClick={onConfirm} className="w-full">
+            <LogOut aria-hidden />
+            Log out
           </Button>
         </DialogFooter>
       </DialogContent>

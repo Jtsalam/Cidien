@@ -53,7 +53,7 @@ export default function SiteHeader() {
   return (
     <header
       data-site-header
-      className="sticky top-0 z-[100] flex h-16 shrink-0 items-center border-b border-gray-200/80 bg-white/90 px-4 shadow-[0_1px_2px_0_rgba(0,0,0,0.04)] backdrop-blur supports-[backdrop-filter]:bg-white/75 sm:h-20 sm:px-6"
+      className="sticky top-0 z-[100] flex h-16 shrink-0 items-center border-b border-slate-900/[0.06] bg-white/90 px-4 backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-white/70 sm:h-20 sm:px-6"
     >
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-6">
         <Link
@@ -74,7 +74,7 @@ export default function SiteHeader() {
 
         <nav className="hidden items-center gap-6 text-sm font-medium text-gray-600 md:flex">
           <Link
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition-colors hover:border-emerald-200 hover:text-emerald-700"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-900/10 bg-white text-gray-600 transition-[color,border-color,transform] duration-150 ease-settle hover:border-emerald-200 hover:text-emerald-700 active:scale-95"
             href="https://github.com/Jtsalam/Cidien"
             target="_blank"
             rel="noreferrer"
@@ -83,17 +83,17 @@ export default function SiteHeader() {
           >
             <Github className="h-4 w-4" />
           </Link>
-          <Link className="transition-colors hover:text-emerald-700" href="/#features">
+          <Link className="relative transition-colors duration-150 after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-emerald-600 after:transition-transform after:duration-200 after:ease-settle hover:text-emerald-700 hover:after:scale-x-100" href="/#features">
             Features
           </Link>
-          <Link className="transition-colors hover:text-emerald-700" href="/#how-it-works">
+          <Link className="relative transition-colors duration-150 after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-emerald-600 after:transition-transform after:duration-200 after:ease-settle hover:text-emerald-700 hover:after:scale-x-100" href="/#how-it-works">
             How it works
           </Link>
           <button
             type="button"
             onClick={handleStartDemo}
             disabled={isStartingDemo}
-            className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-emerald-700 transition-colors hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-70"
+            className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-emerald-700 transition-[background-color,transform] duration-150 ease-settle hover:bg-emerald-100 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isStartingDemo ? (
               <>
@@ -121,7 +121,7 @@ export default function SiteHeader() {
       {isMobileMenuOpen && (
         <div
           id="site-header-mobile-menu"
-          className="absolute inset-x-0 top-full border-b border-gray-200/80 bg-white/95 shadow-md backdrop-blur supports-[backdrop-filter]:bg-white/85 md:hidden"
+          className="absolute inset-x-0 top-full border-b border-slate-900/[0.06] bg-white/95 shadow-float backdrop-blur-md supports-[backdrop-filter]:bg-white/85 animate-in fade-in-0 slide-in-from-top-1 duration-200 md:hidden"
         >
           <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3 text-base font-medium text-gray-700">
             <Link
@@ -155,7 +155,7 @@ export default function SiteHeader() {
                 void handleStartDemo();
               }}
               disabled={isStartingDemo}
-              className="mt-1 inline-flex items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-700 transition-colors hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-70"
+              className="mt-1 inline-flex items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-700 transition-[background-color,transform] duration-150 ease-settle hover:bg-emerald-100 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isStartingDemo ? (
                 <>
