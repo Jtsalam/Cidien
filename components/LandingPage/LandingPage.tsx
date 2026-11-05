@@ -223,10 +223,10 @@ export default function LandingPage() {
                 </div>
                 <span className="w-[52px] shrink-0" aria-hidden />
               </div>
-              <div className="relative aspect-[1919/620] overflow-hidden bg-gray-50">
+              <div className="relative aspect-[16/10] overflow-hidden bg-gray-50">
                 <Image
                   src="/screenshots/dashboard.png"
-                  alt="Cidien staff dashboard listing live transcribed patient notes across rooms"
+                  alt="Cidien staff dashboard showing a live timeline of transcribed patient notes"
                   fill
                   priority
                   sizes="(min-width: 1152px) 1152px, 100vw"
@@ -241,7 +241,7 @@ export default function LandingPage() {
                 <div className="relative aspect-[9/19] overflow-hidden rounded-[1.7rem] bg-white sm:rounded-[2rem]">
                   <Image
                     src="/screenshots/mobile.jpeg"
-                    alt="Cidien mobile recorder with record and clear buttons"
+                    alt="Cidien Mobile charting a note to Room 5011, Bed A"
                     fill
                     sizes="220px"
                     className="object-cover object-top"
@@ -257,7 +257,7 @@ export default function LandingPage() {
               </span>
               <div>
                 <p className="text-sm font-semibold text-gray-900">Voice note captured</p>
-                <p className="text-xs text-gray-500">Room 3127 · Bed A</p>
+                <p className="text-xs text-gray-500">Room 5011 · Bed A</p>
               </div>
               <div className="ml-1 flex h-6 items-center gap-[3px]" aria-hidden>
                 {[60, 100, 45, 85, 55].map((h, i) => (
@@ -547,11 +547,11 @@ export default function LandingPage() {
           <div className="flex flex-col gap-8 pb-10 sm:flex-row sm:items-start sm:justify-between sm:gap-12">
             <div className="max-w-md">
               <Image
-                src="/Cidien.svg"
+                src="/cidien-logo-white.svg"
                 alt="Cidien"
-                width={375}
-                height={225}
-                className="h-12 w-auto brightness-0 invert"
+                width={358}
+                height={80}
+                className="h-8 w-auto"
               />
               <p className="mt-3 text-sm leading-relaxed text-gray-400">
                 AI-powered documentation for nurses - less time charting, more time with patients.

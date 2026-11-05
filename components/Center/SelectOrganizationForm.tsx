@@ -66,12 +66,12 @@ export default function SelectOrganizationForm({ onSubmit }: Props) {
             className="mb-6 inline-block rounded-md outline-none ring-offset-2 transition-transform duration-200 ease-spring hover:scale-105 focus-visible:ring-2 focus-visible:ring-emerald-600"
           >
             <Image
-              src="/Cidien.svg"
+              src="/cidien-logo.svg"
               alt="Cidien"
-              width={375}
-              height={225}
+              width={358}
+              height={80}
               priority
-              className="mx-auto h-14 w-auto"
+              className="mx-auto h-10 w-auto"
             />
           </Link>
           <h1 className="text-3xl font-bold tracking-tight text-gray-800 mb-2">Welcome Back</h1>

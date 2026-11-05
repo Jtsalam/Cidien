@@ -63,12 +63,12 @@ export default function SiteHeader() {
           onClick={closeMobileMenu}
         >
           <Image
-            src="/Cidien.svg"
+            src="/cidien-logo.svg"
             alt="Cidien"
-            width={375}
-            height={225}
+            width={358}
+            height={80}
             priority
-            className="h-10 w-auto sm:h-14"
+            className="h-8 w-auto sm:h-9"
           />
         </Link>
 

@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="public/Cidien.svg" alt="Cidien Logo" width="180" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="public/cidien-logo-white.svg" />
+    <img src="public/cidien-logo.svg" alt="Cidien" width="260" />
+  </picture>
 </p>
 
 <h1 align="center">Cidien</h1>

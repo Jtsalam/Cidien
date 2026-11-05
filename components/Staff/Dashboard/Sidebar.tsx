@@ -49,7 +49,7 @@ export function DashboardSidebar({
 
       <div className="relative px-5 pb-4 pt-6">
         <Link href="/" aria-label="Cidien home" className="inline-block rounded-md">
-          <Image src="/Cidien.svg" alt="Cidien" width={375} height={225} className="h-10 w-auto brightness-0 invert" priority />
+          <Image src="/cidien-logo-white.svg" alt="Cidien" width={358} height={80} className="h-8 w-auto" priority />
         </Link>
         <p className="mt-3 truncate text-sm text-emerald-200/70" title={displayName}>
           {displayName || " "}
@@ -184,7 +184,7 @@ export function DashboardTopBar({
   return (
     <div className="sticky top-0 z-30 border-b border-slate-900/[0.06] bg-white/85 backdrop-blur-md backdrop-saturate-150 lg:hidden">
       <div className="flex h-14 items-center gap-3 px-4">
-        <Image src="/Cidien.svg" alt="Cidien" width={375} height={225} className="h-8 w-auto" priority />
+        <Image src="/cidien-logo.svg" alt="Cidien" width={358} height={80} className="h-6 w-auto" priority />
         <div className="min-w-0 flex-1 border-l border-slate-900/10 pl-3 text-xs leading-tight">
           <p className="truncate font-semibold text-gray-900">{displayName}</p>
           <p className="truncate text-gray-500">{nurseId}</p>

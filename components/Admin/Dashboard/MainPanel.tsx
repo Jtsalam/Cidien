@@ -104,12 +104,12 @@ export default function MainPanel() {
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="flex items-center rounded-xl bg-white/10 px-3 py-2 ring-1 ring-white/15 backdrop-blur-sm">
                 <Image
-                  src="/Cidien.svg"
+                  src="/cidien-logo-white.svg"
                   alt="Cidien"
-                  width={375}
-                  height={225}
+                  width={358}
+                  height={80}
                   priority
-                  className="h-7 w-auto brightness-0 invert sm:h-8"
+                  className="h-6 w-auto sm:h-7"
                 />
               </div>
               <div className="hidden sm:block">

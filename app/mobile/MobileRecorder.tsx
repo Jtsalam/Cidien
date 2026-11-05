@@ -738,7 +738,7 @@ export default function MobileRecorder() {
     <main data-app-shell className="flex min-h-[100dvh] flex-col bg-[#f6f8f7] text-gray-900">
       {step === "login" ? (
         <div className="flex flex-1 flex-col items-center justify-center px-5 py-10">
-          <Image src="/Cidien.svg" alt="Cidien" width={375} height={225} priority className="h-14 w-auto" />
+          <Image src="/cidien-logo.svg" alt="Cidien" width={358} height={80} priority className="h-10 w-auto" />
           {isConnectingViaQr ? (
             <div className="mt-8 flex w-full max-w-sm animate-fade-up flex-col items-center rounded-3xl border border-slate-900/[0.07] bg-white p-8 text-center shadow-card" role="status">
               <span className="relative flex h-16 w-16 items-center justify-center">
@@ -809,7 +809,7 @@ export default function MobileRecorder() {
           {/* Top bar */}
           <header className="sticky top-0 z-30 border-b border-slate-900/[0.06] bg-[#f6f8f7]/85 backdrop-blur-md">
             <div className="mx-auto flex h-14 max-w-md items-center gap-2 px-4">
-              <Image src="/Cidien.svg" alt="Cidien" width={375} height={225} priority className="h-8 w-auto" />
+              <Image src="/cidien-logo.svg" alt="Cidien" width={358} height={80} priority className="h-6 w-auto" />
               <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-emerald-700 ring-1 ring-inset ring-emerald-100">
                 Mobile
               </span>

@@ -31,7 +31,7 @@ export default function OnboardingShell({ step, children, footer }: Props) {
       <header className="sticky top-0 z-40 border-b border-slate-900/[0.06] bg-white/75 backdrop-blur-md backdrop-saturate-150">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 md:px-8">
           <Link href="/" aria-label="Cidien home" className="shrink-0 rounded-md">
-            <Image src="/Cidien.svg" alt="Cidien" width={375} height={225} priority className="h-9 w-auto" />
+            <Image src="/cidien-logo.svg" alt="Cidien" width={358} height={80} priority className="h-7 w-auto" />
           </Link>
 
           <ol className="flex items-center gap-1.5 sm:gap-3" aria-label="Demo progress">
